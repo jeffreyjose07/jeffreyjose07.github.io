@@ -5,99 +5,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jeffrey Jose | Personal Website</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <img src="https://media.licdn.com/dms/image/D4D03AQF1zQ6uJwYv5g/profile-displayphoto-shrink_800_800/0/1704952724824?e=1719446400&v=beta&t=9KZfZB9I1vVfW5w6QnY1k7wG5fP9d8vR0E6fF5QnP5Y" alt="Jeffrey Jose" class="profile-img">
+    <section class="hero-bg">
+        <div class="hero-card">
+            <img src="https://media.licdn.com/dms/image/D4D03AQF1zQ6uJwYv5g/profile-displayphoto-shrink_800_800/0/1704952724824?e=1719446400&v=beta&t=9KZfZB9I1vVfW5w6QnY1k7wG5fP9d8vR0E6fF5QnP5Y" alt="Jeffrey Jose" class="profile-img-large">
             <h1>Jeffrey Jose</h1>
-            <p class="subtitle">Senior Software Engineer at Jio Platforms Limited | IIT Kharagpur</p>
-            <nav>
+            <p class="subtitle">Senior Software Engineer at Jio Platforms Limited<br><span class="school">IIT Kharagpur</span></p>
+            <div class="hero-links">
+                <a href="mailto:jeffreyjose.k@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
+                <a href="tel:9567761105" title="Phone"><i class="fas fa-phone"></i></a>
+                <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            </div>
+            <nav class="hero-nav">
                 <a href="#about">About</a>
                 <a href="#experience">Experience</a>
                 <a href="#education">Education</a>
                 <a href="#skills">Skills</a>
+                <a href="#certifications">Certifications</a>
                 <a href="#contact">Contact</a>
             </nav>
         </div>
-    </header>
+    </section>
     <main>
-        <section id="about" class="container">
+        <section id="about" class="card">
             <h2>About Me</h2>
             <p>Always eager to learn new skills and adapt to new situations. I love challenging myself by overcoming them. Always keen on solving real-world problems using latest technologies.</p>
         </section>
-        <section id="experience" class="container">
+        <section id="experience" class="card">
             <h2>Experience</h2>
-            <div class="item">
-                <h3>Senior Software Engineer</h3>
-                <p><strong>Company:</strong> Jio Platforms Limited (JPL)</p>
-                <p><strong>Duration:</strong> April 2022 – Present</p>
-                <ul>
-                    <li>Upgraded Batch Jobs for user group management using Spring Batch, achieving 3x speed-up in program execution and enabling the service to handle larger data-sets more robustly.</li>
-                    <li>Converted existing promotion/coupon management system in Ajio B2B to a generic multi-tenant service for all Jio-related B2B verticals.</li>
-                </ul>
-            </div>
-            <div class="item">
-                <h3>Software Engineer</h3>
-                <p><strong>Company:</strong> Jio Platforms Limited (JPL)</p>
-                <p><strong>Duration:</strong> July 2019 – March 2022</p>
-                <ul>
-                    <li>Delivered unit-tested backend APIs for Jio Prime Merchant (B2B side of JioMart) and collaborated with testing teams to set up component tests for functionality, scalability, and performance.</li>
-                    <li>Refactored and modularized legacy codebase to improve code quality and enhance product development.</li>
-                    <li>Partnered with infrastructure team to configure zero downtime deployments, significantly reducing product downtime.</li>
-                </ul>
-            </div>
-            <div class="item">
-                <h3>Teaching Assistant</h3>
-                <p><strong>Institution:</strong> Indian Institute of Technology, Kharagpur</p>
-                <p><strong>Duration:</strong> July 2017 – April 2019</p>
-                <ul>
-                    <li>Assisted in Programming and Data Structures Lab (CS11002)</li>
-                    <li>Assisted in Theory of Computations (CS41001)</li>
-                </ul>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3>Senior Software Engineer</h3>
+                    <span class="timeline-company">Jio Platforms Limited (JPL)</span>
+                    <span class="timeline-duration">Apr 2022 – Present</span>
+                    <ul>
+                        <li>Upgraded Batch Jobs for user group management using Spring Batch, achieving 3x speed-up in program execution and enabling the service to handle larger data-sets more robustly.</li>
+                        <li>Converted existing promotion/coupon management system in Ajio B2B to a generic multi-tenant service for all Jio-related B2B verticals.</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h3>Software Engineer</h3>
+                    <span class="timeline-company">Jio Platforms Limited (JPL)</span>
+                    <span class="timeline-duration">Jul 2019 – Mar 2022</span>
+                    <ul>
+                        <li>Delivered unit-tested backend APIs for Jio Prime Merchant (B2B side of JioMart) and collaborated with testing teams to set up component tests for functionality, scalability, and performance.</li>
+                        <li>Refactored and modularized legacy codebase to improve code quality and enhance product development.</li>
+                        <li>Partnered with infrastructure team to configure zero downtime deployments, significantly reducing product downtime.</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h3>Teaching Assistant</h3>
+                    <span class="timeline-company">Indian Institute of Technology, Kharagpur</span>
+                    <span class="timeline-duration">Jul 2017 – Apr 2019</span>
+                    <ul>
+                        <li>Assisted in Programming and Data Structures Lab (CS11002)</li>
+                        <li>Assisted in Theory of Computations (CS41001)</li>
+                    </ul>
+                </div>
             </div>
         </section>
-        <section id="education" class="container">
+        <section id="education" class="card">
             <h2>Education</h2>
-            <div class="item">
-                <h3>Master of Technology (M.Tech.), Computer Science</h3>
-                <p><strong>Institution:</strong> Indian Institute of Technology, Kharagpur</p>
-                <p><strong>Duration:</strong> 2017 – 2019</p>
-            </div>
-            <div class="item">
-                <h3>Bachelor of Technology (B.Tech.), Computer Science and Engineering</h3>
-                <p><strong>Institution:</strong> Government College Of Engineering Kannur</p>
-                <p><strong>Duration:</strong> 2012 – 2016</p>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3>Master of Technology (M.Tech.), Computer Science</h3>
+                    <span class="timeline-company">Indian Institute of Technology, Kharagpur</span>
+                    <span class="timeline-duration">2017 – 2019</span>
+                </div>
+                <div class="timeline-item">
+                    <h3>Bachelor of Technology (B.Tech.), Computer Science and Engineering</h3>
+                    <span class="timeline-company">Government College Of Engineering Kannur</span>
+                    <span class="timeline-duration">2012 – 2016</span>
+                </div>
             </div>
         </section>
-        <section id="skills" class="container">
+        <section id="skills" class="card">
             <h2>Skills</h2>
-            <ul class="skills-list">
-                <li>Front-End Development</li>
-                <li>HTML5</li>
-                <li>CSS</li>
-                <li>Java</li>
-                <li>Spring Batch</li>
-                <li>Backend APIs</li>
-                <li>Functional Programming</li>
-                <li>Team Collaboration</li>
-            </ul>
+            <div class="pill-list">
+                <span>Front-End Development</span>
+                <span>HTML5</span>
+                <span>CSS</span>
+                <span>Java</span>
+                <span>Spring Batch</span>
+                <span>Backend APIs</span>
+                <span>Functional Programming</span>
+                <span>Team Collaboration</span>
+            </div>
         </section>
-        <section id="certifications" class="container">
+        <section id="certifications" class="card">
             <h2>Certifications</h2>
-            <ul class="skills-list">
-                <li>Functional Programming with Java</li>
-                <li>Java (Basic) Certificate</li>
-                <li>Introduction to Generative AI</li>
-                <li>Spring Code Challenges</li>
-                <li>Spring: Spring Batch</li>
-            </ul>
+            <div class="pill-list">
+                <span>Functional Programming with Java</span>
+                <span>Java (Basic) Certificate</span>
+                <span>Introduction to Generative AI</span>
+                <span>Spring Code Challenges</span>
+                <span>Spring: Spring Batch</span>
+            </div>
         </section>
-        <section id="contact" class="container">
+        <section id="contact" class="card">
             <h2>Contact</h2>
-            <p><strong>Mobile:</strong> 9567761105</p>
-            <p><strong>Email:</strong> <a href="mailto:jeffreyjose.k@gmail.com">jeffreyjose.k@gmail.com</a></p>
-            <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank">linkedin.com/in/jeffrey-jose-07-k</a></p>
+            <div class="contact-links">
+                <a href="mailto:jeffreyjose.k@gmail.com"><i class="fas fa-envelope"></i> jeffreyjose.k@gmail.com</a>
+                <a href="tel:9567761105"><i class="fas fa-phone"></i> 9567761105</a>
+                <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank"><i class="fab fa-linkedin"></i> linkedin.com/in/jeffrey-jose-07-k</a>
+            </div>
         </section>
     </main>
     <footer>
