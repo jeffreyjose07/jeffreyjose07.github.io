@@ -2,13 +2,13 @@ body {
     font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, #e9eafc 0%, #f5f7fa 100%);
-    color: #21243d;
+    background: #F6F4EF;
+    color: #3C4A6B;
     min-height: 100vh;
 }
 
 .hero-bg {
-    background: linear-gradient(135deg, #5b6ee1 0%, #3c4a6b 100%);
+    background: #2D3E50;
     padding: 48px 0 32px 0;
     display: flex;
     justify-content: center;
@@ -24,6 +24,7 @@ body {
     max-width: 400px;
     position: relative;
     animation: fadeInUp 1s cubic-bezier(.23,1.03,.53,1.15);
+    border: 2px solid #A68A64;
 }
 @keyframes fadeInUp {
   0% { opacity: 0; transform: translateY(40px); }
@@ -40,12 +41,12 @@ body {
 }
 .subtitle {
     font-size: 1.15rem;
-    color: #5b6ee1;
+    color: #6BA292;
     margin-bottom: 0.6rem;
     font-weight: 500;
 }
 .school {
-    color: #3c4a6b;
+    color: #A68A64;
     font-size: 1rem;
     font-weight: 400;
 }
@@ -53,8 +54,8 @@ body {
     margin: 0.6rem 0 1.2rem 0;
 }
 .hero-links a {
-    color: #5b6ee1;
-    background: #e9eafc;
+    color: #6BA292;
+    background: #F6F4EF;
     border-radius: 50%;
     display: inline-block;
     width: 40px;
@@ -66,7 +67,7 @@ body {
     box-shadow: 0 2px 8px rgba(44,62,80,0.08);
 }
 .hero-links a:hover {
-    background: #5b6ee1;
+    background: #A68A64;
     color: #fff;
     transform: translateY(-3px) scale(1.08);
 }
@@ -74,7 +75,7 @@ body {
     margin-top: 0.8rem;
 }
 .hero-nav a {
-    color: #3c4a6b;
+    color: #2D3E50;
     text-decoration: none;
     margin: 0 0.7rem;
     font-weight: 600;
@@ -88,12 +89,12 @@ body {
     display: block;
     width: 0;
     height: 2px;
-    background: #5b6ee1;
+    background: #6BA292;
     transition: width 0.2s;
     margin: 0 auto;
 }
 .hero-nav a:hover {
-    color: #5b6ee1;
+    color: #A68A64;
 }
 .hero-nav a:hover:after {
     width: 80%;
@@ -111,9 +112,10 @@ main {
     padding: 2.2rem 2rem 1.4rem 2rem;
     margin-bottom: 2.2rem;
     animation: fadeInUp 0.8s cubic-bezier(.23,1.03,.53,1.15);
+    border: 1.5px solid #F6F4EF;
 }
 .card h2 {
-    color: #5b6ee1;
+    color: #2D3E50;
     margin-bottom: 1.1rem;
     font-size: 1.5rem;
 }
@@ -134,12 +136,12 @@ main {
     top: 0.6rem;
     width: 14px;
     height: 14px;
-    background: #5b6ee1;
+    background: #6BA292;
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(44,62,80,0.13);
 }
 .timeline-company {
-    color: #3c4a6b;
+    color: #2D3E50;
     font-weight: 600;
     font-size: 1.04rem;
     margin-right: 1.3rem;
@@ -156,8 +158,8 @@ main {
     margin-top: 0.7rem;
 }
 .pill-list span {
-    background: #e9eafc;
-    color: #5b6ee1;
+    background: #F6F4EF;
+    color: #6BA292;
     border-radius: 22px;
     padding: 0.5rem 1.2rem;
     font-size: 1rem;
@@ -167,7 +169,7 @@ main {
     transition: background 0.2s, color 0.2s;
 }
 .pill-list span:hover {
-    background: #5b6ee1;
+    background: #A68A64;
     color: #fff;
 }
 .contact-links {
@@ -177,7 +179,7 @@ main {
     margin-top: 1rem;
 }
 .contact-links a {
-    color: #3c4a6b;
+    color: #2D3E50;
     font-weight: 500;
     text-decoration: none;
     font-size: 1.07rem;
@@ -187,16 +189,16 @@ main {
     gap: 0.7rem;
 }
 .contact-links a i {
-    color: #5b6ee1;
+    color: #6BA292;
     font-size: 1.2rem;
     transition: color 0.2s;
 }
 .contact-links a:hover,
 .contact-links a:hover i {
-    color: #5b6ee1;
+    color: #A68A64;
 }
 footer {
-    background: #3c4a6b;
+    background: #2D3E50;
     color: #fff;
     text-align: center;
     padding: 1.1rem 0;
