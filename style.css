@@ -119,6 +119,139 @@ main {
     margin-bottom: 1.1rem;
     font-size: 1.5rem;
 }
+/* --- Modern Centered Timeline Styles --- */
+.centered-timeline {
+    position: relative;
+    margin: 3rem 0 2rem 0;
+    padding: 2rem 0;
+}
+.centered-timeline:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #6BA292 0%, #A68A64 100%);
+    border-radius: 2px;
+    z-index: 0;
+}
+.timeline-entry {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    position: relative;
+    width: 50%;
+    padding: 1.2rem 2rem;
+    box-sizing: border-box;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: timelineFadeIn 0.8s forwards;
+}
+.timeline-entry.left {
+    left: 0;
+    flex-direction: row-reverse;
+    animation-delay: 0.2s;
+}
+.timeline-entry.right {
+    left: 50%;
+    flex-direction: row;
+    animation-delay: 0.4s;
+}
+.timeline-marker {
+    width: 22px;
+    height: 22px;
+    background: #FFF;
+    border: 4px solid #6BA292;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px #F6F4EF;
+    position: absolute;
+    top: 24px;
+    left: 100%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    transition: border-color 0.3s;
+}
+.timeline-entry.right .timeline-marker {
+    left: 0%;
+    transform: translate(-50%, -50%);
+}
+.timeline-content {
+    background: #FFF;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(44, 62, 80, 0.08);
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    min-width: 260px;
+    max-width: 440px;
+    z-index: 1;
+    border-left: 4px solid #6BA292;
+    border-right: 4px solid #A68A64;
+}
+.timeline-entry.left .timeline-content {
+    margin-left: 2rem;
+    border-left: 4px solid #6BA292;
+    border-right: none;
+}
+.timeline-entry.right .timeline-content {
+    margin-right: 2rem;
+    border-right: 4px solid #A68A64;
+    border-left: none;
+}
+.timeline-content h3 {
+    margin-top: 0;
+    color: #2D3E50;
+    font-size: 1.2rem;
+}
+.timeline-company {
+    font-weight: 600;
+    color: #6BA292;
+    display: block;
+    margin-bottom: 0.3rem;
+}
+.timeline-duration {
+    font-size: 0.95em;
+    color: #A68A64;
+    display: block;
+    margin-bottom: 0.8rem;
+}
+@media (max-width: 900px) {
+    .timeline-entry,
+    .timeline-entry.left,
+    .timeline-entry.right {
+        width: 100%;
+        left: 0 !important;
+        flex-direction: row;
+        justify-content: flex-start;
+        margin-bottom: 2.5rem;
+    }
+    .timeline-content {
+        margin: 0 0 0 2.5rem;
+        max-width: 100%;
+    }
+    .timeline-marker {
+        left: 0;
+    }
+}
+@media (max-width: 600px) {
+    .centered-timeline {
+        padding: 1rem 0;
+    }
+    .timeline-content {
+        padding: 1rem 1.2rem;
+        min-width: 0;
+    }
+}
+@keyframes timelineFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* --- End Modern Timeline Styles --- */
+/* Old timeline styles commented out for clarity
 .timeline {
     border-left: 3px solid #e9eafc;
     margin-left: 0.8rem;
@@ -140,6 +273,7 @@ main {
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(44,62,80,0.13);
 }
+*/
 .timeline-company {
     color: #2D3E50;
     font-weight: 600;
