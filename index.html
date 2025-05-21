@@ -58,8 +58,53 @@
             </section> -->
             <section class="collaborate card">
                 <h2>Let's Collaborate</h2>
-                <p>Ready to bring your ideas to life? Contact me to discuss your project and how I can help.</p>
-                <a href="#contact" class="btn">Get in Touch</a>
+                <p class="collaborate-intro">I'm passionate about building innovative solutions and would love to be part of your next project. Whether you need a backend expert, system architect, or technical consultant, I'm here to help.</p>
+                
+                <div class="collaborate-options">
+                    <div class="collaborate-option">
+                        <i class="fas fa-code"></i>
+                        <h3>Development</h3>
+                        <p>Custom software solutions and API development</p>
+                    </div>
+                    <div class="collaborate-option">
+                        <i class="fas fa-cogs"></i>
+                        <h3>Architecture</h3>
+                        <p>System design and technical consulting</p>
+                    </div>
+                    <div class="collaborate-option">
+                        <i class="fas fa-rocket"></i>
+                        <h3>Innovation</h3>
+                        <p>Exploring new technologies and solutions</p>
+                    </div>
+                </div>
+                
+                <div class="quick-contact">
+                    <h3>Quick Message</h3>
+                    <form class="quick-contact-form" id="quickContactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                        <div class="form-message success" id="quickSuccessMessage">
+                            Thank you for your message! I'll get back to you soon.
+                        </div>
+                        <div class="form-message error" id="quickErrorMessage">
+                            Oops! Something went wrong. Please try again.
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" id="quickName" name="name" placeholder="Your Name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="quickEmail" name="email" placeholder="Your Email" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="quickMessage" name="message" placeholder="Your Message" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">
+                            <span class="btn-text">Send Message</span>
+                            <span class="btn-loader"></span>
+                        </button>
+                    </form>
+                    <p class="contact-note">For more detailed inquiries, feel free to <a href="#contact" class="contact-link">view my full contact information</a>.</p>
+                </div>
             </section>
         </aside>
         <main>
@@ -154,11 +199,48 @@
                 </div>
             </section>
             <section id="contact" class="card">
-                <h2>Contact</h2>
-                <div class="contact-links">
-                    <a href="mailto:jeffreyjose.k@gmail.com"><i class="fas fa-envelope"></i> jeffreyjose.k@gmail.com</a>
-                    <a href="tel:9567761105"><i class="fas fa-phone"></i> 9567761105</a>
-                    <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank"><i class="fab fa-linkedin"></i> linkedin.com/in/jeffrey-jose-07-k</a>
+                <h2>Get in Touch</h2>
+                <p class="contact-intro">I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.</p>
+                
+                <div class="contact-container">
+                    <div class="contact-info">
+                        <h3>Contact Information</h3>
+                        <div class="contact-links">
+                            <a href="mailto:jeffreyjose.k@gmail.com"><i class="fas fa-envelope"></i> jeffreyjose.k@gmail.com</a>
+                            <a href="tel:9567761105"><i class="fas fa-phone"></i> +91 9567761105</a>
+                            <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank"><i class="fab fa-linkedin"></i> linkedin.com/in/jeffrey-jose-07-k</a>
+                            <a href="https://github.com/jeffreyjose07" target="_blank"><i class="fab fa-github"></i> github.com/jeffreyjose07</a>
+                        </div>
+                    </div>
+                    
+                    <form class="contact-form" id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                        <div class="form-message success" id="successMessage">
+                            Thank you for your message! I'll get back to you soon.
+                        </div>
+                        <div class="form-message error" id="errorMessage">
+                            Oops! Something went wrong. Please try again.
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">
+                            <span class="btn-text">Send Message</span>
+                            <span class="btn-loader"></span>
+                        </button>
+                    </form>
                 </div>
             </section>
         </main>
@@ -168,5 +250,59 @@
             <p>&copy; 2025 Jeffrey Jose. All rights reserved.</p>
         </div>
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle quick contact form
+            const quickForm = document.getElementById('quickContactForm');
+            const quickSuccessMessage = document.getElementById('quickSuccessMessage');
+            const quickErrorMessage = document.getElementById('quickErrorMessage');
+            const quickSubmitButton = quickForm.querySelector('button[type="submit"]');
+            const quickBtnText = quickSubmitButton.querySelector('.btn-text');
+            const quickBtnLoader = quickSubmitButton.querySelector('.btn-loader');
+
+            quickForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                quickSubmitButton.disabled = true;
+                quickBtnText.style.display = 'none';
+                quickBtnLoader.style.display = 'inline-block';
+
+                try {
+                    const formData = new FormData(quickForm);
+                    const response = await fetch(quickForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        quickSuccessMessage.style.display = 'block';
+                        quickErrorMessage.style.display = 'none';
+                        quickForm.reset();
+                    } else {
+                        throw new Error('Form submission failed');
+                    }
+                } catch (error) {
+                    quickErrorMessage.style.display = 'block';
+                    quickSuccessMessage.style.display = 'none';
+                } finally {
+                    // Reset button state
+                    quickSubmitButton.disabled = false;
+                    quickBtnText.style.display = 'inline-block';
+                    quickBtnLoader.style.display = 'none';
+                }
+            });
+
+            // Smooth scroll for contact link
+            document.querySelector('.contact-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                const contactSection = document.getElementById('contact');
+                contactSection.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
 </body>
 </html>
