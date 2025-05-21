@@ -296,11 +296,63 @@
                 }
             });
 
-            // Smooth scroll for contact link
-            document.querySelector('.contact-link').addEventListener('click', function(e) {
+            // Handle main contact form
+            const mainForm = document.getElementById('contactForm');
+            const mainSuccessMessage = document.getElementById('successMessage');
+            const mainErrorMessage = document.getElementById('errorMessage');
+            const mainSubmitButton = mainForm.querySelector('button[type="submit"]');
+            const mainBtnText = mainSubmitButton.querySelector('.btn-text');
+            const mainBtnLoader = mainSubmitButton.querySelector('.btn-loader');
+
+            mainForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                const contactSection = document.getElementById('contact');
-                contactSection.scrollIntoView({ behavior: 'smooth' });
+                
+                // Show loading state
+                mainSubmitButton.disabled = true;
+                mainBtnText.style.display = 'none';
+                mainBtnLoader.style.display = 'inline-block';
+
+                try {
+                    const formData = new FormData(mainForm);
+                    const response = await fetch(mainForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        mainSuccessMessage.style.display = 'block';
+                        mainErrorMessage.style.display = 'none';
+                        mainForm.reset();
+                    } else {
+                        throw new Error('Form submission failed');
+                    }
+                } catch (error) {
+                    mainErrorMessage.style.display = 'block';
+                    mainSuccessMessage.style.display = 'none';
+                } finally {
+                    // Reset button state
+                    mainSubmitButton.disabled = false;
+                    mainBtnText.style.display = 'inline-block';
+                    mainBtnLoader.style.display = 'none';
+                }
+            });
+
+            // Smooth scroll for all internal links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
             });
         });
     </script>
