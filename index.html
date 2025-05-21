@@ -8,128 +8,161 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    <section class="hero-bg">
-        <div class="hero-card">
-            <img src="https://media.licdn.com/dms/image/D4D03AQF1zQ6uJwYv5g/profile-displayphoto-shrink_800_800/0/1704952724824?e=1719446400&v=beta&t=9KZfZB9I1vVfW5w6QnY1k7wG5fP9d8vR0E6fF5QnP5Y" alt="Jeffrey Jose" class="profile-img-large">
-            <h1>Jeffrey Jose</h1>
-            <p class="subtitle">Senior Software Engineer at Jio Platforms Limited<br><span class="school">IIT Kharagpur</span></p>
-            <div class="hero-links">
-                <a href="mailto:jeffreyjose.k@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
-                <a href="tel:9567761105" title="Phone"><i class="fas fa-phone"></i></a>
-                <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-            </div>
-            <nav class="hero-nav">
-                <a href="#about">About</a>
-                <a href="#experience">Experience</a>
-                <a href="#education">Education</a>
-                <a href="#skills">Skills</a>
-                <a href="#certifications">Certifications</a>
-                <a href="#contact">Contact</a>
-            </nav>
-        </div>
-    </section>
-    <main>
-        <section id="about" class="card">
-            <h2>About Me</h2>
-            <p>Always eager to learn new skills and adapt to new situations. I love challenging myself by overcoming them. Always keen on solving real-world problems using latest technologies.</p>
-        </section>
-        <section id="experience" class="card">
-            <h2>Experience</h2>
-            <div class="timeline centered-timeline">
-                <div class="timeline-entry left">
-                    <div class="timeline-content">
-                        <h3>Senior Software Engineer</h3>
-                        <span class="timeline-company">Jio Platforms Limited (JPL)</span>
-                        <span class="timeline-duration">Apr 2022 – Present</span>
-                        <ul>
-                            <li>Upgraded Batch Jobs for user group management using Spring Batch, achieving 3x speed-up in program execution and enabling the service to handle larger data-sets more robustly.</li>
-                            <li>Converted existing promotion/coupon management system in Ajio B2B to a generic multi-tenant service for all Jio-related B2B verticals.</li>
-                        </ul>
-                    </div>
-                    <div class="timeline-marker"></div>
-                </div>
-                <div class="timeline-entry right">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <h3>Software Engineer</h3>
-                        <span class="timeline-company">Jio Platforms Limited (JPL)</span>
-                        <span class="timeline-duration">Jul 2019 – Mar 2022</span>
-                        <ul>
-                            <li>Delivered unit-tested backend APIs for Jio Prime Merchant (B2B side of JioMart) and collaborated with testing teams to set up component tests for functionality, scalability, and performance.</li>
-                            <li>Refactored and modularized legacy codebase to improve code quality and enhance product development.</li>
-                            <li>Partnered with infrastructure team to configure zero downtime deployments, significantly reducing product downtime.</li>
-                        </ul>
+    <div class="layout">
+        <aside class="sidebar">
+            <section class="hero-bg">
+                <div class="hero-card">
+                    <img src="images/profile-128.jpg" alt="Jeffrey Jose profile photo" class="profile-img-large">
+                    <h1>Jeffrey Jose</h1>
+                    <p class="subtitle">Senior Software Engineer at Jio Platforms Limited<br><span class="school">IIT Kharagpur</span></p>
+                    <div class="hero-links">
+                        <a href="mailto:jeffreyjose.k@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
+                        <a href="tel:9567761105" title="Phone"><i class="fas fa-phone"></i></a>
+                        <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
                     </div>
                 </div>
-                <div class="timeline-entry left">
-                    <div class="timeline-content">
-                        <h3>Teaching Assistant</h3>
-                        <span class="timeline-company">Indian Institute of Technology, Kharagpur</span>
-                        <span class="timeline-duration">Jul 2017 – Apr 2019</span>
-                        <ul>
-                            <li>Assisted in Programming and Data Structures Lab (CS11002)</li>
-                            <li>Assisted in Theory of Computations (CS41001)</li>
-                        </ul>
+            </section>
+            <section class="expertise card">
+                <h2>My Expertise</h2>
+                <ul>
+                    <li><strong>Backend Development</strong><br>Building scalable and robust backend systems using Java and Spring frameworks, with expertise in Spring Batch for efficient data processing.</li>
+                    <li><strong>API Development</strong><br>Designing and implementing RESTful APIs with a focus on performance, scalability, and maintainability.</li>
+                    <li><strong>System Architecture</strong><br>Architecting multi-tenant services and refactoring legacy systems for improved code quality and maintainability.</li>
+                </ul>
+            </section>
+            <!-- <section class="featured-projects card">
+                <h2>Featured Projects</h2>
+                <div class="project-list">
+                    <div class="project-card">
+                        <img src="images/profile-64.jpg" alt="Project 1" class="project-thumb">
+                        <div>
+                            <strong>Project Zenith</strong>
+                            <p>App for managing complex data with a sleek interface.</p>
+                        </div>
                     </div>
-                    <div class="timeline-marker"></div>
-                </div>
-            </div>
-                </div>
-            </div>
-        </section>
-        <section id="education" class="card">
-            <h2>Education</h2>
-            <div class="timeline centered-timeline">
-                <div class="timeline-entry right">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <h3>Master of Technology (M.Tech.), Computer Science</h3>
-                        <span class="timeline-company">Indian Institute of Technology, Kharagpur</span>
-                        <span class="timeline-duration">2017 – 2019</span>
+                    <div class="project-card">
+                        <img src="images/profile-64.jpg" alt="Project 2" class="project-thumb">
+                        <div>
+                            <strong>Mobile App X</strong>
+                            <p>Productivity app to organize daily tasks and enhance productivity.</p>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <img src="images/profile-64.jpg" alt="Project 3" class="project-thumb">
+                        <div>
+                            <strong>E-commerce Platform</strong>
+                            <p>Platform with a focus on user experience and seamless transactions.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="timeline-entry left">
-                    <div class="timeline-content">
-                        <h3>Bachelor of Technology (B.Tech.), Computer Science and Engineering</h3>
-                        <span class="timeline-company">Government College Of Engineering Kannur</span>
-                        <span class="timeline-duration">2012 – 2016</span>
+            </section> -->
+            <section class="collaborate card">
+                <h2>Let's Collaborate</h2>
+                <p>Ready to bring your ideas to life? Contact me to discuss your project and how I can help.</p>
+                <a href="#contact" class="btn">Get in Touch</a>
+            </section>
+        </aside>
+        <main>
+            <section id="about" class="card">
+                <h2>About Me</h2>
+                <p>Always eager to learn new skills and adapt to new situations. I love challenging myself by overcoming them. Always keen on solving real-world problems using latest technologies.</p>
+            </section>
+            <section id="experience" class="card">
+                <h2>Experience</h2>
+                <div class="timeline centered-timeline">
+                    <div class="timeline-entry left">
+                        <div class="timeline-content">
+                            <h3>Senior Software Engineer</h3>
+                            <span class="timeline-company">Jio Platforms Limited (JPL)</span>
+                            <span class="timeline-duration">Apr 2022 – Present</span>
+                            <ul>
+                                <li>Upgraded Batch Jobs for user group management using Spring Batch, achieving 3x speed-up in program execution and enabling the service to handle larger data-sets more robustly.</li>
+                                <li>Converted existing promotion/coupon management system in Ajio B2B to a generic multi-tenant service for all Jio-related B2B verticals.</li>
+                            </ul>
+                        </div>
+                        <div class="timeline-marker"></div>
                     </div>
-                    <div class="timeline-marker"></div>
+                    <div class="timeline-entry right">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h3>Software Engineer</h3>
+                            <span class="timeline-company">Jio Platforms Limited (JPL)</span>
+                            <span class="timeline-duration">Jul 2019 – Mar 2022</span>
+                            <ul>
+                                <li>Delivered unit-tested backend APIs for Jio Prime Merchant (B2B side of JioMart) and collaborated with testing teams to set up component tests for functionality, scalability, and performance.</li>
+                                <li>Refactored and modularized legacy codebase to improve code quality and enhance product development.</li>
+                                <li>Partnered with infrastructure team to configure zero downtime deployments, significantly reducing product downtime.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="timeline-entry left">
+                        <div class="timeline-content">
+                            <h3>Teaching Assistant</h3>
+                            <span class="timeline-company">Indian Institute of Technology, Kharagpur</span>
+                            <span class="timeline-duration">Jul 2017 – Apr 2019</span>
+                            <ul>
+                                <li>Assisted in Programming and Data Structures Lab (CS11002)</li>
+                                <li>Assisted in Theory of Computations (CS41001)</li>
+                            </ul>
+                        </div>
+                        <div class="timeline-marker"></div>
+                    </div>
                 </div>
-            </div>
-        </section>
-        <section id="skills" class="card">
-            <h2>Skills</h2>
-            <div class="pill-list">
-                <span>Front-End Development</span>
-                <span>HTML5</span>
-                <span>CSS</span>
-                <span>Java</span>
-                <span>Spring Batch</span>
-                <span>Backend APIs</span>
-                <span>Functional Programming</span>
-                <span>Team Collaboration</span>
-            </div>
-        </section>
-        <section id="certifications" class="card">
-            <h2>Certifications</h2>
-            <div class="pill-list">
-                <span>Functional Programming with Java</span>
-                <span>Java (Basic) Certificate</span>
-                <span>Introduction to Generative AI</span>
-                <span>Spring Code Challenges</span>
-                <span>Spring: Spring Batch</span>
-            </div>
-        </section>
-        <section id="contact" class="card">
-            <h2>Contact</h2>
-            <div class="contact-links">
-                <a href="mailto:jeffreyjose.k@gmail.com"><i class="fas fa-envelope"></i> jeffreyjose.k@gmail.com</a>
-                <a href="tel:9567761105"><i class="fas fa-phone"></i> 9567761105</a>
-                <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank"><i class="fab fa-linkedin"></i> linkedin.com/in/jeffrey-jose-07-k</a>
-            </div>
-        </section>
-    </main>
+            </section>
+            <section id="education" class="card">
+                <h2>Education</h2>
+                <div class="timeline centered-timeline">
+                    <div class="timeline-entry right">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h3>Master of Technology (M.Tech.), Computer Science</h3>
+                            <span class="timeline-company">Indian Institute of Technology, Kharagpur</span>
+                            <span class="timeline-duration">2017 – 2019</span>
+                        </div>
+                    </div>
+                    <div class="timeline-entry left">
+                        <div class="timeline-content">
+                            <h3>Bachelor of Technology (B.Tech.), Computer Science and Engineering</h3>
+                            <span class="timeline-company">Government College Of Engineering Kannur</span>
+                            <span class="timeline-duration">2012 – 2016</span>
+                        </div>
+                        <div class="timeline-marker"></div>
+                    </div>
+                </div>
+            </section>
+            <section id="skills" class="card">
+                <h2>Skills</h2>
+                <div class="pill-list">
+                    <span>Front-End Development</span>
+                    <span>HTML5</span>
+                    <span>CSS</span>
+                    <span>Java</span>
+                    <span>Spring Batch</span>
+                    <span>Backend APIs</span>
+                    <span>Functional Programming</span>
+                    <span>Team Collaboration</span>
+                </div>
+            </section>
+            <section id="certifications" class="card">
+                <h2>Certifications</h2>
+                <div class="pill-list">
+                    <span>Functional Programming with Java</span>
+                    <span>Java (Basic) Certificate</span>
+                    <span>Introduction to Generative AI</span>
+                    <span>Spring Code Challenges</span>
+                    <span>Spring: Spring Batch</span>
+                </div>
+            </section>
+            <section id="contact" class="card">
+                <h2>Contact</h2>
+                <div class="contact-links">
+                    <a href="mailto:jeffreyjose.k@gmail.com"><i class="fas fa-envelope"></i> jeffreyjose.k@gmail.com</a>
+                    <a href="tel:9567761105"><i class="fas fa-phone"></i> 9567761105</a>
+                    <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank"><i class="fab fa-linkedin"></i> linkedin.com/in/jeffrey-jose-07-k</a>
+                </div>
+            </section>
+        </main>
+    </div>
     <footer>
         <div class="container">
             <p>&copy; 2025 Jeffrey Jose. All rights reserved.</p>
