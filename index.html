@@ -12,18 +12,20 @@
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 </head>
 <body>
-    <!-- Theme Toggle -->
+    <!-- Theme Toggle Start -->
     <div class="theme-toggle">
         <button id="themeToggle" aria-label="Toggle theme">
             <i class="fas fa-sun"></i>
             <i class="fas fa-moon"></i>
         </button>
     </div>
+    <!-- Theme Toggle End -->
 
+    <!-- Layout Start -->
     <div class="layout">
-        <!-- Sidebar -->
+        <!-- Sidebar Start -->
         <aside class="sidebar">
-            <!-- Hero Section -->
+            <!-- Hero Section Start -->
             <section class="hero-bg">
                 <div class="hero-card">
                     <div class="profile-container">
@@ -35,22 +37,26 @@
                     </div>
                     <h1>Jeffrey Jose</h1>
                     <p class="subtitle">Senior Software Engineer at Jio Platforms Limited<br><span class="school">IIT Kharagpur</span></p>
-                    <div class="hero-links">
-                        <a href="mailto:jeffreyjose.k@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
-                        <a href="tel:9567761105" title="Phone"><i class="fas fa-phone"></i></a>
-                        <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://github.com/jeffreyjose07" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
-                    </div>
+                    <nav aria-label="Social media and contact links">
+                        <div class="hero-links">
+                            <a href="mailto:jeffreyjose.k@gmail.com" title="Email" aria-label="Email Jeffrey Jose"><i class="fas fa-envelope"></i></a>
+                            <a href="tel:9567761105" title="Phone" aria-label="Call Jeffrey Jose"><i class="fas fa-phone"></i></a>
+                            <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" title="LinkedIn" aria-label="Jeffrey Jose on LinkedIn"><i class="fab fa-linkedin"></i></a>
+                            <a href="https://github.com/jeffreyjose07" target="_blank" title="GitHub" aria-label="Jeffrey Jose on GitHub"><i class="fab fa-github"></i></a>
+                        </div>
+                    </nav>
                     <div class="hero-cta">
                         <a href="#contact" class="btn btn-primary">Get in Touch</a>
-                        <a href="resume.pdf" class="btn btn-secondary" download>Download Resume</a>
+                        <!-- TODO: Add your resume.pdf file and update the href below to point to it. Remove the 'download' attribute if you link to an online resume. -->
+                        <a href="#resume-placeholder" class="btn btn-secondary">Download Resume</a>
                     </div>
                 </div>
             </section>
+            <!-- Hero Section End -->
 
-            <!-- Expertise Section -->
-            <section class="expertise card">
-                <h2>My Expertise</h2>
+            <!-- Expertise Section Start -->
+            <section class="expertise card" aria-labelledby="expertise-heading">
+                <h2 id="expertise-heading">My Expertise</h2>
                 <ul>
                     <li>
                         <strong>Backend Development</strong>
@@ -66,16 +72,18 @@
                     </li>
                 </ul>
             </section>
+            <!-- Expertise Section End -->
 
-            <!-- Collaboration Section -->
-            <section class="collaborate card">
-                <h2>Let's Collaborate</h2>
+            <!-- Collaboration Section Start -->
+            <section class="collaborate card" aria-labelledby="collaboration-heading">
+                <h2 id="collaboration-heading">Let's Collaborate</h2>
                 <p class="collaborate-intro">I'm passionate about building innovative solutions and would love to be part of your next project. Whether you need a backend expert, system architect, or technical consultant, I'm here to help.</p>
                 
-                <!-- Quick Contact Form -->
+                <!-- Quick Contact Form Start -->
                 <div class="quick-contact">
-                    <h3>Quick Message</h3>
-                    <form class="quick-contact-form" id="quickContactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                    <h3 id="quick-contact-heading">Quick Message</h3>
+                    <!-- TODO: Replace YOUR_FORM_ID with your actual Formspree form ID for this form to work. -->
+                    <form class="quick-contact-form" id="quickContactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" aria-labelledby="quick-contact-heading">
                         <div class="form-message success" id="quickSuccessMessage" role="alert" aria-live="polite">
                             Thank you for your message! I'll get back to you soon.
                         </div>
@@ -84,36 +92,43 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group">
+                                <label for="quickName" class="sr-only">Your Name</label>
                                 <input type="text" id="quickName" name="name" placeholder="Your Name" required>
                             </div>
                             <div class="form-group">
+                                <label for="quickEmail" class="sr-only">Your Email</label>
                                 <input type="email" id="quickEmail" name="email" placeholder="Your Email" required>
                             </div>
                         </div>
                         <div class="form-group">
+                            <label for="quickMessage" class="sr-only">Your Message</label>
                             <textarea id="quickMessage" name="message" placeholder="Your Message" rows="3" required></textarea>
                         </div>
                         <button type="submit" class="btn">
-                            <span class="btn-text">Send Message</span>
+                            <span class="btn-text">Send Quick Message</span>
                             <span class="btn-loader"></span>
                         </button>
                     </form>
                     <p class="contact-note">For more detailed inquiries, feel free to <a href="#contact" class="contact-link">view my full contact information</a>.</p>
                 </div>
+                <!-- Quick Contact Form End -->
             </section>
+            <!-- Collaboration Section End -->
         </aside>
+        <!-- Sidebar End -->
 
-        <!-- Main Content -->
+        <!-- Main Content Start -->
         <main>
-            <!-- About Section -->
-            <section id="about" class="card">
-                <h2>About Me</h2>
+            <!-- About Section Start -->
+            <section id="about" class="card" aria-labelledby="about-heading">
+                <h2 id="about-heading">About Me</h2>
                 <p>Always eager to learn new skills and adapt to new situations. I love challenging myself by overcoming them. Always keen on solving real-world problems using latest technologies.</p>
             </section>
+            <!-- About Section End -->
 
-            <!-- Experience Section -->
-            <section id="experience" class="card">
-                <h2>Experience</h2>
+            <!-- Experience Section Start -->
+            <section id="experience" class="card" aria-labelledby="experience-heading">
+                <h2 id="experience-heading">Experience</h2>
                 <div class="timeline centered-timeline">
                     <!-- Experience entries -->
                     <div class="timeline-entry left">
@@ -155,10 +170,11 @@
                     </div>
                 </div>
             </section>
+            <!-- Experience Section End -->
 
-            <!-- Education Section -->
-            <section id="education" class="card">
-                <h2>Education</h2>
+            <!-- Education Section Start -->
+            <section id="education" class="card" aria-labelledby="education-heading">
+                <h2 id="education-heading">Education</h2>
                 <div class="timeline centered-timeline">
                     <div class="timeline-entry right">
                         <div class="timeline-marker"></div>
@@ -178,10 +194,11 @@
                     </div>
                 </div>
             </section>
+            <!-- Education Section End -->
 
-            <!-- Skills Section -->
-            <section id="skills" class="card">
-                <h2>Skills</h2>
+            <!-- Skills Section Start -->
+            <section id="skills" class="card" aria-labelledby="skills-heading">
+                <h2 id="skills-heading">Skills</h2>
                 <div class="skill-progress">
                     <h4>Backend Development</h4>
                     <div class="skill-bar">
@@ -211,10 +228,11 @@
                     <span>Team Collaboration</span>
                 </div>
             </section>
+            <!-- Skills Section End -->
 
-            <!-- Certifications Section -->
-            <section id="certifications" class="card">
-                <h2>Certifications</h2>
+            <!-- Certifications Section Start -->
+            <section id="certifications" class="card" aria-labelledby="certifications-heading">
+                <h2 id="certifications-heading">Certifications</h2>
                 <div class="pill-list">
                     <span>Functional Programming with Java</span>
                     <span>Java (Basic) Certificate</span>
@@ -223,10 +241,11 @@
                     <span>Spring: Spring Batch</span>
                 </div>
             </section>
+            <!-- Certifications Section End -->
 
-            <!-- Testimonials Section -->
-            <section id="testimonials" class="card">
-                <h2>Testimonials</h2>
+            <!-- Testimonials Section Start -->
+            <section id="testimonials" class="card" aria-labelledby="testimonials-heading">
+                <h2 id="testimonials-heading">Testimonials</h2>
                 <div class="testimonials">
                     <div class="testimonial-card" data-aos="fade-up">
                         <div class="testimonial-content">
@@ -254,10 +273,11 @@
                     </div>
                 </div>
             </section>
+            <!-- Testimonials Section End -->
 
-            <!-- Currently Working On Section -->
-            <section id="current-work" class="card">
-                <h2>Currently Working On</h2>
+            <!-- Currently Working On Section Start -->
+            <section id="current-work" class="card" aria-labelledby="current-work-heading">
+                <h2 id="current-work-heading">Currently Working On</h2>
                 <div class="current-work">
                     <div class="work-item" data-aos="fade-right">
                         <i class="fas fa-code"></i>
@@ -275,36 +295,41 @@
                     </div>
                 </div>
             </section>
+            <!-- Currently Working On Section End -->
 
-            <!-- Newsletter Section -->
-            <section id="newsletter" class="card">
+            <!-- Newsletter Section Start -->
+            <section id="newsletter" class="card" aria-labelledby="newsletter-heading">
                 <div class="newsletter">
-                    <h3>Stay Updated</h3>
+                    <h3 id="newsletter-heading">Stay Updated</h3>
                     <p>Subscribe to my newsletter for the latest updates on my work and tech insights.</p>
-                    <form class="newsletter-form" id="newsletterForm">
-                        <input type="email" placeholder="Enter your email" required>
+                    <!-- TODO: Replace YOUR_FORM_ID with your actual Formspree form ID for this form to work, or integrate with a newsletter service. -->
+                    <form class="newsletter-form" id="newsletterForm" aria-labelledby="newsletter-heading">
+                        <label for="newsletterEmail" class="sr-only">Enter your email</label>
+                        <input type="email" id="newsletterEmail" name="email" placeholder="Enter your email" required>
                         <button type="submit">Subscribe</button>
                     </form>
                 </div>
             </section>
+            <!-- Newsletter Section End -->
 
-            <!-- Contact Section -->
-            <section id="contact" class="card">
-                <h2>Get in Touch</h2>
+            <!-- Contact Section Start -->
+            <section id="contact" class="card" aria-labelledby="contact-heading">
+                <h2 id="contact-heading">Get in Touch</h2>
                 <p class="contact-intro">I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.</p>
                 
                 <div class="contact-container">
-                    <div class="contact-info">
-                        <h3>Contact Information</h3>
+                    <div class="contact-info" aria-labelledby="contact-info-heading">
+                        <h3 id="contact-info-heading">Contact Information</h3>
                         <div class="contact-links">
-                            <a href="mailto:jeffreyjose.k@gmail.com"><i class="fas fa-envelope"></i> jeffreyjose.k@gmail.com</a>
-                            <a href="tel:9567761105"><i class="fas fa-phone"></i> +91 9567761105</a>
-                            <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank"><i class="fab fa-linkedin"></i> linkedin.com/in/jeffrey-jose-07-k</a>
-                            <a href="https://github.com/jeffreyjose07" target="_blank"><i class="fab fa-github"></i> github.com/jeffreyjose07</a>
+                            <a href="mailto:jeffreyjose.k@gmail.com" aria-label="Email Jeffrey Jose"><i class="fas fa-envelope"></i> jeffreyjose.k@gmail.com</a>
+                            <a href="tel:9567761105" aria-label="Call Jeffrey Jose"><i class="fas fa-phone"></i> +91 9567761105</a>
+                            <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" aria-label="Jeffrey Jose on LinkedIn"><i class="fab fa-linkedin"></i> linkedin.com/in/jeffrey-jose-07-k</a>
+                            <a href="https://github.com/jeffreyjose07" target="_blank" aria-label="Jeffrey Jose on GitHub"><i class="fab fa-github"></i> github.com/jeffreyjose07</a>
                         </div>
                     </div>
                     
-                    <form class="contact-form" id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                    <!-- TODO: Replace YOUR_FORM_ID with your actual Formspree form ID for this form to work. -->
+                    <form class="contact-form" id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" aria-labelledby="contact-heading">
                         <div class="form-message success" id="successMessage" role="alert" aria-live="polite">
                             Thank you for your message! I'll get back to you soon.
                         </div>
@@ -334,18 +359,22 @@
                     </form>
                 </div>
             </section>
+            <!-- Contact Section End -->
         </main>
+        <!-- Main Content End -->
     </div>
+    <!-- Layout End -->
 
-    <!-- Footer -->
+    <!-- Footer Start -->
     <footer>
         <div class="container">
             <p>&copy; 2025 Jeffrey Jose. All rights reserved.</p>
         </div>
     </footer>
+    <!-- Footer End -->
 
-    <!-- Scripts -->
+    <!-- Scripts Start -->
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <script src="js/main.js"></script>
+    <!-- Scripts End -->
 </body>
 </html>
