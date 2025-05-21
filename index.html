@@ -1,24 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jeffrey Jose | Personal Website</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 </head>
 <body>
+    <div class="theme-toggle">
+        <button id="themeToggle" aria-label="Toggle theme">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
     <div class="layout">
         <aside class="sidebar">
             <section class="hero-bg">
                 <div class="hero-card">
-                    <img src="images/profile-128.jpg" alt="Jeffrey Jose profile photo" class="profile-img-large">
+                    <div class="profile-container">
+                        <img src="images/profile-128.jpg" alt="Jeffrey Jose profile photo" class="profile-img-large">
+                        <div class="profile-status">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Available for work</span>
+                        </div>
+                    </div>
                     <h1>Jeffrey Jose</h1>
                     <p class="subtitle">Senior Software Engineer at Jio Platforms Limited<br><span class="school">IIT Kharagpur</span></p>
                     <div class="hero-links">
                         <a href="mailto:jeffreyjose.k@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
                         <a href="tel:9567761105" title="Phone"><i class="fas fa-phone"></i></a>
                         <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://github.com/jeffreyjose07" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                    <div class="hero-cta">
+                        <a href="#contact" class="btn btn-primary">Get in Touch</a>
+                        <a href="resume.pdf" class="btn btn-secondary" download>Download Resume</a>
                     </div>
                 </div>
             </section>
@@ -177,6 +195,24 @@
             </section>
             <section id="skills" class="card">
                 <h2>Skills</h2>
+                <div class="skill-progress">
+                    <h4>Backend Development</h4>
+                    <div class="skill-bar">
+                        <div class="skill-progress-bar" style="width: 90%"></div>
+                    </div>
+                </div>
+                <div class="skill-progress">
+                    <h4>API Development</h4>
+                    <div class="skill-bar">
+                        <div class="skill-progress-bar" style="width: 85%"></div>
+                    </div>
+                </div>
+                <div class="skill-progress">
+                    <h4>System Architecture</h4>
+                    <div class="skill-bar">
+                        <div class="skill-progress-bar" style="width: 80%"></div>
+                    </div>
+                </div>
                 <div class="pill-list">
                     <span>Front-End Development</span>
                     <span>HTML5</span>
@@ -196,6 +232,64 @@
                     <span>Introduction to Generative AI</span>
                     <span>Spring Code Challenges</span>
                     <span>Spring: Spring Batch</span>
+                </div>
+            </section>
+            <section id="testimonials" class="card">
+                <h2>Testimonials</h2>
+                <div class="testimonials">
+                    <div class="testimonial-card" data-aos="fade-up">
+                        <div class="testimonial-content">
+                            "Jeffrey is an exceptional backend developer who consistently delivers high-quality solutions. His expertise in Spring Batch and system architecture has been invaluable to our team."
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="images/testimonial1.jpg" alt="John Doe">
+                            <div class="testimonial-author-info">
+                                <h4>John Doe</h4>
+                                <p>Tech Lead, Jio Platforms</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="testimonial-content">
+                            "Working with Jeffrey has been a pleasure. His attention to detail and problem-solving skills have helped us overcome complex technical challenges."
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="images/testimonial2.jpg" alt="Jane Smith">
+                            <div class="testimonial-author-info">
+                                <h4>Jane Smith</h4>
+                                <p>Project Manager, Tech Solutions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="current-work" class="card">
+                <h2>Currently Working On</h2>
+                <div class="current-work">
+                    <div class="work-item" data-aos="fade-right">
+                        <i class="fas fa-code"></i>
+                        <div class="work-item-content">
+                            <h4>Multi-tenant Service Architecture</h4>
+                            <p>Designing and implementing a scalable multi-tenant service for B2B applications</p>
+                        </div>
+                    </div>
+                    <div class="work-item" data-aos="fade-right" data-aos-delay="100">
+                        <i class="fas fa-rocket"></i>
+                        <div class="work-item-content">
+                            <h4>Performance Optimization</h4>
+                            <p>Optimizing batch processing jobs for improved performance and scalability</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="newsletter" class="card">
+                <div class="newsletter">
+                    <h3>Stay Updated</h3>
+                    <p>Subscribe to my newsletter for the latest updates on my work and tech insights.</p>
+                    <form class="newsletter-form" id="newsletterForm">
+                        <input type="email" placeholder="Enter your email" required>
+                        <button type="submit">Subscribe</button>
+                    </form>
                 </div>
             </section>
             <section id="contact" class="card">
@@ -250,8 +344,33 @@
             <p>&copy; 2025 Jeffrey Jose. All rights reserved.</p>
         </div>
     </footer>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AOS
+            AOS.init({
+                duration: 800,
+                once: true,
+                offset: 100
+            });
+
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('themeToggle');
+            const html = document.documentElement;
+            
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                html.setAttribute('data-theme', savedTheme);
+            }
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+
             // Handle quick contact form
             const quickForm = document.getElementById('quickContactForm');
             const quickSuccessMessage = document.getElementById('quickSuccessMessage');
@@ -354,6 +473,69 @@
                     }
                 });
             });
+
+            // Add scroll-based animations
+            const cards = document.querySelectorAll('.card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+
+            // Handle newsletter form
+            const newsletterForm = document.getElementById('newsletterForm');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const email = this.querySelector('input[type="email"]').value;
+                    
+                    try {
+                        // Here you would typically send this to your backend
+                        // For now, we'll just show a success message
+                        const button = this.querySelector('button');
+                        const originalText = button.textContent;
+                        button.textContent = 'Subscribing...';
+                        button.disabled = true;
+
+                        // Simulate API call
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+
+                        // Show success message
+                        const successMessage = document.createElement('div');
+                        successMessage.className = 'form-message success';
+                        successMessage.textContent = 'Thank you for subscribing!';
+                        this.appendChild(successMessage);
+
+                        // Reset form
+                        this.reset();
+                        button.textContent = originalText;
+                        button.disabled = false;
+
+                        // Remove success message after 3 seconds
+                        setTimeout(() => {
+                            successMessage.remove();
+                        }, 3000);
+                    } catch (error) {
+                        const errorMessage = document.createElement('div');
+                        errorMessage.className = 'form-message error';
+                        errorMessage.textContent = 'Something went wrong. Please try again.';
+                        this.appendChild(errorMessage);
+
+                        setTimeout(() => {
+                            errorMessage.remove();
+                        }, 3000);
+                    }
+                });
+            }
         });
     </script>
 </body>
