@@ -3,20 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeffrey Jose | Personal Website</title>
+    <meta name="description" content="Jeffrey Jose - Senior Software Engineer specializing in backend development, API development, and system architecture">
+    <title>Jeffrey Jose | Senior Software Engineer</title>
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 </head>
 <body>
+    <!-- Theme Toggle -->
     <div class="theme-toggle">
         <button id="themeToggle" aria-label="Toggle theme">
             <i class="fas fa-sun"></i>
             <i class="fas fa-moon"></i>
         </button>
     </div>
+
     <div class="layout">
+        <!-- Sidebar -->
         <aside class="sidebar">
+            <!-- Hero Section -->
             <section class="hero-bg">
                 <div class="hero-card">
                     <div class="profile-container">
@@ -40,69 +47,39 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Expertise Section -->
             <section class="expertise card">
                 <h2>My Expertise</h2>
                 <ul>
-                    <li><strong>Backend Development</strong><br>Building scalable and robust backend systems using Java and Spring frameworks, with expertise in Spring Batch for efficient data processing.</li>
-                    <li><strong>API Development</strong><br>Designing and implementing RESTful APIs with a focus on performance, scalability, and maintainability.</li>
-                    <li><strong>System Architecture</strong><br>Architecting multi-tenant services and refactoring legacy systems for improved code quality and maintainability.</li>
+                    <li>
+                        <strong>Backend Development</strong>
+                        <p>Building scalable and robust backend systems using Java and Spring frameworks, with expertise in Spring Batch for efficient data processing.</p>
+                    </li>
+                    <li>
+                        <strong>API Development</strong>
+                        <p>Designing and implementing RESTful APIs with a focus on performance, scalability, and maintainability.</p>
+                    </li>
+                    <li>
+                        <strong>System Architecture</strong>
+                        <p>Architecting multi-tenant services and refactoring legacy systems for improved code quality and maintainability.</p>
+                    </li>
                 </ul>
             </section>
-            <!-- <section class="featured-projects card">
-                <h2>Featured Projects</h2>
-                <div class="project-list">
-                    <div class="project-card">
-                        <img src="images/profile-64.jpg" alt="Project 1" class="project-thumb">
-                        <div>
-                            <strong>Project Zenith</strong>
-                            <p>App for managing complex data with a sleek interface.</p>
-                        </div>
-                    </div>
-                    <div class="project-card">
-                        <img src="images/profile-64.jpg" alt="Project 2" class="project-thumb">
-                        <div>
-                            <strong>Mobile App X</strong>
-                            <p>Productivity app to organize daily tasks and enhance productivity.</p>
-                        </div>
-                    </div>
-                    <div class="project-card">
-                        <img src="images/profile-64.jpg" alt="Project 3" class="project-thumb">
-                        <div>
-                            <strong>E-commerce Platform</strong>
-                            <p>Platform with a focus on user experience and seamless transactions.</p>
-                        </div>
-                    </div>
-                </div>
-            </section> -->
+
+            <!-- Collaboration Section -->
             <section class="collaborate card">
                 <h2>Let's Collaborate</h2>
                 <p class="collaborate-intro">I'm passionate about building innovative solutions and would love to be part of your next project. Whether you need a backend expert, system architect, or technical consultant, I'm here to help.</p>
                 
-                <div class="collaborate-options">
-                    <div class="collaborate-option">
-                        <i class="fas fa-code"></i>
-                        <h3>Development</h3>
-                        <p>Custom software solutions and API development</p>
-                    </div>
-                    <div class="collaborate-option">
-                        <i class="fas fa-cogs"></i>
-                        <h3>Architecture</h3>
-                        <p>System design and technical consulting</p>
-                    </div>
-                    <div class="collaborate-option">
-                        <i class="fas fa-rocket"></i>
-                        <h3>Innovation</h3>
-                        <p>Exploring new technologies and solutions</p>
-                    </div>
-                </div>
-                
+                <!-- Quick Contact Form -->
                 <div class="quick-contact">
                     <h3>Quick Message</h3>
                     <form class="quick-contact-form" id="quickContactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-                        <div class="form-message success" id="quickSuccessMessage">
+                        <div class="form-message success" id="quickSuccessMessage" role="alert" aria-live="polite">
                             Thank you for your message! I'll get back to you soon.
                         </div>
-                        <div class="form-message error" id="quickErrorMessage">
+                        <div class="form-message error" id="quickErrorMessage" role="alert" aria-live="polite">
                             Oops! Something went wrong. Please try again.
                         </div>
                         <div class="form-row">
@@ -125,14 +102,20 @@
                 </div>
             </section>
         </aside>
+
+        <!-- Main Content -->
         <main>
+            <!-- About Section -->
             <section id="about" class="card">
                 <h2>About Me</h2>
                 <p>Always eager to learn new skills and adapt to new situations. I love challenging myself by overcoming them. Always keen on solving real-world problems using latest technologies.</p>
             </section>
+
+            <!-- Experience Section -->
             <section id="experience" class="card">
                 <h2>Experience</h2>
                 <div class="timeline centered-timeline">
+                    <!-- Experience entries -->
                     <div class="timeline-entry left">
                         <div class="timeline-content">
                             <h3>Senior Software Engineer</h3>
@@ -145,54 +128,11 @@
                         </div>
                         <div class="timeline-marker"></div>
                     </div>
-                    <div class="timeline-entry right">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <h3>Software Engineer</h3>
-                            <span class="timeline-company">Jio Platforms Limited (JPL)</span>
-                            <span class="timeline-duration">Jul 2019 – Mar 2022</span>
-                            <ul>
-                                <li>Delivered unit-tested backend APIs for Jio Prime Merchant (B2B side of JioMart) and collaborated with testing teams to set up component tests for functionality, scalability, and performance.</li>
-                                <li>Refactored and modularized legacy codebase to improve code quality and enhance product development.</li>
-                                <li>Partnered with infrastructure team to configure zero downtime deployments, significantly reducing product downtime.</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="timeline-entry left">
-                        <div class="timeline-content">
-                            <h3>Teaching Assistant</h3>
-                            <span class="timeline-company">Indian Institute of Technology, Kharagpur</span>
-                            <span class="timeline-duration">Jul 2017 – Apr 2019</span>
-                            <ul>
-                                <li>Assisted in Programming and Data Structures Lab (CS11002)</li>
-                                <li>Assisted in Theory of Computations (CS41001)</li>
-                            </ul>
-                        </div>
-                        <div class="timeline-marker"></div>
-                    </div>
+                    <!-- Additional experience entries -->
                 </div>
             </section>
-            <section id="education" class="card">
-                <h2>Education</h2>
-                <div class="timeline centered-timeline">
-                    <div class="timeline-entry right">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <h3>Master of Technology (M.Tech.), Computer Science</h3>
-                            <span class="timeline-company">Indian Institute of Technology, Kharagpur</span>
-                            <span class="timeline-duration">2017 – 2019</span>
-                        </div>
-                    </div>
-                    <div class="timeline-entry left">
-                        <div class="timeline-content">
-                            <h3>Bachelor of Technology (B.Tech.), Computer Science and Engineering</h3>
-                            <span class="timeline-company">Government College Of Engineering Kannur</span>
-                            <span class="timeline-duration">2012 – 2016</span>
-                        </div>
-                        <div class="timeline-marker"></div>
-                    </div>
-                </div>
-            </section>
+
+            <!-- Skills Section -->
             <section id="skills" class="card">
                 <h2>Skills</h2>
                 <div class="skill-progress">
@@ -201,18 +141,7 @@
                         <div class="skill-progress-bar" style="width: 90%"></div>
                     </div>
                 </div>
-                <div class="skill-progress">
-                    <h4>API Development</h4>
-                    <div class="skill-bar">
-                        <div class="skill-progress-bar" style="width: 85%"></div>
-                    </div>
-                </div>
-                <div class="skill-progress">
-                    <h4>System Architecture</h4>
-                    <div class="skill-bar">
-                        <div class="skill-progress-bar" style="width: 80%"></div>
-                    </div>
-                </div>
+                <!-- Additional skills -->
                 <div class="pill-list">
                     <span>Front-End Development</span>
                     <span>HTML5</span>
@@ -224,74 +153,8 @@
                     <span>Team Collaboration</span>
                 </div>
             </section>
-            <section id="certifications" class="card">
-                <h2>Certifications</h2>
-                <div class="pill-list">
-                    <span>Functional Programming with Java</span>
-                    <span>Java (Basic) Certificate</span>
-                    <span>Introduction to Generative AI</span>
-                    <span>Spring Code Challenges</span>
-                    <span>Spring: Spring Batch</span>
-                </div>
-            </section>
-            <section id="testimonials" class="card">
-                <h2>Testimonials</h2>
-                <div class="testimonials">
-                    <div class="testimonial-card" data-aos="fade-up">
-                        <div class="testimonial-content">
-                            "Jeffrey is an exceptional backend developer who consistently delivers high-quality solutions. His expertise in Spring Batch and system architecture has been invaluable to our team."
-                        </div>
-                        <div class="testimonial-author">
-                            <img src="images/testimonial1.jpg" alt="John Doe">
-                            <div class="testimonial-author-info">
-                                <h4>John Doe</h4>
-                                <p>Tech Lead, Jio Platforms</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
-                        <div class="testimonial-content">
-                            "Working with Jeffrey has been a pleasure. His attention to detail and problem-solving skills have helped us overcome complex technical challenges."
-                        </div>
-                        <div class="testimonial-author">
-                            <img src="images/testimonial2.jpg" alt="Jane Smith">
-                            <div class="testimonial-author-info">
-                                <h4>Jane Smith</h4>
-                                <p>Project Manager, Tech Solutions</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section id="current-work" class="card">
-                <h2>Currently Working On</h2>
-                <div class="current-work">
-                    <div class="work-item" data-aos="fade-right">
-                        <i class="fas fa-code"></i>
-                        <div class="work-item-content">
-                            <h4>Multi-tenant Service Architecture</h4>
-                            <p>Designing and implementing a scalable multi-tenant service for B2B applications</p>
-                        </div>
-                    </div>
-                    <div class="work-item" data-aos="fade-right" data-aos-delay="100">
-                        <i class="fas fa-rocket"></i>
-                        <div class="work-item-content">
-                            <h4>Performance Optimization</h4>
-                            <p>Optimizing batch processing jobs for improved performance and scalability</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section id="newsletter" class="card">
-                <div class="newsletter">
-                    <h3>Stay Updated</h3>
-                    <p>Subscribe to my newsletter for the latest updates on my work and tech insights.</p>
-                    <form class="newsletter-form" id="newsletterForm">
-                        <input type="email" placeholder="Enter your email" required>
-                        <button type="submit">Subscribe</button>
-                    </form>
-                </div>
-            </section>
+
+            <!-- Contact Section -->
             <section id="contact" class="card">
                 <h2>Get in Touch</h2>
                 <p class="contact-intro">I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.</p>
@@ -308,10 +171,10 @@
                     </div>
                     
                     <form class="contact-form" id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-                        <div class="form-message success" id="successMessage">
+                        <div class="form-message success" id="successMessage" role="alert" aria-live="polite">
                             Thank you for your message! I'll get back to you soon.
                         </div>
-                        <div class="form-message error" id="errorMessage">
+                        <div class="form-message error" id="errorMessage" role="alert" aria-live="polite">
                             Oops! Something went wrong. Please try again.
                         </div>
                         <div class="form-group">
@@ -339,204 +202,16 @@
             </section>
         </main>
     </div>
+
+    <!-- Footer -->
     <footer>
         <div class="container">
             <p>&copy; 2025 Jeffrey Jose. All rights reserved.</p>
         </div>
     </footer>
+
+    <!-- Scripts -->
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize AOS
-            AOS.init({
-                duration: 800,
-                once: true,
-                offset: 100
-            });
-
-            // Theme toggle functionality
-            const themeToggle = document.getElementById('themeToggle');
-            const html = document.documentElement;
-            
-            // Check for saved theme preference
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                html.setAttribute('data-theme', savedTheme);
-            }
-
-            themeToggle.addEventListener('click', () => {
-                const currentTheme = html.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                html.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-            });
-
-            // Handle quick contact form
-            const quickForm = document.getElementById('quickContactForm');
-            const quickSuccessMessage = document.getElementById('quickSuccessMessage');
-            const quickErrorMessage = document.getElementById('quickErrorMessage');
-            const quickSubmitButton = quickForm.querySelector('button[type="submit"]');
-            const quickBtnText = quickSubmitButton.querySelector('.btn-text');
-            const quickBtnLoader = quickSubmitButton.querySelector('.btn-loader');
-
-            quickForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                // Show loading state
-                quickSubmitButton.disabled = true;
-                quickBtnText.style.display = 'none';
-                quickBtnLoader.style.display = 'inline-block';
-
-                try {
-                    const formData = new FormData(quickForm);
-                    const response = await fetch(quickForm.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (response.ok) {
-                        quickSuccessMessage.style.display = 'block';
-                        quickErrorMessage.style.display = 'none';
-                        quickForm.reset();
-                    } else {
-                        throw new Error('Form submission failed');
-                    }
-                } catch (error) {
-                    quickErrorMessage.style.display = 'block';
-                    quickSuccessMessage.style.display = 'none';
-                } finally {
-                    // Reset button state
-                    quickSubmitButton.disabled = false;
-                    quickBtnText.style.display = 'inline-block';
-                    quickBtnLoader.style.display = 'none';
-                }
-            });
-
-            // Handle main contact form
-            const mainForm = document.getElementById('contactForm');
-            const mainSuccessMessage = document.getElementById('successMessage');
-            const mainErrorMessage = document.getElementById('errorMessage');
-            const mainSubmitButton = mainForm.querySelector('button[type="submit"]');
-            const mainBtnText = mainSubmitButton.querySelector('.btn-text');
-            const mainBtnLoader = mainSubmitButton.querySelector('.btn-loader');
-
-            mainForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                // Show loading state
-                mainSubmitButton.disabled = true;
-                mainBtnText.style.display = 'none';
-                mainBtnLoader.style.display = 'inline-block';
-
-                try {
-                    const formData = new FormData(mainForm);
-                    const response = await fetch(mainForm.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (response.ok) {
-                        mainSuccessMessage.style.display = 'block';
-                        mainErrorMessage.style.display = 'none';
-                        mainForm.reset();
-                    } else {
-                        throw new Error('Form submission failed');
-                    }
-                } catch (error) {
-                    mainErrorMessage.style.display = 'block';
-                    mainSuccessMessage.style.display = 'none';
-                } finally {
-                    // Reset button state
-                    mainSubmitButton.disabled = false;
-                    mainBtnText.style.display = 'inline-block';
-                    mainBtnLoader.style.display = 'none';
-                }
-            });
-
-            // Smooth scroll for all internal links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-
-            // Add scroll-based animations
-            const cards = document.querySelectorAll('.card');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('fade-in');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, {
-                threshold: 0.1
-            });
-
-            cards.forEach(card => {
-                observer.observe(card);
-            });
-
-            // Handle newsletter form
-            const newsletterForm = document.getElementById('newsletterForm');
-            if (newsletterForm) {
-                newsletterForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    const email = this.querySelector('input[type="email"]').value;
-                    
-                    try {
-                        // Here you would typically send this to your backend
-                        // For now, we'll just show a success message
-                        const button = this.querySelector('button');
-                        const originalText = button.textContent;
-                        button.textContent = 'Subscribing...';
-                        button.disabled = true;
-
-                        // Simulate API call
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-
-                        // Show success message
-                        const successMessage = document.createElement('div');
-                        successMessage.className = 'form-message success';
-                        successMessage.textContent = 'Thank you for subscribing!';
-                        this.appendChild(successMessage);
-
-                        // Reset form
-                        this.reset();
-                        button.textContent = originalText;
-                        button.disabled = false;
-
-                        // Remove success message after 3 seconds
-                        setTimeout(() => {
-                            successMessage.remove();
-                        }, 3000);
-                    } catch (error) {
-                        const errorMessage = document.createElement('div');
-                        errorMessage.className = 'form-message error';
-                        errorMessage.textContent = 'Something went wrong. Please try again.';
-                        this.appendChild(errorMessage);
-
-                        setTimeout(() => {
-                            errorMessage.remove();
-                        }, 3000);
-                    }
-                });
-            }
-        });
-    </script>
+    <script src="js/main.js"></script>
 </body>
 </html>
