@@ -1346,8 +1346,9 @@ input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
     border: 2px solid var(--color-border); /* --card-border -> --color-border */
     border-radius: 8px;
     background: var(--color-background-alt); /* --bg-secondary -> --color-background-alt */
-    color: var(--color-text-primary);
+    color: var(--color-text-primary); /* Use primary text color for better visibility */
     line-height: 1.5; /* Added line-height for form elements */
+    pointer-events: auto; /* Explicitly enable pointer events */
 }
 
 .newsletter-form button {

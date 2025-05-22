@@ -80,6 +80,7 @@ const FormManager = {
     init() {
         this.initQuickContactForm();
         this.initMainContactForm();
+        this.initNewsletterForm();
     },
 
     initQuickContactForm() {
@@ -106,6 +107,22 @@ const FormManager = {
             form,
             successMessage: document.getElementById('successMessage'),
             errorMessage: document.getElementById('errorMessage'),
+            submitButton: form.querySelector('button[type="submit"]'),
+            btnText: form.querySelector('.btn-text'),
+            btnLoader: form.querySelector('.btn-loader')
+        };
+
+        form.addEventListener('submit', (e) => this.handleFormSubmit(e, elements));
+    },
+
+    initNewsletterForm() {
+        const form = document.getElementById('newsletterForm');
+        if (!form) return;
+
+        const elements = {
+            form,
+            successMessage: document.getElementById('newsletterSuccessMessage'),
+            errorMessage: document.getElementById('newsletterErrorMessage'),
             submitButton: form.querySelector('button[type="submit"]'),
             btnText: form.querySelector('.btn-text'),
             btnLoader: form.querySelector('.btn-loader')

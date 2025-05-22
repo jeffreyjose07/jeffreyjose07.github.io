@@ -303,11 +303,21 @@
                     <h3 id="newsletter-heading">Stay Updated</h3>
                     <p>Subscribe to my newsletter for the latest updates on my work and tech insights.</p>
                     <!-- TODO: Replace YOUR_FORM_ID with your actual Formspree form ID for this form to work, or integrate with a newsletter service. -->
-                    <form class="newsletter-form" id="newsletterForm" aria-labelledby="newsletter-heading">
-                        <label for="newsletterEmail" class="sr-only">Enter your email</label>
-                        <input type="email" id="newsletterEmail" name="email" placeholder="Enter your email" required>
-                        <button type="submit">Subscribe</button>
+                    <form class="newsletter-form" id="newsletterForm" aria-labelledby="newsletter-heading" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                        <div class="form-message success" id="newsletterSuccessMessage" role="alert" aria-live="polite">
+                            Thank you for subscribing!
+                        </div>
+                        <div class="form-message error" id="newsletterErrorMessage" role="alert" aria-live="polite">
+                            Oops! There was an issue with your subscription. Please try again.
+                        </div>
+                        <!-- Replaced newsletter email input with structure from contact form email input -->
+                        <div class="form-group">
+                            <label for="newsletterEmail" class="sr-only">Enter your email</label>
+                            <input type="email" id="newsletterEmail" name="email" placeholder="Enter your email" required>
+                        </div>
+                        <button type="submit" class="btn">Subscribe</button>
                     </form>
+                    
                 </div>
             </section>
             <!-- Newsletter Section End -->
