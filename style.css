@@ -139,7 +139,6 @@ main {
    Hero Section
    ========================================================================== */
 .hero-bg {
-    background: linear-gradient(135deg, var(--color-background-alt) 60%, var(--color-primary) 100%);
     padding: 48px 0 32px 0;
     display: flex;
     justify-content: center;
@@ -160,6 +159,14 @@ main {
     animation: fadeInUp 1s cubic-bezier(.23,1.03,.53,1.15);
     border: 2px solid var(--color-border);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Add this new rule to remove card background in sidebar */
+.sidebar .card {
+    background: none;
+    box-shadow: none;
+    border: none;
+    padding: 2.2rem 0 1.4rem 0; /* Adjust padding for sidebar cards */
 }
 
 /* ==========================================================================
