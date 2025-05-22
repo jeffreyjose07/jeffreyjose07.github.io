@@ -663,29 +663,54 @@ main {
 .contact-links {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.2rem;
+    margin-top: 1rem;
 }
 
 .contact-links a {
-    color: var(--color-text-primary); /* #F5F6FA */
+    color: var(--color-text-primary);
     text-decoration: none;
     font-size: 1.05rem;
     display: flex;
     align-items: center;
     gap: 0.8rem;
-    transition: color 0.2s, transform 0.2s;
-    line-height: 1.5; /* Added line-height for readability */
+    transition: all 0.3s ease;
+    line-height: 1.5;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    background: var(--color-background-alt);
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
 }
 
 .contact-links a:hover {
-    color: var(--color-primary); /* #22c55e */
+    color: var(--color-primary);
     transform: translateX(5px);
+    background: var(--color-card);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .contact-links a i {
-    color: var(--color-primary); /* #22c55e */
+    color: var(--color-primary);
     font-size: 1.2rem;
     width: 24px;
+    transition: transform 0.3s ease;
+}
+
+.contact-links a:hover i {
+    transform: scale(1.1);
+}
+
+/* Ensure links are clickable */
+.contact-links a,
+.contact-links a:visited,
+.contact-links a:active {
+    pointer-events: auto;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
 }
 
 .contact-form {
