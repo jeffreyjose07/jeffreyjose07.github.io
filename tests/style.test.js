@@ -85,6 +85,28 @@ describe('Style and Layout Tests', () => {
         });
     });
 
+    // Typography Tests
+    describe('Typography Tests', () => {
+        test('should use rem units for font sizes', () => {
+            const textElements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, a, li');
+            textElements.forEach(element => {
+                const style = window.getComputedStyle(element);
+                if (style.fontSize && style.fontSize !== '0px') { // Avoid checking elements with no rendered text
+                    expect(style.fontSize).toContain('rem');
+                }
+            });
+        });
+
+        test('should have consistent line heights for text elements', () => {
+            const textElements = document.querySelectorAll('p, li, .timeline-content, .contact-intro, .contact-info h3, .contact-links a, .collaborate-option h3, .collaborate-option p, .collaborate-cta p, .quick-contact h3, .contact-note, .skill-progress h4, .testimonial-author-info h4, .testimonial-author-info p, .current-work h3, .work-item-content h4, .work-item-content p, .newsletter h3');
+            textElements.forEach(element => {
+                const style = window.getComputedStyle(element);
+                // Check if line-height is a reasonable value (not 'normal' or a drastically different value)
+                expect(parseFloat(style.lineHeight)).toBeGreaterThan(1); 
+            });
+        });
+    });
+
     // Component Style Tests
     describe('Component Styles', () => {
         test('should have consistent button styles', () => {
@@ -104,6 +126,22 @@ describe('Style and Layout Tests', () => {
                 expect(style.border).toBeTruthy();
                 expect(style.padding).toBeTruthy();
                 expect(style.borderRadius).toBeTruthy();
+            });
+        });
+
+        // Sidebar Background Test
+        test('should have a linear gradient background in the sidebar', () => {
+            const sidebar = document.querySelector('.sidebar');
+            const style = window.getComputedStyle(sidebar);
+            expect(style.backgroundImage).toContain('linear-gradient');
+        });
+
+        // Sidebar Card Background Test
+        test('should have no background on cards within the sidebar', () => {
+            const sidebarCards = document.querySelectorAll('.sidebar .card');
+            sidebarCards.forEach(card => {
+                const style = window.getComputedStyle(card);
+                expect(style.background).toBe('none');
             });
         });
     });
