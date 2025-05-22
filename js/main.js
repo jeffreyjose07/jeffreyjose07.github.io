@@ -1,11 +1,51 @@
 // Initialize AOS (Animate On Scroll)
-const initAOS = () => {
-    AOS.init({
-        duration: 800,
-        once: true,
-        offset: 100
-    });
-};
+AOS.init({
+    duration: 800,
+    once: true
+});
+
+// Theme Toggle Functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+        });
+    }
+
+    // Form Submission Handling
+    const contactForm = document.getElementById('quickContactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = contactForm.querySelector('button[type="submit"]');
+            const successMessage = document.getElementById('quickSuccessMessage');
+            const errorMessage = document.getElementById('quickErrorMessage');
+
+            try {
+                submitButton.disabled = true;
+                submitButton.querySelector('.btn-text').style.display = 'none';
+                submitButton.querySelector('.btn-loader').style.display = 'block';
+
+                // Simulate form submission (replace with actual form submission)
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                successMessage.style.display = 'block';
+                errorMessage.style.display = 'none';
+                contactForm.reset();
+            } catch (error) {
+                successMessage.style.display = 'none';
+                errorMessage.style.display = 'block';
+            } finally {
+                submitButton.disabled = false;
+                submitButton.querySelector('.btn-text').style.display = 'block';
+                submitButton.querySelector('.btn-loader').style.display = 'none';
+            }
+        });
+    }
+});
 
 // Theme Management
 const ThemeManager = {
@@ -178,7 +218,6 @@ const ScrollManager = {
 
 // Initialize everything when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    initAOS();
     ThemeManager.init();
     FormManager.init();
     ScrollManager.init();
