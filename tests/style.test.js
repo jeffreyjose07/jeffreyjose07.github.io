@@ -126,6 +126,45 @@ describe('Style and Layout Tests', () => {
                 expect(style.border).toBeTruthy();
                 expect(style.padding).toBeTruthy();
                 expect(style.borderRadius).toBeTruthy();
+                // Add more specific checks for form input styles
+                expect(style.color).toBe(getComputedStyle(document.documentElement).getPropertyValue('--color-text-primary').trim());
+                expect(style.backgroundColor).toBe(getComputedStyle(document.documentElement).getPropertyValue('--color-background-alt').trim());
+            });
+        });
+
+        // Add more specific tests for sidebar card content styling
+        test('should have correct styling for expertise list items', () => {
+            const expertiseListItems = document.querySelectorAll('.expertise.card li');
+            expertiseListItems.forEach(item => {
+                const style = window.getComputedStyle(item);
+                // Add checks for color, font size, line height, etc.
+                expect(style.color).toBe('rgb(224, 227, 232)'); // Hardcoded color, should ideally use a variable if available
+                expect(style.fontSize).toBe('1rem');
+                expect(style.lineHeight).toBe('1.5');
+            });
+        });
+
+        test('should have correct styling for collaborate options', () => {
+            const collaborateOptions = document.querySelectorAll('.collaborate-option');
+            collaborateOptions.forEach(option => {
+                const style = window.getComputedStyle(option);
+                // Add checks for background, border, padding, etc.
+                // Note: Background was removed from .sidebar .card, but collaborate-option has its own background
+                expect(style.backgroundColor).toBe('rgb(30, 41, 59)'); // Hardcoded color, should ideally use a variable
+                expect(style.border).toContain('1px solid');
+                expect(style.borderRadius).toBe('12px');
+            });
+        });
+
+        // Add tests for hover effects on interactive elements
+        test('should apply hover effects to buttons', () => {
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                // Simulate hover state (requires more advanced testing setup like Jest with JSDOM and a way to trigger pseudo-classes or events)
+                // This is a conceptual test; actual implementation would require a different approach.
+                // For now, we can check for transition properties that enable hover effects.
+                const style = window.getComputedStyle(button);
+                expect(style.transition).toContain('all'); 
             });
         });
 
