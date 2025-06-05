@@ -215,19 +215,19 @@ const ScrollManager = {
 
     setupScrollAnimations() {
         const cards = document.querySelectorAll('.card');
-        const observer = new IntersectionObserver(
+        this.observer = new IntersectionObserver(
             (entries) => this.handleIntersection(entries),
             { threshold: 0.1 }
         );
 
-        cards.forEach(card => observer.observe(card));
+        cards.forEach(card => this.observer.observe(card));
     },
 
     handleIntersection(entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('fade-in');
-                entry.target.observer?.unobserve(entry.target);
+                this.observer.unobserve(entry.target);
             }
         });
     }
