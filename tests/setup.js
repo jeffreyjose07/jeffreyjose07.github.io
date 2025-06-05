@@ -15,6 +15,7 @@ beforeAll(() => {
             <button type="submit">Send</button>
         </form>
         <div id="quickSuccessMessage" style="display: none;"></div>
+        <div class="sidebar" style="width:100%;"></div>
     `;
 });
 
