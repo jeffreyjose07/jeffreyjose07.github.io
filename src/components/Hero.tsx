@@ -18,6 +18,11 @@ const Hero = () => {
         <div className="absolute top-40 right-20 w-1 h-1 bg-primary-glow rounded-full opacity-80 floating-delayed" />
         <div className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-white rounded-full opacity-50 floating" />
         <div className="absolute bottom-20 right-1/3 w-1 h-1 bg-primary rounded-full opacity-70 floating-delayed" />
+        {/* More bubbles */}
+        <div className="absolute top-10 left-1/2 w-1.5 h-1.5 bg-primary-glow rounded-full opacity-60 floating" />
+        <div className="absolute bottom-10 right-1/4 w-2 h-2 bg-white rounded-full opacity-40 floating-delayed" />
+        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-primary rounded-full opacity-50 floating" />
+        <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 bg-primary-glow rounded-full opacity-70 floating-delayed" />
       </div>
 
       <div className="container mx-auto px-6 text-center relative z-10">
