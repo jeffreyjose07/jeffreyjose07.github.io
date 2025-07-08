@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Portfolio Design System - Inspired by Lovable's beautiful gradient aesthetics */
+
+@layer base {
+  :root {
+    /* Lovable-inspired gradient backgrounds */
+    --background: 220 15% 95%;
+    --foreground: 222.2 84% 4.9%;
+
+    /* Card system with subtle shadows */
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Beautiful primary colors inspired by Lovable */
+    --primary: 240 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 240 100% 70%;
+
+    /* Elegant secondary palette */
+    --secondary: 220 13% 91%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    /* Muted colors for subtle elements */
+    --muted: 220 13% 91%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    /* Accent colors */
+    --accent: 240 100% 95%;
+    --accent-foreground: 240 100% 20%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 240 100% 60%;
+
+    /* Custom gradient variables */
+    --gradient-hero: linear-gradient(135deg, hsl(210 100% 12%), hsl(220 100% 20%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 15% 98%));
+    --gradient-accent: linear-gradient(135deg, hsl(240 100% 95%), hsl(260 100% 95%));
+    
+    /* Animation and shadow tokens */
+    --shadow-elegant: 0 10px 30px -10px hsl(240 100% 60% / 0.2);
+    --shadow-glow: 0 0 40px hsl(240 100% 70% / 0.3);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark theme with Lovable-inspired aesthetics */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 217.2 32.6% 17.5%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 217.2 32.6% 17.5%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 240 100% 70%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary-glow: 240 100% 80%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 240 100% 70%;
+
+    /* Dark theme gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(240 100% 8%), hsl(260 100% 12%));
+    --gradient-card: linear-gradient(180deg, hsl(217.2 32.6% 17.5%), hsl(217.2 32.6% 15.5%));
+    --gradient-accent: linear-gradient(135deg, hsl(240 30% 20%), hsl(260 30% 20%));
+    
+    --shadow-elegant: 0 10px 30px -10px hsl(240 100% 60% / 0.3);
+    --shadow-glow: 0 0 40px hsl(240 100% 70% / 0.2);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
