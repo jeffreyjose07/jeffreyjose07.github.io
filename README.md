@@ -1,34 +1,73 @@
-# Jeffrey Jose — Personal Website
+# Welcome to your Lovable project
 
-This is a simple, modern personal website for Jeffrey Jose, built as a static site for easy deployment on GitHub Pages.
+## Project info
 
-## Features
-- Responsive design
-- Sections: About, Experience, Education, Skills, Contact
+**URL**: https://lovable.dev/projects/59ece07b-d232-4dc5-b3f9-c70374431ec3
 
-## How to Deploy to GitHub Pages
+## How can I edit this code?
 
-1. **Create a new GitHub repository** (e.g., `jeffrey-jose.github.io`).
-2. **Push your site files** (all contents of this folder) to the repository.
-3. On GitHub, go to Settings → Pages, and set the source branch to `main` (or `master`) and the root folder (`/`).
-4. Your site will be live at `https://<your-github-username>.github.io/`.
+There are several ways of editing your application.
 
-## Customization
-- Update `index.html` with your real experience, education, and contact details.
-- Update `style.css` for further styling tweaks.
+**Use Lovable**
 
-## License
-MIT License.
+Simply visit the [Lovable Project](https://lovable.dev/projects/59ece07b-d232-4dc5-b3f9-c70374431ec3) and start prompting.
 
-## Further Improvements and Configuration
+Changes made via Lovable will be committed automatically to this repo.
 
-*   **Activate Contact Forms:** The contact forms in `index.html` (Quick Contact and Main Contact) use Formspree. To make them functional, you need to:
-    1.  Create an account on [Formspree.io](https://formspree.io/).
-    2.  Create new forms for your website in your Formspree dashboard.
-    3.  Replace the placeholder `YOUR_FORM_ID` in the `action` attribute of the `<form>` tags in `index.html` with your actual Formspree form IDs. Look for the `<!-- TODO: ... -->` comments in `index.html` for guidance.
-*   **Upload Your Resume:** The "Download Resume" button currently links to a placeholder. To make it work:
-    1.  Add your resume file (e.g., `resume.pdf`) to the root directory of this repository.
-    2.  If your file is named differently, update the `href` attribute in the link `<a href="#resume-placeholder" class="btn btn-secondary">Download Resume</a>` in `index.html` to point to the correct file name (e.g., `href="your-resume-filename.pdf"`). You might also want to re-add the `download` attribute to the link if you are linking directly to a PDF file.
-*   **Optimize Images:** Review the images in the `images/` directory. Consider optimizing them (compressing without significant quality loss) to improve website loading speed. Tools like TinyPNG or ImageOptim can be helpful.
-*   **Review Semantic HTML:** The `index.html` file uses various HTML5 tags. For continued best practice, periodically review if more specific semantic tags (e.g., `<article>`, `<nav>`, `<figure>`, `<figcaption>`) could be used to further improve the structure and accessibility of your content.
-*   **Newsletter Form:** The newsletter subscription form in `index.html` is a basic HTML structure. To make it functional, you'll need to integrate it with a newsletter service (e.g., Mailchimp, Sendinblue, or even a custom backend/Formspree if it supports it). Update the `<form>` tag's `action` attribute and input field names accordingly.
+**Use your preferred IDE**
+
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+Follow these steps:
+
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
+
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
+
+# Step 3: Install the necessary dependencies.
+npm i
+
+# Step 4: Start the development server with auto-reloading and an instant preview.
+npm run dev
+```
+
+**Edit a file directly in GitHub**
+
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
+
+**Use GitHub Codespaces**
+
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
+
+## What technologies are used for this project?
+
+This project is built with:
+
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
+
+## How can I deploy this project?
+
+Simply open [Lovable](https://lovable.dev/projects/59ece07b-d232-4dc5-b3f9-c70374431ec3) and click on Share -> Publish.
+
+## Can I connect a custom domain to my Lovable project?
+
+Yes, you can!
+
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
