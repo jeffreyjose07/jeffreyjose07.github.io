@@ -48,14 +48,14 @@ const Projects = () => {
 
         <div className="max-w-6xl mx-auto grid gap-12">
           {projects.map((project, index) => (
-            <Card 
+            <div 
               key={index} 
-              className="perspective-card group bg-gradient-card shadow-elegant hover:shadow-glow transition-all duration-500 border border-border/50 hover:border-primary/20 slide-up overflow-hidden"
+              className="perspective-card group bg-gradient-card shadow-elegant hover:shadow-glow transition-all duration-500 border border-border/50 hover:border-primary/20 slide-up overflow-hidden rounded-lg"
               style={{ animationDelay: `${index * 0.2}s` }}
             >
               <div className="card-inner relative">
                 {/* Gradient overlay on hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary-glow/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary-glow/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg pointer-events-none"></div>
                 
                 <div className="grid lg:grid-cols-2 gap-8 p-8">
                   {/* Project Image */}
@@ -126,25 +126,29 @@ const Projects = () => {
                       <div className="flex gap-4 pt-4">
                         <button 
                           onClick={(e) => {
+                            console.log('Live Demo button clicked!', project.liveUrl);
                             e.preventDefault();
                             e.stopPropagation();
                             window.open(project.liveUrl, '_blank', 'noopener,noreferrer');
                           }}
-                          className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-primary to-primary-glow hover:from-primary/90 hover:to-primary-glow/90 px-4 py-2 text-sm font-medium text-primary-foreground transition-all duration-300 shadow-elegant group/btn hover:shadow-lg cursor-pointer"
+                          className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-primary to-primary-glow hover:from-primary/90 hover:to-primary-glow/90 px-4 py-2 text-sm font-medium text-primary-foreground transition-all duration-300 shadow-elegant hover:shadow-lg cursor-pointer relative z-50"
+                          style={{ pointerEvents: 'all' }}
                         >
-                          <ExternalLink className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform duration-300" />
+                          <ExternalLink className="mr-2 h-4 w-4" />
                           Live Demo
                         </button>
                         {project.githubUrl && (
                           <button 
                             onClick={(e) => {
+                              console.log('View Code button clicked!', project.githubUrl);
                               e.preventDefault();
                               e.stopPropagation();
                               window.open(project.githubUrl, '_blank', 'noopener,noreferrer');
                             }}
-                            className="inline-flex items-center justify-center rounded-md border border-border hover:border-primary/50 px-4 py-2 text-sm font-medium text-foreground transition-all duration-300 group/btn hover:bg-accent cursor-pointer"
+                            className="inline-flex items-center justify-center rounded-md border border-border hover:border-primary/50 px-4 py-2 text-sm font-medium text-foreground transition-all duration-300 hover:bg-accent cursor-pointer relative z-50"
+                            style={{ pointerEvents: 'all' }}
                           >
-                            <Github className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform duration-300" />
+                            <Github className="mr-2 h-4 w-4" />
                             View Code
                           </button>
                         )}
@@ -153,7 +157,7 @@ const Projects = () => {
                   </div>
                 </div>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       </div>
