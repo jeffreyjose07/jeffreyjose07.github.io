@@ -122,41 +122,36 @@ const Projects = () => {
                         </div>
                       </div>
 
-                      {/* Action Buttons */}
-                      <div className="flex gap-4 pt-4">
-                        <button 
-                          onClick={(e) => {
-                            console.log('Live Demo button clicked!', project.liveUrl);
-                            e.preventDefault();
-                            e.stopPropagation();
-                            window.open(project.liveUrl, '_blank', 'noopener,noreferrer');
-                          }}
-                          className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-primary to-primary-glow hover:from-primary/90 hover:to-primary-glow/90 px-4 py-2 text-sm font-medium text-primary-foreground transition-all duration-300 shadow-elegant hover:shadow-lg cursor-pointer relative z-50"
-                          style={{ pointerEvents: 'all' }}
-                        >
-                          <ExternalLink className="mr-2 h-4 w-4" />
-                          Live Demo
-                        </button>
-                        {project.githubUrl && (
-                          <button 
-                            onClick={(e) => {
-                              console.log('View Code button clicked!', project.githubUrl);
-                              e.preventDefault();
-                              e.stopPropagation();
-                              window.open(project.githubUrl, '_blank', 'noopener,noreferrer');
-                            }}
-                            className="inline-flex items-center justify-center rounded-md border border-border hover:border-primary/50 px-4 py-2 text-sm font-medium text-foreground transition-all duration-300 hover:bg-accent cursor-pointer relative z-50"
-                            style={{ pointerEvents: 'all' }}
-                          >
-                            <Github className="mr-2 h-4 w-4" />
-                            View Code
-                          </button>
-                        )}
-                      </div>
                     </CardContent>
                   </div>
                 </div>
               </div>
+            </div>
+            
+            {/* Action Buttons - Outside the card structure */}
+            <div className="flex gap-4 justify-center mt-6">
+              <button 
+                onClick={() => {
+                  console.log('Live Demo button clicked!', project.liveUrl);
+                  window.open(project.liveUrl, '_blank');
+                }}
+                className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 px-6 py-3 text-sm font-medium text-white transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer"
+              >
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Live Demo
+              </button>
+              {project.githubUrl && (
+                <button 
+                  onClick={() => {
+                    console.log('View Code button clicked!', project.githubUrl);
+                    window.open(project.githubUrl, '_blank');
+                  }}
+                  className="inline-flex items-center justify-center rounded-md border-2 border-gray-300 hover:border-gray-400 px-6 py-3 text-sm font-medium text-gray-700 hover:text-gray-900 transition-all duration-200 hover:bg-gray-50 cursor-pointer"
+                >
+                  <Github className="mr-2 h-4 w-4" />
+                  View Code
+                </button>
+              )}
             </div>
           ))}
         </div>
