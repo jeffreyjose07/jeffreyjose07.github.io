@@ -48,11 +48,11 @@ const Projects = () => {
 
         <div className="max-w-6xl mx-auto grid gap-12">
           {projects.map((project, index) => (
-            <div 
-              key={index} 
-              className="perspective-card group bg-gradient-card shadow-elegant hover:shadow-glow transition-all duration-500 border border-border/50 hover:border-primary/20 slide-up overflow-hidden rounded-lg"
-              style={{ animationDelay: `${index * 0.2}s` }}
-            >
+            <div key={index} className="space-y-6">
+              <div 
+                className="perspective-card group bg-gradient-card shadow-elegant hover:shadow-glow transition-all duration-500 border border-border/50 hover:border-primary/20 slide-up overflow-hidden rounded-lg"
+                style={{ animationDelay: `${index * 0.2}s` }}
+              >
               <div className="card-inner relative">
                 {/* Gradient overlay on hover */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary-glow/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg pointer-events-none"></div>
@@ -125,11 +125,11 @@ const Projects = () => {
                     </CardContent>
                   </div>
                 </div>
+                </div>
               </div>
-            </div>
-            
-            {/* Action Buttons - Outside the card structure */}
-            <div className="flex gap-4 justify-center mt-6">
+              
+              {/* Action Buttons - Outside the card structure */}
+              <div className="flex gap-4 justify-center mt-6">
               <button 
                 onClick={() => {
                   console.log('Live Demo button clicked!', project.liveUrl);
@@ -152,6 +152,7 @@ const Projects = () => {
                   View Code
                 </button>
               )}
+              </div>
             </div>
           ))}
         </div>
