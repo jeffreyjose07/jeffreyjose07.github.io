@@ -125,24 +125,20 @@ const Projects = () => {
                       {/* Action Buttons */}
                       <div className="flex gap-4 pt-4">
                         <Button 
-                          asChild
+                          onClick={() => window.open(project.liveUrl, '_blank')}
                           className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary/90 hover:to-primary-glow/90 transition-all duration-300 shadow-elegant group/btn"
                         >
-                          <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform duration-300" />
-                            Live Demo
-                          </a>
+                          <ExternalLink className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform duration-300" />
+                          Live Demo
                         </Button>
                         {project.githubUrl && (
                           <Button 
                             variant="outline"
-                            asChild
+                            onClick={() => window.open(project.githubUrl, '_blank')}
                             className="border-border hover:border-primary/50 group/btn transition-all duration-300"
                           >
-                            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                              <Github className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform duration-300" />
-                              View Code
-                            </a>
+                            <Github className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform duration-300" />
+                            View Code
                           </Button>
                         )}
                       </div>
