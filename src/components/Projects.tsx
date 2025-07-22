@@ -124,25 +124,29 @@ const Projects = () => {
 
                       {/* Action Buttons */}
                       <div className="flex gap-4 pt-4">
-                        <a 
-                          href={project.liveUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-primary to-primary-glow hover:from-primary/90 hover:to-primary-glow/90 px-4 py-2 text-sm font-medium text-primary-foreground transition-all duration-300 shadow-elegant group/btn hover:shadow-lg"
+                        <button 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.open(project.liveUrl, '_blank', 'noopener,noreferrer');
+                          }}
+                          className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-primary to-primary-glow hover:from-primary/90 hover:to-primary-glow/90 px-4 py-2 text-sm font-medium text-primary-foreground transition-all duration-300 shadow-elegant group/btn hover:shadow-lg cursor-pointer"
                         >
                           <ExternalLink className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform duration-300" />
                           Live Demo
-                        </a>
+                        </button>
                         {project.githubUrl && (
-                          <a 
-                            href={project.githubUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center rounded-md border border-border hover:border-primary/50 px-4 py-2 text-sm font-medium text-foreground transition-all duration-300 group/btn hover:bg-accent"
+                          <button 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              window.open(project.githubUrl, '_blank', 'noopener,noreferrer');
+                            }}
+                            className="inline-flex items-center justify-center rounded-md border border-border hover:border-primary/50 px-4 py-2 text-sm font-medium text-foreground transition-all duration-300 group/btn hover:bg-accent cursor-pointer"
                           >
                             <Github className="mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform duration-300" />
                             View Code
-                          </a>
+                          </button>
                         )}
                       </div>
                     </CardContent>
