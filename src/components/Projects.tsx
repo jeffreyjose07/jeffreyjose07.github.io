@@ -7,16 +7,20 @@ const Projects = () => {
   const projects = [
     {
       title: "Scalable Chat Platform",
-      description: "A real-time chat application built with modern web technologies, featuring instant messaging, user authentication, and scalable architecture.",
-      image: "https://via.placeholder.com/800x450/1a1a1a/ffffff?text=Scalable+Chat+Platform", // Replace with actual screenshot
+      description: "A full-stack real-time chat application with enterprise-grade architecture, featuring Spring Boot backend, React TypeScript frontend, WebSocket communication, and microservices design with comprehensive CI/CD pipeline.",
+      image: "/scalable-chat-platform.png",
       liveUrl: "https://scalable-chat-platform.onrender.com/",
-      githubUrl: "", // Add if available
-      technologies: ["React", "Node.js", "Socket.io", "Express", "Real-time Communication"],
+      githubUrl: "https://github.com/jeffreyjose07/scalable-chat-platform",
+      technologies: ["Spring Boot", "React", "TypeScript", "WebSocket", "Kafka", "Docker", "GitHub Actions", "Java"],
       highlights: [
         "Real-time messaging with WebSocket connections",
-        "Responsive design for all devices",
-        "Scalable backend architecture",
-        "User authentication and session management"
+        "Microservices architecture with Spring Boot",
+        "Comprehensive CI/CD pipeline with GitHub Actions",
+        "Automated testing and security scanning",
+        "Docker containerization for deployment",
+        "Event-driven architecture with Kafka integration",
+        "Enterprise-grade development workflow",
+        "Automated dependency updates and vulnerability scanning"
       ]
     }
   ];
