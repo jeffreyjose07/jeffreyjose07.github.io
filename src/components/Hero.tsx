@@ -4,7 +4,7 @@ import profileImage from "@/assets/jeffrey-profile.jpg";
 
 const Hero = () => {
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-hero text-white relative overflow-hidden">
+    <section id="hero" className="min-h-screen flex items-center justify-center bg-gradient-hero text-white relative overflow-hidden">
       {/* Enhanced animated background elements */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-white rounded-full blur-3xl floating" />

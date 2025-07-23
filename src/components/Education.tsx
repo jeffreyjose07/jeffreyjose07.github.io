@@ -20,7 +20,7 @@ const Education = () => {
   ];
 
   return (
-    <section className="py-24 bg-background relative overflow-hidden">
+    <section id="education" className="py-24 bg-background relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-20 right-20 w-32 h-32 bg-primary rounded-full blur-xl floating"></div>

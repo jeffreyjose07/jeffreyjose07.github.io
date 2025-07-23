@@ -4,7 +4,7 @@ import { Mail, Linkedin, Github, Phone, MapPin } from "lucide-react";
 
 const Contact = () => {
   return (
-    <section id="contact-section" className="py-24 bg-gradient-hero text-white relative overflow-hidden">
+    <section id="contact" className="py-24 bg-gradient-hero text-white relative overflow-hidden">
       {/* Enhanced background elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-white rounded-full blur-3xl floating"></div>
