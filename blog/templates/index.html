@@ -30,9 +30,62 @@
             }
         }
 
+        .main-layout {
+            display: grid;
+            grid-template-columns: 120px 1fr 120px;
+            max-width: 940px;
+            margin: 0 auto;
+            gap: 20px;
+            align-items: start;
+        }
+
         .container {
             max-width: 700px;
-            margin: 0 auto;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            height: 80vh;
+            overflow: hidden;
+            opacity: 0.15;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 10px;
+            line-height: 1.1;
+            color: #55ff55;
+            white-space: pre;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .sidebar.left {
+            text-align: right;
+        }
+
+        .sidebar.right {
+            text-align: left;
+        }
+
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 80px 1fr 80px;
+                gap: 15px;
+            }
+            
+            .sidebar {
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                max-width: 700px;
+            }
+            
+            .sidebar {
+                display: none;
+            }
         }
 
         h1 {
@@ -271,7 +324,9 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="main-layout">
+        <div class="sidebar left" id="leftSidebar"></div>
+        <div class="container">
         <div class="back-link">
             <a href="/">back to portfolio</a>
         </div>
@@ -295,6 +350,8 @@
         <div class="stats">
             total posts: {{totalPosts}}
         </div>
+        </div>
+        <div class="sidebar right" id="rightSidebar"></div>
     </div>
     
     <script>
@@ -348,6 +405,212 @@
             
             // Initialize stats
             updateStats();
+        });
+
+        // Terminal Pattern Animation System
+        class TerminalVisualizer {
+            constructor(elementId, options = {}) {
+                this.element = document.getElementById(elementId);
+                if (!this.element) return;
+                
+                this.chars = options.chars || "01_-=+*#@%&|\\/<>[]{}";
+                this.speed = options.speed || 120;
+                this.width = options.width || 12;
+                this.height = options.height || 60;
+                this.direction = options.direction || 'down';
+                this.density = options.density || 0.25;
+                this.pattern = [];
+                this.isAnimating = false;
+                
+                this.init();
+            }
+            
+            init() {
+                // Initialize pattern array
+                for (let i = 0; i < this.height; i++) {
+                    this.pattern[i] = this.generateRow();
+                }
+                
+                this.render();
+                this.startAnimation();
+                
+                // Pause animation when page is not visible
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        this.stopAnimation();
+                    } else {
+                        this.startAnimation();
+                    }
+                });
+            }
+            
+            generateRow() {
+                let row = '';
+                for (let i = 0; i < this.width; i++) {
+                    if (Math.random() < this.density) {
+                        row += this.chars[Math.floor(Math.random() * this.chars.length)];
+                    } else {
+                        row += ' ';
+                    }
+                }
+                return row;
+            }
+            
+            animate() {
+                if (!this.isAnimating) return;
+                
+                // Shift pattern based on direction
+                if (this.direction === 'down') {
+                    this.pattern.shift();
+                    this.pattern.push(this.generateRow());
+                } else {
+                    this.pattern.pop();
+                    this.pattern.unshift(this.generateRow());
+                }
+                
+                this.render();
+                this.animationId = setTimeout(() => this.animate(), this.speed);
+            }
+            
+            render() {
+                this.element.textContent = this.pattern.join('\n');
+            }
+            
+            startAnimation() {
+                if (!this.isAnimating) {
+                    this.isAnimating = true;
+                    this.animate();
+                }
+            }
+            
+            stopAnimation() {
+                this.isAnimating = false;
+                if (this.animationId) {
+                    clearTimeout(this.animationId);
+                }
+            }
+        }
+
+        // Matrix Rain Effect
+        class MatrixRain {
+            constructor(elementId, options = {}) {
+                this.element = document.getElementById(elementId);
+                if (!this.element) return;
+                
+                this.chars = "01アカサタナハマヤラワガザダバパ_-=+*#@%&";
+                this.columns = options.columns || 12;
+                this.speed = options.speed || 100;
+                this.trails = [];
+                this.isAnimating = false;
+                
+                this.initTrails();
+                this.startAnimation();
+            }
+            
+            initTrails() {
+                const height = Math.floor(this.element.offsetHeight / 12) || 60;
+                
+                for (let i = 0; i < this.columns; i++) {
+                    this.trails[i] = {
+                        x: i,
+                        y: Math.floor(Math.random() * height),
+                        speed: Math.random() * 3 + 1,
+                        length: Math.floor(Math.random() * 15) + 5,
+                        chars: []
+                    };
+                    
+                    // Initialize trail characters
+                    for (let j = 0; j < this.trails[i].length; j++) {
+                        this.trails[i].chars[j] = this.chars[Math.floor(Math.random() * this.chars.length)];
+                    }
+                }
+            }
+            
+            animate() {
+                if (!this.isAnimating) return;
+                
+                const height = Math.floor(this.element.offsetHeight / 12) || 60;
+                let output = '';
+                
+                // Create matrix of spaces
+                const matrix = Array(height).fill().map(() => Array(this.columns).fill(' '));
+                
+                // Update and draw trails
+                this.trails.forEach(trail => {
+                    // Move trail down
+                    trail.y += trail.speed * 0.3;
+                    
+                    // Reset trail when it goes off screen
+                    if (trail.y > height + trail.length) {
+                        trail.y = -trail.length;
+                        trail.speed = Math.random() * 3 + 1;
+                    }
+                    
+                    // Draw trail
+                    for (let i = 0; i < trail.length; i++) {
+                        const y = Math.floor(trail.y - i);
+                        if (y >= 0 && y < height && trail.x < this.columns) {
+                            // Randomly change characters
+                            if (Math.random() < 0.1) {
+                                trail.chars[i] = this.chars[Math.floor(Math.random() * this.chars.length)];
+                            }
+                            matrix[y][trail.x] = trail.chars[i];
+                        }
+                    }
+                });
+                
+                // Convert matrix to string
+                output = matrix.map(row => row.join('')).join('\n');
+                this.element.textContent = output;
+                
+                this.animationId = setTimeout(() => this.animate(), this.speed);
+            }
+            
+            startAnimation() {
+                if (!this.isAnimating) {
+                    this.isAnimating = true;
+                    this.animate();
+                }
+            }
+            
+            stopAnimation() {
+                this.isAnimating = false;
+                if (this.animationId) {
+                    clearTimeout(this.animationId);
+                }
+            }
+        }
+
+        // Initialize visualizers when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if we're on a wide enough screen
+            if (window.innerWidth > 1024) {
+                // Left sidebar - subtle pattern flow
+                new TerminalVisualizer('leftSidebar', {
+                    chars: "01_-=+*",
+                    speed: 200,
+                    direction: 'down',
+                    density: 0.2,
+                    width: 12
+                });
+                
+                // Right sidebar - matrix rain effect
+                new MatrixRain('rightSidebar', {
+                    columns: 12,
+                    speed: 150
+                });
+            }
+            
+            // Reinitialize on window resize
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    if (window.innerWidth > 1024) {
+                        location.reload();
+                    }
+                }, 250);
+            });
         });
     </script>
 </body>
