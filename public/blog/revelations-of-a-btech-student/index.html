@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>the revelations of a btech student - Jeffrey Jose</title>
+    <meta name="description" content="my journey from failing semester exams to achieving GATE rank 170 - lessons learned about learning, persistence, and finding your own path" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background-color: #000000;
+            color: #c9c9c9;
+            line-height: 1.6;
+            padding: 20px;
+            font-size: 15px;
+            text-rendering: optimizeLegibility;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 40px 20px;
+                font-size: 16px;
+            }
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            margin-bottom: 18px;
+        }
+
+        .back-link a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        @media (min-width: 768px) {
+            .back-link a {
+                font-size: 13px;
+            }
+        }
+
+        .back-link a:hover {
+            color: #aaaaaa;
+        }
+
+        .back-link a:before {
+            content: '← ';
+            color: #666666;
+        }
+
+        .post-header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 20px;
+        }
+
+        .post-title {
+            font-size: 16px;
+            font-weight: normal;
+            margin-bottom: 10px;
+            text-transform: lowercase;
+            color: #55ff55;
+            letter-spacing: 0.3px;
+            line-height: 1.3;
+        }
+
+        @media (min-width: 768px) {
+            .post-title {
+                font-size: 18px;
+            }
+        }
+
+        .post-meta {
+            color: #ff8855;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-meta {
+                font-size: 13px;
+            }
+        }
+
+        .post-content {
+            line-height: 1.7;
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h2 {
+            font-size: 14px;
+            font-weight: normal;
+            margin: 30px 0 15px 0;
+            color: #5588ff;
+            text-transform: lowercase;
+            letter-spacing: 0.2px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content h2 {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h3 {
+            font-size: 13px;
+            font-weight: normal;
+            margin: 25px 0 12px 0;
+            color: #ff55ff;
+            text-transform: lowercase;
+        }
+
+        @media (min-width: 768px) {
+            .post-content h3 {
+                font-size: 14px;
+            }
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .post-content li {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content li {
+                font-size: 15px;
+            }
+        }
+
+        .post-content code {
+            background-color: #111111;
+            padding: 2px 4px;
+            border-radius: 1px;
+            font-family: inherit;
+            color: #ffff55;
+            font-size: 13px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content code {
+                font-size: 14px;
+            }
+        }
+
+        .post-content pre {
+            background-color: #111111;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content pre {
+                font-size: 13px;
+            }
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .post-content a {
+            color: #55ffff;
+            text-decoration: none;
+            border-bottom: 1px solid #334444;
+        }
+
+        .post-content a:hover {
+            color: #77ffff;
+            border-bottom-color: #55ffff;
+        }
+
+        .post-content blockquote {
+            border-left: 2px solid #333333;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #999999;
+            font-style: italic;
+        }
+
+        /* Semantic color system */
+        .success {
+            color: #55ff55;
+            font-weight: normal;
+        }
+
+        .structure {
+            color: #5588ff;
+        }
+
+        .process {
+            color: #ffff55;
+        }
+
+        .attention {
+            color: #ff8855;
+        }
+
+        .meta {
+            color: #ff55ff;
+        }
+
+        .connection {
+            color: #55ffff;
+        }
+
+        .neutral {
+            color: #c9c9c9;
+        }
+
+        /* Reading progress indicator */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: #55ff55;
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+
+        /* Subtle improvements */
+        .post-content p:first-of-type:first-letter {
+            color: #55ff55;
+            font-size: 18px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p:first-of-type:first-letter {
+                font-size: 20px;
+            }
+        }
+
+        /* Footer with post info */
+        .post-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #222222;
+            font-size: 11px;
+            color: #555555;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 768px) {
+            .post-footer {
+                font-size: 12px;
+            }
+        }
+
+        .post-footer .tag {
+            color: #ff55ff;
+        }
+
+        /* Mobile improvements */
+        @media (max-width: 767px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .post-content pre {
+                margin-left: -10px;
+                margin-right: -10px;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="back-link">
+            <a href="/blog">back to blog</a>
+        </div>
+        
+        <header class="post-header">
+            <h1 class="post-title">001: the revelations of a btech student</h1>
+            <div class="post-meta">2017.04.20</div>
+        </header>
+        
+        <article class="post-content">
+            <p><img src="/blog/images/btech-revelation-1.jpg" alt="btech revelation 1"></p>
+<p>I&#39;m Jeffrey Jose, a B.Tech Computer Science graduate from Government College of Engineering, Kannur, Kerala. This is the story of how failure became my greatest teacher, and how a rank of 170 in GATE 2017 taught me more about learning than four years of engineering ever did.</p>
+<h2>the comfortable mediocrity of engineering college</h2>
+<p>During my B.Tech, I failed two semester exams. Not because I couldn&#39;t understand the concepts, but because I had developed a dangerous relationship with comfort zones. I was the student who would study just enough to pass, who would skip the difficult subjects, who believed that intelligence meant not having to work hard.</p>
+<p>The irony wasn&#39;t lost on me when TCS offered me a job placement. Here I was, having barely managed to graduate, being handed a software engineering position. But something inside me rebelled against taking the easy path. I wanted to prove to myself that I could do better, that I could push beyond the mediocre ceiling I had built for myself.</p>
+<h2>the decision that changed everything</h2>
+<p>In June, after graduation, I made a decision that would fundamentally alter my relationship with learning: I would prepare for GATE 2017. Not because anyone expected it of me, but because I needed to know if I was capable of more than just getting by.</p>
+<p><img src="/blog/images/btech-revelation-2.jpg" alt="btech revelation 2"></p>
+<p>This wasn&#39;t about career advancement or societal expectations. This was about confronting the uncomfortable question: was I actually capable of sustained, disciplined effort? Or was I forever destined to be someone who did just enough?</p>
+<h2>identifying the demons</h2>
+<p>Before I could change, I had to face the brutal truth about my study habits:</p>
+<h3>the revision paradox</h3>
+<p>I was terrible at periodic revision. I would study a topic once, feel confident, and never return to it until the exam. This created the illusion of knowledge while building nothing substantial.</p>
+<h3>the endurance myth</h3>
+<p>I couldn&#39;t study for long hours. I had convinced myself that this was just &quot;how I was&quot; - that some people were marathon learners and others were sprinters. This was a convenient lie that masked my lack of discipline.</p>
+<h3>the avoidance <span class="meta">pattern</span></h3>
+<p>I would systematically skip difficult subjects. Whenever something felt challenging, I would rationalize why it wasn&#39;t important or tell myself I would &quot;come back to it later.&quot; Later never came.</p>
+<h3>the entertainment escape</h3>
+<p>Binge-watching movies and TV series wasn&#39;t just a hobby - it was my primary coping mechanism for avoiding the discomfort of difficult learning.</p>
+<h2>the systematic reconstruction</h2>
+<p>Faced with these patterns that had defined my academic life, I had to <span class="process">build</span> new systems from scratch:</p>
+<h3>flashcards as memory anchors</h3>
+<p>I discovered that my brain needed repetition, but not the mindless repetition of rote learning. Flashcards became my way of engaging with concepts actively, of testing myself rather than just reviewing.</p>
+<h3>digital minimalism before it was cool</h3>
+<p>I deleted every app that provided instant gratification. Games, social media, streaming services - everything that offered an easy escape from the discomfort of focused study had to go.</p>
+<h3>the multi-subject approach</h3>
+<p>Instead of avoiding difficult subjects, I forced myself to study multiple subjects systematically. This prevented me from falling into the familiar <span class="meta">pattern</span> of avoidance.</p>
+<h3>video lectures as bridges</h3>
+<p>When textbooks felt impenetrable, video lectures became my <span class="connection">bridge</span> to understanding. They provided the visual and auditory context that my learning style needed.</p>
+<h3>coding as applied learning</h3>
+<p>Platforms like CodeChef and HackerRank transformed programming from an abstract concept into a tangible skill. Every problem solved was evidence that learning was actually happening.</p>
+<p><img src="/blog/images/btech-revelation-3.jpg" alt="btech revelation 3"></p>
+<h2>the <span class="meta">philosophy</span> of learning vs studying</h2>
+<p>What I discovered during those months wasn&#39;t just about GATE preparation - it was about the fundamental difference between studying and learning:</p>
+<p><strong>Studying is about memorizing information. Learning is about understanding concepts.</strong></p>
+<p>This distinction became the foundation of everything that followed. I wasn&#39;t trying to cram facts into my head; I was trying to <span class="process">build</span> a <span class="structure">framework</span> for understanding how computer science concepts connected to each other and to real-world problems.</p>
+<h2>the revelation about talent vs dedication</h2>
+<p>The most important revelation came halfway through my preparation: <strong>dedication matters more than natural talent.</strong> </p>
+<p>I had spent years believing that some people were just &quot;naturally good&quot; at academics while others had to struggle. GATE preparation shattered this myth. I watched students with seemingly effortless intelligence struggle with consistency, while students who had to fight for every concept slowly but steadily built unshakeable foundations.</p>
+<p>The playing field wasn&#39;t about raw intelligence - it was about who could sustain effort over time, who could learn from failure, who could adapt their methods when something wasn&#39;t <span class="success">working</span>.</p>
+<h2>finding individual study methods</h2>
+<p>Perhaps the most liberating discovery was that there is no one-size-fits-all approach to learning. The study methods that worked for my classmates didn&#39;t work for me, and that was perfectly fine.</p>
+<p>My learning style required:</p>
+<ul>
+<li>Visual representations of abstract concepts</li>
+<li>Frequent self-testing through active recall</li>
+<li><span class="attention">Breaking</span> complex topics into smaller, manageable chunks</li>
+<li>Connecting new information to previously learned concepts</li>
+<li>Regular practice rather than marathon study sessions</li>
+</ul>
+<p>Understanding my individual learning profile wasn&#39;t about making excuses - it was about optimizing for effectiveness.</p>
+<h2>the importance of persistence and self-motivation</h2>
+<p>External motivation fades. Parents stop checking on your studies, professors stop tracking your progress, friends stop caring about your goals. What remains is the relationship you have with yourself and your commitments.</p>
+<p>GATE preparation taught me that self-motivation isn&#39;t about feeling motivated all the time - it&#39;s about having systems that work even when motivation fails. It&#39;s about showing up consistently, especially on the days when you don&#39;t feel like it.</p>
+<h2>the moment of truth</h2>
+<p><strong>GATE 2017 Score: 69.67</strong><br><strong>Normalized Score: 66.91</strong><br><strong>All India Rank: 170</strong></p>
+<p>But the numbers, while satisfying, weren&#39;t the real victory. The real victory was discovering that I was capable of sustained effort, that I could learn difficult concepts, that I could overcome patterns that had limited me for years.</p>
+<h2>lessons from the <span class="meta">void</span></h2>
+<p>Looking back, those months of GATE preparation were about much more than an entrance exam. They were about learning how to learn, how to fail productively, how to <span class="process">build</span> systems that support growth rather than comfort.</p>
+<p>The student who failed two semester exams and the person who achieved rank 170 weren&#39;t different people - they were the same person who had learned to approach learning differently.</p>
+<p>Sometimes the greatest revelations come not from <span class="success">success</span>, but from the willingness to confront your limitations and systematically work to overcome them.</p>
+<hr>
+<p><em>This post was originally written in April 2017, shortly before GATE results were announced. The journey described here laid the foundation for everything that followed - both academically and personally.</em></p>
+
+        </article>
+        
+        <footer class="post-footer">
+            <div>
+                words: ~1131 · reading time: ~6 min · tags: <span class="tag neutral">btech</span>, <span class="tag neutral">gate-exam</span>, <span class="tag neutral">personal-journey</span>, <span class="tag neutral">study-methods</span>, <span class="tag neutral">academic-failure</span>, <span class="tag neutral">persistence</span>, <span class="tag neutral">self-discovery</span>
+            </div>
+        </footer>
+    </div>
+    
+    <div class="reading-progress"></div>
+    
+    <script>
+        // Simple reading progress indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('.reading-progress').style.width = scrolled + '%';
+        });
+    </script>
+</body>
+</html>
