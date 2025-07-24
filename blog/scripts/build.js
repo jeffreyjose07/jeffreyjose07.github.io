@@ -160,12 +160,25 @@ marked.setOptions({
 });
 
 // Utility functions
-function slugify(text) {
-    return text
+function createCleanSlug(title, customSlug) {
+    // Use custom slug if provided in frontmatter
+    if (customSlug) {
+        return customSlug.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-');
+    }
+    
+    // Generate clean slug from title
+    return title
         .toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/[\s_-]+/g, '-')
-        .replace(/^-+|-+$/g, '');
+        .replace(/[^a-z0-9\s-]/g, '')     // Remove special chars except spaces and hyphens
+        .replace(/\s+/g, '-')             // Convert spaces to hyphens
+        .replace(/-+/g, '-')              // Multiple hyphens to single
+        .substring(0, 50)                 // Max 50 characters
+        .replace(/-$/, '');               // Remove trailing hyphen
+}
+
+// Legacy function for backward compatibility
+function slugify(text) {
+    return createCleanSlug(text);
 }
 
 function formatDate(dateString) {
@@ -190,7 +203,7 @@ function loadTemplate(templateName) {
 }
 
 // Process a single blog post
-function processPost(filename, episodeNumber) {
+function processPost(filename, episodeNumber, allPosts = []) {
     const filePath = path.join(POSTS_DIR, filename);
     const fileContent = fs.readFileSync(filePath, 'utf8');
     
@@ -212,6 +225,16 @@ function processPost(filename, episodeNumber) {
         }).join(', ')
         : '';
     
+    // Create post slug
+    const slug = createCleanSlug(frontmatter.title, frontmatter.slug);
+    
+    // Generate navigation links
+    const currentIndex = allPosts.findIndex(post => post.episodeNumber === episodeNumber);
+    const prevPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
+    const nextPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
+    
+    const navigationHtml = generatePostNavigation(prevPost, nextPost);
+    
     // Load and populate template
     const template = loadTemplate('post');
     const html = template
@@ -222,10 +245,11 @@ function processPost(filename, episodeNumber) {
         .replace(/{{content}}/g, htmlContent)
         .replace(/{{wordCount}}/g, wordCount)
         .replace(/{{readingTime}}/g, readingTime)
-        .replace(/{{tagsFormatted}}/g, tagsFormatted);
+        .replace(/{{tagsFormatted}}/g, tagsFormatted)
+        .replace(/{{navigation}}/g, navigationHtml)
+        .replace(/{{slug}}/g, slug);
     
-    // Create post slug and output directory
-    const slug = frontmatter.slug || slugify(frontmatter.title);
+    // Create output directory
     const outputDir = path.join(OUTPUT_DIR, slug);
     
     if (!fs.existsSync(outputDir)) {
@@ -243,6 +267,34 @@ function processPost(filename, episodeNumber) {
         description: frontmatter.description,
         tags: frontmatter.tags || []
     };
+}
+
+// Generate navigation HTML for posts
+function generatePostNavigation(prevPost, nextPost) {
+    let navHtml = '<nav class="post-navigation">';
+    
+    if (prevPost) {
+        navHtml += `
+            <div class="nav-previous">
+                <a href="/blog/${prevPost.slug}">
+                    <span class="nav-label">← previous</span>
+                    <span class="nav-title">${prevPost.title}</span>
+                </a>
+            </div>`;
+    }
+    
+    if (nextPost) {
+        navHtml += `
+            <div class="nav-next">
+                <a href="/blog/${nextPost.slug}">
+                    <span class="nav-label">next →</span>
+                    <span class="nav-title">${nextPost.title}</span>
+                </a>
+            </div>`;
+    }
+    
+    navHtml += '</nav>';
+    return navHtml;
 }
 
 // Generate blog index with tag filtering
@@ -284,6 +336,88 @@ function generateIndex(posts) {
     fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), html);
 }
 
+// Generate RSS feed
+function generateRSSfeed(posts) {
+    const sortedPosts = posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const latestPosts = sortedPosts.slice(0, 10); // Only include latest 10 posts
+    
+    const rssItems = latestPosts.map(post => {
+        const pubDate = new Date(post.date).toUTCString();
+        const postUrl = `https://jeffreyjose07.github.io/blog/${post.slug}`;
+        
+        return `    <item>
+      <title><![CDATA[${post.title}]]></title>
+      <description><![CDATA[${post.description || ''}]]></description>
+      <link>${postUrl}</link>
+      <guid isPermaLink="true">${postUrl}</guid>
+      <pubDate>${pubDate}</pubDate>
+    </item>`;
+    }).join('\n');
+
+    const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>${config.title} - ${config.author}</title>
+    <description>${config.description}</description>
+    <link>https://jeffreyjose07.github.io/blog</link>
+    <atom:link href="https://jeffreyjose07.github.io/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <language>en-us</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <generator>Custom Node.js Blog Builder</generator>
+${rssItems}
+  </channel>
+</rss>`;
+
+    fs.writeFileSync(path.join(OUTPUT_DIR, 'feed.xml'), rssXml);
+}
+
+// Generate archive page
+function generateArchive(posts) {
+    const template = loadTemplate('archive');
+    
+    // Group posts by year
+    const postsByYear = {};
+    posts.forEach(post => {
+        const year = new Date(post.date).getFullYear();
+        if (!postsByYear[year]) {
+            postsByYear[year] = [];
+        }
+        postsByYear[year].push(post);
+    });
+    
+    // Sort years in descending order
+    const years = Object.keys(postsByYear).sort((a, b) => b - a);
+    
+    // Generate year sections
+    const yearSectionsHtml = years.map(year => {
+        const yearPosts = postsByYear[year].sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        const postsHtml = yearPosts.map(post => {
+            const episodeNum = post.episodeNumber.toString().padStart(3, '0');
+            return `            <li>
+                <a href="/blog/${post.slug}">
+                    <span class="post-number">${episodeNum}</span><span class="post-title">: ${post.title}</span><span class="post-date">${formatDate(post.date)}</span>
+                </a>
+            </li>`;
+        }).join('\n');
+        
+        return `        <div class="year-section">
+            <h2 class="year-title">${year}</h2>
+            <ul class="post-list">
+${postsHtml}
+            </ul>
+        </div>`;
+    }).join('\n');
+    
+    // Populate template
+    const html = template
+        .replace(/{{yearSections}}/g, yearSectionsHtml)
+        .replace(/{{totalPosts}}/g, posts.length);
+    
+    // Write archive file
+    fs.writeFileSync(path.join(OUTPUT_DIR, 'archive.html'), html);
+}
+
 // Main build function
 function build() {
     console.log('🚀 Building blog with advanced semantic coloring...');
@@ -298,17 +432,32 @@ function build() {
         return;
     }
     
+    // First pass: create post metadata for navigation
     const posts = [];
-    
-    // Process each post
     files.forEach((file, index) => {
-        const episodeNumber = index; // Start from 000 instead of 001
+        const episodeNumber = index; // Start from 000
+        const filePath = path.join(POSTS_DIR, file);
+        const fileContent = fs.readFileSync(filePath, 'utf8');
+        const { data: frontmatter } = matter(fileContent);
+        
+        posts.push({
+            episodeNumber,
+            title: frontmatter.title,
+            slug: createCleanSlug(frontmatter.title, frontmatter.slug),
+            date: frontmatter.date,
+            description: frontmatter.description,
+            tags: frontmatter.tags || []
+        });
+    });
+    
+    // Second pass: process each post with navigation context
+    files.forEach((file, index) => {
+        const episodeNumber = index;
         console.log(`📄 Processing ${file} as episode ${episodeNumber.toString().padStart(3, '0')}...`);
         
         try {
-            const post = processPost(file, episodeNumber);
-            posts.push(post);
-            console.log(`✅ Generated ${post.slug}/index.html with semantic coloring`);
+            const post = processPost(file, episodeNumber, posts);
+            console.log(`✅ Generated ${post.slug}/index.html with navigation`);
         } catch (error) {
             console.error(`❌ Error processing ${file}:`, error.message);
         }
@@ -319,7 +468,17 @@ function build() {
     generateIndex(posts);
     console.log('✅ Generated blog index.html with tag filters');
     
-    console.log(`🎉 Blog build complete! Generated ${posts.length} posts with advanced semantic highlighting.`);
+    // Generate RSS feed
+    console.log('📡 Generating RSS feed...');
+    generateRSSfeed(posts);
+    console.log('✅ Generated feed.xml');
+    
+    // Generate archive page
+    console.log('📚 Generating archive page...');
+    generateArchive(posts);
+    console.log('✅ Generated archive.html');
+    
+    console.log(`🎉 Blog build complete! Generated ${posts.length} posts with navigation, RSS feed, archive, and semantic highlighting.`);
 }
 
 // Run build if called directly

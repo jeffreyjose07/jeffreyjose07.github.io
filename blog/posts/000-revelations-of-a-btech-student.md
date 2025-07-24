@@ -3,7 +3,7 @@ title: "the revelations of a btech student"
 slug: "revelations-of-a-btech-student"
 date: "2017-04-20"
 description: "my journey from failing semester exams to achieving GATE rank 170 - lessons learned about learning, persistence, and finding your own path"
-tags: ["btech", "gate-exam", "personal-journey", "study-methods", "academic-failure", "persistence", "self-discovery"]
+tags: ["personal"]
 ---
 
 ![btech revelation 1](/blog/images/btech-revelation-1.jpg)

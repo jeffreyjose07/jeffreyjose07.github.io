@@ -1,7 +1,7 @@
 ---
 title: "creating this portfolio website and blog"
 date: "2025-01-24"
-tags: ["portfolio", "web-dev", "react"]
+tags: ["frontend", "meta"]
 description: "How I built my portfolio website and blog using React, TypeScript, and Vite"
 readingTime: 2
 wordCount: 500

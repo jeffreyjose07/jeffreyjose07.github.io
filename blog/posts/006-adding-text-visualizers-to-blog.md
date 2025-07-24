@@ -1,7 +1,8 @@
 ---
 title: "adding text-based visualizers to the blog homepage"
+slug: "ascii-visualizers"
 date: "2025-01-24"
-tags: ["web-dev", "javascript", "animation", "terminal-aesthetic", "ui-design"]
+tags: ["frontend", "tutorials", "meta"]
 description: "How I reverse-engineered and implemented animated ASCII art visualizers inspired by musicforprogramming.net for my blog's sidebar"
 readingTime: 5
 wordCount: 1200

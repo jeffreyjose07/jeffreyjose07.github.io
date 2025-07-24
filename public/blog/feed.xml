@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>blog - Jeffrey Jose</title>
+    <description>as a little shivering thing of silence, i try. maneuvering against the hissing of nothing, searching for something real in the spaces between.</description>
+    <link>https://jeffreyjose07.github.io/blog</link>
+    <atom:link href="https://jeffreyjose07.github.io/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 24 Jul 2025 15:14:53 GMT</lastBuildDate>
+    <generator>Custom Node.js Blog Builder</generator>
+    <item>
+      <title><![CDATA[adding text-based visualizers to the blog homepage]]></title>
+      <description><![CDATA[How I reverse-engineered and implemented animated ASCII art visualizers inspired by musicforprogramming.net for my blog's sidebar]]></description>
+      <link>https://jeffreyjose07.github.io/blog/ascii-visualizers</link>
+      <guid isPermaLink="true">https://jeffreyjose07.github.io/blog/ascii-visualizers</guid>
+      <pubDate>Fri, 24 Jan 2025 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title><![CDATA[how i write blogs with claude - a transparent process]]></title>
+      <description><![CDATA[A detailed walkthrough of how I use Claude to create blog posts, from initial prompts to final output]]></description>
+      <link>https://jeffreyjose07.github.io/blog/ai-assisted-writing</link>
+      <guid isPermaLink="true">https://jeffreyjose07.github.io/blog/ai-assisted-writing</guid>
+      <pubDate>Fri, 24 Jan 2025 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title><![CDATA[automating the void - building a frictionless blog system]]></title>
+      <description><![CDATA[How I solved the pain of manual blog creation by building an automated system that preserves the terminal aesthetic while eliminating friction]]></description>
+      <link>https://jeffreyjose07.github.io/blog/automated-blog-system</link>
+      <guid isPermaLink="true">https://jeffreyjose07.github.io/blog/automated-blog-system</guid>
+      <pubDate>Fri, 24 Jan 2025 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title><![CDATA[building a scalable chat platform with claude code]]></title>
+      <description><![CDATA[How I built a real-time chat platform using Spring Boot, React, and Claude Code as my pair programming partner]]></description>
+      <link>https://jeffreyjose07.github.io/blog/scalable-chat-platform</link>
+      <guid isPermaLink="true">https://jeffreyjose07.github.io/blog/scalable-chat-platform</guid>
+      <pubDate>Fri, 24 Jan 2025 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title><![CDATA[creating this portfolio website and blog]]></title>
+      <description><![CDATA[How I built my portfolio website and blog using React, TypeScript, and Vite]]></description>
+      <link>https://jeffreyjose07.github.io/blog/creating-this-portfolio-website-and-blog</link>
+      <guid isPermaLink="true">https://jeffreyjose07.github.io/blog/creating-this-portfolio-website-and-blog</guid>
+      <pubDate>Fri, 24 Jan 2025 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title><![CDATA[brainwash yourself for success]]></title>
+      <description><![CDATA[how i overcame procrastination and transformed my study habits for GATE preparation - a journey from last-minute cramming to systematic learning]]></description>
+      <link>https://jeffreyjose07.github.io/blog/brainwash-yourself-for-success</link>
+      <guid isPermaLink="true">https://jeffreyjose07.github.io/blog/brainwash-yourself-for-success</guid>
+      <pubDate>Sat, 22 Apr 2017 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title><![CDATA[the revelations of a btech student]]></title>
+      <description><![CDATA[my journey from failing semester exams to achieving GATE rank 170 - lessons learned about learning, persistence, and finding your own path]]></description>
+      <link>https://jeffreyjose07.github.io/blog/revelations-of-a-btech-student</link>
+      <guid isPermaLink="true">https://jeffreyjose07.github.io/blog/revelations-of-a-btech-student</guid>
+      <pubDate>Thu, 20 Apr 2017 00:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

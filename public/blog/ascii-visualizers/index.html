@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>adding text-based visualizers to the blog homepage - Jeffrey Jose</title>
+    <meta name="description" content="How I reverse-engineered and implemented animated ASCII art visualizers inspired by musicforprogramming.net for my blog's sidebar" />
+    
+    <!-- SEO Meta Tags -->
+    <meta property="og:title" content="adding text-based visualizers to the blog homepage">
+    <meta property="og:description" content="How I reverse-engineered and implemented animated ASCII art visualizers inspired by musicforprogramming.net for my blog's sidebar">
+    <meta property="og:url" content="https://jeffreyjose07.github.io/blog/ascii-visualizers">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="adding text-based visualizers to the blog homepage">
+    <meta name="twitter:description" content="How I reverse-engineered and implemented animated ASCII art visualizers inspired by musicforprogramming.net for my blog's sidebar">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background-color: #000000;
+            color: #c9c9c9;
+            line-height: 1.6;
+            padding: 20px;
+            font-size: 15px;
+            text-rendering: optimizeLegibility;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 40px 20px;
+                font-size: 16px;
+            }
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            margin-bottom: 18px;
+        }
+
+        .back-link a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        @media (min-width: 768px) {
+            .back-link a {
+                font-size: 13px;
+            }
+        }
+
+        .back-link a:hover {
+            color: #aaaaaa;
+        }
+
+        .back-link a:before {
+            content: '← ';
+            color: #666666;
+        }
+
+        .post-header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 20px;
+        }
+
+        .post-title {
+            font-size: 16px;
+            font-weight: normal;
+            margin-bottom: 10px;
+            text-transform: lowercase;
+            color: #55ff55;
+            letter-spacing: 0.3px;
+            line-height: 1.3;
+        }
+
+        @media (min-width: 768px) {
+            .post-title {
+                font-size: 18px;
+            }
+        }
+
+        .post-meta {
+            color: #ff8855;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-meta {
+                font-size: 13px;
+            }
+        }
+
+        .post-content {
+            line-height: 1.7;
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h2 {
+            font-size: 14px;
+            font-weight: normal;
+            margin: 30px 0 15px 0;
+            color: #5588ff;
+            text-transform: lowercase;
+            letter-spacing: 0.2px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content h2 {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h3 {
+            font-size: 13px;
+            font-weight: normal;
+            margin: 25px 0 12px 0;
+            color: #ff55ff;
+            text-transform: lowercase;
+        }
+
+        @media (min-width: 768px) {
+            .post-content h3 {
+                font-size: 14px;
+            }
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .post-content li {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content li {
+                font-size: 15px;
+            }
+        }
+
+        .post-content code {
+            background-color: #111111;
+            padding: 2px 4px;
+            border-radius: 1px;
+            font-family: inherit;
+            color: #ffff55;
+            font-size: 13px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content code {
+                font-size: 14px;
+            }
+        }
+
+        .post-content pre {
+            background-color: #111111;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content pre {
+                font-size: 13px;
+            }
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .post-content a {
+            color: #55ffff;
+            text-decoration: none;
+            border-bottom: 1px solid #334444;
+        }
+
+        .post-content a:hover {
+            color: #77ffff;
+            border-bottom-color: #55ffff;
+        }
+
+        .post-content blockquote {
+            border-left: 2px solid #333333;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #999999;
+            font-style: italic;
+        }
+
+        /* Semantic color system */
+        .success {
+            color: #55ff55;
+            font-weight: normal;
+        }
+
+        .structure {
+            color: #5588ff;
+        }
+
+        .process {
+            color: #ffff55;
+        }
+
+        .attention {
+            color: #ff8855;
+        }
+
+        .meta {
+            color: #ff55ff;
+        }
+
+        .connection {
+            color: #55ffff;
+        }
+
+        .neutral {
+            color: #c9c9c9;
+        }
+
+        /* Reading progress indicator */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: #55ff55;
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+
+        /* Subtle improvements */
+        .post-content p:first-of-type:first-letter {
+            color: #55ff55;
+            font-size: 18px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p:first-of-type:first-letter {
+                font-size: 20px;
+            }
+        }
+
+        /* Footer with post info */
+        .post-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #222222;
+            font-size: 11px;
+            color: #555555;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 768px) {
+            .post-footer {
+                font-size: 12px;
+            }
+        }
+
+        .post-footer .tag {
+            color: #ff55ff;
+        }
+
+        /* Image styling */
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Mobile improvements */
+        @media (max-width: 767px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .post-content pre {
+                margin-left: -10px;
+                margin-right: -10px;
+                border-radius: 0;
+            }
+
+            .post-content img {
+                margin: 15px auto;
+                max-width: calc(100% - 20px);
+            }
+        }
+
+        /* Post Navigation */
+        .post-navigation {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #333333;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .nav-previous, .nav-next {
+            padding: 15px;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            background-color: #111111;
+        }
+
+        .nav-previous a, .nav-next a {
+            display: block;
+            color: #c9c9c9;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-previous a:hover, .nav-next a:hover {
+            color: #ffffff;
+        }
+
+        .nav-next {
+            text-align: right;
+        }
+
+        .nav-label {
+            display: block;
+            font-size: 11px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .nav-title {
+            display: block;
+            font-size: 14px;
+            color: #c9c9c9;
+            line-height: 1.3;
+        }
+
+        .nav-previous a:hover .nav-title, .nav-next a:hover .nav-title {
+            color: #ffffff;
+        }
+
+        @media (max-width: 767px) {
+            .post-navigation {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .nav-next {
+                text-align: left;
+            }
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            margin-bottom: 10px;
+            font-size: 11px;
+            color: #666666;
+        }
+
+        .breadcrumb a {
+            color: #888888;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: #aaaaaa;
+        }
+
+        .breadcrumb span {
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>adding text-based visualizers to the blog homepage</span>
+        </div>
+        
+        <div class="back-link">
+            <a href="/blog">back to blog</a>
+        </div>
+        
+        <header class="post-header">
+            <h1 class="post-title">006: adding text-based visualizers to the blog homepage</h1>
+            <div class="post-meta">2025.01.24</div>
+        </header>
+        
+        <article class="post-content">
+            <p>Sometimes you see something cool on the internet and think &quot;I want that for my site.&quot; That&#39;s exactly what happened when I noticed the subtle text-based music visualizer on <strong>musicforprogramming.net</strong>. The ambient, matrix-like animation perfectly complemented their <span class="meta">minimal</span> <span class="meta">aesthetic</span> without being distracting.</p>
+<p>I wanted something similar for my blog - animated text patterns that would enhance the <span class="meta">terminal</span> vibe without pulling focus from the actual content.</p>
+<h2>the inspiration</h2>
+<p>The <strong>musicforprogramming.net</strong> visualizer caught my attention because it solved a common problem: how do you add visual interest to a <span class="meta">minimal</span> design without <span class="attention">breaking</span> the <span class="meta">aesthetic</span>? Their solution was elegant - subtle, monospace text animations that felt like background processes running in a <span class="meta">terminal</span>.</p>
+<p>My blog already had the <span class="meta">terminal</span> <span class="meta">aesthetic</span> down - black background, <strong>Monaco</strong> font, green accent colors. What it lacked was that ambient, &quot;<span class="structure">system</span> running in the background&quot; feeling that would make the page feel more alive.</p>
+<h2>the research phase</h2>
+<p>Instead of trying to scrape the exact <span class="process">code</span> from <strong>musicforprogramming.net</strong> (which didn&#39;t work anyway), I researched the broader landscape of text-based visualizers and <strong>ASCII</strong> art animations.</p>
+<h3>common patterns i discovered:</h3>
+<p><strong>Matrix rain effects</strong> - The classic green characters falling down the screen
+<strong>Random character cycling</strong> - Characters that randomly change and settle
+<strong><span class="meta">Terminal</span> <span class="meta">pattern</span> flows</strong> - Subtle streams of technical symbols
+<strong>Geometric <strong>ASCII</strong> art</strong> - Shapes and patterns using text characters</p>
+<p>The key insight was that effective text visualizers follow these principles:</p>
+<ul>
+<li><strong>Low visual weight</strong> - subtle enough not to compete with main content</li>
+<li><strong>Consistent character sets</strong> - using symbols that match the site&#39;s theme</li>
+<li><strong><span class="success">Performance</span> conscious</strong> - animations that don&#39;t bog down the page</li>
+<li><strong>Responsive aware</strong> - hidden on mobile where they&#39;d be distracting</li>
+</ul>
+<h2>the technical implementation</h2>
+<p>I implemented two different animation systems to create variety:</p>
+<h3>the <span class="meta">terminal</span> <span class="meta">pattern</span> visualizer</h3>
+<p>This creates a subtle flow of programming-related characters moving down the left sidebar:</p>
+<pre><code class="language-javascript">class TerminalVisualizer {
+    constructor(elementId, options = {}) {
+        this.chars = options.chars || &quot;01_-=+*#@%&amp;|\\/&lt;&gt;[]{}&quot;;
+        this.speed = options.speed || 120;
+        this.density = options.density || 0.25;
+        // ... more initialization
+    }
+    
+    generateRow() {
+        let row = &#39;&#39;;
+        for (let i = 0; i &lt; this.width; i++) {
+            if (Math.random() &lt; this.density) {
+                row += this.chars[Math.floor(Math.random() * this.chars.length)];
+            } else {
+                row += &#39; &#39;;
+            }
+        }
+        return row;
+    }
+}
+</code></pre>
+<p>The <strong>density</strong> parameter controls how sparse or dense the <span class="meta">pattern</span> is. I settled on 0.2 (20% character density) for a subtle effect that doesn&#39;t overwhelm.</p>
+<h3>the matrix rain effect</h3>
+<p>The right sidebar gets a more dynamic matrix-style rain with Japanese characters mixed with programming symbols:</p>
+<pre><code class="language-javascript">class MatrixRain {
+    constructor(elementId, options = {}) {
+        this.chars = &quot;01アカサタナハマヤラワガザダバパ_-=+*#@%&amp;&quot;;
+        this.trails = [];
+        this.initTrails();
+    }
+    
+    initTrails() {
+        for (let i = 0; i &lt; this.columns; i++) {
+            this.trails[i] = {
+                x: i,
+                y: Math.floor(Math.random() * height),
+                speed: Math.random() * 3 + 1,
+                length: Math.floor(Math.random() * 15) + 5,
+                chars: []
+            };
+        }
+    }
+}
+</code></pre>
+<p>Each &quot;trail&quot; is an independent column of characters falling at different speeds, creating the organic matrix effect.</p>
+<h2>design decisions that mattered</h2>
+<h3>opacity and visual hierarchy</h3>
+<p>The animations use <code>opacity: 0.15</code> - barely visible but present. This was crucial for maintaining the focus on the blog content while adding ambient interest.</p>
+<h3>responsive design</h3>
+<pre><code class="language-css">@media (max-width: 1024px) {
+    .sidebar {
+        display: none;
+    }
+}
+</code></pre>
+<p>On mobile and tablet, the animations completely disappear. This isn&#39;t just about <span class="success">performance</span> - it&#39;s about focus. Mobile readers don&#39;t need visual distractions; they need clean, readable content.</p>
+<h3><span class="success">performance</span> optimizations</h3>
+<p>The animations pause when the page isn&#39;t visible:</p>
+<pre><code class="language-javascript">document.addEventListener(&#39;visibilitychange&#39;, () =&gt; {
+    if (document.hidden) {
+        this.stopAnimation();
+    } else {
+        this.startAnimation();
+    }
+});
+</code></pre>
+<p>Why waste <strong>CPU</strong> cycles animating something no one is looking at?</p>
+<h3>character set choices</h3>
+<p><strong>Left sidebar</strong>: <code>&quot;01_-=+*&quot;</code> - <span class="meta">minimal</span>, programming-focused
+<strong>Right sidebar</strong>: <code>&quot;01アカサタナハマヤラワガザダバパ_-=+*#@%&amp;&quot;</code> - matrix-inspired with <strong>Japanese</strong> characters</p>
+<p>The left side stays subtle and professional. The right side allows for more visual <span class="meta">complexity</span> with the matrix <span class="meta">aesthetic</span>.</p>
+<h2>the <span class="process">css</span> grid layout</h2>
+<p>The biggest structural change was moving from a simple centered container to a <strong><span class="process">CSS</span> Grid</strong> layout:</p>
+<pre><code class="language-css">.main-layout {
+    display: grid;
+    grid-template-columns: 120px 1fr 120px;
+    max-width: 940px;
+    margin: 0 auto;
+    gap: 20px;
+}
+</code></pre>
+<p>This creates three columns: left sidebar, main content, right sidebar. The <code>1fr</code> ensures the main content takes up all available space between the fixed-width sidebars.</p>
+<h2><span class="connection">integration</span> with the existing blog <span class="structure">system</span></h2>
+<p>Since my blog uses an automated <span class="process">build</span> <span class="structure">system</span>, I only needed to update the template file. The <span class="process">build</span> <span class="process">script</span> automatically applied the new template to both the index and all regenerated posts.</p>
+<p>The animations integrate seamlessly with the existing <span class="meta">tag</span> filtering <span class="structure">system</span> - they just <span class="process">run</span> in the background while users interact with the main <span class="structure">interface</span>.</p>
+<h2><span class="success">performance</span> and accessibility considerations</h2>
+<h3><span class="success">performance</span> monitoring</h3>
+<p>The animations use <code>setTimeout</code> instead of <code>requestAnimationFrame</code> for deliberate speed control. Each frame is calculated efficiently by shifting arrays rather than regenerating entire patterns.</p>
+<h3>accessibility compliance</h3>
+<pre><code class="language-css">@media (prefers-reduced-motion: reduce) {
+    .sidebar {
+        animation: none;
+    }
+}
+</code></pre>
+<p>Users who prefer reduced motion get a <span class="meta">static</span> version that respects their preferences.</p>
+<h3>memory management</h3>
+<p>Each animation <span class="structure">class</span> properly cleans up its timers and event listeners to prevent memory leaks:</p>
+<pre><code class="language-javascript">stopAnimation() {
+    this.isAnimating = false;
+    if (this.animationId) {
+        clearTimeout(this.animationId);
+    }
+}
+</code></pre>
+<h2>the final effect</h2>
+<p>The result is exactly what I wanted - a blog homepage that feels more alive and dynamic while maintaining its <span class="meta">minimal</span>, <span class="meta">terminal</span> <span class="meta">aesthetic</span>. The animations are present enough to notice but subtle enough to ignore.</p>
+<p>Visitors on desktop get the full ambient effect. Mobile users get a clean, distraction-free reading experience. Everyone wins.</p>
+<h2>lessons from adding ambience</h2>
+<p>Building this reinforced a few key principles:</p>
+<p><strong>Subtlety over spectacle</strong> - The best background effects are the ones you barely notice
+<strong><span class="success">Performance</span> matters</strong> - Smooth animations are better than complex ones that stutter
+<strong>Responsive thinking</strong> - What works on desktop might be terrible on mobile
+<strong>Character sets define personality</strong> - The choice of symbols dramatically affects the mood</p>
+<p>The text visualizers now make the blog feel like a living <span class="meta">terminal</span> session rather than a <span class="meta">static</span> webpage. Another small victory in the ongoing mission to make the web feel <span class="process">less</span> corporate and more personal.</p>
+<h2>what&#39;s next</h2>
+<p>I&#39;m considering adding subtle hover effects that temporarily increase the animation density around the cursor, or perhaps seasonal character set variations. But for now, the ambient <span class="meta">terminal</span> glow is exactly what the blog needed.</p>
+<p>The best features are the ones that enhance without announcing themselves.</p>
+
+        </article>
+        
+        <footer class="post-footer">
+            <div>
+                words: ~1200 · reading time: ~5 min · tags: <span class="tag process">frontend</span>, <span class="tag attention">tutorials</span>, <span class="tag meta">meta</span>
+            </div>
+        </footer>
+        
+        <nav class="post-navigation">
+            <div class="nav-previous">
+                <a href="/blog/ai-assisted-writing">
+                    <span class="nav-label">← previous</span>
+                    <span class="nav-title">how i write blogs with claude - a transparent process</span>
+                </a>
+            </div></nav>
+    </div>
+    
+    <div class="reading-progress"></div>
+    
+    <script>
+        // Simple reading progress indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('.reading-progress').style.width = scrolled + '%';
+        });
+    </script>
+</body>
+</html>

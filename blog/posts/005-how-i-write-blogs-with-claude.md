@@ -1,7 +1,8 @@
 ---
 title: "how i write blogs with claude - a transparent process"
+slug: "ai-assisted-writing"
 date: "2025-01-24"
-tags: ["ai", "claude", "writing", "process", "meta"]
+tags: ["ai-tools", "meta"]
 description: "A detailed walkthrough of how I use Claude to create blog posts, from initial prompts to final output"
 readingTime: 4
 wordCount: 800
