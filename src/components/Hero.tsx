@@ -30,11 +30,14 @@ const Hero = () => {
         <div className="mb-12 slide-up">
           <div className="relative inline-block">
             <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary-glow rounded-full blur-xl opacity-30 animate-pulse"></div>
-            <img 
-              src={profileImage} 
-              alt="Jeffrey Jose" 
-              className="w-36 h-36 md:w-44 md:h-44 rounded-full mx-auto shadow-glow border-4 border-white/30 backdrop-blur-sm relative z-10 glow-hover transition-all duration-500 hover:scale-105"
-            />
+            <div className="relative w-32 h-32 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-48 lg:h-48 xl:w-52 xl:h-52 mx-auto rounded-full overflow-hidden border-4 border-white/30 backdrop-blur-sm shadow-glow glow-hover transition-all duration-500 hover:scale-105">
+              <img 
+                src={profileImage} 
+                alt="Jeffrey Jose" 
+                className="w-full h-full object-cover relative z-10"
+                loading="eager"
+              />
+            </div>
             <div className="absolute -inset-2 bg-gradient-to-r from-primary via-primary-glow to-primary rounded-full opacity-20 blur-lg"></div>
           </div>
         </div>
