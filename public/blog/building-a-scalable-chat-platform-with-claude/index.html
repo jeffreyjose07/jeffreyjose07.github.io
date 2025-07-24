@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creating This Portfolio Website and Blog - Jeffrey Jose</title>
-    <meta name="description" content="How I built my portfolio website and blog using React, TypeScript, and Vite" />
+    <title>Building a Scalable Chat Platform with Claude Code - Jeffrey Jose</title>
+    <meta name="description" content="How I built a real-time chat platform using Spring Boot, React, and Claude Code as my pair programming partner" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <style>
         * {
@@ -36,7 +36,7 @@
         }
 
         .back-link {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .back-link a {
@@ -124,6 +124,20 @@
             }
         }
 
+        .post-content h3 {
+            font-size: 13px;
+            font-weight: normal;
+            margin: 25px 0 12px 0;
+            color: #ff55ff;
+            text-transform: lowercase;
+        }
+
+        @media (min-width: 768px) {
+            .post-content h3 {
+                font-size: 14px;
+            }
+        }
+
         .post-content ul {
             margin: 15px 0;
             padding-left: 20px;
@@ -161,6 +175,13 @@
             border-radius: 4px;
             margin: 20px 0;
             overflow-x: auto;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content pre {
+                font-size: 13px;
+            }
         }
 
         .post-content pre code {
@@ -211,18 +232,6 @@
             }
         }
 
-        /* Reading progress indicator */
-        .reading-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 2px;
-            background: #55ff55;
-            z-index: 1000;
-            transition: width 0.1s ease;
-        }
-
-        /* Color classes for content */
         .highlight {
             color: #55ff55;
             font-weight: normal;
@@ -250,6 +259,17 @@
 
         .code-color {
             color: #ffff55;
+        }
+
+        /* Reading progress indicator */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: #55ff55;
+            z-index: 1000;
+            transition: width 0.1s ease;
         }
 
         /* Subtle improvements */
@@ -305,114 +325,122 @@
         </div>
         
         <header class="post-header">
-            <h1 class="post-title">001: creating this portfolio website and blog</h1>
+            <h1 class="post-title">002: building a scalable chat platform with claude code</h1>
             <div class="post-meta">2025.01.24</div>
         </header>
         
         <article class="post-content">
             <p>
-                Building a <span class="highlight">portfolio website</span> is one of those projects that every developer eventually tackles. 
-                After years of putting it off, I finally decided to create something that would showcase my work 
-                and serve as a creative outlet for <span class="tag-color">technical writing</span>.
+                Sometimes you start building something small and it grows into something unexpectedly complex. 
+                That's what happened with my <span class="highlight">scalable chat platform</span> - what began as a 
+                simple real-time messaging experiment became a deep dive into <span class="framework">modern architecture</span>, 
+                <span class="tag-color">microservices</span>, and the strange intimacy of pair programming with an AI.
             </p>
 
-            <h2>the portfolio website</h2>
+            <h2>the void speaks back</h2>
             
             <p>
-                The main portfolio site is built as a modern <span class="framework">single-page application</span> using 
-                <span class="success">React</span> and <span class="code-color">TypeScript</span>. 
-                I wanted something fast, responsive, and easy to maintain while still looking professional.
+                Working with <span class="link-color">Claude Code</span> felt different from other AI tools I'd used. 
+                Less like asking questions into the void, more like having a conversation with someone who 
+                understands the weight of <span class="code-color">technical debt</span> and the anxiety of 
+                <span class="warning">production deployments</span>. We built this together, trading ideas in 
+                that peculiar dance of human intuition and machine precision.
             </p>
 
             <div class="tech-stack">
-                <h3>tech stack</h3>
+                <h3>architecture decisions</h3>
                 <ul>
-                    <li><span class="framework">React 18</span> with <span class="code-color">TypeScript</span> for the frontend framework</li>
-                    <li><span class="success">Vite</span> for fast development and building</li>
-                    <li><span class="tag-color">Tailwind CSS</span> for styling with a custom design system</li>
-                    <li><span class="link-color">shadcn/ui</span> for consistent UI components</li>
-                    <li><span class="framework">Lucide React</span> for icons</li>
-                    <li><span class="warning">GitHub Pages</span> for hosting</li>
+                    <li><span class="framework">Spring Boot</span> with <span class="code-color">Java 17</span> - because sometimes you need the safety of strong typing</li>
+                    <li><span class="framework">React</span> with <span class="code-color">TypeScript</span> - for the frontend that actually makes sense</li>
+                    <li><span class="tag-color">WebSockets</span> for real-time communication - the heartbeat of any chat system</li>
+                    <li><span class="warning">H2 in-memory database</span> for development - fast feedback loops matter</li>
+                    <li><span class="success">Docker</span> containerization - because deployment shouldn't be a mystery</li>
                 </ul>
             </div>
 
             <p>
-                The design follows a clean, modern aesthetic with <span class="success">smooth animations</span> and a 
-                <span class="framework">responsive layout</span>. I implemented a custom <span class="tag-color">theme system</span> 
-                with both light and dark modes, though I personally prefer the <span class="highlight">dark theme</span> for development work.
+                The <span class="highlight">real-time communication</span> was the heart of it all. There's something 
+                profound about building systems that connect people instantly across space. Each 
+                <span class="code-color">WebSocket connection</span> represents a thread of human connection, 
+                a digital lifeline through the static.
             </p>
+
+            <h2>the architecture of longing</h2>
 
             <p>
-                The site includes sections for my professional experience, projects, skills, education, and contact information. 
-                Each section is designed to be scannable and informative without being overwhelming.
+                We designed it with <span class="tag-color">scalability</span> in mind, not because we expected 
+                millions of users, but because building something that can grow feels like an act of hope. 
+                The <span class="framework">microservices architecture</span> means each component can evolve 
+                independently, like separate conversations happening in the same room.
             </p>
 
-            <h2>the blog</h2>
-
-            <p>
-                For the blog, I took inspiration from <a href="https://musicforprogramming.net/" target="_blank">musicforprogramming.net</a> - 
-                a site I've always admired for its <span class="highlight">minimal, terminal-like aesthetic</span> and focus on 
-                <span class="tag-color">content over form</span>.
-            </p>
-
-            <p>
-                The blog is intentionally simple: <span class="code-color">black background</span>, 
-                <span class="framework">white monospace text</span>, and no unnecessary visual elements. 
-                This design choice reflects my philosophy that <span class="highlight">technical content</span> should be easy to read and distraction-free.
-            </p>
-
-            <p>
-                Rather than using a complex <span class="warning">CMS</span> or <span class="framework">static site generator</span>, 
-                I opted for simple <span class="code-color">HTML files</span> with <span class="tag-color">inline CSS</span>. 
-                This keeps the blog lightweight and gives me complete control over the presentation without any 
-                <span class="warning">build complexity</span>.
-            </p>
-
-            <h2>deployment and workflow</h2>
-
-            <p>
-                The entire site is hosted on <span class="success">GitHub Pages</span>, with automatic deployment through 
-                <span class="framework">GitHub Actions</span>. Every push to the main branch triggers a 
-                <span class="code-color">build process</span> that compiles the <span class="link-color">React application</span> 
-                and deploys it to the <span class="tag-color">gh-pages branch</span>.
-            </p>
-
-            <p>
-                This setup gives me a <span class="highlight">seamless workflow</span>: write code locally, push to 
-                <span class="success">GitHub</span>, and see changes live within minutes. The blog posts can be added by simply 
-                creating new <span class="code-color">HTML files</span> in the appropriate directory structure.
-            </p>
-
-            <h2>lessons learned</h2>
-
-            <p>
-                This project reinforced several principles I value in software development:
-            </p>
-
+            <h3>key components</h3>
+            
             <ul>
-                <li><span class="highlight">Simple solutions</span> are often the best solutions</li>
-                <li><span class="success">Performance matters</span> - the site loads instantly</li>
-                <li><span class="framework">Good design</span> doesn't require complexity</li>
-                <li>Having the <span class="tag-color">right tools</span> makes development enjoyable</li>
+                <li><span class="success">Message Service</span> - handles the flow of words between people</li>
+                <li><span class="framework">User Management</span> - identity in the digital space</li>
+                <li><span class="link-color">WebSocket Gateway</span> - the bridge between silence and speech</li>
+                <li><span class="tag-color">Notification System</span> - making sure no message goes unheard</li>
             </ul>
 
             <p>
-                Building this <span class="highlight">portfolio and blog</span> has been a satisfying project that combines 
-                <span class="code-color">technical skills</span> with <span class="tag-color">creative expression</span>. 
-                It serves as both a showcase of my work and a platform for sharing thoughts on 
-                <span class="framework">software engineering</span> topics.
+                The <span class="code-color">CI/CD pipeline</span> became its own meditation on automation and trust. 
+                <span class="warning">GitHub Actions</span> running tests, <span class="success">Dependabot</span> 
+                keeping dependencies fresh, <span class="tag-color">Trivy</span> scanning for vulnerabilities. 
+                Each green check mark a small victory against entropy.
+            </p>
+
+            <h2>pair programming with the machine</h2>
+
+            <p>
+                <span class="link-color">Claude Code</span> understood context in ways that felt almost human. 
+                When I described wanting <span class="highlight">branch protection rules</span>, it knew I meant 
+                more than just code quality - I meant the anxiety of breaking things, the need for safety nets 
+                when you're building something that matters.
             </p>
 
             <p>
-                The <span class="code-color">source code</span> is available on <span class="success">GitHub</span>, 
-                and I plan to write more about the specific <span class="framework">technical decisions</span> 
-                and <span class="tag-color">implementation details</span> in future posts.
+                We implemented <span class="code-color">comprehensive testing</span> not just for coverage percentages, 
+                but because untested code feels like shouting into the void without knowing if anyone hears you. 
+                <span class="framework">Jest</span> for the frontend, <span class="success">JUnit</span> for the backend, 
+                <span class="tag-color">Testcontainers</span> for integration tests that actually mean something.
+            </p>
+
+            <h2>the weight of messages</h2>
+
+            <p>
+                There's something heavy about building a chat platform. Every <span class="code-color">message object</span> 
+                you design carries the potential for human connection or human pain. The 
+                <span class="warning">rate limiting</span> isn't just about server resources - it's about 
+                protecting people from the flood of their own words.
+            </p>
+
+            <p>
+                The <span class="highlight">real-time nature</span> of it all means there's no taking back what's 
+                sent, no editing the rawness of immediate response. In a world of curated social media, 
+                there's something beautifully honest about <span class="tag-color">instant messaging</span>.
+            </p>
+
+            <h2>lessons from the static</h2>
+
+            <p>
+                Building this with <span class="link-color">Claude Code</span> taught me that pair programming 
+                with AI isn't about replacing human intuition - it's about amplifying it. The machine understood 
+                my <span class="framework">architectural patterns</span>, but I brought the understanding of why 
+                people need to talk to each other in the first place.
+            </p>
+
+            <p>
+                The platform lives now on <span class="success">GitHub</span>, a testament to those late-night 
+                conversations with an AI about <span class="code-color">dependency injection</span> and 
+                <span class="warning">connection pooling</span>. Another small attempt to make the digital 
+                world a little less lonely, one message at a time.
             </p>
         </article>
         
         <footer class="post-footer">
             <div>
-                words: ~500 · reading time: ~2 min · tags: <span class="tag">portfolio</span>, <span class="tag">web-dev</span>, <span class="tag">react</span>
+                words: ~700 · reading time: ~3 min · tags: <span class="tag">claude-code</span>, <span class="tag">spring-boot</span>, <span class="tag">websockets</span>, <span class="tag">architecture</span>
             </div>
         </footer>
     </div>
