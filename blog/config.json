@@ -4,41 +4,103 @@
   "author": "Jeffrey Jose",
   "baseUrl": "/blog",
   "colors": {
-    "highlight": "#55ff55",
-    "framework": "#5588ff", 
-    "warning": "#ff8855",
     "success": "#55ff55",
-    "link": "#55ffff",
-    "tag": "#ff55ff",
-    "code": "#ffff55"
+    "structure": "#5588ff", 
+    "process": "#ffff55",
+    "attention": "#ff8855",
+    "meta": "#ff55ff",
+    "connection": "#55ffff",
+    "neutral": "#c9c9c9"
   },
-  "autoColorTerms": {
-    "React": "framework",
-    "TypeScript": "code",
-    "JavaScript": "code",
-    "Spring Boot": "framework",
-    "GitHub": "success",
-    "WebSocket": "tag",
-    "API": "framework",
-    "Claude Code": "link",
-    "portfolio": "highlight",
-    "blog": "highlight",
-    "database": "framework",
-    "deployment": "warning",
-    "CI/CD": "tag",
-    "Docker": "success",
-    "microservices": "tag",
-    "architecture": "framework",
-    "testing": "success",
-    "performance": "success",
-    "security": "warning",
-    "responsive": "framework",
-    "mobile": "warning",
-    "CSS": "tag",
-    "HTML": "code",
-    "Markdown": "code",
-    "terminal": "highlight",
-    "minimal": "highlight",
-    "aesthetic": "tag"
+  "semanticCategories": {
+    "success": {
+      "description": "Tools that work, successful states, growth concepts",
+      "patterns": [
+        "github", "git", "docker", "kubernetes", "deployed", "deployment", "production",
+        "passing", "success", "working", "live", "stable", "reliable", "scalable",
+        "growing", "scaling", "thriving", "optimization", "performance", "efficient"
+      ]
+    },
+    "structure": {
+      "description": "Architectural concepts, frameworks, stable technologies",
+      "patterns": [
+        "react", "vue", "angular", "spring boot", "django", "rails", "express",
+        "architecture", "framework", "structure", "system", "design pattern",
+        "class", "function", "method", "interface", "component", "module",
+        "database", "postgresql", "mysql", "mongodb", "redis", "elasticsearch"
+      ]
+    },
+    "process": {
+      "description": "Code elements, logic, file types, programming languages",
+      "patterns": [
+        "javascript", "typescript", "python", "java", "golang", "rust", "c++",
+        "html", "css", "sass", "less", "json", "xml", "yaml", "markdown",
+        "code", "script", "algorithm", "logic", "function", "variable", "constant",
+        "compile", "build", "parse", "execute", "run", "debug", "test"
+      ]
+    },
+    "attention": {
+      "description": "Time-sensitive, warnings, performance concerns",
+      "patterns": [
+        "real-time", "latency", "timeout", "deadline", "urgent", "critical",
+        "breaking", "deprecated", "legacy", "technical debt", "refactor",
+        "slow", "bottleneck", "memory leak", "crash", "error", "exception",
+        "security", "vulnerability", "breach", "authentication", "authorization"
+      ]
+    },
+    "meta": {
+      "description": "Abstract concepts, philosophy, methodology",
+      "patterns": [
+        "philosophy", "paradigm", "pattern", "abstraction", "methodology",
+        "agile", "scrum", "devops", "ci/cd", "continuous integration",
+        "tag", "category", "label", "annotation", "metadata",
+        "consciousness", "emergence", "complexity", "entropy", "void", "static",
+        "aesthetic", "minimal", "terminal", "unix", "linux", "command line"
+      ]
+    },
+    "connection": {
+      "description": "Networks, APIs, data flow, connections",
+      "patterns": [
+        "api", "rest", "graphql", "websocket", "http", "https", "tcp", "udp",
+        "connection", "stream", "pipeline", "workflow", "dataflow", "network",
+        "microservices", "service mesh", "load balancer", "proxy", "gateway",
+        "reference", "pointer", "link", "bridge", "integration", "webhook"
+      ]
+    }
+  },
+  "contextualRules": {
+    "codePatterns": {
+      "camelCase": "process",
+      "snake_case": "process",
+      "kebab-case": "process",
+      "CONSTANT_CASE": "process",
+      "versions": "structure"
+    },
+    "technicalPhrases": {
+      "machine learning": "structure",
+      "artificial intelligence": "structure",
+      "dependency injection": "structure",
+      "test driven development": "meta",
+      "continuous deployment": "success",
+      "user experience": "meta",
+      "single page application": "structure"
+    }
+  },
+  "tagColors": {
+    "automation": "success",
+    "meta": "meta", 
+    "github-actions": "success",
+    "workflow": "connection",
+    "portfolio": "structure",
+    "web-dev": "process",
+    "react": "structure",
+    "claude-code": "connection",
+    "spring-boot": "structure",
+    "websockets": "connection",
+    "architecture": "structure",
+    "life": "meta",
+    "philosophy": "meta",
+    "terminal": "meta",
+    "aesthetic": "meta"
   }
 }

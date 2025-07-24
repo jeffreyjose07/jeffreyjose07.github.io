@@ -24,21 +24,128 @@ if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
-// Custom markdown renderer with color coding
+// Advanced semantic color detection
+class SemanticColorizer {
+    constructor(config) {
+        this.config = config;
+        this.semanticPatterns = this.buildPatterns();
+        this.technicalPhrases = config.contextualRules.technicalPhrases;
+        this.codePatternRegexes = this.buildCodePatterns();
+    }
+
+    buildPatterns() {
+        const patterns = new Map();
+        
+        Object.entries(this.config.semanticCategories).forEach(([category, data]) => {
+            data.patterns.forEach(pattern => {
+                // Create case-insensitive regex for each pattern
+                const regex = new RegExp(`\\b${pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+                patterns.set(regex, category);
+            });
+        });
+        
+        return patterns;
+    }
+
+    buildCodePatterns() {
+        return {
+            camelCase: /\b[a-z][a-zA-Z0-9]*[A-Z][a-zA-Z0-9]*\b/g,
+            snake_case: /\b[a-z][a-z0-9]*(_[a-z0-9]+)+\b/g,
+            kebabCase: /\b[a-z][a-z0-9]*(-[a-z0-9]+)+\b/g,
+            CONSTANT_CASE: /\b[A-Z][A-Z0-9]*(_[A-Z0-9]+)*\b/g,
+            versions: /\b[a-zA-Z]+\s+\d+(\.\d+)*\b/g
+        };
+    }
+
+    detectContextualCategory(text, matchedText) {
+        // Check for technical phrases first (highest priority)
+        const lowerText = text.toLowerCase();
+        for (const [phrase, category] of Object.entries(this.technicalPhrases)) {
+            if (lowerText.includes(phrase.toLowerCase())) {
+                return category;
+            }
+        }
+
+        // Check code patterns
+        for (const [pattern, category] of Object.entries(this.config.contextualRules.codePatterns)) {
+            if (this.codePatternRegexes[pattern] && this.codePatternRegexes[pattern].test(matchedText)) {
+                return category;
+            }
+        }
+
+        return null;
+    }
+
+    colorizeText(text) {
+        let coloredText = text;
+        const replacements = new Map();
+
+        // First pass: collect all matches with their positions
+        const matches = [];
+        
+        // Check technical phrases first (longer patterns have priority)
+        Object.entries(this.technicalPhrases).forEach(([phrase, category]) => {
+            const regex = new RegExp(`\\b${phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+            let match;
+            while ((match = regex.exec(text)) !== null) {
+                matches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[0],
+                    category: category,
+                    priority: phrase.length // Longer phrases get higher priority
+                });
+            }
+        });
+
+        // Then check individual semantic patterns
+        this.semanticPatterns.forEach((category, regex) => {
+            let match;
+            regex.lastIndex = 0; // Reset regex state
+            while ((match = regex.exec(text)) !== null) {
+                // Check if this overlaps with any higher priority match
+                const overlaps = matches.some(m => 
+                    (match.index >= m.start && match.index < m.end) ||
+                    (match.index + match[0].length > m.start && match.index + match[0].length <= m.end)
+                );
+                
+                if (!overlaps) {
+                    matches.push({
+                        start: match.index,
+                        end: match.index + match[0].length,
+                        text: match[0],
+                        category: category,
+                        priority: 1
+                    });
+                }
+            }
+        });
+
+        // Sort matches by position (reverse order for replacement)
+        matches.sort((a, b) => b.start - a.start);
+
+        // Apply replacements from end to start to maintain positions
+        matches.forEach(match => {
+            const before = coloredText.substring(0, match.start);
+            const after = coloredText.substring(match.end);
+            const colorClass = this.config.colors[match.category] ? match.category : 'neutral';
+            coloredText = before + `<span class="${colorClass}">${match.text}</span>` + after;
+        });
+
+        return coloredText;
+    }
+}
+
+// Initialize semantic colorizer
+const colorizer = new SemanticColorizer(config);
+
+// Custom markdown renderer with advanced color coding
 const renderer = new marked.Renderer();
 
-// Override text rendering to apply automatic color coding
+// Override text rendering to apply semantic color coding
 const originalText = renderer.text;
 renderer.text = function(text) {
-    let coloredText = text;
-    
-    // Apply automatic color coding based on config
-    Object.entries(config.autoColorTerms).forEach(([term, colorClass]) => {
-        const regex = new RegExp(`\\b${term}\\b`, 'gi');
-        coloredText = coloredText.replace(regex, `<span class="${colorClass}">${term}</span>`);
-    });
-    
-    return coloredText;
+    return colorizer.colorizeText(text);
 };
 
 // Configure marked options
@@ -97,9 +204,12 @@ function processPost(filename, episodeNumber) {
     const wordCount = frontmatter.wordCount || countWords(content);
     const readingTime = frontmatter.readingTime || estimateReadingTime(content);
     
-    // Format tags
+    // Format tags with colors
     const tagsFormatted = frontmatter.tags
-        ? frontmatter.tags.map(tag => `<span class="tag">${tag}</span>`).join(', ')
+        ? frontmatter.tags.map(tag => {
+            const tagColorCategory = config.tagColors[tag] || 'neutral';
+            return `<span class="tag ${tagColorCategory}">${tag}</span>`;
+        }).join(', ')
         : '';
     
     // Load and populate template
@@ -135,17 +245,27 @@ function processPost(filename, episodeNumber) {
     };
 }
 
-// Generate blog index
+// Generate blog index with tag filtering
 function generateIndex(posts) {
     const template = loadTemplate('index');
     
     // Sort posts by episode number (descending for newest first)
     const sortedPosts = posts.sort((a, b) => b.episodeNumber - a.episodeNumber);
     
-    // Generate posts HTML
+    // Collect all unique tags
+    const allTags = [...new Set(posts.flatMap(post => post.tags))];
+    
+    // Generate tag filter buttons
+    const tagFiltersHtml = allTags.map(tag => {
+        const tagColorCategory = config.tagColors[tag] || 'neutral';
+        return `            <button class="tag-filter ${tagColorCategory}" data-tag="${tag}">${tag}</button>`;
+    }).join('\n');
+    
+    // Generate posts HTML with tag data attributes
     const postsHtml = sortedPosts.map(post => {
         const episodeNum = post.episodeNumber.toString().padStart(3, '0');
-        return `            <li>
+        const tagsAttr = post.tags.join(' ');
+        return `            <li class="post-item" data-tags="${tagsAttr}">
                 <a href="/blog/${post.slug}">
                     <span class="episode-number">${episodeNum}</span><span class="episode-title">: ${post.title}</span><span class="date">${formatDate(post.date)}</span>
                 </a>
@@ -156,6 +276,7 @@ function generateIndex(posts) {
     const html = template
         .replace(/{{title}}/g, config.title)
         .replace(/{{description}}/g, config.description)
+        .replace(/{{tagFilters}}/g, tagFiltersHtml)
         .replace(/{{posts}}/g, postsHtml)
         .replace(/{{totalPosts}}/g, posts.length);
     
@@ -165,7 +286,7 @@ function generateIndex(posts) {
 
 // Main build function
 function build() {
-    console.log('🚀 Building blog...');
+    console.log('🚀 Building blog with advanced semantic coloring...');
     
     // Get all markdown files (excluding template)
     const files = fs.readdirSync(POSTS_DIR)
@@ -187,18 +308,18 @@ function build() {
         try {
             const post = processPost(file, episodeNumber);
             posts.push(post);
-            console.log(`✅ Generated ${post.slug}/index.html`);
+            console.log(`✅ Generated ${post.slug}/index.html with semantic coloring`);
         } catch (error) {
             console.error(`❌ Error processing ${file}:`, error.message);
         }
     });
     
     // Generate index page
-    console.log('📝 Generating blog index...');
+    console.log('📝 Generating blog index with tag filtering...');
     generateIndex(posts);
-    console.log('✅ Generated blog index.html');
+    console.log('✅ Generated blog index.html with tag filters');
     
-    console.log(`🎉 Blog build complete! Generated ${posts.length} posts.`);
+    console.log(`🎉 Blog build complete! Generated ${posts.length} posts with advanced semantic highlighting.`);
 }
 
 // Run build if called directly
