@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - Jeffrey Jose</title>
+    <meta name="description" content="{{description}}" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background-color: #000000;
+            color: #c9c9c9;
+            line-height: 1.6;
+            padding: 20px;
+            font-size: 15px;
+            text-rendering: optimizeLegibility;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 40px 20px;
+                font-size: 16px;
+            }
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            margin-bottom: 18px;
+        }
+
+        .back-link a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        @media (min-width: 768px) {
+            .back-link a {
+                font-size: 13px;
+            }
+        }
+
+        .back-link a:hover {
+            color: #aaaaaa;
+        }
+
+        .back-link a:before {
+            content: '← ';
+            color: #666666;
+        }
+
+        .post-header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 20px;
+        }
+
+        .post-title {
+            font-size: 16px;
+            font-weight: normal;
+            margin-bottom: 10px;
+            text-transform: lowercase;
+            color: #55ff55;
+            letter-spacing: 0.3px;
+            line-height: 1.3;
+        }
+
+        @media (min-width: 768px) {
+            .post-title {
+                font-size: 18px;
+            }
+        }
+
+        .post-meta {
+            color: #ff8855;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-meta {
+                font-size: 13px;
+            }
+        }
+
+        .post-content {
+            line-height: 1.7;
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h2 {
+            font-size: 14px;
+            font-weight: normal;
+            margin: 30px 0 15px 0;
+            color: #5588ff;
+            text-transform: lowercase;
+            letter-spacing: 0.2px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content h2 {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h3 {
+            font-size: 13px;
+            font-weight: normal;
+            margin: 25px 0 12px 0;
+            color: #ff55ff;
+            text-transform: lowercase;
+        }
+
+        @media (min-width: 768px) {
+            .post-content h3 {
+                font-size: 14px;
+            }
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .post-content li {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content li {
+                font-size: 15px;
+            }
+        }
+
+        .post-content code {
+            background-color: #111111;
+            padding: 2px 4px;
+            border-radius: 1px;
+            font-family: inherit;
+            color: #ffff55;
+            font-size: 13px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content code {
+                font-size: 14px;
+            }
+        }
+
+        .post-content pre {
+            background-color: #111111;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content pre {
+                font-size: 13px;
+            }
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .post-content a {
+            color: #55ffff;
+            text-decoration: none;
+            border-bottom: 1px solid #334444;
+        }
+
+        .post-content a:hover {
+            color: #77ffff;
+            border-bottom-color: #55ffff;
+        }
+
+        .post-content blockquote {
+            border-left: 2px solid #333333;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #999999;
+            font-style: italic;
+        }
+
+        /* Color classes for automatic term highlighting */
+        .highlight {
+            color: #55ff55;
+            font-weight: normal;
+        }
+
+        .framework {
+            color: #5588ff;
+        }
+
+        .warning {
+            color: #ff8855;
+        }
+
+        .success {
+            color: #55ff55;
+        }
+
+        .link-color {
+            color: #55ffff;
+        }
+
+        .tag-color {
+            color: #ff55ff;
+        }
+
+        .code-color {
+            color: #ffff55;
+        }
+
+        /* Reading progress indicator */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: #55ff55;
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+
+        /* Subtle improvements */
+        .post-content p:first-of-type:first-letter {
+            color: #55ff55;
+            font-size: 18px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p:first-of-type:first-letter {
+                font-size: 20px;
+            }
+        }
+
+        /* Footer with post info */
+        .post-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #222222;
+            font-size: 11px;
+            color: #555555;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 768px) {
+            .post-footer {
+                font-size: 12px;
+            }
+        }
+
+        .post-footer .tag {
+            color: #ff55ff;
+        }
+
+        /* Mobile improvements */
+        @media (max-width: 767px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .post-content pre {
+                margin-left: -10px;
+                margin-right: -10px;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="back-link">
+            <a href="/blog">back to blog</a>
+        </div>
+        
+        <header class="post-header">
+            <h1 class="post-title">{{episodeNumber}}: {{title}}</h1>
+            <div class="post-meta">{{date}}</div>
+        </header>
+        
+        <article class="post-content">
+            {{content}}
+        </article>
+        
+        <footer class="post-footer">
+            <div>
+                words: ~{{wordCount}} · reading time: ~{{readingTime}} min · tags: {{tagsFormatted}}
+            </div>
+        </footer>
+    </div>
+    
+    <div class="reading-progress"></div>
+    
+    <script>
+        // Simple reading progress indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('.reading-progress').style.width = scrolled + '%';
+        });
+    </script>
+</body>
+</html>
