@@ -14,24 +14,27 @@
         }
 
         body {
-            font-family: monospace;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             background-color: #000000;
-            color: #ffffff;
+            color: #c9c9c9;
             line-height: 1.4;
             padding: 40px 20px;
-            font-size: 14px;
+            font-size: 13px;
+            text-rendering: optimizeLegibility;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 700px;
             margin: 0 auto;
         }
 
         h1 {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: normal;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             text-transform: lowercase;
+            color: #55ff55;
+            letter-spacing: 0.5px;
         }
 
         .episode-list {
@@ -39,72 +42,123 @@
         }
 
         .episode-list li {
-            margin: 8px 0;
+            margin: 6px 0;
+            line-height: 1.3;
         }
 
         .episode-list a {
-            color: #ffffff;
+            color: #c9c9c9;
             text-decoration: none;
             display: block;
-            padding: 2px 0;
-            border-bottom: 1px solid transparent;
-            transition: all 0.2s ease;
+            padding: 1px 0;
+            transition: all 0.15s ease;
         }
 
         .episode-list a:hover {
-            color: #cccccc;
-            border-bottom-color: #333333;
+            color: #ffffff;
+        }
+
+        .episode-number {
+            color: #5588ff;
+            font-weight: normal;
+        }
+
+        .episode-title {
+            color: #c9c9c9;
         }
 
         .back-link {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .back-link a {
-            color: #ffffff;
+            color: #888888;
             text-decoration: none;
-            font-size: 12px;
+            font-size: 11px;
+            letter-spacing: 0.3px;
         }
 
         .back-link a:hover {
-            color: #cccccc;
+            color: #aaaaaa;
+        }
+
+        .back-link a:before {
+            content: '← ';
+            color: #666666;
         }
 
         .date {
-            color: #666666;
-            font-size: 12px;
-            margin-left: 10px;
+            color: #ff8855;
+            font-size: 11px;
+            margin-left: 8px;
+            font-weight: normal;
         }
 
         .description {
-            color: #999999;
-            font-size: 12px;
-            margin-top: 20px;
-            margin-bottom: 30px;
-            line-height: 1.5;
+            color: #777777;
+            font-size: 11px;
+            margin-top: 15px;
+            margin-bottom: 25px;
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        .stats {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #222222;
+            font-size: 10px;
+            color: #555555;
+        }
+
+        .episode-list a:hover .episode-number {
+            color: #77aaff;
+        }
+
+        .episode-list a:hover .episode-title {
+            color: #ffffff;
+        }
+
+        .episode-list a:hover .date {
+            color: #ffaa77;
+        }
+
+        /* Terminal-like cursor effect for title */
+        h1:after {
+            content: '_';
+            color: #55ff55;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="back-link">
-            <a href="/">&larr; back to portfolio</a>
+            <a href="/">back to portfolio</a>
         </div>
         
         <h1>blog</h1>
         
         <div class="description">
-            Technical writings and thoughts on software engineering, system design, and development practices.
+            as a little shivering thing of silence, i try. maneuvering against the hissing of nothing, searching for something real in the spaces between.
         </div>
         
         <ul class="episode-list">
             <li>
                 <a href="/blog/creating-this-portfolio-and-blog">
-                    001: creating this portfolio website and blog
-                    <span class="date">2025.01.24</span>
+                    <span class="episode-number">001</span><span class="episode-title">: creating this portfolio website and blog</span><span class="date">2025.01.24</span>
                 </a>
             </li>
         </ul>
+        
+        <div class="stats">
+            total posts: 1
+        </div>
     </div>
 </body>
 </html>

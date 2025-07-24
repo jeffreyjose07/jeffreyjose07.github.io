@@ -14,16 +14,17 @@
         }
 
         body {
-            font-family: monospace;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             background-color: #000000;
-            color: #ffffff;
+            color: #c9c9c9;
             line-height: 1.6;
             padding: 40px 20px;
-            font-size: 14px;
+            font-size: 13px;
+            text-rendering: optimizeLegibility;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 700px;
             margin: 0 auto;
         }
 
@@ -32,13 +33,19 @@
         }
 
         .back-link a {
-            color: #ffffff;
+            color: #888888;
             text-decoration: none;
-            font-size: 12px;
+            font-size: 11px;
+            letter-spacing: 0.3px;
         }
 
         .back-link a:hover {
-            color: #cccccc;
+            color: #aaaaaa;
+        }
+
+        .back-link a:before {
+            content: '← ';
+            color: #666666;
         }
 
         .post-header {
@@ -48,15 +55,17 @@
         }
 
         .post-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: normal;
             margin-bottom: 10px;
             text-transform: lowercase;
+            color: #55ff55;
+            letter-spacing: 0.3px;
         }
 
         .post-meta {
-            color: #666666;
-            font-size: 12px;
+            color: #ff8855;
+            font-size: 11px;
         }
 
         .post-content {
@@ -68,11 +77,12 @@
         }
 
         .post-content h2 {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: normal;
             margin: 30px 0 15px 0;
-            color: #cccccc;
+            color: #5588ff;
             text-transform: lowercase;
+            letter-spacing: 0.2px;
         }
 
         .post-content ul {
@@ -87,9 +97,10 @@
         .post-content code {
             background-color: #111111;
             padding: 2px 4px;
-            border-radius: 2px;
-            font-family: monospace;
-            color: #cccccc;
+            border-radius: 1px;
+            font-family: inherit;
+            color: #ffff55;
+            font-size: 12px;
         }
 
         .post-content pre {
@@ -106,12 +117,14 @@
         }
 
         .post-content a {
-            color: #ffffff;
-            text-decoration: underline;
+            color: #55ffff;
+            text-decoration: none;
+            border-bottom: 1px solid #334444;
         }
 
         .post-content a:hover {
-            color: #cccccc;
+            color: #77ffff;
+            border-bottom-color: #55ffff;
         }
 
         .tech-stack {
@@ -122,18 +135,54 @@
         }
 
         .tech-stack h3 {
-            font-size: 12px;
-            color: #999999;
+            font-size: 10px;
+            color: #ff55ff;
             margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+
+        .tech-stack ul li {
+            color: #aaaaaa;
+            font-size: 12px;
+        }
+
+        /* Reading progress indicator */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: #55ff55;
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+
+        /* Subtle improvements */
+        .post-content p:first-of-type:first-letter {
+            color: #55ff55;
+            font-size: 16px;
+        }
+
+        /* Footer with post info */
+        .post-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #222222;
+            font-size: 10px;
+            color: #555555;
+            line-height: 1.5;
+        }
+
+        .post-footer .tag {
+            color: #ff55ff;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="back-link">
-            <a href="/blog">&larr; back to blog</a>
+            <a href="/blog">back to blog</a>
         </div>
         
         <header class="post-header">
@@ -232,6 +281,24 @@
                 and implementation details in future posts.
             </p>
         </article>
+        
+        <footer class="post-footer">
+            <div>
+                words: ~500 · reading time: ~2 min · tags: <span class="tag">portfolio</span>, <span class="tag">web-dev</span>, <span class="tag">react</span>
+            </div>
+        </footer>
     </div>
+    
+    <div class="reading-progress"></div>
+    
+    <script>
+        // Simple reading progress indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('.reading-progress').style.width = scrolled + '%';
+        });
+    </script>
 </body>
 </html>
