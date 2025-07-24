@@ -60,12 +60,17 @@ const Projects = () => {
                 <div className="grid lg:grid-cols-2 gap-8 p-8">
                   {/* Project Image */}
                   <div className="relative group/image">
-                    <div className="aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-primary/10 to-primary-glow/10 border border-border/30 group-hover:border-primary/30 transition-all duration-500">
+                    <div className="aspect-video rounded-lg overflow-hidden bg-gradient-to-br from-primary/10 to-primary-glow/10 border border-border/30 group-hover:border-primary/30 transition-all duration-500 mobile-image-container">
                       <img
                         src={project.image}
                         alt={project.title}
-                        className="w-full h-full object-cover group-hover/image:scale-105 transition-transform duration-700 cursor-pointer"
+                        className="w-full h-full object-cover md:object-contain lg:object-cover group-hover/image:scale-105 transition-transform duration-700 cursor-pointer bg-white/5 mobile-image-fit"
                         onClick={() => window.open(project.liveUrl, '_blank')}
+                        loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.style.objectFit = 'contain';
+                          e.currentTarget.style.padding = '1rem';
+                        }}
                       />
                       {/* Overlay with link icon */}
                       <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-all duration-300 flex items-center justify-center cursor-pointer"
