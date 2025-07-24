@@ -302,7 +302,7 @@ function build() {
     
     // Process each post
     files.forEach((file, index) => {
-        const episodeNumber = index + 1;
+        const episodeNumber = index; // Start from 000 instead of 001
         console.log(`📄 Processing ${file} as episode ${episodeNumber.toString().padStart(3, '0')}...`);
         
         try {
