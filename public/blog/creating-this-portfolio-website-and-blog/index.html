@@ -281,6 +281,16 @@
             color: #ff55ff;
         }
 
+        /* Image styling */
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
         /* Mobile improvements */
         @media (max-width: 767px) {
             .container {
@@ -291,6 +301,11 @@
                 margin-left: -10px;
                 margin-right: -10px;
                 border-radius: 0;
+            }
+
+            .post-content img {
+                margin: 15px auto;
+                max-width: calc(100% - 20px);
             }
         }
     </style>
