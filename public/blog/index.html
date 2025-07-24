@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Jeffrey Jose</title>
+    <meta name="description" content="Technical blog by Jeffrey Jose, Senior Software Engineer" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: monospace;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.4;
+            padding: 40px 20px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 16px;
+            font-weight: normal;
+            margin-bottom: 30px;
+            text-transform: lowercase;
+        }
+
+        .episode-list {
+            list-style: none;
+        }
+
+        .episode-list li {
+            margin: 8px 0;
+        }
+
+        .episode-list a {
+            color: #ffffff;
+            text-decoration: none;
+            display: block;
+            padding: 2px 0;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .episode-list a:hover {
+            color: #cccccc;
+            border-bottom-color: #333333;
+        }
+
+        .back-link {
+            margin-bottom: 20px;
+        }
+
+        .back-link a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .back-link a:hover {
+            color: #cccccc;
+        }
+
+        .date {
+            color: #666666;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .description {
+            color: #999999;
+            font-size: 12px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="back-link">
+            <a href="/">&larr; back to portfolio</a>
+        </div>
+        
+        <h1>blog</h1>
+        
+        <div class="description">
+            Technical writings and thoughts on software engineering, system design, and development practices.
+        </div>
+        
+        <ul class="episode-list">
+            <li>
+                <a href="/blog/creating-this-portfolio-and-blog">
+                    001: creating this portfolio website and blog
+                    <span class="date">2025.01.24</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>
