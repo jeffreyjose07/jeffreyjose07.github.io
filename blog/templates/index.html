@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>blog - Jeffrey Jose</title>
-    <meta name="description" content="as a little shivering thing of silence, i try. maneuvering against the hissing of nothing, searching for something real in the spaces between." />
+    <title>{{title}} - Jeffrey Jose</title>
+    <meta name="description" content="{{description}}" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <style>
         * {
@@ -186,32 +186,18 @@
             <a href="/">back to portfolio</a>
         </div>
         
-        <h1>blog</h1>
+        <h1>{{title}}</h1>
         
         <div class="description">
-            as a little shivering thing of silence, i try. maneuvering against the hissing of nothing, searching for something real in the spaces between.
+            {{description}}
         </div>
         
         <ul class="episode-list">
-                        <li>
-                <a href="/blog/automating-the-void-building-a-frictionless-blog-system">
-                    <span class="episode-number">003</span><span class="episode-title">: automating the void - building a frictionless blog system</span><span class="date">2025.01.24</span>
-                </a>
-            </li>
-            <li>
-                <a href="/blog/building-a-scalable-chat-platform-with-claude-code">
-                    <span class="episode-number">002</span><span class="episode-title">: building a scalable chat platform with claude code</span><span class="date">2025.01.24</span>
-                </a>
-            </li>
-            <li>
-                <a href="/blog/creating-this-portfolio-website-and-blog">
-                    <span class="episode-number">001</span><span class="episode-title">: creating this portfolio website and blog</span><span class="date">2025.01.24</span>
-                </a>
-            </li>
+            {{posts}}
         </ul>
         
         <div class="stats">
-            total posts: 3
+            total posts: {{totalPosts}}
         </div>
     </div>
 </body>

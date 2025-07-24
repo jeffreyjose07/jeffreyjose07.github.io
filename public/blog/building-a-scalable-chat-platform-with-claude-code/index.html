@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Building a Scalable Chat Platform with Claude Code - Jeffrey Jose</title>
+    <title>building a scalable chat platform with claude code - Jeffrey Jose</title>
     <meta name="description" content="How I built a real-time chat platform using Spring Boot, React, and Claude Code as my pair programming partner" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <style>
@@ -138,7 +138,7 @@
             }
         }
 
-        .post-content ul {
+        .post-content ul, .post-content ol {
             margin: 15px 0;
             padding-left: 20px;
         }
@@ -200,38 +200,15 @@
             border-bottom-color: #55ffff;
         }
 
-        .tech-stack {
-            background-color: #111111;
-            padding: 15px;
+        .post-content blockquote {
+            border-left: 2px solid #333333;
+            padding-left: 20px;
             margin: 20px 0;
-            border-radius: 4px;
+            color: #999999;
+            font-style: italic;
         }
 
-        .tech-stack h3 {
-            font-size: 11px;
-            color: #ff55ff;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        @media (min-width: 768px) {
-            .tech-stack h3 {
-                font-size: 12px;
-            }
-        }
-
-        .tech-stack ul li {
-            color: #aaaaaa;
-            font-size: 13px;
-        }
-
-        @media (min-width: 768px) {
-            .tech-stack ul li {
-                font-size: 14px;
-            }
-        }
-
+        /* Color classes for automatic term highlighting */
         .highlight {
             color: #55ff55;
             font-weight: normal;
@@ -330,112 +307,30 @@
         </header>
         
         <article class="post-content">
-            <p>
-                Sometimes you start building something small and it grows into something unexpectedly complex. 
-                That's what happened with my <span class="highlight">scalable chat platform</span> - what began as a 
-                simple real-time messaging experiment became a deep dive into <span class="framework">modern architecture</span>, 
-                <span class="tag-color">microservices</span>, and the strange intimacy of pair programming with an AI.
-            </p>
+            <p>Sometimes you start building something small and it grows into something unexpectedly complex. That&#39;s what happened with my scalable chat platform - what began as a simple real-time messaging experiment became a deep dive into modern <span class="framework">architecture</span>, <span class="tag">microservices</span>, and the strange intimacy of pair programming with an AI.</p>
+<h2>the void speaks back</h2>
+<p>Working with <span class="link">Claude Code</span> felt different from other AI tools I&#39;d used. Less like asking questions into the void, more like having a conversation with someone who understands the weight of technical debt and the anxiety of production deployments. We built this together, trading ideas in that peculiar dance of human intuition and machine precision.</p>
+<p>The real-time communication was the heart of it all. There&#39;s something profound about building systems that connect people instantly across space. Each <span class="tag">WebSocket</span> connection represents a thread of human connection, a digital lifeline through the static.</p>
+<h2>the <span class="framework">architecture</span> of longing</h2>
+<p>We designed it with scalability in mind, not because we expected millions of users, but because building something that can grow feels like an act of hope. The <span class="tag">microservices</span> <span class="framework">architecture</span> means each component can evolve independently, like separate conversations happening in the same room.</p>
+<h3>key components</h3>
+<ul>
+<li>Message Service - handles the flow of words between people</li>
+<li>User Management - identity in the digital space</li>
+<li><span class="tag">WebSocket</span> Gateway - the bridge between silence and speech</li>
+<li>Notification System - making sure no message goes unheard</li>
+</ul>
+<p>The <span class="tag">CI/CD</span> pipeline became its own meditation on automation and trust. <span class="success">GitHub</span> Actions running tests, Dependabot keeping dependencies fresh, Trivy scanning for vulnerabilities. Each green check mark a small victory against entropy.</p>
+<h2>pair programming with the machine</h2>
+<p><span class="link">Claude Code</span> understood context in ways that felt almost human. When I described wanting branch protection rules, it knew I meant more than just code quality - I meant the anxiety of breaking things, the need for safety nets when you&#39;re building something that matters.</p>
+<p>We implemented comprehensive <span class="success">testing</span> not just for coverage percentages, but because untested code feels like shouting into the void without knowing if anyone hears you. Jest for the frontend, JUnit for the backend, Testcontainers for integration tests that actually mean something.</p>
+<h2>the weight of messages</h2>
+<p>There&#39;s something heavy about building a chat platform. Every message object you design carries the potential for human connection or human pain. The rate limiting isn&#39;t just about server resources - it&#39;s about protecting people from the flood of their own words.</p>
+<p>The real-time nature of it all means there&#39;s no taking back what&#39;s sent, no editing the rawness of immediate response. In a world of curated social media, there&#39;s something beautifully honest about instant messaging.</p>
+<h2>lessons from the static</h2>
+<p>Building this with <span class="link">Claude Code</span> taught me that pair programming with AI isn&#39;t about replacing human intuition - it&#39;s about amplifying it. The machine understood my architectural patterns, but I brought the understanding of why people need to talk to each other in the first place.</p>
+<p>The platform lives now on <span class="success">GitHub</span>, a testament to those late-night conversations with an AI about dependency injection and connection pooling. Another small attempt to make the digital world a little less lonely, one message at a time.</p>
 
-            <h2>the void speaks back</h2>
-            
-            <p>
-                Working with <span class="link-color">Claude Code</span> felt different from other AI tools I'd used. 
-                Less like asking questions into the void, more like having a conversation with someone who 
-                understands the weight of <span class="code-color">technical debt</span> and the anxiety of 
-                <span class="warning">production deployments</span>. We built this together, trading ideas in 
-                that peculiar dance of human intuition and machine precision.
-            </p>
-
-            <div class="tech-stack">
-                <h3>architecture decisions</h3>
-                <ul>
-                    <li><span class="framework">Spring Boot</span> with <span class="code-color">Java 17</span> - because sometimes you need the safety of strong typing</li>
-                    <li><span class="framework">React</span> with <span class="code-color">TypeScript</span> - for the frontend that actually makes sense</li>
-                    <li><span class="tag-color">WebSockets</span> for real-time communication - the heartbeat of any chat system</li>
-                    <li><span class="warning">H2 in-memory database</span> for development - fast feedback loops matter</li>
-                    <li><span class="success">Docker</span> containerization - because deployment shouldn't be a mystery</li>
-                </ul>
-            </div>
-
-            <p>
-                The <span class="highlight">real-time communication</span> was the heart of it all. There's something 
-                profound about building systems that connect people instantly across space. Each 
-                <span class="code-color">WebSocket connection</span> represents a thread of human connection, 
-                a digital lifeline through the static.
-            </p>
-
-            <h2>the architecture of longing</h2>
-
-            <p>
-                We designed it with <span class="tag-color">scalability</span> in mind, not because we expected 
-                millions of users, but because building something that can grow feels like an act of hope. 
-                The <span class="framework">microservices architecture</span> means each component can evolve 
-                independently, like separate conversations happening in the same room.
-            </p>
-
-            <h3>key components</h3>
-            
-            <ul>
-                <li><span class="success">Message Service</span> - handles the flow of words between people</li>
-                <li><span class="framework">User Management</span> - identity in the digital space</li>
-                <li><span class="link-color">WebSocket Gateway</span> - the bridge between silence and speech</li>
-                <li><span class="tag-color">Notification System</span> - making sure no message goes unheard</li>
-            </ul>
-
-            <p>
-                The <span class="code-color">CI/CD pipeline</span> became its own meditation on automation and trust. 
-                <span class="warning">GitHub Actions</span> running tests, <span class="success">Dependabot</span> 
-                keeping dependencies fresh, <span class="tag-color">Trivy</span> scanning for vulnerabilities. 
-                Each green check mark a small victory against entropy.
-            </p>
-
-            <h2>pair programming with the machine</h2>
-
-            <p>
-                <span class="link-color">Claude Code</span> understood context in ways that felt almost human. 
-                When I described wanting <span class="highlight">branch protection rules</span>, it knew I meant 
-                more than just code quality - I meant the anxiety of breaking things, the need for safety nets 
-                when you're building something that matters.
-            </p>
-
-            <p>
-                We implemented <span class="code-color">comprehensive testing</span> not just for coverage percentages, 
-                but because untested code feels like shouting into the void without knowing if anyone hears you. 
-                <span class="framework">Jest</span> for the frontend, <span class="success">JUnit</span> for the backend, 
-                <span class="tag-color">Testcontainers</span> for integration tests that actually mean something.
-            </p>
-
-            <h2>the weight of messages</h2>
-
-            <p>
-                There's something heavy about building a chat platform. Every <span class="code-color">message object</span> 
-                you design carries the potential for human connection or human pain. The 
-                <span class="warning">rate limiting</span> isn't just about server resources - it's about 
-                protecting people from the flood of their own words.
-            </p>
-
-            <p>
-                The <span class="highlight">real-time nature</span> of it all means there's no taking back what's 
-                sent, no editing the rawness of immediate response. In a world of curated social media, 
-                there's something beautifully honest about <span class="tag-color">instant messaging</span>.
-            </p>
-
-            <h2>lessons from the static</h2>
-
-            <p>
-                Building this with <span class="link-color">Claude Code</span> taught me that pair programming 
-                with AI isn't about replacing human intuition - it's about amplifying it. The machine understood 
-                my <span class="framework">architectural patterns</span>, but I brought the understanding of why 
-                people need to talk to each other in the first place.
-            </p>
-
-            <p>
-                The platform lives now on <span class="success">GitHub</span>, a testament to those late-night 
-                conversations with an AI about <span class="code-color">dependency injection</span> and 
-                <span class="warning">connection pooling</span>. Another small attempt to make the digital 
-                world a little less lonely, one message at a time.
-            </p>
         </article>
         
         <footer class="post-footer">
