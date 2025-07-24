@@ -3,7 +3,7 @@ title: "brainwash yourself for success"
 slug: "brainwash-yourself-for-success"
 date: "2017-04-22"
 description: "how i overcame procrastination and transformed my study habits for GATE preparation - a journey from last-minute cramming to systematic learning"
-tags: ["personal-growth", "education", "gate-exam", "study-habits", "self-improvement", "motivation"]
+tags: ["personal", "tutorials"]
 ---
 
 ![success](/blog/images/success-image.jpg)

@@ -1,7 +1,8 @@
 ---
 title: "automating the void - building a frictionless blog system"
+slug: "automated-blog-system"
 date: "2025-01-24"
-tags: ["automation", "meta", "github-actions", "workflow"]
+tags: ["automation", "meta"]
 description: "How I solved the pain of manual blog creation by building an automated system that preserves the terminal aesthetic while eliminating friction"
 ---
 
