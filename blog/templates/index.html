@@ -160,6 +160,96 @@
             color: #ffaa77;
         }
 
+        /* Tag filters */
+        .tag-filters {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            background-color: #111111;
+        }
+
+        .tag-filters h3 {
+            font-size: 11px;
+            color: #666666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @media (min-width: 768px) {
+            .tag-filters h3 {
+                font-size: 12px;
+            }
+        }
+
+        .tag-filter {
+            background: none;
+            border: 1px solid #333333;
+            color: #c9c9c9;
+            padding: 4px 8px;
+            margin: 2px 4px 2px 0;
+            font-family: inherit;
+            font-size: 10px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.2s ease;
+        }
+
+        @media (min-width: 768px) {
+            .tag-filter {
+                font-size: 11px;
+                padding: 5px 10px;
+            }
+        }
+
+        .tag-filter:hover,
+        .tag-filter.active {
+            border-color: currentColor;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .tag-filter.success { color: #55ff55; }
+        .tag-filter.structure { color: #5588ff; }
+        .tag-filter.process { color: #ffff55; }
+        .tag-filter.attention { color: #ff8855; }
+        .tag-filter.meta { color: #ff55ff; }
+        .tag-filter.connection { color: #55ffff; }
+        .tag-filter.neutral { color: #c9c9c9; }
+
+        /* Show all button */
+        .show-all {
+            background: none;
+            border: 1px solid #555555;
+            color: #aaaaaa;
+            padding: 4px 8px;
+            margin: 2px 4px 2px 0;
+            font-family: inherit;
+            font-size: 10px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.2s ease;
+        }
+
+        @media (min-width: 768px) {
+            .show-all {
+                font-size: 11px;
+                padding: 5px 10px;
+            }
+        }
+
+        .show-all:hover,
+        .show-all.active {
+            border-color: #55ff55;
+            color: #55ff55;
+            background-color: rgba(85, 255, 85, 0.1);
+        }
+
+        /* Hidden posts during filtering */
+        .post-item.hidden {
+            display: none;
+        }
+
         /* Terminal-like cursor effect for title */
         h1:after {
             content: '_';
@@ -192,6 +282,12 @@
             {{description}}
         </div>
         
+        <div class="tag-filters">
+            <h3>filter by tag</h3>
+            <button class="show-all active" data-tag="all">show all</button>
+            {{tagFilters}}
+        </div>
+        
         <ul class="episode-list">
             {{posts}}
         </ul>
@@ -200,5 +296,59 @@
             total posts: {{totalPosts}}
         </div>
     </div>
+    
+    <script>
+        // Tag filtering functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.tag-filter, .show-all');
+            const postItems = document.querySelectorAll('.post-item');
+            const showAllButton = document.querySelector('.show-all');
+            
+            function updateStats() {
+                const visiblePosts = document.querySelectorAll('.post-item:not(.hidden)').length;
+                const statsElement = document.querySelector('.stats');
+                const activeFilter = document.querySelector('.tag-filter.active, .show-all.active');
+                
+                if (activeFilter && activeFilter.dataset.tag === 'all') {
+                    statsElement.textContent = `total posts: ${postItems.length}`;
+                } else if (activeFilter) {
+                    statsElement.textContent = `showing ${visiblePosts} posts tagged with "${activeFilter.dataset.tag}"`;
+                }
+            }
+            
+            function filterPosts(tag) {
+                postItems.forEach(post => {
+                    if (tag === 'all') {
+                        post.classList.remove('hidden');
+                    } else {
+                        const postTags = post.dataset.tags.split(' ');
+                        if (postTags.includes(tag)) {
+                            post.classList.remove('hidden');
+                        } else {
+                            post.classList.add('hidden');
+                        }
+                    }
+                });
+                updateStats();
+            }
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Filter posts
+                    const tag = this.dataset.tag;
+                    filterPosts(tag);
+                });
+            });
+            
+            // Initialize stats
+            updateStats();
+        });
+    </script>
 </body>
 </html>
