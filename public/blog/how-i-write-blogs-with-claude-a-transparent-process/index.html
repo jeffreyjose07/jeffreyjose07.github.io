@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>how i write blogs with claude - a transparent process - Jeffrey Jose</title>
+    <meta name="description" content="A detailed walkthrough of how I use Claude to create blog posts, from initial prompts to final output" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background-color: #000000;
+            color: #c9c9c9;
+            line-height: 1.6;
+            padding: 20px;
+            font-size: 15px;
+            text-rendering: optimizeLegibility;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 40px 20px;
+                font-size: 16px;
+            }
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            margin-bottom: 18px;
+        }
+
+        .back-link a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        @media (min-width: 768px) {
+            .back-link a {
+                font-size: 13px;
+            }
+        }
+
+        .back-link a:hover {
+            color: #aaaaaa;
+        }
+
+        .back-link a:before {
+            content: '← ';
+            color: #666666;
+        }
+
+        .post-header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 20px;
+        }
+
+        .post-title {
+            font-size: 16px;
+            font-weight: normal;
+            margin-bottom: 10px;
+            text-transform: lowercase;
+            color: #55ff55;
+            letter-spacing: 0.3px;
+            line-height: 1.3;
+        }
+
+        @media (min-width: 768px) {
+            .post-title {
+                font-size: 18px;
+            }
+        }
+
+        .post-meta {
+            color: #ff8855;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-meta {
+                font-size: 13px;
+            }
+        }
+
+        .post-content {
+            line-height: 1.7;
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h2 {
+            font-size: 14px;
+            font-weight: normal;
+            margin: 30px 0 15px 0;
+            color: #5588ff;
+            text-transform: lowercase;
+            letter-spacing: 0.2px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content h2 {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h3 {
+            font-size: 13px;
+            font-weight: normal;
+            margin: 25px 0 12px 0;
+            color: #ff55ff;
+            text-transform: lowercase;
+        }
+
+        @media (min-width: 768px) {
+            .post-content h3 {
+                font-size: 14px;
+            }
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .post-content li {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content li {
+                font-size: 15px;
+            }
+        }
+
+        .post-content code {
+            background-color: #111111;
+            padding: 2px 4px;
+            border-radius: 1px;
+            font-family: inherit;
+            color: #ffff55;
+            font-size: 13px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content code {
+                font-size: 14px;
+            }
+        }
+
+        .post-content pre {
+            background-color: #111111;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content pre {
+                font-size: 13px;
+            }
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .post-content a {
+            color: #55ffff;
+            text-decoration: none;
+            border-bottom: 1px solid #334444;
+        }
+
+        .post-content a:hover {
+            color: #77ffff;
+            border-bottom-color: #55ffff;
+        }
+
+        .post-content blockquote {
+            border-left: 2px solid #333333;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #999999;
+            font-style: italic;
+        }
+
+        /* Semantic color system */
+        .success {
+            color: #55ff55;
+            font-weight: normal;
+        }
+
+        .structure {
+            color: #5588ff;
+        }
+
+        .process {
+            color: #ffff55;
+        }
+
+        .attention {
+            color: #ff8855;
+        }
+
+        .meta {
+            color: #ff55ff;
+        }
+
+        .connection {
+            color: #55ffff;
+        }
+
+        .neutral {
+            color: #c9c9c9;
+        }
+
+        /* Reading progress indicator */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: #55ff55;
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+
+        /* Subtle improvements */
+        .post-content p:first-of-type:first-letter {
+            color: #55ff55;
+            font-size: 18px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p:first-of-type:first-letter {
+                font-size: 20px;
+            }
+        }
+
+        /* Footer with post info */
+        .post-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #222222;
+            font-size: 11px;
+            color: #555555;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 768px) {
+            .post-footer {
+                font-size: 12px;
+            }
+        }
+
+        .post-footer .tag {
+            color: #ff55ff;
+        }
+
+        /* Image styling */
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Mobile improvements */
+        @media (max-width: 767px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .post-content pre {
+                margin-left: -10px;
+                margin-right: -10px;
+                border-radius: 0;
+            }
+
+            .post-content img {
+                margin: 15px auto;
+                max-width: calc(100% - 20px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="back-link">
+            <a href="/blog">back to blog</a>
+        </div>
+        
+        <header class="post-header">
+            <h1 class="post-title">005: how i write blogs with claude - a transparent process</h1>
+            <div class="post-meta">2025.01.24</div>
+        </header>
+        
+        <article class="post-content">
+            <p>Let me be direct about something: I use <strong>AI</strong> to write my blog posts, and I&#39;m not apologizing for it. This isn&#39;t about replacing creativity or taking shortcuts - it&#39;s about building something instead of staying stuck in perfectionism paralysis.</p>
+<h2>the reality of ai-assisted writing</h2>
+<p>Here&#39;s the thing about using <strong>Claude</strong> for blog writing - I&#39;m not just hitting &quot;generate blog post&quot; and calling it done. I bring the core ideas, the direction, the voice. <strong>Claude</strong> helps me flesh out those ideas into coherent posts that actually provide value to readers.</p>
+<p>The alternative? Spending weeks overthinking a single post, getting caught in endless revision cycles, or worse - not writing anything at all because the blank page feels too intimidating.</p>
+<h2>my actual process with claude</h2>
+<h3>step 1: the messy initial prompt</h3>
+<p>I don&#39;t start with a polished request. My prompts to <strong>Claude</strong> look exactly like this recent one:</p>
+<pre><code>id like to create a new blog post explaining how i make blog posts using claude. 
+make no mistake i use ai for creating blog posts and will continue to use ai no use 
+not using ai. might not help in developing creative writing skills but this is good 
+enough i do contribute core ideas flesh em out using ai the intent matters and also 
+viewer should get value out of reading the post rather than wait for nothing. ai makes 
+life easier and no one should be ashamed of using it. i can change the post styles 
+according to my wish and this post doesnt need to be too existential or nihilistic 
+as before. also try to keep the post not cringe or too motivational. im just writing 
+blogs using ai to help myself start somewhere build something rather than be stuck. 
+this post is an example of how i use claude to write blogs. explain in detail the process
+</code></pre>
+<p>That&#39;s the raw, unfiltered input. No grammar checking, no perfect sentences. Just brain-to-text <span class="connection">stream</span> of <span class="meta">consciousness</span> about what I want to communicate.</p>
+<h3>step 2: claude does the heavy lifting</h3>
+<p><strong>Claude</strong> takes my messy thoughts and:</p>
+<ul>
+<li><strong>Structures</strong> them into logical sections</li>
+<li><strong>Expands</strong> on ideas I only briefly mentioned</li>
+<li><strong>Maintains</strong> the voice and tone I specified</li>
+<li><strong>Organizes</strong> everything into readable flow</li>
+<li><strong>Preserves</strong> my key points while making them clearer</li>
+</ul>
+<p>The <strong>AI</strong> isn&#39;t writing about topics it chose - it&#39;s amplifying and organizing the ideas I already had.</p>
+<h3>step 3: the automated blog <span class="structure">system</span></h3>
+<p>Once <strong>Claude</strong> generates the content, my automated blog <span class="structure">system</span> (which I wrote about in a previous post) handles:</p>
+<ul>
+<li><strong>Converting</strong> <strong><span class="process">Markdown</span></strong> to <strong><span class="process">HTML</span></strong> with <span class="meta">terminal</span> styling</li>
+<li><strong>Color coding</strong> technical terms automatically</li>
+<li><strong>Generating</strong> episode numbers and <span class="meta">metadata</span></li>
+<li><strong>Updating</strong> the blog index</li>
+<li><strong>Deploying</strong> via <strong><span class="success">GitHub</span> Actions</strong></li>
+</ul>
+<p>The entire <span class="connection">pipeline</span> from idea to published post takes maybe 10 minutes.</p>
+<h2>why this approach works for me</h2>
+<h3>it breaks through decision paralysis</h3>
+<p>Without <strong>AI</strong> assistance, I&#39;d spend hours debating:</p>
+<ul>
+<li>Is this topic worth writing about?</li>
+<li>How should I <span class="structure">structure</span> this?</li>
+<li>What if my writing isn&#39;t good enough?</li>
+<li>Should I make this more technical or more personal?</li>
+</ul>
+<p>With <strong>Claude</strong>, I dump all my thoughts and let the <strong>AI</strong> organize them. Then I can evaluate the structured output instead of wrestling with a blank page.</p>
+<h3>it maintains authenticity</h3>
+<p>The ideas are mine. The experiences are mine. The opinions are mine. <strong>Claude</strong> just helps me articulate them clearly instead of getting lost in my own head.</p>
+<h3>it produces actual value</h3>
+<p>Readers don&#39;t care if I used <strong>AI</strong> to organize my thoughts - they care if the post teaches them something useful or gives them a new perspective. This approach lets me focus on the substance rather than getting stuck on the presentation.</p>
+<h2>what i contribute vs what claude contributes</h2>
+<h3>my contributions:</h3>
+<ul>
+<li><strong>Core concepts</strong> and ideas to explore</li>
+<li><strong>Personal experiences</strong> and specific examples</li>
+<li><strong>Voice</strong> and <strong>tone</strong> direction</li>
+<li><strong>Technical requirements</strong> (like &quot;don&#39;t be too motivational&quot;)</li>
+<li><strong>Structural preferences</strong> (headings, flow, emphasis)</li>
+</ul>
+<h3>claude&#39;s contributions:</h3>
+<ul>
+<li><strong>Organization</strong> of scattered thoughts into logical flow</li>
+<li><strong>Expansion</strong> of brief points into full explanations</li>
+<li><strong>Transitions</strong> between sections</li>
+<li><strong>Clarity</strong> improvements in language</li>
+<li><strong>Consistency</strong> in voice throughout the post</li>
+</ul>
+<h2>the elephant in the room</h2>
+<p>&quot;But doesn&#39;t this hurt your creative writing skills?&quot;</p>
+<p>Probably. But here&#39;s what it definitely helps:</p>
+<ul>
+<li><strong>Publishing consistency</strong> - I actually write posts instead of thinking about writing posts</li>
+<li><strong>Idea development</strong> - I explore topics I might have dismissed as &quot;not developed enough&quot;</li>
+<li><strong>Audience focus</strong> - I spend energy on what readers need instead of perfect prose</li>
+<li><strong>Technical learning</strong> - I <span class="process">build</span> systems and workflows around content creation</li>
+</ul>
+<p>I&#39;m not trying to become a novelist. I&#39;m trying to share ideas and <span class="process">build</span> an online presence. <strong>AI</strong> helps me do that effectively.</p>
+<h2>the meta aspect</h2>
+<p>This post is itself an example of the process I&#39;m describing. I gave <strong>Claude</strong> that messy prompt at the beginning, specified the tone (not too existential, not cringe, not overly motivational), and asked for a detailed process explanation.</p>
+<p><strong>Claude</strong> organized my scattered thoughts about <strong>AI</strong>-assisted writing into this structured post. I&#39;m not pretending I wrote every word myself - but I did provide every idea, opinion, and direction.</p>
+<h2>why you shouldn&#39;t feel bad about using ai</h2>
+<p>The value is in having something to say, not in manually arranging every sentence. If <strong>AI</strong> helps you:</p>
+<ul>
+<li><strong>Overcome</strong> writing blocks</li>
+<li><strong>Organize</strong> complex thoughts</li>
+<li><strong>Maintain</strong> publishing consistency</li>
+<li><strong>Focus</strong> on ideas instead of prose perfectionism</li>
+</ul>
+<p>Then use it. The alternative isn&#39;t becoming a better writer through struggle - it&#39;s often just not writing at all.</p>
+<h2>the practical <span class="connection">workflow</span></h2>
+<ol>
+<li><strong>Dump thoughts</strong> into a messy prompt to <strong>Claude</strong></li>
+<li><strong>Specify tone</strong> and structural preferences</li>
+<li><strong>Review</strong> and <strong>edit</strong> the generated content</li>
+<li><strong>Commit</strong> to <strong><span class="success">GitHub</span></strong> and let automation handle the <span class="connection">rest</span></li>
+<li><strong>Publish</strong> within minutes instead of weeks</li>
+</ol>
+<p>Simple, effective, and <span class="success">scalable</span>. No shame in using tools that work.</p>
+<p>The goal isn&#39;t to prove I can write without help. The goal is to consistently share ideas that might be useful to someone else. <strong>AI</strong> helps me do that better than perfectionist paralysis ever did.</p>
+
+        </article>
+        
+        <footer class="post-footer">
+            <div>
+                words: ~800 · reading time: ~4 min · tags: <span class="tag neutral">ai</span>, <span class="tag neutral">claude</span>, <span class="tag neutral">writing</span>, <span class="tag neutral">process</span>, <span class="tag meta">meta</span>
+            </div>
+        </footer>
+    </div>
+    
+    <div class="reading-progress"></div>
+    
+    <script>
+        // Simple reading progress indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('.reading-progress').style.width = scrolled + '%';
+        });
+    </script>
+</body>
+</html>
