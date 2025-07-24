@@ -11,6 +11,7 @@ const Navigation = () => {
     { label: "Projects", href: "#projects" },
     { label: "Skills", href: "#skills" },
     { label: "Education", href: "#education" },
+    { label: "Blog", href: "/blog", external: true },
     { label: "Contact", href: "#contact" }
   ];
 
@@ -23,8 +24,12 @@ const Navigation = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleNavClick = (href: string) => {
+  const handleNavClick = (href: string, external?: boolean) => {
     setIsMobileMenuOpen(false);
+    if (external) {
+      window.location.href = href;
+      return;
+    }
     const element = document.querySelector(href);
     if (element) {
       element.scrollIntoView({ 
@@ -65,7 +70,7 @@ const Navigation = () => {
                   href={item.href}
                   onClick={(e) => {
                     e.preventDefault();
-                    handleNavClick(item.href);
+                    handleNavClick(item.href, (item as any).external);
                   }}
                   className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-all duration-300 relative group"
                 >
@@ -97,7 +102,7 @@ const Navigation = () => {
                   href={item.href}
                   onClick={(e) => {
                     e.preventDefault();
-                    handleNavClick(item.href);
+                    handleNavClick(item.href, (item as any).external);
                   }}
                   className="text-foreground hover:text-primary hover:bg-accent block px-3 py-2 text-base font-medium transition-all duration-300 rounded-md"
                 >

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creating This Portfolio Website and Blog - Jeffrey Jose</title>
+    <meta name="description" content="How I built my portfolio website and blog using React, TypeScript, and Vite" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: monospace;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 40px 20px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            margin-bottom: 20px;
+        }
+
+        .back-link a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .back-link a:hover {
+            color: #cccccc;
+        }
+
+        .post-header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 20px;
+        }
+
+        .post-title {
+            font-size: 16px;
+            font-weight: normal;
+            margin-bottom: 10px;
+            text-transform: lowercase;
+        }
+
+        .post-meta {
+            color: #666666;
+            font-size: 12px;
+        }
+
+        .post-content {
+            line-height: 1.7;
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+        }
+
+        .post-content h2 {
+            font-size: 14px;
+            font-weight: normal;
+            margin: 30px 0 15px 0;
+            color: #cccccc;
+            text-transform: lowercase;
+        }
+
+        .post-content ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .post-content li {
+            margin: 8px 0;
+        }
+
+        .post-content code {
+            background-color: #111111;
+            padding: 2px 4px;
+            border-radius: 2px;
+            font-family: monospace;
+            color: #cccccc;
+        }
+
+        .post-content pre {
+            background-color: #111111;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .post-content a {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .post-content a:hover {
+            color: #cccccc;
+        }
+
+        .tech-stack {
+            background-color: #111111;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .tech-stack h3 {
+            font-size: 12px;
+            color: #999999;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="back-link">
+            <a href="/blog">&larr; back to blog</a>
+        </div>
+        
+        <header class="post-header">
+            <h1 class="post-title">001: creating this portfolio website and blog</h1>
+            <div class="post-meta">2025.01.24</div>
+        </header>
+        
+        <article class="post-content">
+            <p>
+                Building a portfolio website is one of those projects that every developer eventually tackles. 
+                After years of putting it off, I finally decided to create something that would showcase my work 
+                and serve as a creative outlet for technical writing.
+            </p>
+
+            <h2>the portfolio website</h2>
+            
+            <p>
+                The main portfolio site is built as a modern single-page application using React and TypeScript. 
+                I wanted something fast, responsive, and easy to maintain while still looking professional.
+            </p>
+
+            <div class="tech-stack">
+                <h3>tech stack</h3>
+                <ul>
+                    <li>React 18 with TypeScript for the frontend framework</li>
+                    <li>Vite for fast development and building</li>
+                    <li>Tailwind CSS for styling with a custom design system</li>
+                    <li>shadcn/ui for consistent UI components</li>
+                    <li>Lucide React for icons</li>
+                    <li>GitHub Pages for hosting</li>
+                </ul>
+            </div>
+
+            <p>
+                The design follows a clean, modern aesthetic with smooth animations and a responsive layout. 
+                I implemented a custom theme system with both light and dark modes, though I personally prefer 
+                the dark theme for development work.
+            </p>
+
+            <p>
+                The site includes sections for my professional experience, projects, skills, education, and contact information. 
+                Each section is designed to be scannable and informative without being overwhelming.
+            </p>
+
+            <h2>the blog</h2>
+
+            <p>
+                For the blog, I took inspiration from <a href="https://musicforprogramming.net/" target="_blank">musicforprogramming.net</a> - 
+                a site I've always admired for its minimal, terminal-like aesthetic and focus on content over form.
+            </p>
+
+            <p>
+                The blog is intentionally simple: black background, white monospace text, and no unnecessary visual elements. 
+                This design choice reflects my philosophy that technical content should be easy to read and distraction-free.
+            </p>
+
+            <p>
+                Rather than using a complex CMS or static site generator, I opted for simple HTML files with inline CSS. 
+                This keeps the blog lightweight and gives me complete control over the presentation without any build complexity.
+            </p>
+
+            <h2>deployment and workflow</h2>
+
+            <p>
+                The entire site is hosted on GitHub Pages, with automatic deployment through GitHub Actions. 
+                Every push to the main branch triggers a build process that compiles the React application and 
+                deploys it to the gh-pages branch.
+            </p>
+
+            <p>
+                This setup gives me a seamless workflow: write code locally, push to GitHub, and see changes live 
+                within minutes. The blog posts can be added by simply creating new HTML files in the appropriate directory structure.
+            </p>
+
+            <h2>lessons learned</h2>
+
+            <p>
+                This project reinforced several principles I value in software development:
+            </p>
+
+            <ul>
+                <li>Simple solutions are often the best solutions</li>
+                <li>Performance matters - the site loads instantly</li>
+                <li>Good design doesn't require complexity</li>
+                <li>Having the right tools makes development enjoyable</li>
+            </ul>
+
+            <p>
+                Building this portfolio and blog has been a satisfying project that combines technical skills with 
+                creative expression. It serves as both a showcase of my work and a platform for sharing thoughts 
+                on software engineering topics.
+            </p>
+
+            <p>
+                The source code is available on GitHub, and I plan to write more about the specific technical decisions 
+                and implementation details in future posts.
+            </p>
+        </article>
+    </div>
+</body>
+</html>
