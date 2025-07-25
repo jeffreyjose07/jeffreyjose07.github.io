@@ -183,7 +183,16 @@ function slugify(text) {
 
 function formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0].replace(/-/g, '.');
+    const months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    
+    return `${day} ${month} ${year}`;
 }
 
 function estimateReadingTime(text) {
@@ -247,7 +256,12 @@ function processPost(filename, episodeNumber, allPosts = []) {
         .replace(/{{readingTime}}/g, readingTime)
         .replace(/{{tagsFormatted}}/g, tagsFormatted)
         .replace(/{{navigation}}/g, navigationHtml)
-        .replace(/{{slug}}/g, slug);
+        .replace(/{{slug}}/g, slug)
+        .replace(/{{githubUrl}}/g, config.social.github)
+        .replace(/{{linkedinUrl}}/g, config.social.linkedin)
+        .replace(/{{twitterUrl}}/g, config.social.twitter)
+        .replace(/{{emailUrl}}/g, config.social.email)
+        .replace(/{{resumeUrl}}/g, config.resumeUrl);
     
     // Create output directory
     const outputDir = path.join(OUTPUT_DIR, slug);
@@ -330,7 +344,12 @@ function generateIndex(posts) {
         .replace(/{{description}}/g, config.description)
         .replace(/{{tagFilters}}/g, tagFiltersHtml)
         .replace(/{{posts}}/g, postsHtml)
-        .replace(/{{totalPosts}}/g, posts.length);
+        .replace(/{{totalPosts}}/g, posts.length)
+        .replace(/{{githubUrl}}/g, config.social.github)
+        .replace(/{{linkedinUrl}}/g, config.social.linkedin)
+        .replace(/{{twitterUrl}}/g, config.social.twitter)
+        .replace(/{{emailUrl}}/g, config.social.email)
+        .replace(/{{resumeUrl}}/g, config.resumeUrl);
     
     // Write index file
     fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), html);
@@ -412,7 +431,12 @@ ${postsHtml}
     // Populate template
     const html = template
         .replace(/{{yearSections}}/g, yearSectionsHtml)
-        .replace(/{{totalPosts}}/g, posts.length);
+        .replace(/{{totalPosts}}/g, posts.length)
+        .replace(/{{githubUrl}}/g, config.social.github)
+        .replace(/{{linkedinUrl}}/g, config.social.linkedin)
+        .replace(/{{twitterUrl}}/g, config.social.twitter)
+        .replace(/{{emailUrl}}/g, config.social.email)
+        .replace(/{{resumeUrl}}/g, config.resumeUrl);
     
     // Write archive file
     fs.writeFileSync(path.join(OUTPUT_DIR, 'archive.html'), html);

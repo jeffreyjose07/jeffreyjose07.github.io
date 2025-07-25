@@ -400,9 +400,107 @@
         .breadcrumb span {
             margin: 0 5px;
         }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #222222;
+        }
+
+        .social-links a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 11px;
+            text-transform: lowercase;
+            letter-spacing: 0.5px;
+            transition: color 0.2s ease;
+        }
+
+        .social-links a:hover {
+            color: #55ff55;
+        }
+
+        .social-links .divider {
+            color: #333333;
+            font-size: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .social-links a {
+                font-size: 12px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .terminal-loader {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            color: #55ff55;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .cursor-blink {
+            animation: blink 1.2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid #55ff55;
+            white-space: nowrap;
+            animation: typing 2s steps(20, end), blink-cursor 1s infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-cursor {
+            0%, 50% { border-color: #55ff55; }
+            51%, 100% { border-color: transparent; }
+        }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="terminal-loader">
+            <div class="typewriter">loading post...</div>
+            <div style="margin-top: 10px;">
+                <span class="cursor-blink">_</span>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="breadcrumb">
             <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>the revelations of a btech student</span>
@@ -412,9 +510,21 @@
             <a href="/blog">back to blog</a>
         </div>
         
+        <div class="social-links">
+            <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener">github</a>
+            <span class="divider">·</span>
+            <a href="https://linkedin.com/in/jeffreyjose07" target="_blank" rel="noopener">linkedin</a>
+            <span class="divider">·</span>
+            <a href="https://twitter.com/jeffreyjose07" target="_blank" rel="noopener">twitter</a>
+            <span class="divider">·</span>
+            <a href="mailto:jeffrey.jose07@gmail.com">email</a>
+            <span class="divider">·</span>
+            <a href="/resume.pdf" target="_blank">resume</a>
+        </div>
+        
         <header class="post-header">
             <h1 class="post-title">000: the revelations of a btech student</h1>
-            <div class="post-meta">2017.04.20</div>
+            <div class="post-meta">20 Apr 2017</div>
         </header>
         
         <article class="post-content">
@@ -508,6 +618,19 @@
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
             document.querySelector('.reading-progress').style.width = scrolled + '%';
+        });
+
+        // Loading screen animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            
+            // Simulate loading time and hide loading screen
+            setTimeout(() => {
+                loadingScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 1500); // Show loading for 1.5 seconds
         });
     </script>
 </body>
