@@ -422,6 +422,42 @@ ${rssItems}
     fs.writeFileSync(path.join(OUTPUT_DIR, 'feed.xml'), rssXml);
 }
 
+// Generate sitemap.xml
+function generateSitemap(posts) {
+    const baseUrl = 'https://jeffreyjose07.github.io';
+    const currentDate = new Date().toISOString().split('T')[0];
+    
+    // Static pages
+    const staticPages = [
+        { url: `${baseUrl}/`, priority: '1.0', changefreq: 'monthly' },
+        { url: `${baseUrl}/blog/`, priority: '0.9', changefreq: 'weekly' },
+        { url: `${baseUrl}/blog/archive.html`, priority: '0.8', changefreq: 'weekly' },
+        { url: `${baseUrl}/blog/feed.xml`, priority: '0.7', changefreq: 'daily' }
+    ];
+    
+    // Blog posts
+    const postUrls = posts.map(post => ({
+        url: `${baseUrl}/blog/${post.slug}`,
+        lastmod: new Date(post.date).toISOString().split('T')[0],
+        priority: '0.8',
+        changefreq: 'monthly'
+    }));
+    
+    const allUrls = [...staticPages, ...postUrls];
+    
+    const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${allUrls.map(page => `  <url>
+    <loc>${page.url}</loc>
+    <lastmod>${page.lastmod || currentDate}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`;
+
+    fs.writeFileSync(path.join(OUTPUT_DIR, 'sitemap.xml'), sitemapXml);
+}
+
 // Generate archive page
 function generateArchive(posts) {
     const template = loadTemplate('archive');
@@ -538,7 +574,12 @@ function build() {
     generateArchive(posts);
     console.log('✅ Generated archive.html');
     
-    console.log(`🎉 Blog build complete! Generated ${posts.length} posts with navigation, RSS feed, archive, and semantic highlighting.`);
+    // Generate sitemap
+    console.log('🗺️ Generating sitemap...');
+    generateSitemap(posts);
+    console.log('✅ Generated sitemap.xml');
+    
+    console.log(`🎉 Blog build complete! Generated ${posts.length} posts with navigation, RSS feed, archive, sitemap, and semantic highlighting.`);
 }
 
 // Run build if called directly
