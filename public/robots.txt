@@ -12,3 +12,9 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Sitemaps
+Sitemap: https://jeffreyjose07.github.io/blog/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
