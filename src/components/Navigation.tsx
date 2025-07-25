@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   const navItems = [
     { label: "Home", href: "#hero" },
@@ -22,6 +25,10 @@ const Navigation = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   const handleNavClick = (href: string, external?: boolean) => {
@@ -81,8 +88,23 @@ const Navigation = () => {
             </div>
           </div>
 
-          {/* Mobile menu button - Enhanced for better touch interaction */}
-          <div className="md:hidden">
+          {/* Mobile controls - Theme toggle and menu button */}
+          <div className="md:hidden flex items-center space-x-2">
+            {/* Theme toggle for mobile */}
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="text-foreground hover:text-primary p-2 touch-manipulation bg-accent/20 hover:bg-accent/40 rounded-lg border border-border/30 transition-all duration-200 active:scale-95"
+              aria-label="Toggle theme"
+              type="button"
+            >
+              {mounted && theme === "dark" ? (
+                <Sun size={20} />
+              ) : (
+                <Moon size={20} />
+              )}
+            </button>
+            
+            {/* Hamburger menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-foreground hover:text-primary p-3 touch-manipulation bg-accent/20 hover:bg-accent/40 rounded-lg border border-border/30 transition-all duration-200 active:scale-95"
