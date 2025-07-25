@@ -449,6 +449,7 @@
             z-index: 9999;
             opacity: 1;
             transition: opacity 0.5s ease;
+            overflow: hidden;
         }
 
         .loading-screen.fade-out {
@@ -456,11 +457,32 @@
             pointer-events: none;
         }
 
+        .matrix-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 12px;
+            line-height: 14px;
+            color: #00ff00;
+            opacity: 0.3;
+            overflow: hidden;
+            z-index: 1;
+        }
+
         .terminal-loader {
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             color: #55ff55;
             font-size: 14px;
             text-align: center;
+            z-index: 2;
+            position: relative;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 4px;
+            border: 1px solid #333333;
         }
 
         .cursor-blink {
@@ -493,6 +515,7 @@
 <body>
     <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
+        <div class="matrix-rain" id="matrixRain"></div>
         <div class="terminal-loader">
             <div class="typewriter">loading post...</div>
             <div style="margin-top: 10px;">
@@ -620,8 +643,52 @@
             document.querySelector('.reading-progress').style.width = scrolled + '%';
         });
 
+        // Matrix rain effect for loading screen
+        function createMatrixRain() {
+            const matrixContainer = document.getElementById('matrixRain');
+            if (!matrixContainer) return;
+            
+            const chars = '01アカサタナハマヤラワガザダバパ_-=+*#@%&';
+            const columns = Math.floor(window.innerWidth / 14);
+            const drops = [];
+            
+            // Initialize drops
+            for (let i = 0; i < columns; i++) {
+                drops[i] = Math.floor(Math.random() * window.innerHeight / 14);
+            }
+            
+            function drawMatrix() {
+                let output = '';
+                for (let i = 0; i < columns; i++) {
+                    const char = chars[Math.floor(Math.random() * chars.length)];
+                    const x = i * 14;
+                    const y = drops[i] * 14;
+                    
+                    output += `<span style="position: absolute; left: ${x}px; top: ${y}px; opacity: ${Math.random() * 0.8 + 0.2};">${char}</span>`;
+                    
+                    // Reset drop to top when it reaches bottom
+                    if (y > window.innerHeight && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+                matrixContainer.innerHTML = output;
+            }
+            
+            // Start matrix animation
+            const matrixInterval = setInterval(drawMatrix, 100);
+            
+            // Stop matrix animation after loading
+            setTimeout(() => {
+                clearInterval(matrixInterval);
+            }, 1400);
+        }
+
         // Loading screen animation
         document.addEventListener('DOMContentLoaded', () => {
+            // Start matrix rain
+            createMatrixRain();
+            
             const loadingScreen = document.getElementById('loadingScreen');
             
             // Simulate loading time and hide loading screen
