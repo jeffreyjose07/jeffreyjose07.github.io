@@ -286,7 +286,24 @@
 
         .post-footer .tag {
             color: #ff55ff;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
         }
+        
+        .post-footer .tag:hover {
+            text-decoration: none;
+            border-bottom-color: currentColor;
+        }
+        
+        /* Tag color classes */
+        .tag.success { color: #55ff55; }
+        .tag.structure { color: #5588ff; }
+        .tag.process { color: #ffff55; }
+        .tag.attention { color: #ff8855; }
+        .tag.meta { color: #ff55ff; }
+        .tag.connection { color: #55ffff; }
+        .tag.neutral { color: #c9c9c9; }
 
         /* Image styling */
         .post-content img {
@@ -527,7 +544,7 @@
         
         <footer class="post-footer">
             <div>
-                words: ~700 · reading time: ~3 min · tags: <span class="tag structure">backend</span>, <span class="tag structure">system-design</span>, <span class="tag connection">ai-tools</span>
+                words: ~700 · reading time: ~3 min · tags: <a href="/blog#tag-backend" class="tag structure" data-tag="backend">backend</a>, <a href="/blog#tag-system-design" class="tag structure" data-tag="system-design">system-design</a>, <a href="/blog#tag-ai-tools" class="tag connection" data-tag="ai-tools">ai-tools</a>
             </div>
         </footer>
         

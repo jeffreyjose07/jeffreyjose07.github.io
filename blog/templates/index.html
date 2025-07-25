@@ -462,6 +462,25 @@
             const postItems = document.querySelectorAll('.post-item');
             const showAllButton = document.querySelector('.show-all');
             
+            // Check for tag in URL hash on page load
+            function checkUrlHash() {
+                const hash = window.location.hash;
+                if (hash.startsWith('#tag-')) {
+                    const tag = hash.substring(5); // Remove '#tag-' prefix
+                    const tagButton = document.querySelector(`[data-tag="${tag}"]`);
+                    if (tagButton) {
+                        // Remove active class from all buttons
+                        filterButtons.forEach(btn => btn.classList.remove('active'));
+                        // Add active class to the tag button
+                        tagButton.classList.add('active');
+                        // Filter posts by tag
+                        filterPosts(tag);
+                        // Clear the hash after filtering
+                        history.replaceState(null, null, '/blog');
+                    }
+                }
+            }
+            
             function updateStats() {
                 const visiblePosts = document.querySelectorAll('.post-item:not(.hidden)').length;
                 const statsElement = document.querySelector('.stats');
@@ -506,6 +525,9 @@
             
             // Initialize stats
             updateStats();
+            
+            // Check for tag in URL hash after everything is set up
+            checkUrlHash();
         });
 
         // 90s BBS-Style Pattern Animator
