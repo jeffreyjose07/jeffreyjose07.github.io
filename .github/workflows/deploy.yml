@@ -101,7 +101,7 @@ jobs:
 
   build-portfolio:
     runs-on: ubuntu-latest
-    needs: [build-blog, commit-blog]
+    needs: build-blog
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
