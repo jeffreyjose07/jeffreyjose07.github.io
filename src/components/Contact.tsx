@@ -55,7 +55,7 @@ const Contact = () => {
                         <div className="p-2 rounded-full bg-white/10 group-hover/item:bg-white/20 transition-all duration-300">
                           <MapPin className="h-5 w-5 text-blue-200 group-hover/item:text-white group-hover/item:scale-110 transition-all duration-300" />
                         </div>
-                        <span className="text-white/80 font-medium">Kharagpur, India</span>
+                        <span className="text-white/80 font-medium">Bengaluru, India</span>
                       </div>
                     </div>
                   </div>
