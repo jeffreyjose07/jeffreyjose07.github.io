@@ -5,14 +5,14 @@ const Education = () => {
   const education = [
     {
       degree: "Master of Technology (M.Tech.)",
-      field: "Computer Science",
+      field: "Computer Science & Engineering",
       institution: "Indian Institute of Technology, Kharagpur",
       period: "2017 – 2019",
       location: "Kharagpur, India"
     },
     {
       degree: "Bachelor of Technology (B.Tech.)",
-      field: "Computer Science and Engineering",
+      field: "Computer Science & Engineering",
       institution: "Government College Of Engineering Kannur",
       period: "2012 – 2016",
       location: "Kannur, India"
