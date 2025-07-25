@@ -363,18 +363,38 @@ function generateRSSfeed(posts) {
     const rssItems = latestPosts.map(post => {
         const pubDate = new Date(post.date).toUTCString();
         const postUrl = `https://jeffreyjose07.github.io/blog/${post.slug}`;
-        
+        const author = post.author || (config.authorEmail ? `${config.authorEmail} (${config.author})` : config.author) || '';
+        const tags = post.tags || [];
+        // Try to get image from frontmatter or first image in content (if available)
+        let imageUrl = '';
+        if (post.image) {
+            imageUrl = post.image.startsWith('http') ? post.image : `https://jeffreyjose07.github.io/blog/${post.image}`;
+        }
+        // Optionally, try to extract from post.content if desired
+        // const imageMatch = post.content && post.content.match(/<img[^>]+src=["']([^"'>]+)["']/);
+        // if (imageMatch) imageUrl = imageMatch[1];
+        // Provide full HTML content if available
+        const contentEncoded = post.htmlContent ? `<![CDATA[${post.htmlContent}]]>` : '';
         return `    <item>
       <title><![CDATA[${post.title}]]></title>
       <description><![CDATA[${post.description || ''}]]></description>
       <link>${postUrl}</link>
       <guid isPermaLink="true">${postUrl}</guid>
       <pubDate>${pubDate}</pubDate>
+      <author>${author}</author>
+      <dc:creator>${config.author}</dc:creator>
+${tags.map(tag => `      <category><![CDATA[${tag}]]></category>`).join('\n')}
+${imageUrl ? `      <media:thumbnail url="${imageUrl}" />` : ''}
+${contentEncoded ? `      <content:encoded>${contentEncoded}</content:encoded>` : ''}
     </item>`;
     }).join('\n');
 
     const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" 
+    xmlns:atom="http://www.w3.org/2005/Atom" 
+    xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+    xmlns:dc="http://purl.org/dc/elements/1.1/" 
+    xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
     <title>${config.title} - ${config.author}</title>
     <description>${config.description}</description>
@@ -383,6 +403,7 @@ function generateRSSfeed(posts) {
     <language>en-us</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <generator>Custom Node.js Blog Builder</generator>
+    <copyright>${config.copyright || `Copyright ${new Date().getFullYear()} ${config.author}`}</copyright>
 ${rssItems}
   </channel>
 </rss>`;
@@ -492,10 +513,14 @@ function build() {
     generateIndex(posts);
     console.log('✅ Generated blog index.html with tag filters');
     
-    // Generate RSS feed
-    console.log('📡 Generating RSS feed...');
-    generateRSSfeed(posts);
-    console.log('✅ Generated feed.xml');
+    // Only generate RSS feed during CI (GitHub Actions or CI env variable)
+    if (process.env.GITHUB_ACTIONS === 'true' || process.env.CI === 'true') {
+        console.log('📡 Generating RSS feed (CI detected)...');
+        generateRSSfeed(posts);
+        console.log('✅ Generated feed.xml');
+    } else {
+        console.log('ℹ️ Skipping RSS feed generation (not running in CI).');
+    }
     
     // Generate archive page
     console.log('📚 Generating archive page...');
