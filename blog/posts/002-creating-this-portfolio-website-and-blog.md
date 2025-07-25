@@ -1,5 +1,5 @@
 ---
-title: "creating this portfolio website and blog"
+title: "Creating This Portfolio Website and Blog"
 date: "2025-01-24"
 tags: ["frontend", "meta"]
 description: "How I built my portfolio website and blog using React, TypeScript, and Vite"
@@ -9,7 +9,7 @@ wordCount: 500
 
 Building a portfolio website is one of those projects that every developer eventually tackles. After years of putting it off, I finally decided to create something that would showcase my work and serve as a creative outlet for technical writing.
 
-## the portfolio website
+## The Portfolio Website
 
 The main portfolio site is built as a modern single-page application using React and TypeScript. I wanted something fast, responsive, and easy to maintain while still looking professional.
 
@@ -17,21 +17,21 @@ The design follows a clean, modern aesthetic with smooth animations and a respon
 
 The site includes sections for my professional experience, projects, skills, education, and contact information. Each section is designed to be scannable and informative without being overwhelming.
 
-## the blog
+## The Blog
 
-For the blog, I took inspiration from [musicforprogramming.net](https://musicforprogramming.net/) - a site I've always admired for its minimal, terminal-like aesthetic and focus on content over form.
+For the blog, I took inspiration from [MusicForProgramming.net](https://musicforprogramming.net/) - a site I've always admired for its minimal, terminal-like aesthetic and focus on content over form.
 
 The blog is intentionally simple: black background, white monospace text, and no unnecessary visual elements. This design choice reflects my philosophy that technical content should be easy to read and distraction-free.
 
 Rather than using a complex CMS or static site generator, I opted for simple HTML files with inline CSS. This keeps the blog lightweight and gives me complete control over the presentation without any build complexity.
 
-## deployment and workflow
+## Deployment and Workflow
 
 The entire site is hosted on GitHub Pages, with automatic deployment through GitHub Actions. Every push to the main branch triggers a build process that compiles the React application and deploys it to the gh-pages branch.
 
 This setup gives me a seamless workflow: write code locally, push to GitHub, and see changes live within minutes. The blog posts can be added by simply creating new HTML files in the appropriate directory structure.
 
-## lessons learned
+## Lessons Learned
 
 This project reinforced several principles I value in software development:
 

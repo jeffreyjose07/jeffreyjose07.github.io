@@ -1,5 +1,5 @@
 ---
-title: "how i write blogs with claude - a transparent process"
+title: "How I Write Blogs with Claude - A Transparent Process"
 slug: "ai-assisted-writing"
 date: "2025-01-24"
 tags: ["ai-tools", "meta"]
