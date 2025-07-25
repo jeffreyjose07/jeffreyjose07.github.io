@@ -286,7 +286,24 @@
 
         .post-footer .tag {
             color: #ff55ff;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
         }
+        
+        .post-footer .tag:hover {
+            text-decoration: none;
+            border-bottom-color: currentColor;
+        }
+        
+        /* Tag color classes */
+        .tag.success { color: #55ff55; }
+        .tag.structure { color: #5588ff; }
+        .tag.process { color: #ffff55; }
+        .tag.attention { color: #ff8855; }
+        .tag.meta { color: #ff55ff; }
+        .tag.connection { color: #55ffff; }
+        .tag.neutral { color: #c9c9c9; }
 
         /* Image styling */
         .post-content img {
@@ -606,7 +623,7 @@ this post is an example of how i use claude to write blogs. explain in detail th
         
         <footer class="post-footer">
             <div>
-                words: ~800 · reading time: ~4 min · tags: <span class="tag connection">ai-tools</span>, <span class="tag meta">meta</span>
+                words: ~800 · reading time: ~4 min · tags: <a href="/blog#tag-ai-tools" class="tag connection" data-tag="ai-tools">ai-tools</a>, <a href="/blog#tag-meta" class="tag meta" data-tag="meta">meta</a>
             </div>
         </footer>
         

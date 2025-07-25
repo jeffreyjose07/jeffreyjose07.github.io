@@ -226,11 +226,11 @@ function processPost(filename, episodeNumber, allPosts = []) {
     const wordCount = frontmatter.wordCount || countWords(content);
     const readingTime = frontmatter.readingTime || estimateReadingTime(content);
     
-    // Format tags with colors
+    // Format tags with colors and make them clickable
     const tagsFormatted = frontmatter.tags
         ? frontmatter.tags.map(tag => {
             const tagColorCategory = config.tagColors[tag] || 'neutral';
-            return `<span class="tag ${tagColorCategory}">${tag}</span>`;
+            return `<a href="/blog#tag-${tag}" class="tag ${tagColorCategory}" data-tag="${tag}">${tag}</a>`;
         }).join(', ')
         : '';
     

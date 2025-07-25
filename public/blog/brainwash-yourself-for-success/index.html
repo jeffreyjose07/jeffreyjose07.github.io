@@ -286,7 +286,24 @@
 
         .post-footer .tag {
             color: #ff55ff;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
         }
+        
+        .post-footer .tag:hover {
+            text-decoration: none;
+            border-bottom-color: currentColor;
+        }
+        
+        /* Tag color classes */
+        .tag.success { color: #55ff55; }
+        .tag.structure { color: #5588ff; }
+        .tag.process { color: #ffff55; }
+        .tag.attention { color: #ff8855; }
+        .tag.meta { color: #ff55ff; }
+        .tag.connection { color: #55ffff; }
+        .tag.neutral { color: #c9c9c9; }
 
         /* Image styling */
         .post-content img {
@@ -544,7 +561,7 @@
         
         <footer class="post-footer">
             <div>
-                words: ~801 · reading time: ~5 min · tags: <span class="tag neutral">personal</span>, <span class="tag attention">tutorials</span>
+                words: ~801 · reading time: ~5 min · tags: <a href="/blog#tag-personal" class="tag neutral" data-tag="personal">personal</a>, <a href="/blog#tag-tutorials" class="tag attention" data-tag="tutorials">tutorials</a>
             </div>
         </footer>
         
