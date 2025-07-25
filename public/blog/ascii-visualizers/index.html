@@ -722,10 +722,34 @@
             initializeMaterializationEffect();
         });
     </script>
-    <footer class="rss-footer" style="text-align:center; margin:2rem 0 1rem 0; font-size:1rem;">
-      <a href="/blog/feed.xml" target="_blank" rel="noopener" style="display:inline-block; padding:0.5em 1em; border-radius:4px; background:#f3f4f6; color:#222; text-decoration:none; font-weight:bold;">
-        📡 Subscribe via RSS
-      </a>
+    <footer class="rss-terminal" style="text-align:center; margin:3rem 0 2rem 0;">
+      <div class="ascii-border" style="display:inline-block; font-family: 'Courier New', monospace; color: #33ff33; background: #000; padding: 0.5rem 1rem; white-space: pre; line-height: 1.2; border: 1px solid #333;">
+        <div style="text-align: center;">
+          +----------------------+
+        </div>
+        <div style="text-align: center;">
+          |   <a href="/blog/feed.xml" target="_blank" rel="noopener" style="color: #33ff33; text-decoration: none; font-weight: normal;" onmouseover="this.style.background='#33ff33'; this.style.color='#000';" onmouseout="this.style.background='transparent'; this.style.color='#33ff33';">[ RSS FEED ]</a>   |
+        </div>
+        <div style="text-align: center;">
+          +----------------------+
+        </div>
+      </div>
+      <div style="margin-top: 0.5rem; font-family: 'Courier New', monospace; color: #888; font-size: 0.9rem;">
+        > <span class="blink-cursor">_</span>
+      </div>
     </footer>
+    <style>
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+      }
+      .blink-cursor {
+        animation: blink 1s step-end infinite;
+        display: inline-block;
+        width: 0.5em;
+        background: #33ff33;
+        margin-left: 2px;
+      }
+    </style>
 </body>
 </html>
