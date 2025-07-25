@@ -1,9 +1,9 @@
 ---
-title: "automating the void - building a frictionless blog system"
+title: "Automating the Void - Building a Frictionless Blog System"
 slug: "automated-blog-system"
 date: "2025-01-24"
 tags: ["automation", "meta"]
-description: "How I solved the pain of manual blog creation by building an automated system that preserves the terminal aesthetic while eliminating friction"
+description: "How I Solved the Pain of Manual Blog Creation by Building an Automated System That Preserves the Terminal Aesthetic While Eliminating Friction"
 ---
 
 There's a peculiar anxiety that comes with wanting to write but facing the weight of implementation. Every time I wanted to create a blog post, I had to copy 300+ lines of HTML, manually update styling, remember the exact color codes, and then edit the blog index. The barrier between thought and expression had become a wall.

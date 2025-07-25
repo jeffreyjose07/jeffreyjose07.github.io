@@ -1,9 +1,9 @@
 ---
-title: "building a scalable chat platform with claude code"
+title: "Building a Scalable Chat Platform with Claude Code"
 slug: "scalable-chat-platform"
 date: "2025-01-24"
 tags: ["backend", "system-design", "ai-tools"]
-description: "How I built a real-time chat platform using Spring Boot, React, and Claude Code as my pair programming partner"
+description: "How I Built a Real-Time Chat Platform Using Spring Boot, React, and Claude Code as My Pair Programming Partner"
 readingTime: 3
 wordCount: 700
 ---

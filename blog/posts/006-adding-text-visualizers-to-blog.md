@@ -1,5 +1,5 @@
 ---
-title: "adding text-based visualizers to the blog homepage"
+title: "Adding Text-Based Visualizers to the Blog Homepage"
 slug: "ascii-visualizers"
 date: "2025-01-24"
 tags: ["frontend", "tutorials", "meta"]
@@ -12,17 +12,17 @@ Sometimes you see something cool on the internet and think "I want that for my s
 
 I wanted something similar for my blog - animated text patterns that would enhance the terminal vibe without pulling focus from the actual content.
 
-## the inspiration
+## The Inspiration
 
 The **musicforprogramming.net** visualizer caught my attention because it solved a common problem: how do you add visual interest to a minimal design without breaking the aesthetic? Their solution was elegant - subtle, monospace text animations that felt like background processes running in a terminal.
 
 My blog already had the terminal aesthetic down - black background, **Monaco** font, green accent colors. What it lacked was that ambient, "system running in the background" feeling that would make the page feel more alive.
 
-## the research phase
+## The Research Phase
 
 Instead of trying to scrape the exact code from **musicforprogramming.net** (which didn't work anyway), I researched the broader landscape of text-based visualizers and **ASCII** art animations.
 
-### common patterns i discovered:
+### Common Patterns I Discovered:
 
 **Matrix rain effects** - The classic green characters falling down the screen
 **Random character cycling** - Characters that randomly change and settle
@@ -35,7 +35,7 @@ The key insight was that effective text visualizers follow these principles:
 - **Performance conscious** - animations that don't bog down the page
 - **Responsive aware** - hidden on mobile where they'd be distracting
 
-## the technical implementation
+## The Technical Implementation
 
 I implemented two different animation systems to create variety:
 
