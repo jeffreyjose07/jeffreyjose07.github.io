@@ -151,14 +151,30 @@ blog/
 
 ## Automatic Features
 
-### Episode Numbering
-Posts are automatically numbered as episodes (001, 002, 003, etc.) based on the alphabetical order of filenames. To control ordering, prefix your files:
+### Episode Numbering and File Naming Convention
+
+**IMPORTANT:** Blog posts must follow the numbered naming pattern to maintain proper episode ordering:
 
 ```
-001-first-post.md
-002-second-post.md
-003-latest-thoughts.md
+000-first-post.md
+001-second-post.md
+002-third-post.md
+008-latest-post.md
 ```
+
+**Before creating a new post:**
+1. Check existing posts to find the next episode number:
+   ```bash
+   ls blog/posts/ | grep -E '^[0-9]' | tail -1
+   ```
+2. Use the next sequential number with zero-padding (e.g., 008, 009, 010)
+
+**Naming Format:**
+- **Pattern:** `###-descriptive-title.md`
+- **Examples:** `008-ai-learning-catalyst.md`, `009-react-hooks-explained.md`
+- **Zero-padding:** Always use 3 digits (001, not 1)
+
+Posts are automatically numbered as episodes based on the filename prefix, which determines the display order and navigation structure.
 
 ### Blog Index
 The main blog index at `/blog` is automatically updated with:
