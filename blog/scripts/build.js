@@ -361,6 +361,17 @@ function generateRSSfeed(posts) {
     const latestPosts = sortedPosts.slice(0, 10); // Only include latest 10 posts
     
     const rssItems = latestPosts.map(post => {
+        // Try to get the full HTML content for each post
+        let htmlContent = '';
+        try {
+            const postPath = path.join(OUTPUT_DIR, post.slug, 'index.html');
+            if (fs.existsSync(postPath)) {
+                htmlContent = fs.readFileSync(postPath, 'utf8');
+                // Optionally, extract only the <article>...</article> or main content if desired
+            }
+        } catch (e) {
+            htmlContent = '';
+        }
         const pubDate = new Date(post.date).toUTCString();
         const postUrl = `https://jeffreyjose07.github.io/blog/${post.slug}`;
         const author = post.author || (config.authorEmail ? `${config.authorEmail} (${config.author})` : config.author) || '';
@@ -374,7 +385,7 @@ function generateRSSfeed(posts) {
         // const imageMatch = post.content && post.content.match(/<img[^>]+src=["']([^"'>]+)["']/);
         // if (imageMatch) imageUrl = imageMatch[1];
         // Provide full HTML content if available
-        const contentEncoded = post.htmlContent ? `<![CDATA[${post.htmlContent}]]>` : '';
+        const contentEncoded = htmlContent ? `<![CDATA[${htmlContent}]]>` : '';
         return `    <item>
       <title><![CDATA[${post.title}]]></title>
       <description><![CDATA[${post.description || ''}]]></description>
@@ -385,7 +396,7 @@ function generateRSSfeed(posts) {
       <dc:creator>${config.author}</dc:creator>
 ${tags.map(tag => `      <category><![CDATA[${tag}]]></category>`).join('\n')}
 ${imageUrl ? `      <media:thumbnail url="${imageUrl}" />` : ''}
-${contentEncoded ? `      <content:encoded>${contentEncoded}</content:encoded>` : ''}
+      <content:encoded>${contentEncoded}</content:encoded>
     </item>`;
     }).join('\n');
 
