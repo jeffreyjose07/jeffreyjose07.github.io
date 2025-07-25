@@ -81,21 +81,27 @@ const Navigation = () => {
             </div>
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu button - Enhanced for better touch interaction */}
           <div className="md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-foreground hover:text-primary p-2 transition-colors duration-300"
+              className="text-foreground hover:text-primary p-3 touch-manipulation bg-accent/20 hover:bg-accent/40 rounded-lg border border-border/30 transition-all duration-200 active:scale-95"
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              type="button"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border/20 shadow-lg">
-            <div className="px-2 pt-2 pb-3 space-y-1">
+        {/* Mobile Navigation - Enhanced for webview compatibility */}
+        <div className={`md:hidden fixed top-16 left-0 right-0 z-40 transform transition-all duration-300 ease-in-out ${
+          isMobileMenuOpen 
+            ? "translate-y-0 opacity-100" 
+            : "-translate-y-full opacity-0 pointer-events-none"
+        }`}>
+          <div className="bg-background border-b border-border shadow-lg">
+            <div className="px-4 py-3 space-y-2">
               {navItems.map((item) => (
                 <a
                   key={item.href}
@@ -104,14 +110,21 @@ const Navigation = () => {
                     e.preventDefault();
                     handleNavClick(item.href, (item as any).external);
                   }}
-                  className="text-foreground hover:text-primary hover:bg-accent block px-3 py-2 text-base font-medium transition-all duration-300 rounded-md"
+                  className="text-foreground hover:text-primary hover:bg-accent/50 block px-4 py-3 text-base font-medium transition-all duration-200 rounded-lg border border-transparent hover:border-border/30 active:bg-accent/70"
                 >
                   {item.label}
                 </a>
               ))}
             </div>
           </div>
-        )}
+          
+          {/* Mobile menu backdrop - tap to close */}
+          <div 
+            className="fixed inset-0 bg-black/20 -z-10"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{ top: '0', height: '100vh' }}
+          />
+        </div>
       </div>
     </nav>
   );

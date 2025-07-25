@@ -304,6 +304,57 @@ html {
       object-fit: contain;
     }
   }
+
+  /* Mobile navigation enhancements for webview compatibility */
+  @media (max-width: 768px) {
+    /* Ensure mobile menu button is always visible and touchable */
+    .mobile-menu-button {
+      min-width: 48px;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    
+    /* Enhanced mobile menu with better webview support */
+    .mobile-menu {
+      position: fixed;
+      top: 64px; /* Height of nav bar */
+      left: 0;
+      right: 0;
+      background: hsl(var(--background));
+      border-bottom: 1px solid hsl(var(--border));
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      z-index: 40;
+    }
+    
+    /* Mobile menu items with better touch targets */
+    .mobile-menu-item {
+      display: block;
+      padding: 16px 20px;
+      min-height: 56px;
+      border-bottom: 1px solid hsl(var(--border) / 0.1);
+      transition: background-color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    
+    .mobile-menu-item:hover,
+    .mobile-menu-item:active {
+      background: hsl(var(--accent) / 0.5);
+    }
+    
+    /* Fallback for backdrop-blur if not supported */
+    @supports not (backdrop-filter: blur(16px)) {
+      .glass-effect,
+      .glass-effect-dark {
+        background: hsl(var(--background) / 0.95);
+        border: 1px solid hsl(var(--border));
+      }
+    }
+  }
 }
 
 /* Enhanced keyframes */
