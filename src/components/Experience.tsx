@@ -6,26 +6,31 @@ const Experience = () => {
   const experiences = [
     {
       title: "Senior Software Engineer",
-      company: "Jio Platforms Limited (JPL)",
+      company: "Jio Platforms Ltd",
       period: "Apr 2022 – Present",
-      location: "India",
+      location: "Bengaluru, Karnataka",
       achievements: [
-        "Upgraded Batch Jobs for user group management using Spring Batch, achieving 3x speed-up in program execution and enabling the service to handle larger data-sets more robustly.",
-        "Converted existing promotion/coupon management system in Ajio B2B to a generic multi-tenant service for all Jio-related B2B verticals."
+        "Designed and architected scalable batch processing system for user group management using Spring Batch with optimized data partitioning, achieving 3x speed-up in program execution and enabling the service to handle 10x larger datasets while maintaining system reliability and performance.",
+        "Led system design and architecture for converting monolithic promotion/coupon management system into a generic multi-tenant microservice, enabling seamless integration across all Jio B2B verticals and supporting distributed deployment patterns.",
+        "Designed and implemented distributed order management system architecture in collaboration with central platform team and Fynd, utilizing reactive programming with Spring WebFlux and Project Reactor to handle 50,000+ concurrent requests, achieving 40% reduction in response time and supporting 5x higher throughput.",
+        "Architected and developed multithreaded enterprise migration utility with distributed system design, integrating multiple telecommunication systems (SIP, HSS, BTAS, and ESBC) to automate mobility-to-enterprise number migration, reducing manual processing time from 2 hours to 15 minutes per 1000-number batch and improving business processing efficiency by 85%.",
+        "Established technical leadership practices including code review processes, system design documentation, and mentored team of 4 junior developers, improving code quality metrics by 60% and reducing production incidents by 45%."
       ],
-      skills: ["Spring Batch", "Java", "System Architecture", "Multi-tenant Services"]
+      skills: ["Spring Batch", "Spring WebFlux", "Project Reactor", "Microservices", "System Architecture", "Technical Leadership", "Performance Optimization"]
     },
     {
       title: "Software Engineer",
-      company: "Jio Platforms Limited (JPL)",
-      period: "Jul 2019 – Mar 2022",
-      location: "India",
+      company: "Jio Platforms Ltd",
+      period: "Jul 2019 – Apr 2022",
+      location: "Bengaluru, Karnataka",
       achievements: [
-        "Delivered unit-tested backend APIs for Jio Prime Merchant (B2B side of JioMart) and collaborated with testing teams to set up component tests for functionality, scalability, and performance.",
-        "Refactored and modularized legacy codebase to improve code quality and enhance product development.",
-        "Partnered with infrastructure team to configure zero downtime deployments, significantly reducing product downtime."
+        "Designed and delivered scalable REST APIs for Jio Prime Merchant (B2B side of JioMart) handling 100,000+ daily transactions, implementing comprehensive unit and component testing strategies to meet business requirements for functionality, scalability and performance optimization.",
+        "Led technical modernization through systematic revision, modularization, and refactoring of legacy monolithic codebase into clean, maintainable microservices architecture with 80% test coverage and zero code smells, significantly enhancing product development velocity by 50% and code quality.",
+        "Collaborated with infrastructure team to architect and configure zero-downtime CI/CD deployment pipelines using Azure DevOps, implementing blue-green deployment strategies that improved deployment speed by 70% and system stability with 99.9% uptime.",
+        "Designed and integrated Liquibase-based database schema management system for distributed environments, ensuring consistency across multiple database instances and enabling reliable rollback mechanisms with automated migration scripts.",
+        "Provided technical leadership through mentoring 6+ new recruits with structured sessions on clean code principles, legacy system refactoring strategies, and agile development best practices."
       ],
-      skills: ["Backend APIs", "Testing", "DevOps", "Code Refactoring"]
+      skills: ["REST APIs", "Microservices", "Azure DevOps", "Liquibase", "Testing", "Technical Mentoring", "Legacy Modernization"]
     },
     {
       title: "Teaching Assistant",
@@ -34,9 +39,11 @@ const Experience = () => {
       location: "Kharagpur, India",
       achievements: [
         "Assisted in Programming and Data Structures Lab (CS11002)",
-        "Assisted in Theory of Computations (CS41001)"
+        "Assisted in Theory of Computations (CS41001)",
+        "Mentored students in fundamental computer science concepts and programming techniques",
+        "Conducted lab sessions and provided guidance on algorithmic problem-solving"
       ],
-      skills: ["Teaching", "Data Structures", "Algorithms", "Theory of Computation"]
+      skills: ["Teaching", "Data Structures", "Algorithms", "Theory of Computation", "Mentoring", "Academic Leadership"]
     }
   ];
 

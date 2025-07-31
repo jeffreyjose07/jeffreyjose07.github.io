@@ -7,14 +7,17 @@ const Education = () => {
       degree: "Master of Technology (M.Tech.)",
       field: "Computer Science & Engineering",
       institution: "Indian Institute of Technology, Kharagpur",
-      period: "2017 – 2019",
-      location: "Kharagpur, India"
+      period: "Jun 2017 – May 2019",
+      location: "Kharagpur, India",
+      thesis: "Unsupervised Iterative Clustering of Hybrid Polarimetric SAR Images",
+      advisor: "Dr. Jayanta Mukhopadhyay (CSE Dept, IIT Kharagpur)",
+      description: "Cluster hybrid polarized SAR image in an unsupervised way into physically meaningful classes."
     },
     {
       degree: "Bachelor of Technology (B.Tech.)",
       field: "Computer Science & Engineering",
       institution: "Government College Of Engineering Kannur",
-      period: "2012 – 2016",
+      period: "Jun 2012 – May 2016",
       location: "Kannur, India"
     }
   ];
@@ -72,6 +75,14 @@ const Education = () => {
                         <p className="text-muted-foreground font-medium text-lg">
                           {edu.institution}
                         </p>
+                        {edu.thesis && (
+                          <div className="mt-4 space-y-2">
+                            <h4 className="text-sm font-semibold text-foreground/90">M.Tech Thesis:</h4>
+                            <p className="text-sm text-muted-foreground italic">{edu.thesis}</p>
+                            <p className="text-xs text-muted-foreground">Guided by: {edu.advisor}</p>
+                            <p className="text-sm text-muted-foreground">{edu.description}</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="flex flex-col gap-4 text-sm text-muted-foreground lg:text-right">
@@ -98,7 +109,7 @@ const Education = () => {
             <div className="text-center space-y-6">
               <div className="inline-block">
                 <h3 className="text-3xl md:text-4xl font-bold text-gradient mb-4">
-                  Academic Achievements
+                  Key Achievements
                 </h3>
                 <div className="w-20 h-1 bg-gradient-to-r from-primary to-primary-glow rounded-full mx-auto"></div>
               </div>
@@ -108,8 +119,8 @@ const Education = () => {
                 M.Tech., mentoring students in Programming, Data Structures, and Theory of Computations.
               </p>
               
-              {/* Achievement highlights */}
-              <div className="grid md:grid-cols-3 gap-8 mt-12">
+              {/* Key Achievements */}
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
                 <div className="group/item text-center">
                   <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-full flex items-center justify-center group-hover/item:from-primary/20 group-hover/item:to-primary-glow/20 transition-all duration-300">
                     <GraduationCap className="h-8 w-8 text-primary group-hover/item:scale-110 transition-transform duration-300" />
@@ -121,15 +132,36 @@ const Education = () => {
                   <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-full flex items-center justify-center group-hover/item:from-primary/20 group-hover/item:to-primary-glow/20 transition-all duration-300">
                     <Calendar className="h-8 w-8 text-primary group-hover/item:scale-110 transition-transform duration-300" />
                   </div>
-                  <h4 className="font-bold text-foreground mb-2 group-hover/item:text-primary transition-colors duration-300">Teaching Assistant</h4>
-                  <p className="text-sm text-muted-foreground">2+ Years Experience</p>
+                  <h4 className="font-bold text-foreground mb-2 group-hover/item:text-primary transition-colors duration-300">GATE 2017</h4>
+                  <p className="text-sm text-muted-foreground">All India Rank 170 among 200,000+ candidates</p>
                 </div>
                 <div className="group/item text-center">
                   <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-full flex items-center justify-center group-hover/item:from-primary/20 group-hover/item:to-primary-glow/20 transition-all duration-300">
                     <MapPin className="h-8 w-8 text-primary group-hover/item:scale-110 transition-transform duration-300" />
                   </div>
-                  <h4 className="font-bold text-foreground mb-2 group-hover/item:text-primary transition-colors duration-300">Premier Institutions</h4>
-                  <p className="text-sm text-muted-foreground">Strong Academic Foundation</p>
+                  <h4 className="font-bold text-foreground mb-2 group-hover/item:text-primary transition-colors duration-300">Spotlight Award</h4>
+                  <p className="text-sm text-muted-foreground">Q1 2022 for technical excellence in system architecture</p>
+                </div>
+                <div className="group/item text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-full flex items-center justify-center group-hover/item:from-primary/20 group-hover/item:to-primary-glow/20 transition-all duration-300">
+                    <Calendar className="h-8 w-8 text-primary group-hover/item:scale-110 transition-transform duration-300" />
+                  </div>
+                  <h4 className="font-bold text-foreground mb-2 group-hover/item:text-primary transition-colors duration-300">Teaching Assistant</h4>
+                  <p className="text-sm text-muted-foreground">2+ Years Experience at IIT Kharagpur</p>
+                </div>
+                <div className="group/item text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-full flex items-center justify-center group-hover/item:from-primary/20 group-hover/item:to-primary-glow/20 transition-all duration-300">
+                    <GraduationCap className="h-8 w-8 text-primary group-hover/item:scale-110 transition-transform duration-300" />
+                  </div>
+                  <h4 className="font-bold text-foreground mb-2 group-hover/item:text-primary transition-colors duration-300">Association Secretary</h4>
+                  <p className="text-sm text-muted-foreground">Coordinated Tech Fest, CSE Department 2016</p>
+                </div>
+                <div className="group/item text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-primary/10 to-primary-glow/10 rounded-full flex items-center justify-center group-hover/item:from-primary/20 group-hover/item:to-primary-glow/20 transition-all duration-300">
+                    <MapPin className="h-8 w-8 text-primary group-hover/item:scale-110 transition-transform duration-300" />
+                  </div>
+                  <h4 className="font-bold text-foreground mb-2 group-hover/item:text-primary transition-colors duration-300">50,000+ Requests</h4>
+                  <p className="text-sm text-muted-foreground">Distributed systems with 99.9% uptime</p>
                 </div>
               </div>
             </div>
