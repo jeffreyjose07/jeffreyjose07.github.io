@@ -5,28 +5,40 @@ import { Code, Database, Server, Layers } from "lucide-react";
 const Skills = () => {
   const skillCategories = [
     {
+      title: "Programming Languages",
+      icon: Code,
+      skills: ["Java", "SQL", "Functional Programming", "Object-Oriented Design"],
+      color: "text-purple-500"
+    },
+    {
       title: "Backend Development",
       icon: Server,
-      skills: ["Java", "Spring Boot", "Spring Batch", "RESTful APIs", "Microservices"],
+      skills: ["Spring", "Spring Boot", "Spring Batch", "Spring WebFlux", "Project Reactor", "Hibernate", "RESTful APIs"],
       color: "text-blue-500"
+    },
+    {
+      title: "Database & Storage",
+      icon: Database,
+      skills: ["MongoDB", "PostgreSQL", "Redis", "Elasticsearch", "Database Design", "Performance Optimization", "Data Processing"],
+      color: "text-orange-500"
     },
     {
       title: "System Architecture",
       icon: Layers,
-      skills: ["Multi-tenant Services", "Scalable Systems", "Legacy Modernization", "DevOps"],
+      skills: ["Microservices", "Apache Kafka", "Event-Driven Systems", "Multi-tenant Services", "Scalable Systems", "Legacy Modernization", "Distributed Architecture"],
       color: "text-green-500"
     },
     {
-      title: "Programming Languages",
-      icon: Code,
-      skills: ["Java", "Spring Framework", "Functional Programming", "Object-Oriented Design"],
-      color: "text-purple-500"
+      title: "DevOps & Cloud",
+      icon: Server,
+      skills: ["Kubernetes", "GCP", "Azure DevOps", "CI/CD Pipelines", "Docker", "Zero-downtime Deployments"],
+      color: "text-cyan-500"
     },
     {
-      title: "Database & Tools",
-      icon: Database,
-      skills: ["SQL", "Database Design", "Performance Optimization", "Data Processing"],
-      color: "text-orange-500"
+      title: "Testing & Quality",
+      icon: Code,
+      skills: ["JUnit-Mockito", "Test-Driven Development", "Code Review Processes", "Unit Testing", "Component Testing"],
+      color: "text-indigo-500"
     }
   ];
 
@@ -55,8 +67,41 @@ const Skills = () => {
             <div className="w-32 h-1 bg-gradient-to-r from-primary to-primary-glow rounded-full mx-auto mb-6"></div>
           </div>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-light leading-relaxed">
-            Specialized in building robust, scalable backend systems and modern web applications with cutting-edge technologies
+            Expertise in distributed systems, microservices architecture, and performance engineering with proven track record in technical leadership
           </p>
+        </div>
+
+        {/* Core Competencies Section */}
+        <div className="max-w-6xl mx-auto mb-16 slide-up">
+          <Card className="bg-card/80 backdrop-blur-sm shadow-elegant border border-border/50 glow-hover group">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary-glow/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
+            <CardHeader className="relative z-10 text-center">
+              <CardTitle className="text-2xl md:text-3xl font-bold text-gradient mb-2">
+                Core Competencies
+              </CardTitle>
+              <div className="w-16 h-1 bg-gradient-to-r from-primary to-primary-glow rounded-full mx-auto"></div>
+            </CardHeader>
+            <CardContent className="relative z-10">
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="text-center group/comp">
+                  <h4 className="font-semibold text-foreground mb-2 group-hover/comp:text-primary transition-colors duration-300">Technical Leadership</h4>
+                  <p className="text-sm text-muted-foreground">System design, distributed architecture, cross-functional team collaboration, technical mentoring</p>
+                </div>
+                <div className="text-center group/comp">
+                  <h4 className="font-semibold text-foreground mb-2 group-hover/comp:text-primary transition-colors duration-300">System Architecture</h4>
+                  <p className="text-sm text-muted-foreground">Microservices design, scalable backend systems, reactive programming, event-driven architecture</p>
+                </div>
+                <div className="text-center group/comp">
+                  <h4 className="font-semibold text-foreground mb-2 group-hover/comp:text-primary transition-colors duration-300">Performance Engineering</h4>
+                  <p className="text-sm text-muted-foreground">Database optimization, caching strategies, load balancing, concurrent processing</p>
+                </div>
+                <div className="text-center group/comp">
+                  <h4 className="font-semibold text-foreground mb-2 group-hover/comp:text-primary transition-colors duration-300">DevOps & Reliability</h4>
+                  <p className="text-sm text-muted-foreground">CI/CD pipelines, zero-downtime deployments, monitoring, incident response, SLA management</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="grid md:grid-cols-2 gap-10 max-w-7xl mx-auto mb-20">

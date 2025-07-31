@@ -22,6 +22,45 @@ const Projects = () => {
         "Enterprise-grade development workflow",
         "Automated dependency updates and vulnerability scanning"
       ]
+    },
+    {
+      title: "Detection of Forest Area in SAR Images",
+      description: "Computer vision project focused on detecting and classifying forest areas in polarimetric SAR RISAT-1 images using advanced image processing techniques and machine learning algorithms.",
+      image: "/placeholder.svg",
+      technologies: ["Python", "Computer Vision", "Machine Learning", "SAR Image Processing", "Pattern Recognition"],
+      highlights: [
+        "Implemented advanced SAR image processing algorithms",
+        "Developed classification models for forest area detection",
+        "Applied polarimetric analysis techniques",
+        "Achieved accurate forest boundary identification",
+        "Utilized RISAT-1 satellite imagery data"
+      ]
+    },
+    {
+      title: "Graph-based Document Summarization",
+      description: "Natural language processing system that generates concise summaries of word documents using graph-based approaches including text-rank and degree-centrality algorithms.",
+      image: "/placeholder.svg",
+      technologies: ["Python", "NLP", "Graph Theory", "Text Processing", "Algorithm Design"],
+      highlights: [
+        "Implemented TextRank algorithm for document summarization",
+        "Applied degree-centrality based sentence ranking",
+        "Developed graph-based text representation",
+        "Automated summary generation pipeline",
+        "Evaluated summarization quality metrics"
+      ]
+    },
+    {
+      title: "Emotional Intelligence in Social Media",
+      description: "Data analytics project analyzing emotional intelligence patterns in Twitter users based on gender differences in tweets posted on sensitive topics, providing insights into social media behavior.",
+      image: "/placeholder.svg",
+      technologies: ["Python", "Data Analytics", "Social Media Mining", "Sentiment Analysis", "Statistical Analysis"],
+      highlights: [
+        "Analyzed large-scale Twitter dataset",
+        "Implemented sentiment analysis algorithms",
+        "Studied gender-based emotional patterns",
+        "Applied statistical analysis techniques",
+        "Generated behavioral insights from social media data"
+      ]
     }
   ];
 
@@ -65,7 +104,7 @@ const Projects = () => {
                         src={project.image}
                         alt={project.title}
                         className="w-full h-full object-cover md:object-contain lg:object-cover group-hover/image:scale-105 transition-transform duration-700 cursor-pointer bg-white/5 mobile-image-fit"
-                        onClick={() => window.open(project.liveUrl, '_blank')}
+                        onClick={() => project.liveUrl && window.open(project.liveUrl, '_blank')}
                         loading="lazy"
                         onError={(e) => {
                           e.currentTarget.style.objectFit = 'contain';
@@ -74,7 +113,7 @@ const Projects = () => {
                       />
                       {/* Overlay with link icon */}
                       <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-all duration-300 flex items-center justify-center cursor-pointer"
-                           onClick={() => window.open(project.liveUrl, '_blank')}>
+                           onClick={() => project.liveUrl && window.open(project.liveUrl, '_blank')}>
                         <div className="opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 bg-white/90 rounded-full p-3">
                           <ExternalLink className="h-6 w-6 text-primary" />
                         </div>
@@ -135,16 +174,18 @@ const Projects = () => {
               
               {/* Action Buttons - Outside the card structure */}
               <div className="flex gap-4 justify-center mt-6">
-              <button 
-                onClick={() => {
-                  console.log('Live Demo button clicked!', project.liveUrl);
-                  window.open(project.liveUrl, '_blank');
-                }}
-                className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 px-6 py-3 text-sm font-medium text-white transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer"
-              >
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Live Demo
-              </button>
+              {project.liveUrl && (
+                <button 
+                  onClick={() => {
+                    console.log('Live Demo button clicked!', project.liveUrl);
+                    window.open(project.liveUrl, '_blank');
+                  }}
+                  className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 px-6 py-3 text-sm font-medium text-white transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer"
+                >
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Live Demo
+                </button>
+              )}
               {project.githubUrl && (
                 <button 
                   onClick={() => {
@@ -156,6 +197,11 @@ const Projects = () => {
                   <Github className="mr-2 h-4 w-4" />
                   View Code
                 </button>
+              )}
+              {!project.liveUrl && !project.githubUrl && (
+                <div className="text-muted-foreground text-sm italic">
+                  Academic/Research Project
+                </div>
               )}
               </div>
             </div>
