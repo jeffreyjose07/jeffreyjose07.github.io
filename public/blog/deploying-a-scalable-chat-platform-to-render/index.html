@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deploying a Scalable Chat Platform to Render - Jeffrey Jose</title>
+    <meta name="description" content="lessons learned deploying a full-stack chat platform with spring boot, react, and modern ci/cd practices" />
+    
+    <!-- SEO Meta Tags -->
+    <meta property="og:title" content="Deploying a Scalable Chat Platform to Render">
+    <meta property="og:description" content="lessons learned deploying a full-stack chat platform with spring boot, react, and modern ci/cd practices">
+    <meta property="og:url" content="https://jeffreyjose07.github.io/blog/deploying-a-scalable-chat-platform-to-render">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Deploying a Scalable Chat Platform to Render">
+    <meta name="twitter:description" content="lessons learned deploying a full-stack chat platform with spring boot, react, and modern ci/cd practices">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background-color: #000000;
+            color: #c9c9c9;
+            line-height: 1.6;
+            padding: 20px;
+            font-size: 15px;
+            text-rendering: optimizeLegibility;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 40px 20px;
+                font-size: 16px;
+            }
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            margin-bottom: 18px;
+        }
+
+        .back-link a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        @media (min-width: 768px) {
+            .back-link a {
+                font-size: 13px;
+            }
+        }
+
+        .back-link a:hover {
+            color: #aaaaaa;
+        }
+
+        .back-link a:before {
+            content: '← ';
+            color: #666666;
+        }
+
+        .post-header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 20px;
+        }
+
+        .post-title {
+            font-size: 16px;
+            font-weight: normal;
+            margin-bottom: 10px;
+                        color: #55ff55;
+            letter-spacing: 0.3px;
+            line-height: 1.3;
+        }
+
+        @media (min-width: 768px) {
+            .post-title {
+                font-size: 18px;
+            }
+        }
+
+        .post-meta {
+            color: #ff8855;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-meta {
+                font-size: 13px;
+            }
+        }
+
+        .post-content {
+            line-height: 1.7;
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h2 {
+            font-size: 14px;
+            font-weight: normal;
+            margin: 30px 0 15px 0;
+            color: #5588ff;
+                        letter-spacing: 0.2px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content h2 {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h3 {
+            font-size: 13px;
+            font-weight: normal;
+            margin: 25px 0 12px 0;
+            color: #ff55ff;
+                    }
+
+        @media (min-width: 768px) {
+            .post-content h3 {
+                font-size: 14px;
+            }
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .post-content li {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content li {
+                font-size: 15px;
+            }
+        }
+
+        .post-content code {
+            background-color: #111111;
+            padding: 2px 4px;
+            border-radius: 1px;
+            font-family: inherit;
+            color: #ffff55;
+            font-size: 13px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content code {
+                font-size: 14px;
+            }
+        }
+
+        .post-content pre {
+            background-color: #111111;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content pre {
+                font-size: 13px;
+            }
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .post-content a {
+            color: #55ffff;
+            text-decoration: none;
+            border-bottom: 1px solid #334444;
+        }
+
+        .post-content a:hover {
+            color: #77ffff;
+            border-bottom-color: #55ffff;
+        }
+
+        .post-content blockquote {
+            border-left: 2px solid #333333;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #999999;
+            font-style: italic;
+        }
+
+        /* Semantic color system */
+        .success {
+            color: #55ff55;
+            font-weight: normal;
+        }
+
+        .structure {
+            color: #5588ff;
+        }
+
+        .process {
+            color: #ffff55;
+        }
+
+        .attention {
+            color: #ff8855;
+        }
+
+        .meta {
+            color: #ff55ff;
+        }
+
+        .connection {
+            color: #55ffff;
+        }
+
+        .neutral {
+            color: #c9c9c9;
+        }
+
+        /* Reading progress indicator */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: #55ff55;
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+
+        /* Subtle improvements */
+        .post-content p:first-of-type:first-letter {
+            color: #55ff55;
+            font-size: 18px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p:first-of-type:first-letter {
+                font-size: 20px;
+            }
+        }
+
+        /* Footer with post info */
+        .post-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #222222;
+            font-size: 11px;
+            color: #555555;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 768px) {
+            .post-footer {
+                font-size: 12px;
+            }
+        }
+
+        .post-footer .tag {
+            color: #ff55ff;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .post-footer .tag:hover {
+            text-decoration: none;
+            border-bottom-color: currentColor;
+        }
+        
+        /* Tag color classes */
+        .tag.success { color: #55ff55; }
+        .tag.structure { color: #5588ff; }
+        .tag.process { color: #ffff55; }
+        .tag.attention { color: #ff8855; }
+        .tag.meta { color: #ff55ff; }
+        .tag.connection { color: #55ffff; }
+        .tag.neutral { color: #c9c9c9; }
+
+        /* Image styling */
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Mobile improvements */
+        @media (max-width: 767px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .post-content pre {
+                margin-left: -10px;
+                margin-right: -10px;
+                border-radius: 0;
+            }
+
+            .post-content img {
+                margin: 15px auto;
+                max-width: calc(100% - 20px);
+            }
+        }
+
+        /* Post Navigation */
+        .post-navigation {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #333333;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .nav-previous, .nav-next {
+            padding: 15px;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            background-color: #111111;
+        }
+
+        .nav-previous a, .nav-next a {
+            display: block;
+            color: #c9c9c9;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-previous a:hover, .nav-next a:hover {
+            color: #ffffff;
+        }
+
+        .nav-next {
+            text-align: right;
+        }
+
+        .nav-label {
+            display: block;
+            font-size: 11px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .nav-title {
+            display: block;
+            font-size: 14px;
+            color: #c9c9c9;
+            line-height: 1.3;
+        }
+
+        .nav-previous a:hover .nav-title, .nav-next a:hover .nav-title {
+            color: #ffffff;
+        }
+
+        @media (max-width: 767px) {
+            .post-navigation {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .nav-next {
+                text-align: left;
+            }
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            margin-bottom: 10px;
+            font-size: 11px;
+            color: #666666;
+        }
+
+        .breadcrumb a {
+            color: #888888;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: #aaaaaa;
+        }
+
+        .breadcrumb span {
+            margin: 0 5px;
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #222222;
+        }
+
+        .social-links a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 11px;
+                        letter-spacing: 0.5px;
+            transition: color 0.2s ease;
+        }
+
+        .social-links a:hover {
+            color: #55ff55;
+        }
+
+        .social-links .divider {
+            color: #333333;
+            font-size: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .social-links a {
+                font-size: 12px;
+            }
+        }
+
+        /* Text Materialization Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease;
+            pointer-events: none;
+        }
+
+        .loading-overlay.fade-out {
+            opacity: 0;
+        }
+
+        /* Text elements start randomly positioned and animate to final position */
+        .materializing {
+            animation: materialize 1.2s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes materialize {
+            0% {
+                opacity: 0;
+                transform: translate(var(--random-x, 0), var(--random-y, 0)) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay"></div>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>Deploying a Scalable Chat Platform to Render</span>
+        </div>
+        
+        <div class="back-link">
+            <a href="/blog">back to blog</a>
+        </div>
+        
+        <div class="social-links">
+            <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener">github</a>
+            <span class="divider">·</span>
+            <a href="https://linkedin.com/in/jeffreyjose07" target="_blank" rel="noopener">linkedin</a>
+            <span class="divider">·</span>
+            <a href="https://x.com/josejeffrey07" target="_blank" rel="noopener">twitter</a>
+            <span class="divider">·</span>
+            <a href="mailto:jeffrey.jose07@gmail.com">email</a>
+            <span class="divider">·</span>
+            <a href="/resume.pdf" target="_blank">resume</a>
+        </div>
+        
+        <header class="post-header">
+            <h1 class="post-title">009: Deploying a Scalable Chat Platform to Render</h1>
+            <div class="post-meta">25 Jan 2025</div>
+        </header>
+        
+        <article class="post-content">
+            <p>This week I finally <span class="success">deployed</span> my <span class="success">scalable</span> chat platform to <span class="success">production</span> on Render. After months of development, the moment of truth arrived - would all the architectural decisions hold up under real-world conditions?</p>
+<h2>The Platform <span class="structure">Architecture</span></h2>
+<p>The chat platform follows a modern full-stack approach:</p>
+<ul>
+<li><strong>Backend</strong>: <span class="structure">Spring Boot</span> with <span class="connection">WebSocket</span> support and Kafka for message queuing</li>
+<li><strong>Frontend</strong>: <span class="structure">React</span> with <span class="process">TypeScript</span> for type safety</li>
+<li><strong>Infrastructure</strong>: Dockerized <span class="success">deployment</span> with <span class="success">GitHub</span> Actions <span class="meta">CI/CD</span></li>
+<li><strong>Hosting</strong>: Render for both backend and frontend services</li>
+</ul>
+<p>The goal was building something that could handle real concurrent users without the typical chat application bottlenecks.</p>
+<h2><span class="success">Deployment</span> Strategy</h2>
+<p>Rather than the usual &quot;deploy and pray&quot; approach, I implemented a comprehensive <span class="meta">CI/CD</span> <span class="connection">pipeline</span> that catches issues before they reach <span class="success">production</span>.</p>
+<h3><span class="success">GitHub</span> Actions <span class="connection">Pipeline</span></h3>
+<p>The <span class="success">deployment</span> <span class="connection">workflow</span> runs on every push to main and includes:</p>
+<pre><code class="language-yaml">- Backend unit tests with H2 in-memory database
+- Frontend ESLint and TypeScript checks  
+- Jest test coverage validation
+- Trivy security vulnerability scanning
+- Automated staging deployment
+- Manual production deployment gate
+</code></pre>
+<p>The <span class="attention">security</span> scanning was particularly important - Trivy catches known vulnerabilities in dependencies before they make it to <span class="success">production</span>. This saved me from deploying with several outdated packages that had known <span class="attention">security</span> issues.</p>
+<h3>Branch Protection Rules</h3>
+<p>Main branch is protected with required status checks. No <span class="process">code</span> reaches <span class="success">production</span> without <span class="success">passing</span> the full <span class="process">test</span> suite. This might seem obvious, but you&#39;d be surprised how many side projects skip this step.</p>
+<h2>Render Configuration Challenges</h2>
+<p>Render has some quirks that took time to figure out:</p>
+<h3>Backend Service Setup</h3>
+<p><span class="structure">Spring Boot</span> applications need specific configuration for Render&#39;s environment:</p>
+<ul>
+<li>Port binding to <code>$PORT</code> environment <span class="process">variable</span></li>
+<li>Health check endpoint configuration</li>
+<li><span class="structure">Database</span> <span class="connection">connection</span> pooling for <span class="structure">PostgreSQL</span></li>
+<li><span class="connection">WebSocket</span> configuration for <span class="connection">load balancer</span> compatibility</li>
+</ul>
+<p>The <span class="connection">WebSocket</span> configuration was tricky. Render&#39;s <span class="connection">load balancer</span> needs session affinity for <span class="connection">WebSocket</span> connections, which required adding sticky session support to the <span class="structure">Spring Boot</span> configuration.</p>
+<h3>Frontend <span class="success">Deployment</span></h3>
+<p><span class="structure">React</span> builds required custom <span class="process">build</span> commands and environment <span class="process">variable</span> management:</p>
+<ul>
+<li><span class="process">Build</span> command: <code>npm run build</code></li>
+<li>Publish directory: <code>build</code></li>
+<li>Environment variables for <span class="connection">API</span> endpoint URLs</li>
+<li>Custom redirect rules for <span class="structure">React</span> Router</li>
+</ul>
+<p>The redirect rules were essential - without them, direct navigation to routes like <code>/chat/room-id</code> would return 404 errors instead of serving the <span class="structure">React</span> app.</p>
+<h2><span class="success">Performance</span> Optimizations</h2>
+<p>Real-world <span class="success">deployment</span> revealed several <span class="success">performance</span> bottlenecks:</p>
+<h3><span class="structure">Database</span> <span class="connection">Connection</span> Pooling</h3>
+<p>Initial <span class="success">deployment</span> used default <span class="connection">connection</span> pool settings, which caused timeouts under moderate load. Implementing HikariCP with optimized pool sizes improved response times significantly:</p>
+<pre><code class="language-java">spring.datasource.hikari.maximum-pool-size=20
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.connection-timeout=30000
+</code></pre>
+<h3>Kafka Configuration</h3>
+<p>Message throughput required tuning Kafka consumer and producer settings:</p>
+<ul>
+<li>Batch size <span class="success">optimization</span> for message processing</li>
+<li>Consumer group configuration for <span class="success">scaling</span></li>
+<li>Partition strategy for message ordering</li>
+<li><span class="connection">Connection</span> pooling for Kafka clients</li>
+</ul>
+<h3>Frontend Bundle <span class="success">Optimization</span></h3>
+<p><span class="structure">React</span> bundle size was initially too large for fast loading:</p>
+<ul>
+<li><span class="process">Code</span> splitting with <span class="structure">React</span>.lazy()</li>
+<li>Tree shaking to eliminate unused dependencies</li>
+<li>Gzip compression configuration</li>
+<li>CDN <span class="success">optimization</span> for <span class="meta">static</span> assets</li>
+</ul>
+<h2>Monitoring and Observability</h2>
+<p><span class="success">Production</span> <span class="success">deployment</span> isn&#39;t complete without proper monitoring:</p>
+<h3>Health Checks</h3>
+<p>Implemented comprehensive health checks covering:</p>
+<ul>
+<li><span class="structure">Database</span> connectivity</li>
+<li>Kafka broker availability  </li>
+<li><span class="connection">WebSocket</span> <span class="connection">connection</span> status</li>
+<li>Memory and CPU utilization</li>
+</ul>
+<h3>Logging Strategy</h3>
+<p>Structured logging with <span class="process">JSON</span> format for log aggregation:</p>
+<ul>
+<li>Request/response correlation IDs</li>
+<li>User action tracking</li>
+<li><span class="attention">Error</span> stack traces with context</li>
+<li><span class="success">Performance</span> metrics collection</li>
+</ul>
+<h3><span class="attention">Error</span> Handling</h3>
+<p><span class="success">Production</span>-grade <span class="attention">error</span> handling throughout the stack:</p>
+<ul>
+<li>Global <span class="attention">exception</span> handlers in <span class="structure">Spring Boot</span></li>
+<li><span class="attention">Error</span> boundaries in <span class="structure">React</span> components</li>
+<li>Graceful degradation for service failures</li>
+<li>User-friendly <span class="attention">error</span> messages</li>
+</ul>
+<h2>Lessons Learned</h2>
+<h3>Start with <span class="meta">CI/CD</span></h3>
+<p>Setting up automated testing and <span class="success">deployment</span> from the beginning pays dividends. Manual <span class="success">deployment</span> is <span class="attention">error</span>-prone and doesn&#39;t scale.</p>
+<h3>Environment Parity</h3>
+<p>Development and <span class="success">production</span> environments must match as closely as possible. <span class="success">Docker</span> containers help, but configuration differences still cause issues.</p>
+<h3><span class="attention">Security</span> First</h3>
+<p>Running <span class="attention">security</span> scans caught several <span class="attention">vulnerability</span> issues that would have been problematic in <span class="success">production</span>. Integrate <span class="attention">security</span> checking into your development <span class="connection">workflow</span>, not as an afterthought.</p>
+<h3><span class="structure">Database</span> Migrations</h3>
+<p>Schema changes in <span class="success">production</span> require careful planning. <span class="structure">Spring Boot</span>&#39;s Flyway <span class="connection">integration</span> made <span class="structure">database</span> migrations manageable, but testing migration scripts thoroughly is crucial.</p>
+<h3><span class="success">Performance</span> Testing</h3>
+<p>Load testing revealed bottlenecks that weren&#39;t apparent during development. Tools like JMeter or Artillery should be part of your <span class="success">deployment</span> checklist.</p>
+<h2>The <span class="success">Deployment</span> Process</h2>
+<p>The actual <span class="success">deployment</span> process became streamlined through automation:</p>
+<ol>
+<li><strong><span class="process">Code</span> Push</strong>: Developer pushes to main branch</li>
+<li><strong>Automated Testing</strong>: Full <span class="process">test</span> suite runs via <span class="success">GitHub</span> Actions</li>
+<li><strong><span class="attention">Security</span> Scanning</strong>: Trivy scans for vulnerabilities</li>
+<li><strong>Staging Deploy</strong>: Automatic <span class="success">deployment</span> to staging environment</li>
+<li><strong>Manual Review</strong>: Human verification of staging <span class="success">deployment</span></li>
+<li><strong><span class="success">Production</span> Deploy</strong>: Manual trigger for <span class="success">production</span> <span class="success">deployment</span></li>
+<li><strong>Health Checks</strong>: Automated verification of <span class="success">production</span> health</li>
+</ol>
+<p>This process transforms <span class="success">deployment</span> from a stressful manual operation into a predictable, repeatable <span class="connection">workflow</span>.</p>
+<h2>Current Status and Metrics</h2>
+<p>The platform is now running successfully on Render with:</p>
+<ul>
+<li><strong>Uptime</strong>: 99.8% over the past month</li>
+<li><strong>Response Time</strong>: Average 120ms for <span class="connection">API</span> calls</li>
+<li><strong>Concurrent Users</strong>: Successfully tested with 100+ concurrent connections</li>
+<li><strong>Message Throughput</strong>: Handling 1000+ messages per minute without issues</li>
+</ul>
+<h2>Next Steps</h2>
+<p>Now that the platform is <span class="success">stable</span> in <span class="success">production</span>, the focus shifts to:</p>
+<h3>Feature Development</h3>
+<ul>
+<li>Message history and search functionality</li>
+<li>File sharing capabilities</li>
+<li>User <span class="attention">authentication</span> and room management</li>
+<li>Mobile-responsive improvements</li>
+</ul>
+<h3>Scale Preparation</h3>
+<ul>
+<li><span class="structure">Redis</span> caching layer implementation</li>
+<li><span class="structure">Database</span> read replica configuration</li>
+<li>CDN <span class="connection">integration</span> for <span class="meta">static</span> assets</li>
+<li>Horizontal <span class="success">scaling</span> strategy planning</li>
+</ul>
+<h3>Observability Enhancement</h3>
+<ul>
+<li>Custom metrics dashboard</li>
+<li>Alerting <span class="structure">system</span> for <span class="attention">critical</span> failures</li>
+<li><span class="success">Performance</span> monitoring <span class="connection">integration</span></li>
+<li>User analytics implementation</li>
+</ul>
+<h2><span class="attention">Technical Debt</span> and Improvements</h2>
+<p><span class="success">Production</span> <span class="success">deployment</span> revealed areas needing attention:</p>
+<ul>
+<li><span class="connection">WebSocket</span> reconnection <span class="process">logic</span> needs improvement</li>
+<li>Message ordering guarantees under high load</li>
+<li><span class="structure">Database</span> query <span class="success">optimization</span> for large chat histories</li>
+<li>Frontend state management <span class="meta">complexity</span></li>
+</ul>
+<h2>Conclusion</h2>
+<p>Deploying a full-stack application to <span class="success">production</span> teaches lessons that development alone cannot. The gap between &quot;it works on my machine&quot; and &quot;it works reliably for users&quot; is significant.</p>
+<p>The investment in proper <span class="meta">CI/CD</span>, monitoring, and <span class="success">deployment</span> automation paid off immediately. What could have been a stressful <span class="success">deployment</span> became a predictable process that builds confidence rather than anxiety.</p>
+<p>Render proved to be an excellent platform for hosting modern web applications. The learning curve exists, but the developer experience is significantly better than managing your own infrastructure.</p>
+<p>The chat platform is now <span class="success">live</span>, handling real users, and ready for the next phase of development. Sometimes the best way to learn is to <span class="process">build</span> something real, deploy it, and see what breaks.</p>
+<p>The <span class="process">code</span> is available on <a href="https://github.com/jeffreyjose07/scalable-chat-platform"><span class="success">GitHub</span></a> for anyone interested in the implementation details. Feel free to explore the <span class="meta">CI/CD</span> configuration and <span class="success">deployment</span> scripts - they might save you some of the troubleshooting I had to do.</p>
+
+        </article>
+        
+        <footer class="post-footer">
+            <div>
+                words: ~2200 · reading time: ~8 min · tags: <a href="/blog#tag-deployment" class="tag neutral" data-tag="deployment">deployment</a>, <a href="/blog#tag-render" class="tag neutral" data-tag="render">render</a>, <a href="/blog#tag-spring-boot" class="tag structure" data-tag="spring-boot">spring-boot</a>, <a href="/blog#tag-react" class="tag process" data-tag="react">react</a>, <a href="/blog#tag-devops" class="tag neutral" data-tag="devops">devops</a>
+            </div>
+        </footer>
+        
+        <nav class="post-navigation">
+            <div class="nav-previous">
+                <a href="/blog/ai-as-learning-catalyst-how-to-gain-skills-without">
+                    <span class="nav-label">← previous</span>
+                    <span class="nav-title">AI as Learning Catalyst: How to Gain Skills Without Losing Competence</span>
+                </a>
+            </div></nav>
+    </div>
+    
+    <div class="reading-progress"></div>
+    
+    <script>
+        // Simple reading progress indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('.reading-progress').style.width = scrolled + '%';
+        });
+
+        // Text materialization effect
+        function initializeMaterializationEffect() {
+            const elementsToMaterialize = [
+                '.breadcrumb',
+                '.back-link',
+                '.social-links',
+                '.post-header',
+                '.post-content > *',
+                '.post-footer',
+                '.post-navigation'
+            ];
+            
+            elementsToMaterialize.forEach((selector, index) => {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach((element, elementIndex) => {
+                    // Generate random starting position
+                    const randomX = (Math.random() - 0.5) * 200; // -100 to 100px
+                    const randomY = (Math.random() - 0.5) * 100; // -50 to 50px
+                    
+                    // Set CSS custom properties for random position
+                    element.style.setProperty('--random-x', `${randomX}px`);
+                    element.style.setProperty('--random-y', `${randomY}px`);
+                    
+                    // Add materializing class
+                    element.classList.add('materializing');
+                    
+                    // Calculate staggered delay
+                    const delay = (index * 0.1) + (elementIndex * 0.05);
+                    element.style.animationDelay = `${delay}s`;
+                });
+            });
+            
+            // Hide loading overlay after animations complete
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            setTimeout(() => {
+                loadingOverlay.classList.add('fade-out');
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 800);
+            }, 400); // Start fade after initial delay
+        }
+        
+        // Initialize materialization effect on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeMaterializationEffect();
+        });
+    </script>
+    <footer class="rss-footer" style="text-align:center; margin:2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;">
+      <a href="/blog/feed.xml" class="rss-button" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 8 8" style="margin-right:6px; vertical-align:middle;">
+          <path d="M1 0v1c3.32 0 6 2.68 6 6h1c0-3.86-3.14-7-7-7zm0 2v1c2.21 0 4 1.79 4 4h1c0-2.76-2.24-5-5-5zm.5 2c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5z" fill="currentColor"/>
+        </svg>
+        <span>Subscribe via RSS</span>
+      </a>
+    </footer>
+    <style>
+      .rss-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.6em 1.2em;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #4a5568;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      }
+      .rss-button:hover {
+        background: #edf2f7;
+        border-color: #cbd5e0;
+        transform: translateY(-1px);
+      }
+      .rss-button:active {
+        transform: translateY(0);
+      }
+      .rss-button svg {
+        color: #f6ad55;
+      }
+    </style>
+</body>
+</html>
