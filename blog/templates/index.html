@@ -412,6 +412,12 @@
 <body>
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay"></div>
+    
+    <!-- Intro Audio -->
+    <audio id="introAudio" preload="auto">
+        <source src="/blog/audio/intro.mp3" type="audio/mpeg">
+        <source src="/blog/audio/intro.ogg" type="audio/ogg">
+    </audio>
 
     <div class="main-layout">
         <div class="sidebar left" id="leftSidebar"></div>
@@ -970,8 +976,43 @@
                 }, 400); // Start fade after initial delay
             }
             
+            // Intro Audio Functionality
+            function playIntroAudio() {
+                const introAudio = document.getElementById('introAudio');
+                const hasPlayedBefore = sessionStorage.getItem('blogIntroPlayed');
+                
+                if (!hasPlayedBefore && introAudio) {
+                    introAudio.volume = 0.3; // Set volume to 30%
+                    
+                    // Try to play the audio
+                    const playPromise = introAudio.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise
+                            .then(() => {
+                                console.log('🎵 Intro music playing');
+                                sessionStorage.setItem('blogIntroPlayed', 'true');
+                            })
+                            .catch((error) => {
+                                console.log('Audio autoplay blocked by browser:', error);
+                            });
+                    }
+                    
+                    // Stop audio after 10 seconds (failsafe)
+                    setTimeout(() => {
+                        if (introAudio) {
+                            introAudio.pause();
+                            introAudio.currentTime = 0;
+                        }
+                    }, 10500); // 10.5 seconds to be safe
+                }
+            }
+            
             // Initialize on page load
             initializeMaterializationEffect();
+            
+            // Play intro audio after a brief delay to allow page elements to load
+            setTimeout(playIntroAudio, 800);
         });
     </script>
 </body>

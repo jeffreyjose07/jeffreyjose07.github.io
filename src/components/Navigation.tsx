@@ -62,7 +62,11 @@ const Navigation = () => {
                 e.preventDefault();
                 handleNavClick("#hero");
               }}
-              className="text-2xl font-bold text-foreground hover:text-primary transition-colors duration-300"
+              className={`text-2xl font-bold transition-colors duration-300 ${
+                isScrolled 
+                  ? "text-foreground hover:text-primary" 
+                  : "text-white hover:text-white/80"
+              }`}
             >
               Jeffrey Jose
             </a>
@@ -70,7 +74,7 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
+            <div className="ml-10 flex items-center space-x-8">
               {navItems.map((item) => (
                 <a
                   key={item.href}
@@ -79,12 +83,40 @@ const Navigation = () => {
                     e.preventDefault();
                     handleNavClick(item.href, (item as any).external);
                   }}
-                  className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-all duration-300 relative group"
+                  className={`px-3 py-2 text-sm font-medium transition-all duration-300 relative group ${
+                    isScrolled 
+                      ? "text-foreground hover:text-primary" 
+                      : "text-white/90 hover:text-white"
+                  }`}
                 >
                   {item.label}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-primary-glow transition-all duration-300 group-hover:w-full"></span>
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${
+                    isScrolled 
+                      ? "bg-gradient-to-r from-primary to-primary-glow" 
+                      : "bg-gradient-to-r from-white to-white/80"
+                  }`}></span>
                 </a>
               ))}
+              
+              {/* Desktop Theme Toggle - integrated into nav */}
+              {mounted && (
+                <button
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  className={`p-2 rounded-lg transition-all duration-300 ${
+                    isScrolled
+                      ? "text-foreground hover:text-primary bg-accent/20 hover:bg-accent/40 border border-border/30"
+                      : "text-white/90 hover:text-white bg-white/10 hover:bg-white/20 border border-white/20"
+                  }`}
+                  aria-label="Toggle theme"
+                  type="button"
+                >
+                  {theme === "dark" ? (
+                    <Sun size={18} />
+                  ) : (
+                    <Moon size={18} />
+                  )}
+                </button>
+              )}
             </div>
           </div>
 
@@ -93,7 +125,11 @@ const Navigation = () => {
             {/* Theme toggle for mobile */}
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="text-foreground hover:text-primary p-2 touch-manipulation bg-accent/20 hover:bg-accent/40 rounded-lg border border-border/30 transition-all duration-200 active:scale-95"
+              className={`p-2 touch-manipulation rounded-lg border transition-all duration-200 active:scale-95 ${
+                isScrolled
+                  ? "text-foreground hover:text-primary bg-accent/20 hover:bg-accent/40 border-border/30"
+                  : "text-white/90 hover:text-white bg-white/10 hover:bg-white/20 border-white/20"
+              }`}
               aria-label="Toggle theme"
               type="button"
             >
@@ -107,7 +143,11 @@ const Navigation = () => {
             {/* Hamburger menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-foreground hover:text-primary p-3 touch-manipulation bg-accent/20 hover:bg-accent/40 rounded-lg border border-border/30 transition-all duration-200 active:scale-95"
+              className={`p-3 touch-manipulation rounded-lg border transition-all duration-200 active:scale-95 ${
+                isScrolled
+                  ? "text-foreground hover:text-primary bg-accent/20 hover:bg-accent/40 border-border/30"
+                  : "text-white/90 hover:text-white bg-white/10 hover:bg-white/20 border-white/20"
+              }`}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               type="button"
             >

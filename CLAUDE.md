@@ -4,11 +4,25 @@
 
 **NEVER add Claude as co-author in git commits.**
 
-When committing changes:
-- Use standard commit messages without any Claude attribution
-- Do not add "Co-Authored-By: Claude" lines
-- Do not mention Claude in commit messages unless specifically about Claude-related content
-- The user prefers clean commit history without AI attribution
+### Strict Rules (Enforced by Git Hooks)
+- **NEVER include "Co-Authored-By: Claude"** in commit messages (case insensitive)
+- **NEVER include "Generated with Claude Code"** or similar AI attribution
+- **NEVER use robot emoji (🤖) with Claude references** in commit messages
+- **NEVER add any form of Claude authorship** or AI generation attribution
+
+### Commit Message Guidelines
+- Use **standard, professional commit messages** without AI attribution
+- Keep messages **concise and descriptive** of the actual changes
+- Focus on **what was changed and why**, not how it was created
+- Follow conventional commit format when appropriate (feat:, fix:, docs:, etc.)
+
+### Git Hooks Protection
+Git hooks are installed to automatically reject commits containing:
+- Any variation of "Co-Authored-By: Claude"
+- "Generated with Claude" (with or without robot emoji)
+- Other common AI attribution patterns
+
+**If your commit is rejected:** Remove the AI attribution and try again with a clean, standard commit message.
 
 ## Design Philosophy & Aesthetic
 
