@@ -418,6 +418,13 @@
         <source src="/blog/audio/intro.mp3" type="audio/mpeg">
         <source src="/blog/audio/intro.ogg" type="audio/ogg">
     </audio>
+    
+    <!-- Audio Play Button - Hidden by default, shown if autoplay fails -->
+    <div id="audioPlayPrompt" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; background: #000000; border: 2px solid #55ff55; padding: 20px; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; color: #55ff55; text-align: center; font-size: 14px; cursor: pointer;">
+        <div style="margin-bottom: 10px;">🎵 AUDIO BLOCKED BY BROWSER</div>
+        <div style="margin-bottom: 15px; color: #c9c9c9; font-size: 12px;">Click to enable intro music</div>
+        <div style="color: #55ff55; text-decoration: underline;">[PRESS ENTER TO PLAY]</div>
+    </div>
 
     <div class="main-layout">
         <div class="sidebar left" id="leftSidebar"></div>
@@ -976,36 +983,92 @@
                 }, 400); // Start fade after initial delay
             }
             
-            // Intro Audio Functionality
+            // Intro Audio Functionality with Cross-Browser Support
             function playIntroAudio() {
                 const introAudio = document.getElementById('introAudio');
+                const audioPlayPrompt = document.getElementById('audioPlayPrompt');
                 const hasPlayedBefore = sessionStorage.getItem('blogIntroPlayed');
                 
                 if (!hasPlayedBefore && introAudio) {
                     introAudio.volume = 0.3; // Set volume to 30%
                     
-                    // Try to play the audio
+                    // Try to play the audio automatically
                     const playPromise = introAudio.play();
                     
                     if (playPromise !== undefined) {
                         playPromise
                             .then(() => {
-                                console.log('🎵 Intro music playing');
+                                console.log('🎵 Intro music playing (autoplay successful)');
                                 sessionStorage.setItem('blogIntroPlayed', 'true');
+                                setupAudioTimeout(introAudio);
                             })
                             .catch((error) => {
-                                console.log('Audio autoplay blocked by browser:', error);
+                                console.log('Audio autoplay blocked by browser, showing user prompt');
+                                showAudioPrompt(introAudio, audioPlayPrompt);
                             });
+                    } else {
+                        // Fallback for older browsers
+                        showAudioPrompt(introAudio, audioPlayPrompt);
                     }
-                    
-                    // Stop audio after 10 seconds (failsafe)
-                    setTimeout(() => {
-                        if (introAudio) {
-                            introAudio.pause();
-                            introAudio.currentTime = 0;
-                        }
-                    }, 10500); // 10.5 seconds to be safe
                 }
+            }
+            
+            function setupAudioTimeout(introAudio) {
+                // Stop audio after 10 seconds (failsafe)
+                setTimeout(() => {
+                    if (introAudio) {
+                        introAudio.pause();
+                        introAudio.currentTime = 0;
+                    }
+                }, 10500); // 10.5 seconds to be safe
+            }
+            
+            function showAudioPrompt(introAudio, audioPlayPrompt) {
+                // Show the terminal-style audio prompt
+                audioPlayPrompt.style.display = 'block';
+                
+                // Handle click/enter to play
+                function playAudioWithInteraction() {
+                    introAudio.play()
+                        .then(() => {
+                            console.log('🎵 Intro music playing (user interaction)');
+                            sessionStorage.setItem('blogIntroPlayed', 'true');
+                            audioPlayPrompt.style.display = 'none';
+                            setupAudioTimeout(introAudio);
+                        })
+                        .catch((error) => {
+                            console.log('Audio play failed even with user interaction:', error);
+                            audioPlayPrompt.style.display = 'none';
+                        });
+                }
+                
+                // Click handler
+                audioPlayPrompt.addEventListener('click', playAudioWithInteraction);
+                
+                // Keyboard handler (Enter key)
+                function handleKeyPress(event) {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        playAudioWithInteraction();
+                        document.removeEventListener('keydown', handleKeyPress);
+                    } else if (event.key === 'Escape') {
+                        // Allow user to dismiss without playing
+                        audioPlayPrompt.style.display = 'none';
+                        sessionStorage.setItem('blogIntroPlayed', 'true');
+                        document.removeEventListener('keydown', handleKeyPress);
+                    }
+                }
+                
+                document.addEventListener('keydown', handleKeyPress);
+                
+                // Auto-dismiss after 10 seconds if no interaction
+                setTimeout(() => {
+                    if (audioPlayPrompt.style.display !== 'none') {
+                        audioPlayPrompt.style.display = 'none';
+                        sessionStorage.setItem('blogIntroPlayed', 'true');
+                        document.removeEventListener('keydown', handleKeyPress);
+                    }
+                }, 10000);
             }
             
             // Initialize on page load
