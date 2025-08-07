@@ -11,6 +11,8 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
+  // Configure static file serving to handle blog routes
+  publicDir: 'public',
   plugins: [
     react(),
     mode === 'development' &&
@@ -25,5 +27,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
+    // Copy public directory contents to dist
+    copyPublicDir: true,
   }
 }));
