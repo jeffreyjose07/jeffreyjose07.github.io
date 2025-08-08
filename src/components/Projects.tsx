@@ -24,6 +24,21 @@ const Projects = () => {
       ]
     },
     {
+      title: "VOID BLOCKS",
+      description: "A cyberpunk-inspired Tetris variant where you manipulate data fragments to prevent system corruption. Features virus blocks, progressive difficulty, and terminal-aesthetic design.",
+      image: "/games/void-blocks/screenshot.png",
+      liveUrl: "/games/void-blocks/",
+      githubUrl: "https://github.com/jeffreyjose07/void-blocks-game",
+      technologies: ["LittleJS", "JavaScript", "WebGL", "Game Development", "CSS3"],
+      highlights: [
+        "Cyberpunk Tetris variant with unique virus block mechanics",
+        "Built with ultra-lightweight LittleJS engine (7KB)",
+        "Terminal aesthetic with glitch effects and neon styling",
+        "Progressive difficulty with firewall challenge modes",
+        "Mobile-responsive design optimized for all devices"
+      ]
+    },
+    {
       title: "Detection of Forest Area in SAR Images",
       description: "Computer vision project focused on detecting and classifying forest areas in polarimetric SAR RISAT-1 images using advanced image processing techniques and machine learning algorithms.",
       image: "/placeholder.svg",
