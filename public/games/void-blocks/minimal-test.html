@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minimal LittleJS Test</title>
+    <style>
+        body { margin: 0; background: #000; color: #0f0; font-family: monospace; }
+        canvas { border: 2px solid #0ff; }
+        #log { position: absolute; top: 10px; left: 10px; z-index: 1000; }
+    </style>
+</head>
+<body>
+    <div id="log"></div>
+    <canvas></canvas>
+    
+    <script src="./littlejs.min.js"></script>
+    <script>
+        const log = msg => {
+            document.getElementById('log').innerHTML += '<div>' + msg + '</div>';
+            console.log(msg);
+        };
+        
+        log('Script started');
+        
+        // Minimal game functions
+        function gameInit() {
+            log('gameInit called!');
+            setCameraScale(32);
+            setCanvasSize(vec2(800, 600));
+            log('Canvas size set: 800x600');
+            log('cameraScale: ' + cameraScale);
+        }
+        
+        function gameUpdate() {}
+        function gameUpdatePost() {}
+        function gameRender() {
+            // Draw a simple background
+            drawRect(vec2(400, 300), vec2(800, 600), new Color(0.1, 0.1, 0.3, 1));
+        }
+        
+        function gameRenderPost() {
+            try {
+                log('gameRenderPost called - attempting to draw text');
+                
+                // Test simple text
+                const color = new Color(1, 1, 1, 1);
+                drawText('HELLO WORLD', vec2(400, 300), 32, color, 0, undefined, 'center');
+                
+                log('Text draw attempted');
+            } catch (error) {
+                log('ERROR: ' + error.message);
+            }
+        }
+        
+        // Wait for LittleJS and initialize
+        function waitAndInit() {
+            if (typeof engineInit !== 'undefined' && typeof vec2 !== 'undefined' && typeof Color !== 'undefined') {
+                log('LittleJS fully loaded - initializing engine');
+                try {
+                    engineInit(gameInit, gameUpdate, gameUpdatePost, gameRender, gameRenderPost);
+                    log('engineInit called successfully');
+                } catch (error) {
+                    log('engineInit ERROR: ' + error.message);
+                }
+            } else {
+                log('Waiting for LittleJS... (engineInit: ' + (typeof engineInit) + ', vec2: ' + (typeof vec2) + ', Color: ' + (typeof Color) + ')');
+                setTimeout(waitAndInit, 100);
+            }
+        }
+        
+        waitAndInit();
+    </script>
+</body>
+</html>
