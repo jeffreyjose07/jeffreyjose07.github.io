@@ -1,0 +1,38 @@
+name: Rebuild Portfolio on Game Update
+
+on:
+  repository_dispatch:
+    types: [game-updated]
+  workflow_dispatch:
+
+jobs:
+  rebuild-portfolio:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Build blog
+      run: node blog/scripts/build.js
+      
+    - name: Build portfolio
+      run: npm run build
+      
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        commit_message: 'Rebuild portfolio after game update: ${{ github.event.client_payload.game }}'
+        user_name: 'GitHub Actions'
+        user_email: 'actions@github.com'
