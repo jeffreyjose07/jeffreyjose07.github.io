@@ -10,22 +10,454 @@
             padding: 0;
             background: #000011;
             font-family: 'Monaco', 'Menlo', monospace;
-            overflow: hidden;
-        }
-        #gameContainer {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            color: #55ff55;
+        }
+        
+        #gameContainer {
+            text-align: center;
+        }
+        
+        canvas {
+            border: 2px solid #55ffff;
+            box-shadow: 0 0 20px #55ffff;
+            background: #000008;
+        }
+        
+        #ui {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        
+        #gameArea {
+            flex: 1;
+            text-align: center;
+        }
+        
+        #sidebar {
+            width: 200px;
+            text-align: left;
+            padding: 0 20px;
+            color: #55ff55;
+        }
+        
+        .panel {
+            background: rgba(0, 28, 0, 0.8);
+            border: 1px solid #55ff55;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 0 10px #55ff55;
+        }
+        
+        .title {
+            color: #55ffff;
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #55ffff;
+        }
+        
+        .score {
+            color: #55ff55;
+            font-size: 18px;
+        }
+        
+        .controls {
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        
+        .virus-text {
+            color: #ff5555;
+            text-shadow: 0 0 10px #ff5555;
         }
     </style>
-  <link rel="stylesheet" crossorigin href="./style.css">
 </head>
 <body>
     <div id="gameContainer">
-        <canvas id="gameCanvas"></canvas>
+        <div class="title">VOID BLOCKS</div>
+        <div style="color: #55ff55; font-size: 14px; margin-bottom: 20px;">NEURAL NETWORK SECURITY PROTOCOL</div>
+        
+        <div id="ui">
+            <div id="sidebar">
+                <div class="panel">
+                    <div style="color: #55ffff;">SYSTEM STATUS</div>
+                    <div>SCORE: <span id="score" class="score">0</span></div>
+                    <div>LEVEL: <span id="level" class="score">1</span></div>
+                    <div>LINES: <span id="lines" class="score">0</span></div>
+                </div>
+                
+                <div class="panel">
+                    <div style="color: #55ffff;">NETWORK STATUS</div>
+                    <div>CONNECTION: <span id="connection">STABLE</span></div>
+                    <div>FIREWALL: <span id="firewall">ACTIVE</span></div>
+                    <div>INTEGRITY: <span id="integrity">100%</span></div>
+                </div>
+            </div>
+            
+            <div id="gameArea">
+                <canvas id="gameCanvas" width="300" height="600"></canvas>
+            </div>
+            
+            <div id="sidebar">
+                <div class="panel">
+                    <div style="color: #55ffff;">CONTROLS</div>
+                    <div class="controls">
+                        ARROW KEYS - MOVE<br>
+                        SPACE - ROTATE<br>
+                        DOWN - DROP<br>
+                        ESC - PAUSE
+                    </div>
+                </div>
+                
+                <div class="panel">
+                    <div style="color: #55ffff;">NEXT BLOCK</div>
+                    <canvas id="nextCanvas" width="80" height="80"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/littlejsengine@1.8.0/dist/littlejs.min.js"></script>
-    <script type="module" crossorigin src="./game.js"></script>
+
+    <script>
+        // Game constants
+        const GRID_WIDTH = 10;
+        const GRID_HEIGHT = 20;
+        const CELL_SIZE = 30;
+        
+        // Colors
+        const COLORS = {
+            empty: '#000008',
+            border: '#55ffff',
+            ghost: '#333333',
+            pieces: [
+                '#55ff55', // Green
+                '#55ffff', // Cyan  
+                '#ff55ff', // Magenta
+                '#ff5555', // Red
+                '#ffff55', // Yellow
+                '#ff8855', // Orange
+                '#8855ff'  // Purple
+            ]
+        };
+        
+        // Tetris pieces
+        const PIECES = [
+            // I piece
+            [
+                [1,1,1,1]
+            ],
+            // O piece
+            [
+                [1,1],
+                [1,1]
+            ],
+            // T piece
+            [
+                [0,1,0],
+                [1,1,1]
+            ],
+            // S piece
+            [
+                [0,1,1],
+                [1,1,0]
+            ],
+            // Z piece
+            [
+                [1,1,0],
+                [0,1,1]
+            ],
+            // J piece
+            [
+                [1,0,0],
+                [1,1,1]
+            ],
+            // L piece
+            [
+                [0,0,1],
+                [1,1,1]
+            ]
+        ];
+        
+        // Game state
+        let canvas, ctx, nextCanvas, nextCtx;
+        let grid = [];
+        let currentPiece = null;
+        let nextPiece = null;
+        let score = 0;
+        let lines = 0;
+        let level = 1;
+        let dropTime = 0;
+        let dropDelay = 500;
+        let gameRunning = true;
+        
+        // Initialize game
+        function init() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            nextCanvas = document.getElementById('nextCanvas');
+            nextCtx = nextCanvas.getContext('2d');
+            
+            // Initialize grid
+            for (let y = 0; y < GRID_HEIGHT; y++) {
+                grid[y] = [];
+                for (let x = 0; x < GRID_WIDTH; x++) {
+                    grid[y][x] = 0;
+                }
+            }
+            
+            // Create first pieces
+            nextPiece = createPiece();
+            spawnNewPiece();
+            
+            // Start game loop
+            gameLoop();
+            
+            // Input handling
+            document.addEventListener('keydown', handleKeyDown);
+        }
+        
+        function createPiece() {
+            const typeIndex = Math.floor(Math.random() * PIECES.length);
+            return {
+                type: typeIndex,
+                shape: PIECES[typeIndex],
+                x: Math.floor(GRID_WIDTH / 2) - Math.floor(PIECES[typeIndex][0].length / 2),
+                y: 0,
+                color: COLORS.pieces[typeIndex]
+            };
+        }
+        
+        function spawnNewPiece() {
+            currentPiece = nextPiece;
+            nextPiece = createPiece();
+            
+            // Check game over
+            if (!isValidPosition(currentPiece, currentPiece.x, currentPiece.y)) {
+                gameRunning = false;
+                alert('SYSTEM COMPROMISED - GAME OVER!\nFinal Score: ' + score);
+            }
+        }
+        
+        function isValidPosition(piece, newX, newY) {
+            for (let y = 0; y < piece.shape.length; y++) {
+                for (let x = 0; x < piece.shape[y].length; x++) {
+                    if (piece.shape[y][x]) {
+                        const boardX = newX + x;
+                        const boardY = newY + y;
+                        
+                        if (boardX < 0 || boardX >= GRID_WIDTH || 
+                            boardY >= GRID_HEIGHT || 
+                            (boardY >= 0 && grid[boardY][boardX])) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        
+        function rotatePiece(piece) {
+            const rotated = [];
+            const rows = piece.shape.length;
+            const cols = piece.shape[0].length;
+            
+            for (let i = 0; i < cols; i++) {
+                rotated[i] = [];
+                for (let j = 0; j < rows; j++) {
+                    rotated[i][j] = piece.shape[rows - 1 - j][i];
+                }
+            }
+            
+            return {
+                ...piece,
+                shape: rotated
+            };
+        }
+        
+        function placePiece() {
+            for (let y = 0; y < currentPiece.shape.length; y++) {
+                for (let x = 0; x < currentPiece.shape[y].length; x++) {
+                    if (currentPiece.shape[y][x]) {
+                        const boardY = currentPiece.y + y;
+                        const boardX = currentPiece.x + x;
+                        if (boardY >= 0) {
+                            grid[boardY][boardX] = currentPiece.type + 1;
+                        }
+                    }
+                }
+            }
+            
+            // Clear completed lines
+            clearLines();
+            spawnNewPiece();
+        }
+        
+        function clearLines() {
+            let linesCleared = 0;
+            
+            for (let y = GRID_HEIGHT - 1; y >= 0; y--) {
+                if (grid[y].every(cell => cell !== 0)) {
+                    grid.splice(y, 1);
+                    grid.unshift(new Array(GRID_WIDTH).fill(0));
+                    linesCleared++;
+                    y++; // Check the same line again
+                }
+            }
+            
+            if (linesCleared > 0) {
+                lines += linesCleared;
+                score += linesCleared * 100 * level;
+                level = Math.floor(lines / 10) + 1;
+                dropDelay = Math.max(50, 500 - (level - 1) * 50);
+                updateUI();
+            }
+        }
+        
+        function updateUI() {
+            document.getElementById('score').textContent = score.toLocaleString();
+            document.getElementById('level').textContent = level;
+            document.getElementById('lines').textContent = lines;
+            
+            // Update status based on level
+            if (level > 5) {
+                document.getElementById('connection').textContent = 'UNSTABLE';
+                document.getElementById('connection').className = 'virus-text';
+            }
+            
+            if (level % 10 === 0 && level > 0) {
+                document.getElementById('firewall').textContent = 'CHALLENGE';
+                document.getElementById('firewall').className = 'virus-text';
+            }
+            
+            const integrity = Math.max(50, 100 - level * 2);
+            document.getElementById('integrity').textContent = integrity + '%';
+            if (integrity < 70) {
+                document.getElementById('integrity').className = 'virus-text';
+            }
+        }
+        
+        function handleKeyDown(e) {
+            if (!gameRunning || !currentPiece) return;
+            
+            switch(e.key) {
+                case 'ArrowLeft':
+                    if (isValidPosition(currentPiece, currentPiece.x - 1, currentPiece.y)) {
+                        currentPiece.x--;
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (isValidPosition(currentPiece, currentPiece.x + 1, currentPiece.y)) {
+                        currentPiece.x++;
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (isValidPosition(currentPiece, currentPiece.x, currentPiece.y + 1)) {
+                        currentPiece.y++;
+                        score += 1;
+                        updateUI();
+                    }
+                    break;
+                case ' ':
+                case 'ArrowUp':
+                    const rotated = rotatePiece(currentPiece);
+                    if (isValidPosition(rotated, rotated.x, rotated.y)) {
+                        currentPiece = rotated;
+                    }
+                    break;
+                case 'Escape':
+                    gameRunning = !gameRunning;
+                    break;
+            }
+            e.preventDefault();
+        }
+        
+        function gameLoop() {
+            const now = Date.now();
+            
+            if (gameRunning && now - dropTime > dropDelay) {
+                if (currentPiece && isValidPosition(currentPiece, currentPiece.x, currentPiece.y + 1)) {
+                    currentPiece.y++;
+                } else if (currentPiece) {
+                    placePiece();
+                }
+                dropTime = now;
+            }
+            
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function render() {
+            // Clear canvas
+            ctx.fillStyle = COLORS.empty;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid
+            ctx.strokeStyle = COLORS.border;
+            ctx.lineWidth = 1;
+            for (let x = 0; x <= GRID_WIDTH; x++) {
+                ctx.beginPath();
+                ctx.moveTo(x * CELL_SIZE, 0);
+                ctx.lineTo(x * CELL_SIZE, GRID_HEIGHT * CELL_SIZE);
+                ctx.stroke();
+            }
+            for (let y = 0; y <= GRID_HEIGHT; y++) {
+                ctx.beginPath();
+                ctx.moveTo(0, y * CELL_SIZE);
+                ctx.lineTo(GRID_WIDTH * CELL_SIZE, y * CELL_SIZE);
+                ctx.stroke();
+            }
+            
+            // Draw placed pieces
+            for (let y = 0; y < GRID_HEIGHT; y++) {
+                for (let x = 0; x < GRID_WIDTH; x++) {
+                    if (grid[y][x] > 0) {
+                        ctx.fillStyle = COLORS.pieces[grid[y][x] - 1];
+                        ctx.fillRect(x * CELL_SIZE + 1, y * CELL_SIZE + 1, CELL_SIZE - 2, CELL_SIZE - 2);
+                    }
+                }
+            }
+            
+            // Draw current piece
+            if (currentPiece) {
+                ctx.fillStyle = currentPiece.color;
+                for (let y = 0; y < currentPiece.shape.length; y++) {
+                    for (let x = 0; x < currentPiece.shape[y].length; x++) {
+                        if (currentPiece.shape[y][x]) {
+                            const drawX = (currentPiece.x + x) * CELL_SIZE;
+                            const drawY = (currentPiece.y + y) * CELL_SIZE;
+                            ctx.fillRect(drawX + 1, drawY + 1, CELL_SIZE - 2, CELL_SIZE - 2);
+                        }
+                    }
+                }
+            }
+            
+            // Draw next piece
+            nextCtx.fillStyle = COLORS.empty;
+            nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
+            
+            if (nextPiece) {
+                nextCtx.fillStyle = nextPiece.color;
+                const offsetX = (nextCanvas.width - nextPiece.shape[0].length * 20) / 2;
+                const offsetY = (nextCanvas.height - nextPiece.shape.length * 20) / 2;
+                
+                for (let y = 0; y < nextPiece.shape.length; y++) {
+                    for (let x = 0; x < nextPiece.shape[y].length; x++) {
+                        if (nextPiece.shape[y][x]) {
+                            nextCtx.fillRect(offsetX + x * 20, offsetY + y * 20, 18, 18);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Start the game when page loads
+        window.addEventListener('load', init);
+    </script>
 </body>
 </html>

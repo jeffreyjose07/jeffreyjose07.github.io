@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LittleJS Text Test</title>
+    <style>
+        body { margin: 0; background: #000; }
+        canvas { border: 1px solid cyan; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/littlejsengine@1.8.0/dist/littlejs.min.js"></script>
+    <script>
+        function gameInit() {
+            setCameraScale(1)
+            setCanvasSize(vec2(800, 600))
+        }
+        
+        function gameUpdate() {}
+        function gameUpdatePost() {}
+        function gameRender() {}
+        
+        function gameRenderPost() {
+            // Test simple text rendering
+            const color = new Color(0.2, 1, 0.2, 1) // green
+            drawText('TEST TEXT', vec2(400, 300), 24, color)
+            
+            // Test multiple texts
+            drawText('Line 1', vec2(400, 200), 16, new Color(1, 1, 1, 1))
+            drawText('Line 2', vec2(400, 250), 16, new Color(0.2, 1, 1, 1))
+            drawText('Line 3', vec2(400, 350), 16, new Color(1, 0.2, 0.2, 1))
+        }
+        
+        engineInit(gameInit, gameUpdate, gameUpdatePost, gameRender, gameRenderPost)
+    </script>
+</body>
+</html>
