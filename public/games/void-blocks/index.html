@@ -1,31 +1,863 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VOID BLOCKS - Cyberpunk Tetris</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #000011;
-            font-family: 'Monaco', 'Menlo', monospace;
-            overflow: hidden;
-        }
-        #gameContainer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-    </style>
-  <script type="module" crossorigin src="./game.js"></script>
-  <link rel="stylesheet" crossorigin href="./style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VOID BLOCKS - Neural Network Security Protocol</title>
+  <style>
+    :root {
+      --bg: #000011;
+      --panel: #001122;
+      --terminal: #55ff55;
+      --data: #55ffff;
+      --virus: #ff5555;
+      --warning: #ffaa55;
+      --special: #ff55ff;
+      --text: #cccccc;
+    }
+    
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      background: linear-gradient(180deg, var(--bg) 0%, #000022 100%);
+      color: var(--text);
+      overflow: hidden;
+    }
+    
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      gap: 20px;
+    }
+    
+    .game-area {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    
+    canvas {
+      background: var(--panel);
+      border: 2px solid var(--data);
+      border-radius: 4px;
+      box-shadow: 
+        0 0 20px rgba(85, 255, 255, 0.3),
+        inset 0 0 20px rgba(0, 17, 34, 0.8);
+    }
+    
+    .panels {
+      width: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .panel {
+      background: rgba(0, 17, 34, 0.9);
+      border: 1px solid var(--terminal);
+      border-radius: 4px;
+      padding: 15px;
+      box-shadow: 0 0 10px rgba(85, 255, 85, 0.2);
+    }
+    
+    .panel-title {
+      color: var(--data);
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .title-panel .panel-title {
+      color: var(--data);
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 5px;
+    }
+    
+    .subtitle {
+      color: var(--terminal);
+      font-size: 10px;
+      text-align: center;
+      opacity: 0.8;
+    }
+    
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+      font-size: 13px;
+    }
+    
+    .stat-label {
+      color: var(--text);
+    }
+    
+    .stat-value {
+      color: var(--terminal);
+      font-weight: bold;
+    }
+    
+    .score-value {
+      color: var(--data);
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+    
+    .status-stable { background: var(--terminal); }
+    .status-unstable { background: var(--warning); }
+    .status-critical { background: var(--virus); }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .controls {
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    
+    .control-row {
+      margin: 4px 0;
+      color: var(--text);
+    }
+    
+    .key {
+      color: var(--data);
+      font-weight: bold;
+    }
+    
+    .legend {
+      margin-top: 10px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin: 4px 0;
+      font-size: 11px;
+    }
+    
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      margin-right: 8px;
+      border-radius: 2px;
+    }
+    
+    .terminal { background: var(--terminal); }
+    .data { background: var(--data); }
+    .virus { background: var(--virus); }
+    .warning { background: var(--warning); }
+    .special { background: var(--special); }
+    
+    .game-over, .paused {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 17, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .overlay-text {
+      color: var(--virus);
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px currentColor;
+    }
+    
+    .overlay-subtitle {
+      color: var(--data);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    
+    .restart-hint {
+      color: var(--terminal);
+      font-size: 12px;
+      animation: pulse 2s infinite;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .version {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(204, 204, 204, 0.3);
+      font-size: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div id="gameContainer">
-        <canvas id="gameCanvas"></canvas>
+  <div class="container">
+    <div class="game-area">
+      <canvas id="gameCanvas" width="300" height="600"></canvas>
+      
+      <div class="panels">
+        <div class="panel title-panel">
+          <div class="panel-title">VOID BLOCKS</div>
+          <div class="subtitle">Neural Network Security Protocol v2.0</div>
+        </div>
+        
+        <div class="panel">
+          <div class="panel-title">System Status</div>
+          <div class="stat-row">
+            <span class="stat-label">SCORE</span>
+            <span class="stat-value score-value" id="score">0</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">LEVEL</span>
+            <span class="stat-value" id="level">1</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">LINES</span>
+            <span class="stat-value" id="lines">0</span>
+          </div>
+        </div>
+        
+        <div class="panel">
+          <div class="panel-title">Network Status</div>
+          <div class="stat-row">
+            <span class="stat-label">CONNECTION</span>
+            <span class="stat-value" id="connection">
+              <span class="status-indicator status-stable"></span>STABLE
+            </span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">INTEGRITY</span>
+            <span class="stat-value" id="integrity">100%</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">CORRUPTION</span>
+            <span class="stat-value" id="corruption">0%</span>
+          </div>
+        </div>
+        
+        <div class="panel">
+          <div class="panel-title">Next Fragment</div>
+          <canvas id="nextCanvas" width="120" height="80"></canvas>
+        </div>
+        
+        <div class="panel">
+          <div class="panel-title">Controls</div>
+          <div class="controls">
+            <div class="control-row"><span class="key">← / →</span> Move</div>
+            <div class="control-row"><span class="key">↓</span> Soft Drop</div>
+            <div class="control-row"><span class="key">SPACE</span> Hard Drop</div>
+            <div class="control-row"><span class="key">Z / X</span> Rotate</div>
+            <div class="control-row"><span class="key">P</span> Pause</div>
+            <div class="control-row"><span class="key">R</span> Restart</div>
+          </div>
+          
+          <div class="legend">
+            <div class="panel-title" style="font-size: 12px; margin-bottom: 8px;">Block Types</div>
+            <div class="legend-item">
+              <div class="legend-color terminal"></div>
+              <span>Standard Blocks</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color data"></div>
+              <span>Data Fragments</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color virus"></div>
+              <span>Virus Blocks</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color warning"></div>
+              <span>Power-ups</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color special"></div>
+              <span>Special Blocks</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/littlejsengine@1.8.0/dist/littlejs.min.js"></script>
+  </div>
+  
+  <div class="game-over hidden" id="gameOverScreen">
+    <div class="overlay-text">SYSTEM COMPROMISED</div>
+    <div class="overlay-subtitle">Neural network security breached</div>
+    <div class="stat-row" style="color: var(--text); margin: 10px 0;">
+      Final Score: <span style="color: var(--data);" id="finalScore">0</span>
+    </div>
+    <div class="restart-hint">Press R to restart security protocol</div>
+  </div>
+  
+  <div class="paused hidden" id="pausedScreen">
+    <div class="overlay-text">SYSTEM PAUSED</div>
+    <div class="overlay-subtitle">Security protocol suspended</div>
+    <div class="restart-hint">Press P to resume</div>
+  </div>
+  
+  <div class="version">v2.0.0</div>
+
+<script>
+// VOID BLOCKS - Cyberpunk Tetris Implementation
+(() => {
+  const COLS = 10, ROWS = 20, BLOCK_SIZE = 30;
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const nextCanvas = document.getElementById('nextCanvas');
+  const nextCtx = nextCanvas.getContext('2d');
+  
+  // Game colors matching cyberpunk theme
+  const COLORS = {
+    STANDARD: '#55ff55',    // Terminal green
+    DATA: '#55ffff',        // Cyan
+    VIRUS: '#ff5555',       // Red
+    POWER: '#ffaa55',       // Yellow/Orange
+    SPECIAL: '#ff55ff',     // Magenta
+    BACKGROUND: '#001122'
+  };
+  
+  // Tetris shapes
+  const SHAPES = {
+    I: [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
+    O: [[1,1],[1,1]],
+    T: [[0,1,0],[1,1,1],[0,0,0]],
+    S: [[0,1,1],[1,1,0],[0,0,0]],
+    Z: [[1,1,0],[0,1,1],[0,0,0]],
+    J: [[1,0,0],[1,1,1],[0,0,0]],
+    L: [[0,0,1],[1,1,1],[0,0,0]]
+  };
+  
+  const SHAPE_NAMES = ['I', 'O', 'T', 'S', 'Z', 'J', 'L'];
+  
+  // Block types with weights for random generation
+  const BLOCK_TYPES = [
+    { name: 'STANDARD', color: COLORS.STANDARD, weight: 60 },
+    { name: 'DATA', color: COLORS.DATA, weight: 20 },
+    { name: 'VIRUS', color: COLORS.VIRUS, weight: 8 },
+    { name: 'POWER', color: COLORS.POWER, weight: 7 },
+    { name: 'SPECIAL', color: COLORS.SPECIAL, weight: 5 }
+  ];
+  
+  // Game state
+  let board = createMatrix(ROWS, COLS);
+  let virusBoard = createMatrix(ROWS, COLS); // Track virus infections
+  let current = null;
+  let next = null;
+  let score = 0, level = 1, lines = 0;
+  let dropTime = 0;
+  let dropInterval = 1000;
+  let lastTime = 0;
+  let gameOver = false;
+  let paused = false;
+  let corruption = 0;
+  let virusSpreadTimer = 0;
+  let bag = [];
+  
+  function createMatrix(rows, cols) {
+    return Array.from({ length: rows }, () => Array(cols).fill(0));
+  }
+  
+  function getRandomBlockType() {
+    const totalWeight = BLOCK_TYPES.reduce((sum, type) => sum + type.weight, 0);
+    const random = Math.random() * totalWeight;
+    let accumulated = 0;
+    
+    for (let type of BLOCK_TYPES) {
+      accumulated += type.weight;
+      if (random <= accumulated) {
+        return type;
+      }
+    }
+    return BLOCK_TYPES[0];
+  }
+  
+  function generateShapeBag() {
+    const shuffled = [...SHAPE_NAMES];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+  
+  function createPiece() {
+    if (bag.length === 0) {
+      bag = generateShapeBag();
+    }
+    
+    const shapeKey = bag.pop();
+    const shape = SHAPES[shapeKey].map(row => [...row]);
+    const blockType = getRandomBlockType();
+    
+    return {
+      shape,
+      x: Math.floor((COLS - shape[0].length) / 2),
+      y: 0,
+      type: blockType
+    };
+  }
+  
+  function rotate(matrix, clockwise = true) {
+    const N = matrix.length;
+    const rotated = Array.from({ length: N }, () => Array(N).fill(0));
+    
+    for (let i = 0; i < N; i++) {
+      for (let j = 0; j < N; j++) {
+        if (clockwise) {
+          rotated[j][N - 1 - i] = matrix[i][j];
+        } else {
+          rotated[N - 1 - j][i] = matrix[i][j];
+        }
+      }
+    }
+    return rotated;
+  }
+  
+  function isValidMove(piece, dx = 0, dy = 0, newShape = null) {
+    const shape = newShape || piece.shape;
+    const newX = piece.x + dx;
+    const newY = piece.y + dy;
+    
+    for (let y = 0; y < shape.length; y++) {
+      for (let x = 0; x < shape[y].length; x++) {
+        if (shape[y][x]) {
+          const boardX = newX + x;
+          const boardY = newY + y;
+          
+          if (boardX < 0 || boardX >= COLS || 
+              boardY >= ROWS || 
+              (boardY >= 0 && board[boardY][boardX])) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+  
+  function placePiece(piece) {
+    for (let y = 0; y < piece.shape.length; y++) {
+      for (let x = 0; x < piece.shape[y].length; x++) {
+        if (piece.shape[y][x]) {
+          const boardX = piece.x + x;
+          const boardY = piece.y + y;
+          
+          if (boardY >= 0) {
+            board[boardY][boardX] = piece.type.color;
+            
+            // Mark virus blocks
+            if (piece.type.name === 'VIRUS') {
+              virusBoard[boardY][boardX] = 1;
+              corruption = Math.min(100, corruption + 5);
+            }
+            
+            // Random chance for standard blocks to become virus
+            if (piece.type.name === 'STANDARD' && Math.random() < 0.1) {
+              virusBoard[boardY][boardX] = 1;
+              board[boardY][boardX] = COLORS.VIRUS;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  function clearLines() {
+    let linesCleared = 0;
+    let dataFragmentsCleared = 0;
+    let virusBlocksCleared = 0;
+    
+    for (let y = ROWS - 1; y >= 0; y--) {
+      if (board[y].every(cell => cell !== 0)) {
+        // Count special blocks in cleared line
+        for (let x = 0; x < COLS; x++) {
+          if (board[y][x] === COLORS.DATA) dataFragmentsCleared++;
+          if (virusBoard[y][x]) virusBlocksCleared++;
+        }
+        
+        board.splice(y, 1);
+        board.unshift(Array(COLS).fill(0));
+        virusBoard.splice(y, 1);
+        virusBoard.unshift(Array(COLS).fill(0));
+        linesCleared++;
+        y++; // Check the same line again
+      }
+    }
+    
+    if (linesCleared > 0) {
+      // Scoring system
+      const basePoints = [0, 40, 100, 300, 1200];
+      let points = (basePoints[linesCleared] || 500) * level;
+      
+      // Bonus for data fragments
+      if (dataFragmentsCleared > 0) {
+        points *= (1 + dataFragmentsCleared * 0.5);
+      }
+      
+      score += Math.floor(points);
+      lines += linesCleared;
+      
+      // Reduce corruption when clearing virus blocks
+      if (virusBlocksCleared > 0) {
+        corruption = Math.max(0, corruption - virusBlocksCleared * 3);
+      }
+      
+      // Level progression
+      const newLevel = Math.floor(lines / 10) + 1;
+      if (newLevel > level) {
+        level = newLevel;
+        dropInterval = Math.max(100, 1000 - (level - 1) * 50);
+      }
+      
+      updateUI();
+    }
+  }
+  
+  function spreadVirus() {
+    const newVirusBoard = virusBoard.map(row => [...row]);
+    let spreadOccurred = false;
+    
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        if (virusBoard[y][x]) {
+          // Spread to adjacent cells
+          const directions = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+          
+          for (let [dx, dy] of directions) {
+            const nx = x + dx;
+            const ny = y + dy;
+            
+            if (nx >= 0 && nx < COLS && ny >= 0 && ny < ROWS &&
+                board[ny][nx] !== 0 && !virusBoard[ny][nx] && 
+                Math.random() < 0.3) {
+              
+              newVirusBoard[ny][nx] = 1;
+              board[ny][nx] = COLORS.VIRUS;
+              corruption = Math.min(100, corruption + 2);
+              spreadOccurred = true;
+            }
+          }
+        }
+      }
+    }
+    
+    if (spreadOccurred) {
+      virusBoard = newVirusBoard;
+    }
+  }
+  
+  function update(time = 0) {
+    if (gameOver || paused) return;
+    
+    const deltaTime = time - lastTime;
+    lastTime = time;
+    
+    // Drop logic
+    dropTime += deltaTime;
+    if (dropTime > dropInterval) {
+      if (current && isValidMove(current, 0, 1)) {
+        current.y++;
+      } else if (current) {
+        placePiece(current);
+        clearLines();
+        spawnNext();
+      }
+      dropTime = 0;
+    }
+    
+    // Virus spread logic
+    virusSpreadTimer += deltaTime;
+    if (virusSpreadTimer > 3000) { // Spread every 3 seconds
+      spreadVirus();
+      virusSpreadTimer = 0;
+    }
+    
+    draw();
+    updateUI();
+    
+    if (!gameOver) {
+      requestAnimationFrame(update);
+    }
+  }
+  
+  function spawnNext() {
+    current = next || createPiece();
+    next = createPiece();
+    
+    if (!isValidMove(current)) {
+      gameOver = true;
+      showGameOver();
+    }
+  }
+  
+  function draw() {
+    // Clear canvas
+    ctx.fillStyle = COLORS.BACKGROUND;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw board grid
+    ctx.strokeStyle = 'rgba(85, 255, 85, 0.1)';
+    ctx.lineWidth = 1;
+    
+    for (let x = 0; x <= COLS; x++) {
+      ctx.beginPath();
+      ctx.moveTo(x * BLOCK_SIZE, 0);
+      ctx.lineTo(x * BLOCK_SIZE, ROWS * BLOCK_SIZE);
+      ctx.stroke();
+    }
+    
+    for (let y = 0; y <= ROWS; y++) {
+      ctx.beginPath();
+      ctx.moveTo(0, y * BLOCK_SIZE);
+      ctx.lineTo(COLS * BLOCK_SIZE, y * BLOCK_SIZE);
+      ctx.stroke();
+    }
+    
+    // Draw placed blocks
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        if (board[y][x]) {
+          drawBlock(x, y, board[y][x], virusBoard[y][x]);
+        }
+      }
+    }
+    
+    // Draw current piece
+    if (current) {
+      for (let y = 0; y < current.shape.length; y++) {
+        for (let x = 0; x < current.shape[y].length; x++) {
+          if (current.shape[y][x]) {
+            drawBlock(current.x + x, current.y + y, current.type.color);
+          }
+        }
+      }
+    }
+    
+    // Draw next piece
+    drawNextPiece();
+  }
+  
+  function drawBlock(x, y, color, isVirus = false) {
+    const px = x * BLOCK_SIZE;
+    const py = y * BLOCK_SIZE;
+    
+    ctx.fillStyle = color;
+    ctx.fillRect(px + 1, py + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2);
+    
+    // Add glow effect
+    ctx.shadowColor = color;
+    ctx.shadowBlur = isVirus ? 8 : 4;
+    ctx.fillRect(px + 3, py + 3, BLOCK_SIZE - 6, BLOCK_SIZE - 6);
+    ctx.shadowBlur = 0;
+    
+    // Virus glitch effect
+    if (isVirus && Math.random() < 0.3) {
+      ctx.fillStyle = 'rgba(255, 85, 85, 0.8)';
+      const offset = Math.random() * 4 - 2;
+      ctx.fillRect(px + offset, py + offset, BLOCK_SIZE - 2, BLOCK_SIZE - 2);
+    }
+  }
+  
+  function drawNextPiece() {
+    nextCtx.fillStyle = COLORS.BACKGROUND;
+    nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
+    
+    if (next) {
+      const blockSize = 15;
+      const offsetX = (nextCanvas.width - next.shape[0].length * blockSize) / 2;
+      const offsetY = (nextCanvas.height - next.shape.length * blockSize) / 2;
+      
+      for (let y = 0; y < next.shape.length; y++) {
+        for (let x = 0; x < next.shape[y].length; x++) {
+          if (next.shape[y][x]) {
+            nextCtx.fillStyle = next.type.color;
+            nextCtx.fillRect(
+              offsetX + x * blockSize,
+              offsetY + y * blockSize,
+              blockSize - 1,
+              blockSize - 1
+            );
+          }
+        }
+      }
+    }
+  }
+  
+  function updateUI() {
+    document.getElementById('score').textContent = score.toLocaleString();
+    document.getElementById('level').textContent = level;
+    document.getElementById('lines').textContent = lines;
+    
+    const integrity = Math.max(0, 100 - corruption);
+    document.getElementById('integrity').textContent = integrity + '%';
+    document.getElementById('corruption').textContent = Math.floor(corruption) + '%';
+    
+    const connectionEl = document.getElementById('connection');
+    const indicator = connectionEl.querySelector('.status-indicator');
+    
+    if (corruption < 30) {
+      connectionEl.innerHTML = '<span class="status-indicator status-stable"></span>STABLE';
+    } else if (corruption < 70) {
+      connectionEl.innerHTML = '<span class="status-indicator status-unstable"></span>UNSTABLE';
+    } else {
+      connectionEl.innerHTML = '<span class="status-indicator status-critical"></span>CRITICAL';
+    }
+  }
+  
+  function showGameOver() {
+    document.getElementById('finalScore').textContent = score.toLocaleString();
+    document.getElementById('gameOverScreen').classList.remove('hidden');
+  }
+  
+  function togglePause() {
+    paused = !paused;
+    const pauseScreen = document.getElementById('pausedScreen');
+    
+    if (paused) {
+      pauseScreen.classList.remove('hidden');
+    } else {
+      pauseScreen.classList.add('hidden');
+      lastTime = performance.now();
+      requestAnimationFrame(update);
+    }
+  }
+  
+  function restart() {
+    board = createMatrix(ROWS, COLS);
+    virusBoard = createMatrix(ROWS, COLS);
+    current = null;
+    next = null;
+    score = 0;
+    level = 1;
+    lines = 0;
+    corruption = 0;
+    dropTime = 0;
+    dropInterval = 1000;
+    virusSpreadTimer = 0;
+    gameOver = false;
+    paused = false;
+    bag = [];
+    
+    document.getElementById('gameOverScreen').classList.add('hidden');
+    document.getElementById('pausedScreen').classList.add('hidden');
+    
+    spawnNext();
+    updateUI();
+    lastTime = performance.now();
+    requestAnimationFrame(update);
+  }
+  
+  // Input handling
+  document.addEventListener('keydown', (e) => {
+    if (gameOver) {
+      if (e.key.toLowerCase() === 'r') {
+        restart();
+      }
+      return;
+    }
+    
+    if (paused && e.key.toLowerCase() !== 'p' && e.key.toLowerCase() !== 'r') {
+      return;
+    }
+    
+    switch (e.key) {
+      case 'ArrowLeft':
+        if (current && isValidMove(current, -1, 0)) {
+          current.x--;
+        }
+        break;
+        
+      case 'ArrowRight':
+        if (current && isValidMove(current, 1, 0)) {
+          current.x++;
+        }
+        break;
+        
+      case 'ArrowDown':
+        if (current && isValidMove(current, 0, 1)) {
+          current.y++;
+          dropTime = 0;
+        }
+        break;
+        
+      case ' ': // Hard drop
+        if (current) {
+          while (isValidMove(current, 0, 1)) {
+            current.y++;
+          }
+          placePiece(current);
+          clearLines();
+          spawnNext();
+          dropTime = 0;
+        }
+        e.preventDefault();
+        break;
+        
+      case 'z':
+      case 'Z':
+        if (current) {
+          const rotated = rotate(current.shape, false);
+          if (isValidMove(current, 0, 0, rotated)) {
+            current.shape = rotated;
+          }
+        }
+        break;
+        
+      case 'x':
+      case 'X':
+        if (current) {
+          const rotated = rotate(current.shape, true);
+          if (isValidMove(current, 0, 0, rotated)) {
+            current.shape = rotated;
+          }
+        }
+        break;
+        
+      case 'p':
+      case 'P':
+        togglePause();
+        break;
+        
+      case 'r':
+      case 'R':
+        restart();
+        break;
+    }
+    
+    if (e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault();
+    }
+  });
+  
+  // Initialize game
+  spawnNext();
+  updateUI();
+  lastTime = performance.now();
+  requestAnimationFrame(update);
+})();
+</script>
 </body>
 </html>
