@@ -585,12 +585,110 @@
     </div>
     
     <script>
+        const POSTS_PER_PAGE = 10;
+        const allPostsData = {{allPostsData}}; // Embedded from Node.js script
+        // Utility function to format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const months = [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ];
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
+            return `${day} ${month} ${year}`;
+        }
+
+        // Function to render posts and pagination
+        function renderPostsAndPagination(postsToDisplay, currentPage = 1) {
+            const episodeList = document.querySelector('.episode-list');
+            const paginationContainer = document.querySelector('.pagination');
+            const statsElement = document.querySelector('.stats');
+
+            episodeList.innerHTML = ''; // Clear current posts
+            paginationContainer.innerHTML = ''; // Clear current pagination
+
+            const totalPages = Math.ceil(postsToDisplay.length / POSTS_PER_PAGE);
+            const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+            const endIndex = startIndex + POSTS_PER_PAGE;
+            const paginatedPosts = postsToDisplay.slice(startIndex, endIndex);
+
+            // Render posts
+            paginatedPosts.forEach(post => {
+                const li = document.createElement('li');
+                li.classList.add('post-item');
+                li.dataset.tags = post.tags.join(' ');
+                li.innerHTML = `
+                    <a href="/blog/${post.slug}">
+                        <span class="episode-number">${post.episodeNumber.toString().padStart(3, '0')}</span><span class="episode-title">: ${post.title}</span><span class="date">${formatDate(post.date)}</span>
+                    </a>
+                `;
+                episodeList.appendChild(li);
+            });
+
+            // Render pagination controls
+            if (totalPages > 1) {
+                if (currentPage > 1) {
+                    const prevLink = document.createElement('a');
+                    prevLink.href = '#';
+                    prevLink.classList.add('pagination-link');
+                    prevLink.innerHTML = '&laquo; Previous';
+                    prevLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        renderPostsAndPagination(postsToDisplay, currentPage - 1);
+                        window.scrollTo(0, 0); // Scroll to top
+                    });
+                    paginationContainer.appendChild(prevLink);
+                }
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageLink = document.createElement('a');
+                    pageLink.href = '#';
+                    pageLink.classList.add('pagination-link');
+                    if (i === currentPage) {
+                        pageLink.classList.add('active');
+                    }
+                    pageLink.textContent = i;
+                    pageLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        renderPostsAndPagination(postsToDisplay, i);
+                        window.scrollTo(0, 0); // Scroll to top
+                    });
+                    paginationContainer.appendChild(pageLink);
+                }
+
+                if (currentPage < totalPages) {
+                    const nextLink = document.createElement('a');
+                    nextLink.href = '#';
+                    nextLink.classList.add('pagination-link');
+                    nextLink.innerHTML = 'Next &raquo;';
+                    nextLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        renderPostsAndPagination(postsToDisplay, currentPage + 1);
+                        window.scrollTo(0, 0); // Scroll to top
+                    });
+                    paginationContainer.appendChild(nextLink);
+                }
+            }
+
+            // Update stats
+            const activeFilter = document.querySelector('.tag-filter.active, .show-all.active');
+            if (activeFilter && activeFilter.dataset.tag === 'all') {
+                statsElement.innerHTML = `total posts: ${postsToDisplay.length} · <a href="/blog/archive.html" style="color: #888888; text-decoration: none;">archive</a> · <a href="/blog/feed.xml" style="color: #888888; text-decoration: none;">rss feed</a>`;
+            } else if (activeFilter) {
+                statsElement.innerHTML = `showing ${postsToDisplay.length} posts tagged with "${activeFilter.dataset.tag}" · <a href="/blog/archive.html" style="color: #888888; text-decoration: none;">archive</a> · <a href="/blog/feed.xml" style="color: #888888; text-decoration: none;">rss feed</a>`;
+            }
+        }
+
         // Tag filtering functionality
         document.addEventListener('DOMContentLoaded', function() {
             const filterButtons = document.querySelectorAll('.tag-filter, .show-all');
-            const postItems = document.querySelectorAll('.post-item');
             const showAllButton = document.querySelector('.show-all');
-            
+
+            // Initial render of all posts
+            renderPostsAndPagination(allPostsData);
+
             // Check for tag in URL hash on page load
             function checkUrlHash() {
                 const hash = window.location.hash;
@@ -598,64 +696,33 @@
                     const tag = hash.substring(5); // Remove '#tag-' prefix
                     const tagButton = document.querySelector(`[data-tag="${tag}"]`);
                     if (tagButton) {
-                        // Remove active class from all buttons
                         filterButtons.forEach(btn => btn.classList.remove('active'));
-                        // Add active class to the tag button
                         tagButton.classList.add('active');
-                        // Filter posts by tag
                         filterPosts(tag);
-                        // Clear the hash after filtering
                         history.replaceState(null, null, '/blog');
                     }
                 }
             }
-            
-            function updateStats() {
-                const visiblePosts = document.querySelectorAll('.post-item:not(.hidden)').length;
-                const statsElement = document.querySelector('.stats');
-                const activeFilter = document.querySelector('.tag-filter.active, .show-all.active');
-                
-                if (activeFilter && activeFilter.dataset.tag === 'all') {
-                    statsElement.textContent = `total posts: ${postItems.length}`;
-                } else if (activeFilter) {
-                    statsElement.textContent = `showing ${visiblePosts} posts tagged with "${activeFilter.dataset.tag}"`;
-                }
-            }
-            
+
             function filterPosts(tag) {
-                postItems.forEach(post => {
-                    if (tag === 'all') {
-                        post.classList.remove('hidden');
-                    } else {
-                        const postTags = post.dataset.tags.split(' ');
-                        if (postTags.includes(tag)) {
-                            post.classList.remove('hidden');
-                        } else {
-                            post.classList.add('hidden');
-                        }
-                    }
-                });
-                updateStats();
+                let filteredPosts = [];
+                if (tag === 'all') {
+                    filteredPosts = allPostsData;
+                } else {
+                    filteredPosts = allPostsData.filter(post => post.tags.includes(tag));
+                }
+                renderPostsAndPagination(filteredPosts);
             }
-            
+
             filterButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    // Remove active class from all buttons
                     filterButtons.forEach(btn => btn.classList.remove('active'));
-                    
-                    // Add active class to clicked button
                     this.classList.add('active');
-                    
-                    // Filter posts
                     const tag = this.dataset.tag;
                     filterPosts(tag);
                 });
             });
-            
-            // Initialize stats
-            updateStats();
-            
-            // Check for tag in URL hash after everything is set up
+
             checkUrlHash();
         });
 
