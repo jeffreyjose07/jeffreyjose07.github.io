@@ -205,6 +205,162 @@
       display: none;
     }
     
+    .start-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, var(--bg) 0%, #000022 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    
+    .start-content {
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: rgba(0, 17, 34, 0.95);
+      border: 2px solid var(--data);
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 0 30px rgba(85, 255, 255, 0.3);
+    }
+    
+    .start-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .start-title {
+      color: var(--data);
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px currentColor;
+      letter-spacing: 3px;
+    }
+    
+    .start-subtitle {
+      color: var(--terminal);
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .start-sections {
+      display: grid;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+    
+    .start-section {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--terminal);
+      border-radius: 4px;
+      padding: 20px;
+    }
+    
+    .section-title {
+      color: var(--warning);
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .section-content {
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    
+    .fragment-item {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+    
+    .fragment-preview {
+      width: 16px;
+      height: 16px;
+      margin-right: 12px;
+      border-radius: 2px;
+      box-shadow: 0 0 4px currentColor;
+    }
+    
+    .fragment-desc {
+      flex: 1;
+    }
+    
+    .control-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    
+    .control-item {
+      display: flex;
+      align-items: center;
+    }
+    
+    .control-key {
+      color: var(--data);
+      font-weight: bold;
+      min-width: 60px;
+      margin-right: 10px;
+    }
+    
+    .warning-item {
+      margin: 8px 0;
+      color: var(--text);
+    }
+    
+    .start-footer {
+      text-align: center;
+    }
+    
+    .start-button {
+      background: linear-gradient(45deg, var(--terminal), var(--data));
+      border: 2px solid var(--data);
+      border-radius: 6px;
+      padding: 15px 30px;
+      color: #000;
+      font-family: inherit;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(85, 255, 255, 0.4);
+    }
+    
+    .start-button:hover {
+      background: linear-gradient(45deg, var(--data), var(--terminal));
+      box-shadow: 0 0 25px rgba(85, 255, 255, 0.6);
+      transform: translateY(-2px);
+    }
+    
+    .start-button:active {
+      transform: translateY(0);
+      box-shadow: 0 0 10px rgba(85, 255, 255, 0.8);
+    }
+    
+    .button-text {
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .button-hint {
+      display: block;
+      font-size: 10px;
+      opacity: 0.8;
+      font-weight: normal;
+    }
+    
     .version {
       position: fixed;
       bottom: 10px;
@@ -270,7 +426,7 @@
             <div class="control-row"><span class="key">← / →</span> Move</div>
             <div class="control-row"><span class="key">↓</span> Soft Drop</div>
             <div class="control-row"><span class="key">SPACE</span> Hard Drop</div>
-            <div class="control-row"><span class="key">Z / X</span> Rotate</div>
+            <div class="control-row"><span class="key">↑ / Z / X</span> Rotate</div>
             <div class="control-row"><span class="key">P</span> Pause</div>
             <div class="control-row"><span class="key">R</span> Restart</div>
           </div>
@@ -316,6 +472,81 @@
     <div class="overlay-text">SYSTEM PAUSED</div>
     <div class="overlay-subtitle">Security protocol suspended</div>
     <div class="restart-hint">Press P to resume</div>
+  </div>
+  
+  <div class="start-screen" id="startScreen">
+    <div class="start-content">
+      <div class="start-header">
+        <div class="start-title">VOID BLOCKS</div>
+        <div class="start-subtitle">Neural Network Security Protocol v2.0</div>
+      </div>
+      
+      <div class="start-sections">
+        <div class="start-section">
+          <div class="section-title">📋 Mission Briefing</div>
+          <div class="section-content">
+            You are a security analyst tasked with preventing system corruption in a virtual reality network. Manipulate incoming data fragments to maintain system integrity and prevent virus propagation.
+          </div>
+        </div>
+        
+        <div class="start-section">
+          <div class="section-title">🧬 Fragment Types</div>
+          <div class="section-content">
+            <div class="fragment-item">
+              <div class="fragment-preview terminal"></div>
+              <div class="fragment-desc"><strong>Standard Blocks</strong> - Basic green fragments (60%)</div>
+            </div>
+            <div class="fragment-item">
+              <div class="fragment-preview data"></div>
+              <div class="fragment-desc"><strong>Data Fragments</strong> - Cyan blocks that slow time when cleared (20%)</div>
+            </div>
+            <div class="fragment-item">
+              <div class="fragment-preview virus"></div>
+              <div class="fragment-desc"><strong>Virus Blocks</strong> - Red corruption that spreads to adjacent blocks (8%)</div>
+            </div>
+            <div class="fragment-item">
+              <div class="fragment-preview warning"></div>
+              <div class="fragment-desc"><strong>Power-ups</strong> - Yellow blocks that clear all viruses (7%)</div>
+            </div>
+            <div class="fragment-item">
+              <div class="fragment-preview special"></div>
+              <div class="fragment-desc"><strong>Special Blocks</strong> - Magenta fragments with bonus points (5%)</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="start-section">
+          <div class="section-title">🎮 Control Interface</div>
+          <div class="section-content">
+            <div class="control-grid">
+              <div class="control-item"><span class="control-key">← →</span> Move fragments</div>
+              <div class="control-item"><span class="control-key">↓</span> Soft drop</div>
+              <div class="control-item"><span class="control-key">SPACE</span> Hard drop</div>
+              <div class="control-item"><span class="control-key">↑/Z/X</span> Rotate fragments</div>
+              <div class="control-item"><span class="control-key">P</span> Pause protocol</div>
+              <div class="control-item"><span class="control-key">R</span> Restart system</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="start-section">
+          <div class="section-title">⚠️ System Warnings</div>
+          <div class="section-content">
+            <div class="warning-item">• Virus blocks spread to adjacent fragments every 3 seconds (30% chance)</div>
+            <div class="warning-item">• System corruption increases with each virus block placed</div>
+            <div class="warning-item">• Clear virus blocks to reduce corruption levels</div>
+            <div class="warning-item">• Game over occurs when new fragments cannot be placed</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="start-footer">
+        <button class="start-button" id="startButton">
+          <span class="button-text">INITIALIZE SECURITY PROTOCOL</span>
+          <span class="button-hint">Press ENTER or click to begin</span>
+        </button>
+      </div>
+    </div>
   </div>
   
   <div class="version">v2.0.0</div>
@@ -375,6 +606,7 @@
   let corruption = 0;
   let virusSpreadTimer = 0;
   let bag = [];
+  let gameStarted = false;
   
   function createMatrix(rows, cols) {
     return Array.from({ length: rows }, () => Array(cols).fill(0));
@@ -570,7 +802,7 @@
   }
   
   function update(time = 0) {
-    if (gameOver || paused) return;
+    if (!gameStarted || gameOver || paused) return;
     
     const deltaTime = time - lastTime;
     lastTime = time;
@@ -745,6 +977,15 @@
     }
   }
   
+  function startGame() {
+    gameStarted = true;
+    document.getElementById('startScreen').classList.add('hidden');
+    spawnNext();
+    updateUI();
+    lastTime = performance.now();
+    requestAnimationFrame(update);
+  }
+  
   function restart() {
     board = createMatrix(ROWS, COLS);
     virusBoard = createMatrix(ROWS, COLS);
@@ -760,9 +1001,11 @@
     gameOver = false;
     paused = false;
     bag = [];
+    gameStarted = true;
     
     document.getElementById('gameOverScreen').classList.add('hidden');
     document.getElementById('pausedScreen').classList.add('hidden');
+    document.getElementById('startScreen').classList.add('hidden');
     
     spawnNext();
     updateUI();
@@ -770,8 +1013,19 @@
     requestAnimationFrame(update);
   }
   
+  // Start screen event listeners
+  document.getElementById('startButton').addEventListener('click', startGame);
+  
   // Input handling
   document.addEventListener('keydown', (e) => {
+    // Start screen handling
+    if (!gameStarted) {
+      if (e.key === 'Enter') {
+        startGame();
+      }
+      return;
+    }
+    
     if (gameOver) {
       if (e.key.toLowerCase() === 'r') {
         restart();
@@ -816,6 +1070,7 @@
         e.preventDefault();
         break;
         
+      case 'ArrowUp':
       case 'z':
       case 'Z':
         if (current) {
@@ -852,11 +1107,8 @@
     }
   });
   
-  // Initialize game
-  spawnNext();
+  // Initialize UI only (game starts after start screen)
   updateUI();
-  lastTime = performance.now();
-  requestAnimationFrame(update);
 })();
 </script>
 </body>
