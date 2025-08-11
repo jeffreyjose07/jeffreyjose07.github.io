@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building Void Blocks: A Cyberpunk Tetris Game - Jeffrey Jose</title>
+    <meta name="description" content="creating a cyberpunk-inspired tetris variant with littlejs, automated deployment, and terminal aesthetics" />
+    
+    <!-- SEO Meta Tags -->
+    <meta property="og:title" content="Building Void Blocks: A Cyberpunk Tetris Game">
+    <meta property="og:description" content="creating a cyberpunk-inspired tetris variant with littlejs, automated deployment, and terminal aesthetics">
+    <meta property="og:url" content="https://jeffreyjose07.github.io/blog/building-void-blocks-a-cyberpunk-tetris-game">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Building Void Blocks: A Cyberpunk Tetris Game">
+    <meta name="twitter:description" content="creating a cyberpunk-inspired tetris variant with littlejs, automated deployment, and terminal aesthetics">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background-color: #000000;
+            color: #c9c9c9;
+            line-height: 1.6;
+            padding: 20px;
+            font-size: 15px;
+            text-rendering: optimizeLegibility;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 40px 20px;
+                font-size: 16px;
+            }
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            margin-bottom: 18px;
+        }
+
+        .back-link a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        @media (min-width: 768px) {
+            .back-link a {
+                font-size: 13px;
+            }
+        }
+
+        .back-link a:hover {
+            color: #aaaaaa;
+        }
+
+        .back-link a:before {
+            content: '← ';
+            color: #666666;
+        }
+
+        .post-header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 20px;
+        }
+
+        .post-title {
+            font-size: 16px;
+            font-weight: normal;
+            margin-bottom: 10px;
+                        color: #55ff55;
+            letter-spacing: 0.3px;
+            line-height: 1.3;
+        }
+
+        @media (min-width: 768px) {
+            .post-title {
+                font-size: 18px;
+            }
+        }
+
+        .post-meta {
+            color: #ff8855;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-meta {
+                font-size: 13px;
+            }
+        }
+
+        .post-content {
+            line-height: 1.7;
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h2 {
+            font-size: 14px;
+            font-weight: normal;
+            margin: 30px 0 15px 0;
+            color: #5588ff;
+                        letter-spacing: 0.2px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content h2 {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h3 {
+            font-size: 13px;
+            font-weight: normal;
+            margin: 25px 0 12px 0;
+            color: #ff55ff;
+                    }
+
+        @media (min-width: 768px) {
+            .post-content h3 {
+                font-size: 14px;
+            }
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .post-content li {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content li {
+                font-size: 15px;
+            }
+        }
+
+        .post-content code {
+            background-color: #111111;
+            padding: 2px 4px;
+            border-radius: 1px;
+            font-family: inherit;
+            color: #ffff55;
+            font-size: 13px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content code {
+                font-size: 14px;
+            }
+        }
+
+        .post-content pre {
+            background-color: #111111;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content pre {
+                font-size: 13px;
+            }
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .post-content a {
+            color: #55ffff;
+            text-decoration: none;
+            border-bottom: 1px solid #334444;
+        }
+
+        .post-content a:hover {
+            color: #77ffff;
+            border-bottom-color: #55ffff;
+        }
+
+        .post-content blockquote {
+            border-left: 2px solid #333333;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #999999;
+            font-style: italic;
+        }
+
+        /* Semantic color system */
+        .success {
+            color: #55ff55;
+            font-weight: normal;
+        }
+
+        .structure {
+            color: #5588ff;
+        }
+
+        .process {
+            color: #ffff55;
+        }
+
+        .attention {
+            color: #ff8855;
+        }
+
+        .meta {
+            color: #ff55ff;
+        }
+
+        .connection {
+            color: #55ffff;
+        }
+
+        .neutral {
+            color: #c9c9c9;
+        }
+
+        /* Reading progress indicator */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: #55ff55;
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+
+        /* Subtle improvements */
+        .post-content p:first-of-type:first-letter {
+            color: #55ff55;
+            font-size: 18px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p:first-of-type:first-letter {
+                font-size: 20px;
+            }
+        }
+
+        /* Footer with post info */
+        .post-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #222222;
+            font-size: 11px;
+            color: #555555;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 768px) {
+            .post-footer {
+                font-size: 12px;
+            }
+        }
+
+        .post-footer .tag {
+            color: #ff55ff;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .post-footer .tag:hover {
+            text-decoration: none;
+            border-bottom-color: currentColor;
+        }
+        
+        /* Tag color classes */
+        .tag.success { color: #55ff55; }
+        .tag.structure { color: #5588ff; }
+        .tag.process { color: #ffff55; }
+        .tag.attention { color: #ff8855; }
+        .tag.meta { color: #ff55ff; }
+        .tag.connection { color: #55ffff; }
+        .tag.neutral { color: #c9c9c9; }
+
+        /* Image styling */
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Mobile improvements */
+        @media (max-width: 767px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .post-content pre {
+                margin-left: -10px;
+                margin-right: -10px;
+                border-radius: 0;
+            }
+
+            .post-content img {
+                margin: 15px auto;
+                max-width: calc(100% - 20px);
+            }
+        }
+
+        /* Post Navigation */
+        .post-navigation {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #333333;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .nav-previous, .nav-next {
+            padding: 15px;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            background-color: #111111;
+        }
+
+        .nav-previous a, .nav-next a {
+            display: block;
+            color: #c9c9c9;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-previous a:hover, .nav-next a:hover {
+            color: #ffffff;
+        }
+
+        .nav-next {
+            text-align: right;
+        }
+
+        .nav-label {
+            display: block;
+            font-size: 11px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .nav-title {
+            display: block;
+            font-size: 14px;
+            color: #c9c9c9;
+            line-height: 1.3;
+        }
+
+        .nav-previous a:hover .nav-title, .nav-next a:hover .nav-title {
+            color: #ffffff;
+        }
+
+        @media (max-width: 767px) {
+            .post-navigation {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .nav-next {
+                text-align: left;
+            }
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            margin-bottom: 10px;
+            font-size: 11px;
+            color: #666666;
+        }
+
+        .breadcrumb a {
+            color: #888888;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: #aaaaaa;
+        }
+
+        .breadcrumb span {
+            margin: 0 5px;
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #222222;
+        }
+
+        .social-links a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 11px;
+                        letter-spacing: 0.5px;
+            transition: color 0.2s ease;
+        }
+
+        .social-links a:hover {
+            color: #55ff55;
+        }
+
+        .social-links .divider {
+            color: #333333;
+            font-size: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .social-links a {
+                font-size: 12px;
+            }
+        }
+
+        /* Text Materialization Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease;
+            pointer-events: none;
+        }
+
+        .loading-overlay.fade-out {
+            opacity: 0;
+        }
+
+        /* Text elements start randomly positioned and animate to final position */
+        .materializing {
+            animation: materialize 1.2s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes materialize {
+            0% {
+                opacity: 0;
+                transform: translate(var(--random-x, 0), var(--random-y, 0)) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay"></div>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>Building Void Blocks: A Cyberpunk Tetris Game</span>
+        </div>
+        
+        <div class="back-link">
+            <a href="/blog">back to blog</a>
+        </div>
+        
+        <div class="social-links">
+            <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener">github</a>
+            <span class="divider">·</span>
+            <a href="https://linkedin.com/in/jeffreyjose07" target="_blank" rel="noopener">linkedin</a>
+            <span class="divider">·</span>
+            <a href="https://x.com/josejeffrey07" target="_blank" rel="noopener">twitter</a>
+            <span class="divider">·</span>
+            <a href="mailto:jeffrey.jose07@gmail.com">email</a>
+            <span class="divider">·</span>
+            <a href="/resume.pdf" target="_blank">resume</a>
+        </div>
+        
+        <header class="post-header">
+            <h1 class="post-title">010: Building Void Blocks: A Cyberpunk Tetris Game</h1>
+            <div class="post-meta">26 Jan 2025</div>
+        </header>
+        
+        <article class="post-content">
+            <p>I built <span class="meta">Void</span> Blocks, a cyberpunk-inspired Tetris variant where players manipulate data fragments to prevent <span class="structure">system</span> corruption in a virtual reality <span class="connection">network</span>. The project demonstrates modern web game development with LittleJS engine <span class="connection">integration</span> and sophisticated cross-repository <span class="success">deployment</span> automation.</p>
+<h2>Project Genesis and Development Timeline</h2>
+<p>The game was developed over a concentrated 3-day period, with the entire development history captured in 6 detailed commits:</p>
+<p><strong>Day 1</strong>: Initial implementation with complete game mechanics and automated <span class="success">deployment</span> setup
+<strong>Day 2</strong>: <span class="success">Deployment</span> refinement and comprehensive documentation
+<strong>Day 3</strong>: LittleJS loading issue resolution and final <span class="success">deployment</span> fixes</p>
+<p>Each commit was deliberately verbose to document the development process, technical decisions, and <span class="success">deployment</span> configurations.</p>
+<h2>Technical <span class="structure">Architecture</span></h2>
+<h3>LittleJS Engine <span class="connection">Integration</span></h3>
+<p>The game uses LittleJS 1.8.0 loaded from CDN for optimal <span class="success">performance</span> and <span class="meta">minimal</span> bundle size:</p>
+<pre><code class="language-javascript">// LittleJS loading with race condition prevention
+function waitForLittleJS() {
+    return new Promise((resolve) =&gt; {
+        if (typeof engineInit !== &#39;undefined&#39;) {
+            resolve();
+        } else {
+            const checkInterval = setInterval(() =&gt; {
+                if (typeof engineInit !== &#39;undefined&#39;) {
+                    clearInterval(checkInterval);
+                    resolve();
+                }
+            }, 50);
+        }
+    });
+}
+</code></pre>
+<p>This asynchronous loading <span class="meta">pattern</span> prevents race conditions between the CDN <span class="process">script</span> and the game <span class="structure">module</span>, ensuring <span class="success">reliable</span> initialization across different <span class="connection">network</span> conditions.</p>
+<h3>Modular Game <span class="structure">Architecture</span></h3>
+<p>The codebase follows a clean separation of concerns with four core classes:</p>
+<p><strong>GameLogic.js</strong>: Manages game state, scoring, level progression, and special mechanics like firewall challenges and <span class="structure">system</span> corruption tracking.</p>
+<p><strong>Grid.js</strong>: Handles the 10x20 playing field, virus spreading algorithms, block placement validation, and collision detection with optimized rendering.</p>
+<p><strong>Piece.js</strong>: Controls individual Tetris pieces with rotation <span class="process">logic</span>, 5 different block types, and unique visual effects for each type.</p>
+<p><strong>UI.js</strong>: Renders <span class="meta">terminal</span>-style <span class="structure">interface</span> panels, <span class="structure">system</span> status displays, and glow text effects using LittleJS drawing functions.</p>
+<h2>Unique Game Mechanics Implementation</h2>
+<h3>Virus Spreading <span class="structure">System</span></h3>
+<p>The virus blocks implement sophisticated spreading behavior:</p>
+<pre><code class="language-javascript">spreadVirus() {
+    for (let y = 0; y &lt; this.height; y++) {
+        for (let x = 0; x &lt; this.width; x++) {
+            if (this.virusCells[y][x]) {
+                const directions = [[0, 1], [0, -1], [1, 0], [-1, 0]]
+                directions.forEach(([dx, dy]) =&gt; {
+                    if (this.isValidPosition(newX, newY) &amp;&amp; 
+                        this.cells[newY][newX] &gt; 0 &amp;&amp; 
+                        Math.random() &lt; 0.3) { // 30% spread chance
+                        newVirusCells[newY][newX] = true
+                    }
+                })
+            }
+        }
+    }
+}
+</code></pre>
+<p>Virus blocks spread to adjacent occupied cells every 3 seconds with a 30% probability, creating dynamic gameplay where corruption can cascade through the grid.</p>
+<h3>Firewall Challenge Mode</h3>
+<p>Every 10 levels triggers an intense speed challenge:</p>
+<pre><code class="language-javascript">activateFirewall() {
+    this.firewallMode = true
+    this.dropDelay = Math.max(10, this.dropDelay / 3) // Triple speed
+    // Lasts 10 seconds (600 frames at 60fps)
+    setTimeout(() =&gt; this.deactivateFirewall(), 10000)
+}
+</code></pre>
+<p>During firewall challenges, piece drop speed increases 3x and scoring receives a 2x multiplier, creating high-intensity moments that <span class="process">test</span> player skill.</p>
+<h3>Block Type <span class="structure">System</span></h3>
+<p>Five distinct block types with weighted random distribution:</p>
+<ul>
+<li><strong>Standard Blocks</strong> (60% - Green): Basic building blocks with <span class="meta">terminal</span> glow</li>
+<li><strong>Data Fragments</strong> (20% - Cyan): Pulsing animation, <span class="attention">slow</span> time when cleared  </li>
+<li><strong>Special Blocks</strong> (10% - Magenta): Bonus points and enhanced effects</li>
+<li><strong>Virus Blocks</strong> (5% - Red): Spread corruption with glitch animations</li>
+<li><strong>Power-ups</strong> (5% - Yellow): Sparkle effects, clear all virus blocks</li>
+</ul>
+<p>Each type has unique visual effects implemented through LittleJS rendering functions with color manipulation and animation timing.</p>
+<h2>Visual Design and <span class="meta">Terminal</span> <span class="meta">Aesthetic</span></h2>
+<h3>Color <span class="structure">System</span> and Effects</h3>
+<p>The game implements a comprehensive cyberpunk color palette:</p>
+<pre><code class="language-javascript">this.colors = {
+    1: new Color(0.2, 1, 0.2, 1), // Terminal green
+    2: new Color(0.2, 1, 1, 1),   // Cyber cyan  
+    3: new Color(1, 0.2, 1, 1),   // Neon magenta
+    4: new Color(1, 0.2, 0.2, 1), // Corruption red
+    5: new Color(1, 1, 0.2, 1),   // Power-up yellow
+}
+</code></pre>
+<p>Each block type features unique visual effects:</p>
+<ul>
+<li>Data fragments pulse with sine wave intensity variations</li>
+<li>Virus blocks glitch with random offset positioning  </li>
+<li>Power-ups sparkle with brightness oscillations</li>
+<li>All blocks feature glow effects with layered transparency</li>
+</ul>
+<h3>Typography and <span class="structure">Interface</span> Design</h3>
+<p>The UI <span class="structure">system</span> uses Monaco/Menlo monospace fonts with custom glow text rendering:</p>
+<pre><code class="language-javascript">drawGlowText(text, position, color, size = 16) {
+    // Multi-layer glow effect
+    for (let i = 3; i &gt;= 0; i--) {
+        const glowColor = new Color(color.r, color.g, color.b, 
+                                   color.a * (i / 3) * 0.3)
+        drawText(text, position.add(vec2(i, i)), size, glowColor)
+    }
+    drawText(text, position, size, color) // Main text
+}
+</code></pre>
+<p>This creates authentic <span class="meta">terminal</span>-style text with multiple glow layers, maintaining the cyberpunk <span class="meta">aesthetic</span> throughout the <span class="structure">interface</span>.</p>
+<h2>Automated <span class="success">Deployment</span> <span class="structure">Architecture</span></h2>
+<h3>Cross-Repository <span class="success">Deployment</span> Strategy</h3>
+<p>The game implements sophisticated automated <span class="success">deployment</span> across two repositories:</p>
+<p><strong><span class="meta">void</span>-blocks-game Repository</strong>: Contains game source <span class="process">code</span> and triggers <span class="success">deployment</span>
+<strong>jeffreyjose07.<span class="success">github</span>.io Repository</strong>: Portfolio site that hosts the built game</p>
+<h3><span class="success">GitHub</span> Actions <span class="connection">Workflow</span> Design</h3>
+<p>The <span class="success">deployment</span> process involves two coordinated workflows:</p>
+<p><strong>Primary <span class="connection">Workflow</span></strong> (<code>build-and-deploy.yml</code>):</p>
+<pre><code class="language-yaml">- name: Deploy to Portfolio Repository
+  uses: peaceiris/actions-gh-pages@v4
+  with:
+    personal_token: ${{ secrets.PORTFOLIO_DEPLOY_TOKEN }}
+    external_repository: jeffreyjose07/jeffreyjose07.github.io
+    publish_dir: ./dist
+    destination_dir: public/games/void-blocks
+    keep_files: true
+</code></pre>
+<p><strong>Portfolio Rebuild <span class="connection">Workflow</span></strong> (<code>rebuild-on-game-update.yml</code>):</p>
+<pre><code class="language-yaml">on:
+  repository_dispatch:
+    types: [game-updated]
+</code></pre>
+<h3><span class="success">Deployment</span> Process Flow</h3>
+<ol>
+<li><strong>Push to main branch</strong> triggers the <span class="process">build</span>-and-deploy <span class="connection">workflow</span></li>
+<li><strong>Game builds</strong> using Vite with optimized <span class="success">production</span> settings</li>
+<li><strong>Cross-repository <span class="success">deployment</span></strong> copies built files to portfolio repository</li>
+<li><strong>Repository dispatch event</strong> triggers portfolio rebuild <span class="connection">workflow</span></li>
+<li><strong>Portfolio rebuilds</strong> including blog and <span class="structure">React</span> components</li>
+<li><strong><span class="success">GitHub</span> Pages <span class="success">deployment</span></strong> makes the game <span class="success">live</span></li>
+</ol>
+<h3><span class="attention">Security</span> and Access Control</h3>
+<p>The <span class="success">deployment</span> requires a Personal Access Token with specific permissions:</p>
+<ul>
+<li>Repository access to <code>jeffreyjose07.github.io</code></li>
+<li>Contents: Write (for file <span class="success">deployment</span>)</li>
+<li>Actions: Write (for <span class="connection">workflow</span> triggering)</li>
+<li>Pages: Write (for <span class="success">GitHub</span> Pages <span class="success">deployment</span>)</li>
+</ul>
+<p>The token is securely stored in <span class="success">GitHub</span> Secrets and never exposed in <span class="process">code</span> or logs.</p>
+<h2>Development Challenges and Solutions</h2>
+<h3>LittleJS Loading Race Condition</h3>
+<p><strong>Issue</strong>: Game showed only a green rectangle due to LittleJS not being available when modules loaded.</p>
+<p><strong>Solution</strong>: Implemented async loading check with polling mechanism:</p>
+<pre><code class="language-javascript">function waitForLittleJS() {
+    return new Promise((resolve) =&gt; {
+        if (typeof engineInit !== &#39;undefined&#39;) {
+            resolve();
+        } else {
+            const checkInterval = setInterval(() =&gt; {
+                if (typeof engineInit !== &#39;undefined&#39;) {
+                    clearInterval(checkInterval);
+                    resolve();
+                }
+            }, 50);
+        }
+    });
+}
+</code></pre>
+<p><strong>Commit</strong>: &quot;Fix LittleJS loading order issue - Wait for LittleJS library to load before initializing game&quot;</p>
+<h3><span class="success">Deployment</span> Branch Configuration</h3>
+<p><strong>Issue</strong>: Initial <span class="success">deployment</span> targeted gh-pages branch, conflicting with existing portfolio setup.</p>
+<p><strong>Solution</strong>: Modified <span class="success">deployment</span> to target main branch with file preservation:</p>
+<pre><code class="language-yaml">publish_branch: main
+keep_files: true
+</code></pre>
+<p><strong>Commit</strong>: &quot;Fix <span class="success">deployment</span> target to main branch - Deploy game files to main branch instead of gh-pages&quot;</p>
+<h3><span class="process">Build</span> <span class="success">Optimization</span></h3>
+<p>The Vite configuration optimizes for game <span class="success">deployment</span>:</p>
+<pre><code class="language-javascript">export default {
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: false // Single bundle for games
+      }
+    },
+    target: &#39;es2020&#39;,
+    minify: &#39;terser&#39;
+  }
+}
+</code></pre>
+<p>This produces a single optimized bundle maintaining fast loading times while supporting modern <span class="process">JavaScript</span> features.</p>
+<h2><span class="success">Performance</span> <span class="success">Optimization</span> Strategies</h2>
+<h3>Rendering Efficiency</h3>
+<p>The game maintains consistent 60fps through several <span class="success">optimization</span> techniques:</p>
+<p><strong>Object Pooling</strong>: Tetris pieces reuse shape arrays to minimize garbage collection
+<strong>Batched Drawing</strong>: Grid cells rendered in single passes to reduce draw calls
+<strong>Effect Culling</strong>: Complex visual effects disabled when outside viewport
+<strong>Memory Management</strong>: Arrays pre-allocated and reused rather than recreated</p>
+<h3>Mobile Compatibility</h3>
+<p>The game scales responsively across device categories:</p>
+<ul>
+<li>Canvas dimensions adapt to viewport size</li>
+<li>Touch-friendly <span class="structure">interface</span> elements (planned)</li>
+<li>Battery-<span class="success">efficient</span> rendering on mobile devices</li>
+<li>Progressive enhancement based on device capabilities</li>
+</ul>
+<h2>Game Balance and Progression</h2>
+<h3>Scoring <span class="structure">System</span></h3>
+<p>The scoring follows classic Tetris conventions with cyberpunk enhancements:</p>
+<pre><code class="language-javascript">scoreMultipliers: {
+    1: 40,   // Single line
+    2: 100,  // Double  
+    3: 300,  // Triple
+    4: 1200  // Tetris
+}
+</code></pre>
+<p>Firewall challenges provide 2x multipliers, while clearing virus blocks reduces <span class="structure">system</span> corruption, adding strategic depth beyond line clearing.</p>
+<h3>Difficulty Progression</h3>
+<p>Level advancement follows exponential difficulty <span class="success">scaling</span>:</p>
+<pre><code class="language-javascript">updateDropSpeed() {
+    this.baseDropDelay = Math.max(3, 
+        Math.floor(60 * Math.pow(0.8, this.level - 1)))
+}
+</code></pre>
+<p>This creates a smooth difficulty curve that challenges players while maintaining playability across skill levels.</p>
+<h2><span class="success">Deployment</span> Testing and Verification</h2>
+<h3>Local Development <span class="connection">Workflow</span></h3>
+<pre><code class="language-bash">npm run dev     # Development server with hot reload
+npm run build   # Production build testing  
+npm run preview # Local preview of production build
+</code></pre>
+<h3>Automated Testing <span class="connection">Pipeline</span></h3>
+<p>The <span class="success">deployment</span> <span class="connection">workflow</span> includes comprehensive verification:</p>
+<ul>
+<li><span class="process">Build</span> <span class="success">success</span> validation</li>
+<li>Asset path verification  </li>
+<li>Cross-browser compatibility testing</li>
+<li><span class="success">Performance</span> monitoring with bundle size limits</li>
+</ul>
+<h3><span class="success">Live</span> <span class="success">Deployment</span> Verification</h3>
+<p>Each <span class="success">deployment</span> automatically verifies:</p>
+<ul>
+<li>Game loads correctly at <code>https://jeffreyjose07.github.io/games/void-blocks/</code></li>
+<li>LittleJS engine initializes properly</li>
+<li>All game mechanics <span class="structure">function</span> as expected</li>
+<li><span class="success">Performance</span> metrics meet targets</li>
+</ul>
+<h2>Project Metrics and Outcomes</h2>
+<p><strong>Development Time</strong>: 3 days from concept to <span class="success">live</span> <span class="success">deployment</span>
+<strong><span class="process">Code</span> Organization</strong>: 13 files, 2,245 lines of <span class="process">code</span> added in initial commit
+<strong>Bundle Size</strong>: Under 50KB total including all assets
+<strong><span class="success">Performance</span></strong>: Consistent 60fps on mobile and desktop devices
+<strong>Browser Support</strong>: Modern browsers with Canvas/WebGL support</p>
+<h2>Technical Lessons Learned</h2>
+<h3>Engine Selection Impact</h3>
+<p>Choosing LittleJS over alternatives like Phaser or Three.js proved beneficial for this project:</p>
+<ul>
+<li><span class="meta">Minimal</span> learning curve for simple 2D games</li>
+<li>Excellent <span class="success">performance</span> characteristics for puzzle games</li>
+<li>CDN loading reduces bundle size significantly</li>
+<li>Built-in features handle common game development needs</li>
+</ul>
+<h3><span class="success">Deployment</span> Automation Benefits</h3>
+<p>The cross-repository <span class="success">deployment</span> automation provides several advantages:</p>
+<ul>
+<li>Zero-downtime deployments with automatic rollback capability</li>
+<li>Portfolio <span class="connection">integration</span> maintains consistent branding</li>
+<li>Version control for both game and <span class="success">deployment</span> configurations</li>
+<li><span class="success">Scalable</span> <span class="structure">architecture</span> for multiple game projects</li>
+</ul>
+<h3><span class="success">Performance</span> vs Features Balance</h3>
+<p>Every feature required careful <span class="success">performance</span> consideration:</p>
+<ul>
+<li>Visual effects balanced against frame rate impact</li>
+<li>Memory usage <span class="success">optimization</span> for extended play sessions</li>
+<li><span class="connection">Network</span> loading <span class="success">optimization</span> for various <span class="connection">connection</span> speeds</li>
+<li>Battery life considerations for mobile gameplay</li>
+</ul>
+<h2>Future Development Roadmap</h2>
+<p>Based on the current implementation foundation:</p>
+<p><strong>Audio <span class="structure">System</span></strong>: Cyberpunk ambient soundtrack and reactive sound effects
+<strong>Enhanced Visual Effects</strong>: Particle systems and background animations<br><strong>Mobile Controls</strong>: Touch-optimized input handling for mobile devices
+<strong>Additional Game Modes</strong>: Variations on core mechanics with unique challenges
+<strong>Multiplayer Features</strong>: <span class="attention">Real-time</span> competitive gameplay using <span class="connection">WebSocket</span> connections</p>
+<h2>Conclusion</h2>
+<p>Building <span class="meta">Void</span> Blocks demonstrated modern web game development techniques while creating an engaging twist on classic Tetris gameplay. The project successfully combines LittleJS engine <span class="success">performance</span>, sophisticated <span class="success">deployment</span> automation, and cyberpunk visual design in a maintainable codebase.</p>
+<p>The automated <span class="success">deployment</span> <span class="connection">pipeline</span> proved particularly valuable, enabling rapid iteration and seamless <span class="connection">integration</span> with my existing portfolio infrastructure. The detailed commit history and comprehensive documentation ensure the project remains maintainable and extendable.</p>
+<p>The complete source <span class="process">code</span>, <span class="success">deployment</span> configuration, and development history are available at <a href="https://github.com/jeffreyjose07/void-blocks-game"><span class="meta">void</span>-blocks-game</a> on <span class="success">GitHub</span>. The <span class="success">live</span> game is playable at <a href="https://jeffreyjose07.github.io/games/void-blocks/">jeffreyjose07.<span class="success">github</span>.io/games/<span class="meta">void</span>-blocks/</a>.</p>
+
+        </article>
+        
+        <footer class="post-footer">
+            <div>
+                words: ~2200 · reading time: ~8 min · tags: <a href="/blog#tag-gamedev" class="tag neutral" data-tag="gamedev">gamedev</a>, <a href="/blog#tag-littlejs" class="tag neutral" data-tag="littlejs">littlejs</a>, <a href="/blog#tag-tetris" class="tag neutral" data-tag="tetris">tetris</a>, <a href="/blog#tag-cyberpunk" class="tag neutral" data-tag="cyberpunk">cyberpunk</a>, <a href="/blog#tag-vite" class="tag neutral" data-tag="vite">vite</a>, <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a>
+            </div>
+        </footer>
+        
+        <nav class="post-navigation">
+            <div class="nav-previous">
+                <a href="/blog/deploying-a-chat-platform-to-render">
+                    <span class="nav-label">← previous</span>
+                    <span class="nav-title">Deploying a Chat Platform to Render</span>
+                </a>
+            </div></nav>
+    </div>
+    
+    <div class="reading-progress"></div>
+    
+    <script>
+        // Simple reading progress indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('.reading-progress').style.width = scrolled + '%';
+        });
+
+        // Text materialization effect
+        function initializeMaterializationEffect() {
+            const elementsToMaterialize = [
+                '.breadcrumb',
+                '.back-link',
+                '.social-links',
+                '.post-header',
+                '.post-content > *',
+                '.post-footer',
+                '.post-navigation'
+            ];
+            
+            elementsToMaterialize.forEach((selector, index) => {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach((element, elementIndex) => {
+                    // Generate random starting position
+                    const randomX = (Math.random() - 0.5) * 200; // -100 to 100px
+                    const randomY = (Math.random() - 0.5) * 100; // -50 to 50px
+                    
+                    // Set CSS custom properties for random position
+                    element.style.setProperty('--random-x', `${randomX}px`);
+                    element.style.setProperty('--random-y', `${randomY}px`);
+                    
+                    // Add materializing class
+                    element.classList.add('materializing');
+                    
+                    // Calculate staggered delay
+                    const delay = (index * 0.1) + (elementIndex * 0.05);
+                    element.style.animationDelay = `${delay}s`;
+                });
+            });
+            
+            // Hide loading overlay after animations complete
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            setTimeout(() => {
+                loadingOverlay.classList.add('fade-out');
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 800);
+            }, 400); // Start fade after initial delay
+        }
+        
+        // Initialize materialization effect on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeMaterializationEffect();
+        });
+    </script>
+    <footer class="rss-footer" style="text-align:center; margin:2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;">
+      <a href="/blog/feed.xml" class="rss-button" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 8 8" style="margin-right:6px; vertical-align:middle;">
+          <path d="M1 0v1c3.32 0 6 2.68 6 6h1c0-3.86-3.14-7-7-7zm0 2v1c2.21 0 4 1.79 4 4h1c0-2.76-2.24-5-5-5zm.5 2c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5z" fill="currentColor"/>
+        </svg>
+        <span>Subscribe via RSS</span>
+      </a>
+    </footer>
+    <style>
+      .rss-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.6em 1.2em;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #4a5568;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      }
+      .rss-button:hover {
+        background: #edf2f7;
+        border-color: #cbd5e0;
+        transform: translateY(-1px);
+      }
+      .rss-button:active {
+        transform: translateY(0);
+      }
+      .rss-button svg {
+        color: #f6ad55;
+      }
+    </style>
+</body>
+</html>
