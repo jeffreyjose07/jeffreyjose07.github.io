@@ -33,6 +33,7 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
+        publish_branch: main
         commit_message: 'Rebuild portfolio after game update: ${{ github.event.client_payload.game }}'
         user_name: 'GitHub Actions'
         user_email: 'actions@github.com'
