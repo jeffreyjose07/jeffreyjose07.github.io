@@ -556,9 +556,20 @@
 (() => {
   const COLS = 10, ROWS = 20, BLOCK_SIZE = 30;
   const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
   const nextCanvas = document.getElementById('nextCanvas');
+  
+  if (!canvas || !nextCanvas) {
+    console.error('Canvas elements not found:', { canvas: !!canvas, nextCanvas: !!nextCanvas });
+    return; // Exit early if critical elements missing
+  }
+  
+  const ctx = canvas.getContext('2d');
   const nextCtx = nextCanvas.getContext('2d');
+  
+  if (!ctx || !nextCtx) {
+    console.error('Canvas contexts not available:', { ctx: !!ctx, nextCtx: !!nextCtx });
+    return; // Exit early if contexts unavailable
+  }
   
   // Game colors matching cyberpunk theme
   const COLORS = {
@@ -939,34 +950,60 @@
   }
   
   function updateUI() {
-    document.getElementById('score').textContent = score.toLocaleString();
-    document.getElementById('level').textContent = level;
-    document.getElementById('lines').textContent = lines;
+    // Update score with null check
+    const scoreEl = document.getElementById('score');
+    if (scoreEl) scoreEl.textContent = score.toLocaleString();
     
+    const levelEl = document.getElementById('level');
+    if (levelEl) levelEl.textContent = level;
+    
+    const linesEl = document.getElementById('lines');
+    if (linesEl) linesEl.textContent = lines;
+    
+    // Update system status
     const integrity = Math.max(0, 100 - corruption);
-    document.getElementById('integrity').textContent = integrity + '%';
-    document.getElementById('corruption').textContent = Math.floor(corruption) + '%';
+    const integrityEl = document.getElementById('integrity');
+    if (integrityEl) integrityEl.textContent = integrity + '%';
     
+    const corruptionEl = document.getElementById('corruption');
+    if (corruptionEl) corruptionEl.textContent = Math.floor(corruption) + '%';
+    
+    // Update connection status
     const connectionEl = document.getElementById('connection');
-    const indicator = connectionEl.querySelector('.status-indicator');
-    
-    if (corruption < 30) {
-      connectionEl.innerHTML = '<span class="status-indicator status-stable"></span>STABLE';
-    } else if (corruption < 70) {
-      connectionEl.innerHTML = '<span class="status-indicator status-unstable"></span>UNSTABLE';
-    } else {
-      connectionEl.innerHTML = '<span class="status-indicator status-critical"></span>CRITICAL';
+    if (connectionEl) {
+      if (corruption < 30) {
+        connectionEl.innerHTML = '<span class="status-indicator status-stable"></span>STABLE';
+      } else if (corruption < 70) {
+        connectionEl.innerHTML = '<span class="status-indicator status-unstable"></span>UNSTABLE';
+      } else {
+        connectionEl.innerHTML = '<span class="status-indicator status-critical"></span>CRITICAL';
+      }
     }
   }
   
   function showGameOver() {
-    document.getElementById('finalScore').textContent = score.toLocaleString();
-    document.getElementById('gameOverScreen').classList.remove('hidden');
+    const finalScoreEl = document.getElementById('finalScore');
+    if (finalScoreEl) finalScoreEl.textContent = score.toLocaleString();
+    
+    const gameOverScreen = document.getElementById('gameOverScreen');
+    if (gameOverScreen) {
+      gameOverScreen.classList.remove('hidden');
+    } else {
+      console.error('Game over screen not found');
+    }
   }
   
   function togglePause() {
+    if (!gameStarted) return; // Don't allow pause before game starts
+    
     paused = !paused;
     const pauseScreen = document.getElementById('pausedScreen');
+    
+    if (!pauseScreen) {
+      console.error('Pause screen not found');
+      paused = false; // Reset pause state if screen missing
+      return;
+    }
     
     if (paused) {
       pauseScreen.classList.remove('hidden');
@@ -978,15 +1015,39 @@
   }
   
   function startGame() {
+    if (gameStarted) {
+      console.warn('Game already started, ignoring duplicate start request');
+      return;
+    }
+    
+    console.log('Starting game...');
     gameStarted = true;
-    document.getElementById('startScreen').classList.add('hidden');
-    spawnNext();
-    updateUI();
-    lastTime = performance.now();
-    requestAnimationFrame(update);
+    
+    // Hide start screen with error handling
+    const startScreen = document.getElementById('startScreen');
+    if (startScreen) {
+      startScreen.classList.add('hidden');
+    } else {
+      console.error('Start screen element not found');
+    }
+    
+    // Initialize game state
+    try {
+      spawnNext();
+      updateUI();
+      lastTime = performance.now();
+      requestAnimationFrame(update);
+      console.log('Game started successfully');
+    } catch (error) {
+      console.error('Error starting game:', error);
+      gameStarted = false; // Reset state on error
+    }
   }
   
   function restart() {
+    console.log('Restarting game...');
+    
+    // Reset game state
     board = createMatrix(ROWS, COLS);
     virusBoard = createMatrix(ROWS, COLS);
     current = null;
@@ -1003,41 +1064,64 @@
     bag = [];
     gameStarted = true;
     
-    document.getElementById('gameOverScreen').classList.add('hidden');
-    document.getElementById('pausedScreen').classList.add('hidden');
-    document.getElementById('startScreen').classList.add('hidden');
+    // Hide all overlay screens with error handling
+    ['gameOverScreen', 'pausedScreen', 'startScreen'].forEach(screenId => {
+      const screen = document.getElementById(screenId);
+      if (screen) {
+        screen.classList.add('hidden');
+      } else {
+        console.warn(`Screen element ${screenId} not found`);
+      }
+    });
     
-    spawnNext();
-    updateUI();
-    lastTime = performance.now();
-    requestAnimationFrame(update);
+    // Initialize game
+    try {
+      spawnNext();
+      updateUI();
+      lastTime = performance.now();
+      requestAnimationFrame(update);
+      console.log('Game restarted successfully');
+    } catch (error) {
+      console.error('Error restarting game:', error);
+      gameStarted = false;
+    }
   }
   
-  // Start screen event listeners
-  document.getElementById('startButton').addEventListener('click', startGame);
+  // Initialize DOM event listeners when DOM is ready
+  function initializeEventListeners() {
+    // Start screen event listeners with error handling
+    const startButton = document.getElementById('startButton');
+    if (startButton) {
+      startButton.addEventListener('click', startGame);
+    } else {
+      console.error('Start button not found in DOM');
+    }
+    
+    // Input handling
+    document.addEventListener('keydown', handleKeyInput);
+  }
   
-  // Input handling
-  document.addEventListener('keydown', (e) => {
-    // Start screen handling
-    if (!gameStarted) {
-      if (e.key === 'Enter') {
-        startGame();
+  function handleKeyInput(e) {
+      // Start screen handling
+      if (!gameStarted) {
+        if (e.key === 'Enter') {
+          startGame();
+        }
+        return;
       }
-      return;
-    }
-    
-    if (gameOver) {
-      if (e.key.toLowerCase() === 'r') {
-        restart();
+      
+      if (gameOver) {
+        if (e.key.toLowerCase() === 'r') {
+          restart();
+        }
+        return;
       }
-      return;
-    }
-    
-    if (paused && e.key.toLowerCase() !== 'p' && e.key.toLowerCase() !== 'r') {
-      return;
-    }
-    
-    switch (e.key) {
+      
+      if (paused && e.key.toLowerCase() !== 'p' && e.key.toLowerCase() !== 'r') {
+        return;
+      }
+      
+      switch (e.key) {
       case 'ArrowLeft':
         if (current && isValidMove(current, -1, 0)) {
           current.x--;
@@ -1102,13 +1186,34 @@
         break;
     }
     
-    if (e.key === 'ArrowDown' || e.key === ' ') {
-      e.preventDefault();
+      if (e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault();
+      }
     }
-  });
   
-  // Initialize UI only (game starts after start screen)
-  updateUI();
+  // Initialize game when DOM is fully loaded
+  function initializeGame() {
+    // Ensure start screen is visible
+    const startScreen = document.getElementById('startScreen');
+    if (startScreen) {
+      startScreen.classList.remove('hidden');
+    }
+    
+    // Initialize event listeners
+    initializeEventListeners();
+    
+    // Initialize UI
+    updateUI();
+    
+    console.log('Game initialized successfully');
+  }
+  
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeGame);
+  } else {
+    initializeGame();
+  }
 })();
 </script>
 </body>
