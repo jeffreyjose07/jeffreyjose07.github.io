@@ -311,48 +311,64 @@ function generatePostNavigation(prevPost, nextPost) {
     return navHtml;
 }
 
-// Generate blog index with tag filtering
+// Constants for pagination
+const POSTS_PER_PAGE = 10;
+
+// Generate blog index with tag filtering and pagination
 function generateIndex(posts) {
-    const template = loadTemplate('index');
-    
-    // Sort posts by episode number (descending for newest first)
-    const sortedPosts = posts.sort((a, b) => b.episodeNumber - a.episodeNumber);
-    
-    // Collect all unique tags
     const allTags = [...new Set(posts.flatMap(post => post.tags))];
-    
-    // Generate tag filter buttons
     const tagFiltersHtml = allTags.map(tag => {
         const tagColorCategory = config.tagColors[tag] || 'neutral';
         return `            <button class="tag-filter ${tagColorCategory}" data-tag="${tag}">${tag}</button>`;
     }).join('\n');
-    
-    // Generate posts HTML with tag data attributes
-    const postsHtml = sortedPosts.map(post => {
-        const episodeNum = post.episodeNumber.toString().padStart(3, '0');
-        const tagsAttr = post.tags.join(' ');
-        return `            <li class="post-item" data-tags="${tagsAttr}">
+
+    // Sort posts by episode number (descending for newest first)
+    const sortedPosts = posts.sort((a, b) => b.episodeNumber - a.episodeNumber);
+    const totalPages = Math.ceil(sortedPosts.length / POSTS_PER_PAGE);
+
+    for (let i = 0; i < totalPages; i++) {
+        const pagePosts = sortedPosts.slice(i * POSTS_PER_PAGE, (i + 1) * POSTS_PER_PAGE);
+        const template = loadTemplate('index');
+
+        const postsHtml = pagePosts.map(post => {
+            const episodeNum = post.episodeNumber.toString().padStart(3, '0');
+            const tagsAttr = post.tags.join(' ');
+            return `            <li class="post-item" data-tags="${tagsAttr}">
                 <a href="/blog/${post.slug}">
                     <span class="episode-number">${episodeNum}</span><span class="episode-title">: ${post.title}</span><span class="date">${formatDate(post.date)}</span>
                 </a>
             </li>`;
-    }).join('\n');
-    
-    // Populate template
-    const html = template
-        .replace(/{{title}}/g, config.title)
-        .replace(/{{description}}/g, config.description)
-        .replace(/{{tagFilters}}/g, tagFiltersHtml)
-        .replace(/{{posts}}/g, postsHtml)
-        .replace(/{{totalPosts}}/g, posts.length)
-        .replace(/{{githubUrl}}/g, config.social.github)
-        .replace(/{{linkedinUrl}}/g, config.social.linkedin)
-        .replace(/{{twitterUrl}}/g, config.social.twitter)
-        .replace(/{{emailUrl}}/g, config.social.email)
-        .replace(/{{resumeUrl}}/g, config.resumeUrl);
-    
-    // Write index file
-    fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), html);
+        }).join('\n');
+
+        let paginationHtml = '<div class="pagination">';
+        if (i > 0) {
+            paginationHtml += `<a href="/blog/${i === 0 ? '' : `page${i + 1}.html`}" class="pagination-link">&laquo; Previous</a>`;
+        }
+        for (let j = 0; j < totalPages; j++) {
+            const pageLink = j === 0 ? 'index.html' : `page${j + 1}.html`;
+            paginationHtml += `<a href="/blog/${pageLink}" class="pagination-link ${i === j ? 'active' : ''}">${j + 1}</a>`;
+        }
+        if (i < totalPages - 1) {
+            paginationHtml += `<a href="/blog/page${i + 2}.html" class="pagination-link">Next &raquo;</a>`;
+        }
+        paginationHtml += '</div>';
+
+        const html = template
+            .replace(/{{title}}/g, config.title)
+            .replace(/{{description}}/g, config.description)
+            .replace(/{{tagFilters}}/g, tagFiltersHtml)
+            .replace(/{{posts}}/g, postsHtml)
+            .replace(/{{totalPosts}}/g, posts.length)
+            .replace(/{{pagination}}/g, paginationHtml) // Add pagination placeholder
+            .replace(/{{githubUrl}}/g, config.social.github)
+            .replace(/{{linkedinUrl}}/g, config.social.linkedin)
+            .replace(/{{twitterUrl}}/g, config.social.twitter)
+            .replace(/{{emailUrl}}/g, config.social.email)
+            .replace(/{{resumeUrl}}/g, config.resumeUrl);
+
+        const outputFileName = i === 0 ? 'index.html' : `page${i + 1}.html`;
+        fs.writeFileSync(path.join(OUTPUT_DIR, outputFileName), html);
+    }
 }
 
 // Generate RSS feed
