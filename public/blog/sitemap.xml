@@ -25,6 +25,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://jeffreyjose07.github.io/blog/implementing-privacy-first-analytics-from-research</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://jeffreyjose07.github.io/blog/debugging-cross-repository-workflows</loc>
     <lastmod>2025-08-11</lastmod>
     <changefreq>monthly</changefreq>

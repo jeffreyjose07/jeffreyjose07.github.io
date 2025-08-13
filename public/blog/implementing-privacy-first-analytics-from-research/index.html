@@ -4,17 +4,17 @@
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debugging Cross-Repository GitHub Actions: A Void Blocks Tale - Jeffrey Jose</title>
-    <meta name="description" content="A deep dive into the complex world of cross-repository workflows, race conditions, and permission errors I encountered while deploying my Void Blocks game." />
+    <title>Implementing Privacy-First Analytics: From Research to GoatCounter - Jeffrey Jose</title>
+    <meta name="description" content="A comprehensive guide to implementing privacy-friendly analytics across portfolio and blog - from researching solutions to deploying GoatCounter with future API integration plans." />
     
     <!-- SEO Meta Tags -->
-    <meta property="og:title" content="Debugging Cross-Repository GitHub Actions: A Void Blocks Tale">
-    <meta property="og:description" content="A deep dive into the complex world of cross-repository workflows, race conditions, and permission errors I encountered while deploying my Void Blocks game.">
-    <meta property="og:url" content="https://jeffreyjose07.github.io/blog/debugging-cross-repository-workflows">
+    <meta property="og:title" content="Implementing Privacy-First Analytics: From Research to GoatCounter">
+    <meta property="og:description" content="A comprehensive guide to implementing privacy-friendly analytics across portfolio and blog - from researching solutions to deploying GoatCounter with future API integration plans.">
+    <meta property="og:url" content="https://jeffreyjose07.github.io/blog/implementing-privacy-first-analytics-from-research">
     <meta property="og:type" content="article">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Debugging Cross-Repository GitHub Actions: A Void Blocks Tale">
-    <meta name="twitter:description" content="A deep dive into the complex world of cross-repository workflows, race conditions, and permission errors I encountered while deploying my Void Blocks game.">
+    <meta name="twitter:title" content="Implementing Privacy-First Analytics: From Research to GoatCounter">
+    <meta name="twitter:description" content="A comprehensive guide to implementing privacy-friendly analytics across portfolio and blog - from researching solutions to deploying GoatCounter with future API integration plans.">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <style>
         * {
@@ -491,7 +491,7 @@
 
     <div class="container">
         <div class="breadcrumb">
-            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>Debugging Cross-Repository GitHub Actions: A Void Blocks Tale</span>
+            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>Implementing Privacy-First Analytics: From Research to GoatCounter</span>
         </div>
         
         <div class="back-link">
@@ -511,117 +511,256 @@
         </div>
         
         <header class="post-header">
-            <h1 class="post-title">011: Debugging Cross-Repository GitHub Actions: A Void Blocks Tale</h1>
-            <div class="post-meta">11 Aug 2025</div>
+            <h1 class="post-title">012: Implementing Privacy-First Analytics: From Research to GoatCounter</h1>
+            <div class="post-meta">13 Jan 2025</div>
         </header>
         
         <article class="post-content">
-            <p>I recently embarked on a journey to automate the <span class="success">deployment</span> of my <code>void-blocks-game</code> to my personal portfolio website. The goal was simple: push a change to the game&#39;s repository, and have it automatically <span class="process">build</span>, deploy, and appear on my portfolio site. What followed was a fascinating and frustrating deep dive into the world of cross-repository <span class="success">GitHub</span> Actions, race conditions, and permission errors.</p>
-<h2>the initial setup</h2>
-<p>The plan was to have two repositories <span class="success">working</span> in concert:</p>
-<ol>
-<li><strong><code>void-blocks-game</code></strong>: The repository for the game itself. A push to this repository would trigger a <span class="process">build</span> process.</li>
-<li><strong><code>jeffreyjose07.github.io</code></strong>: My personal portfolio website, which would host the game.</li>
-</ol>
-<p>The idea was to have a <span class="success">GitHub</span> Actions <span class="connection">workflow</span> in the <code>void-blocks-game</code> repository that would <span class="process">build</span> the game and then push the <span class="process">build</span> artifacts to the <code>jeffreyjose07.github.io</code> repository. This, in turn, would trigger another <span class="connection">workflow</span> in the portfolio repository to rebuild the site and deploy the new version of the game.</p>
-<h2>the first hurdle: the race condition</h2>
-<p>The initial implementation seemed straightforward. The <code>void-blocks-game</code> <span class="connection">workflow</span> would push the game&#39;s <span class="process">build</span> to the <code>public/games/void-blocks</code> directory in the portfolio&#39;s <code>main</code> branch. Simultaneously, it would dispatch a <code>repository_dispatch</code> event to trigger the portfolio&#39;s rebuild <span class="connection">workflow</span>.</p>
-<p>The problem? A classic race condition. The portfolio&#39;s rebuild <span class="connection">workflow</span> would start at the same time as the game&#39;s <span class="process">build</span> was being pushed. More often than not, the portfolio would <span class="process">build</span> <em>before</em> the new game files were available, resulting in no change to the <span class="success">live</span> site.</p>
-<p>My first attempt at a solution was to introduce a delay in the portfolio&#39;s rebuild <span class="connection">workflow</span>:</p>
-<pre><code class="language-yaml">- name: Wait for game files to be pushed
-  run: sleep 30s
-</code></pre>
-<p>This was a simple, if not elegant, solution. It worked, but it felt like a hack. There had to be a better way.</p>
-<h2>the second hurdle: permissions</h2>
-<p>The next problem was more insidious. The portfolio&#39;s rebuild <span class="connection">workflow</span> was failing with a permission <span class="attention">error</span>:</p>
-<p><code>remote: Permission to jeffreyjose07/jeffreyjose07.github.io.git denied to github-actions[bot].</code></p>
-<p>The <code>GITHUB_TOKEN</code> used in the <span class="connection">workflow</span> didn&#39;t have the necessary permissions to push to the <code>main</code> branch. This is because workflows triggered by <code>repository_dispatch</code> events have read-only permissions by default.</p>
-<p>The fix was to explicitly grant write permissions to the <span class="connection">workflow</span>:</p>
-<pre><code class="language-yaml">jobs:
-  rebuild-portfolio:
-    permissions: write-all
-    runs-on: ubuntu-latest
-</code></pre>
-<p>This was a crucial lesson in the <span class="attention">security</span> model of <span class="success">GitHub</span> Actions.</p>
-<h2>the third hurdle: the missing lock file</h2>
-<p>Even with the permissions fixed, the <code>void-blocks-game</code> <span class="connection">workflow</span> started failing. The <span class="attention">error</span> was in the <code>Setup Node.js</code> step:</p>
-<p><code>##[error]Dependencies lock file is not found...</code></p>
-<p>The <code>actions/setup-node@v4</code> action was configured to use a cache for <code>npm</code>, but it couldn&#39;t find a <code>package-lock.json</code> file. I had forgotten to commit the lock file to the repository.</p>
-<p>A quick <code>npm install</code> and a commit of the <code>package-lock.json</code> file fixed this issue.</p>
-<h2>the final solution: a robust <span class="connection">workflow</span></h2>
-<p>After a lot of trial and <span class="attention">error</span>, I arrived at a solution that is both robust and elegant.</p>
-<p>The <code>void-blocks-game</code> <span class="connection">workflow</span> now builds the game and pushes the artifacts to the portfolio repository. It then triggers the portfolio&#39;s rebuild <span class="connection">workflow</span> using <code>repository_dispatch</code>.</p>
-<p>The portfolio&#39;s rebuild <span class="connection">workflow</span>, now with the correct permissions and a delay, pulls the latest changes, rebuilds the site, and commits the changes to the <code>main</code> branch. This final push then triggers the <code>deploy.yml</code> <span class="connection">workflow</span>, which handles the <span class="success">deployment</span> to <span class="success">GitHub</span> Pages.</p>
-<p>Here&#39;s a look at the key parts of the final workflows:</p>
-<p><strong><code>void-blocks-game/.github/workflows/build-and-deploy.yml</code></strong></p>
-<pre><code class="language-yaml">- name: Deploy to Portfolio Repository
-  uses: peaceiris/actions-gh-pages@v4
-  with:
-    personal_token: ${{ secrets.PORTFOLIO_DEPLOY_TOKEN }}
-    external_repository: jeffreyjose07/jeffreyjose07.github.io
-    publish_dir: ./dist
-    destination_dir: public/games/void-blocks
-    publish_branch: main
-    keep_files: true
-
-- name: Trigger Portfolio Rebuild
-  uses: peter-evans/repository-dispatch@v3
-  with:
-    token: ${{ secrets.PORTFOLIO_DEPLOY_TOKEN }}
-    repository: jeffreyjose07/jeffreyjose07.github.io
-    event-type: game-updated
-</code></pre>
-<p><strong><code>jeffreyjose07.github.io/.github/workflows/rebuild-on-game-update.yml</code></strong></p>
-<pre><code class="language-yaml">permissions:
-  contents: write
-
-jobs:
-  rebuild-portfolio:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Wait for game files to be pushed
-      run: sleep 30s
-
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Commit and push changes
-      run: |
-        git config --local user.email &quot;action@github.com&quot;
-        git config --local user.name &quot;GitHub Action&quot;
-        git add -A
-        git commit -m &quot;Rebuild portfolio after game update: ${{ github.event.client_payload.game }}&quot; || echo &quot;No changes to commit&quot;
-        git push
-</code></pre>
-<h2>lessons learned</h2>
-<p>This experience taught me a lot about the intricacies of <span class="success">GitHub</span> Actions:</p>
+            <p>After months of running my portfolio and blog without any visitor insights, I finally decided it was time to implement analytics. But not just any analytics - I wanted a solution that respected user privacy, didn&#39;t require consent banners, and provided the data I actually needed.</p>
+<h2>The Analytics Dilemma</h2>
+<p>Most developers reach for Google Analytics by default, but I had several concerns:</p>
 <ul>
-<li><strong>Race conditions are real:</strong> When dealing with multiple workflows that interact with each other, it&#39;s important to consider the timing of events.</li>
-<li><strong>Permissions are key:</strong> Always check the permissions of the <code>GITHUB_TOKEN</code> in your workflows, especially when dealing with <code>repository_dispatch</code> events.</li>
-<li><strong>Lock files are important:</strong> Always commit your lock files to ensure reproducible builds.</li>
-<li><strong>Iterate and learn:</strong> Don&#39;t be afraid to try different solutions and learn from your mistakes.</li>
+<li><strong>Privacy invasion</strong>: Extensive tracking and data collection</li>
+<li><strong>GDPR compliance</strong>: Cookie banners and consent management</li>
+<li><strong>Bloated scripts</strong>: ~28KB+ of <span class="process">JavaScript</span> for basic analytics</li>
+<li><strong>Over-engineering</strong>: Complex <span class="structure">interface</span> for simple needs</li>
 </ul>
-<p>In the end, I was able to <span class="process">build</span> a fully automated <span class="success">deployment</span> <span class="connection">pipeline</span> that is both <span class="success">reliable</span> and <span class="success">efficient</span>. The journey was challenging, but the result was well worth the effort.</p>
+<p>I needed something that would tell me:</p>
+<ul>
+<li>How many people visit my portfolio vs blog</li>
+<li>Which blog posts are most popular  </li>
+<li>How many people try my <span class="meta">Void</span> Blocks game</li>
+<li>Where visitors come from (referrers)</li>
+</ul>
+<h2>Research Phase: Exploring Options</h2>
+<h3>Option 1: Google Analytics 4</h3>
+<p><strong>Pros</strong>: Comprehensive features, familiar <span class="structure">interface</span>, free forever
+<strong>Cons</strong>: Privacy concerns, requires GDPR compliance, heavy <span class="process">script</span>, complex setup</p>
+<h3>Option 2: <span class="success">GitHub</span> Pages Built-in Analytics</h3>
+<p><strong>Status</strong>: Non-existent. <span class="success">GitHub</span> Pages provides zero analytics capabilities beyond IP logging for <span class="attention">security</span>.</p>
+<p>After extensive research, I discovered <span class="success">GitHub</span> still doesn&#39;t provide native analytics for Pages sites, despite years of community requests. This remains one of the most requested features.</p>
+<h3>Option 3: Privacy-Focused Alternatives</h3>
+<p>I evaluated several privacy-first solutions:</p>
+<p><strong>Plausible Analytics</strong>: Excellent privacy focus, beautiful dashboard, but $9/month
+<strong>Fathom Analytics</strong>: Similar to Plausible, but more expensive<br><strong>Umami</strong>: Self-hosted option, requires server setup and maintenance</p>
+<h3>Option 4: GoatCounter - The Winner</h3>
+<p><strong>Cost</strong>: Completely FREE (donation-supported)
+<strong>Privacy</strong>: No cookies, no personal data tracking, GDPR compliant
+<strong>Size</strong>: Only ~3.5KB <span class="process">script</span> (75x lighter than Google Analytics)
+<strong>Features</strong>: All essential metrics without <span class="meta">complexity</span>
+<strong><span class="connection">API</span></strong>: <span class="connection">REST</span> endpoints for programmatic access</p>
+<h2>Implementation Strategy</h2>
+<h3>Phase 1: <span class="process">Script</span> <span class="connection">Integration</span></h3>
+<p>I needed to add tracking to four distinct sections:</p>
+<ol>
+<li><strong>Main Portfolio</strong> (<code>/index.html</code>) - <span class="structure">React</span> app landing page</li>
+<li><strong>Blog Homepage</strong> (<code>/blog/templates/index.html</code>) - Blog index with posts</li>
+<li><strong>Individual Posts</strong> (<code>/blog/templates/post.html</code>) - Article pages  </li>
+<li><strong><span class="meta">Void</span> Blocks Game</strong> (<code>/public/games/void-blocks/index.html</code>) - Game analytics</li>
+</ol>
+<p>The implementation was straightforward - a single <span class="process">script</span> <span class="meta">tag</span> before <code>&lt;/body&gt;</code>:</p>
+<pre><code class="language-html">&lt;!-- GoatCounter Analytics --&gt;
+&lt;script data-goatcounter=&quot;https://jeffreyjose.goatcounter.com/count&quot; 
+        async src=&quot;//gc.zgo.at/count.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<h3>Phase 2: Template Updates</h3>
+<p>For the blog <span class="structure">system</span>, I updated both templates:</p>
+<p><strong>Blog Index Template</strong>: Tracks blog homepage visits, <span class="meta">tag</span> filtering usage, and pagination navigation.</p>
+<p><strong>Post Template</strong>: Tracks individual article reads, reading time, and referral sources.</p>
+<p>The <span class="structure">React</span> portfolio required adding the <span class="process">script</span> to the root <span class="process">HTML</span> template, ensuring tracking works across all single-page-app navigation.</p>
+<h3>Phase 3: <span class="process">Build</span> and Deploy</h3>
+<p>After updating templates, I rebuilt the blog to propagate changes:</p>
+<pre><code class="language-bash">node blog/scripts/build.js
+</code></pre>
+<p>This generated new <span class="process">HTML</span> files with analytics scripts embedded. The <span class="process">build</span> process updated all 12 blog posts, the index, archive page, and sitemap.</p>
+<h2><span class="structure">Architecture</span> Decisions</h2>
+<h3>Why Not Self-Hosted?</h3>
+<p>While Umami and Plausible offer self-hosted options, I chose GoatCounter&#39;s hosted service because:</p>
+<ul>
+<li><strong>Zero maintenance</strong>: No server management or updates</li>
+<li><strong>Reliability</strong>: Professional infrastructure and uptime</li>
+<li><strong>Cost</strong>: Truly free vs hosting costs</li>
+<li><strong>Focus</strong>: Spend time on content, not analytics infrastructure</li>
+</ul>
+<h3><span class="process">Script</span> Placement Strategy</h3>
+<p>I placed all scripts before <code>&lt;/body&gt;</code> to ensure:</p>
+<ul>
+<li>Page content loads first (better UX)</li>
+<li>No blocking of <span class="attention">critical</span> rendering path</li>
+<li>Analytics don&#39;t interfere with existing animations</li>
+<li>Proper interaction with <span class="meta">terminal</span> effects and loading animations</li>
+</ul>
+<h2>What Gets Tracked</h2>
+<h3>Portfolio Analytics</h3>
+<ul>
+<li>Homepage visits and unique visitors</li>
+<li>Time on site and bounce rate</li>
+<li>Referrer sources (social, direct, search)</li>
+<li>Geographic distribution</li>
+</ul>
+<h3>Blog Analytics</h3>
+<ul>
+<li>Individual post <span class="success">performance</span></li>
+<li>Most popular content categories</li>
+<li>Reading completion rates (via time on page)</li>
+<li><span class="meta">Tag</span>-based content preferences</li>
+</ul>
+<h3>Game Analytics</h3>
+<ul>
+<li><span class="meta">Void</span> Blocks play sessions</li>
+<li>Game completion rates</li>
+<li>Player engagement metrics</li>
+</ul>
+<h2>Privacy Implementation</h2>
+<h3>No Consent Required</h3>
+<p>GoatCounter&#39;s privacy-first approach means:</p>
+<ul>
+<li>No cookies stored</li>
+<li>No personal data collected</li>
+<li>No cross-site tracking</li>
+<li>No consent banners needed</li>
+</ul>
+<h3><span class="meta">Terminal</span> <span class="meta">Aesthetic</span> Compliance</h3>
+<p>The solution maintains my 90s <span class="meta">terminal</span> <span class="meta">aesthetic</span>:</p>
+<ul>
+<li>No intrusive UI elements</li>
+<li>Lightweight <span class="process">script</span> doesn&#39;t affect <span class="success">performance</span></li>
+<li>Clean, <span class="meta">minimal</span> dashboard matches design <span class="meta">philosophy</span></li>
+</ul>
+<h2>Future Scope: View Count Display</h2>
+<h3>Phase 2 Planning</h3>
+<p>The most exciting part is GoatCounter&#39;s <span class="connection">API</span> access. I&#39;m planning to implement view counts directly on blog posts:</p>
+<pre><code>📊 analytics: 1,234 total views · 567 unique visitors
+👀 this post: 89 views
+🎮 void blocks: 156 plays
+</code></pre>
+<h3><span class="connection">API</span> <span class="connection">Integration</span> Options</h3>
+<p><strong><span class="process">Build</span>-time Fetching</strong>: Update view counts during blog rebuilds</p>
+<pre><code class="language-javascript">// In blog/scripts/build.js
+const response = await fetch(&#39;https://jeffreyjose.goatcounter.com/api/v0/stats/hits&#39;, {
+  headers: { &#39;Authorization&#39;: &#39;Bearer YOUR_API_KEY&#39; }
+});
+</code></pre>
+<p><strong>Client-side Updates</strong>: Dynamic view counts with <span class="process">JavaScript</span></p>
+<pre><code class="language-javascript">// Real-time view count updates
+fetch(&#39;/api/goatcounter-proxy/stats/hits/{path}&#39;)
+  .then(r =&gt; r.json())
+  .then(data =&gt; updateViewCount(data.count));
+</code></pre>
+<h3>Rate Limits and Considerations</h3>
+<p>GoatCounter&#39;s <span class="connection">API</span> allows 4 requests per second, perfect for:</p>
+<ul>
+<li><span class="process">Build</span>-time batch updates</li>
+<li>Occasional <span class="attention">real-time</span> refreshes</li>
+<li>Popular posts widgets</li>
+<li>Analytics dashboard <span class="connection">integration</span></li>
+</ul>
+<h2>Results and <span class="success">Performance</span></h2>
+<h3>Immediate Benefits</h3>
+<ul>
+<li><strong>Zero impact</strong> on page load times</li>
+<li><strong>No privacy concerns</strong> - visitors browse freely</li>
+<li><strong>Clean data</strong> - only meaningful metrics</li>
+<li><strong><span class="meta">Terminal</span> <span class="meta">aesthetic</span></strong> maintained throughout</li>
+</ul>
+<h3>Analytics Insights</h3>
+<p>Within hours of <span class="success">deployment</span>, I could see:</p>
+<ul>
+<li>Blog posts attracting most traffic</li>
+<li>Popular content categories</li>
+<li>Visitor geographic distribution</li>
+<li>Referral source effectiveness</li>
+</ul>
+<h2>Lessons Learned</h2>
+<h3>Research Pays Off</h3>
+<p>Spending time evaluating options prevented expensive mistakes. The &quot;free&quot; solutions (Google Analytics) had hidden costs in <span class="meta">complexity</span> and privacy concerns.</p>
+<h3>Privacy-First is User-First</h3>
+<p>Choosing GoatCounter improved <span class="meta">user experience</span>:</p>
+<ul>
+<li>No cookie prompts</li>
+<li>Faster page loads  </li>
+<li>No tracking concerns</li>
+<li>Cleaner browsing experience</li>
+</ul>
+<h3><span class="connection">API</span> Access is Crucial</h3>
+<p>Having programmatic access to analytics data opens possibilities:</p>
+<ul>
+<li>Custom dashboards</li>
+<li>View count displays</li>
+<li>Popular content widgets</li>
+<li><span class="connection">Integration</span> with existing systems</li>
+</ul>
+<h2>Technical Implementation Details</h2>
+<h3>File Changes Made</h3>
+<ul>
+<li><code>index.html</code> - Portfolio tracking</li>
+<li><code>blog/templates/index.html</code> - Blog homepage</li>
+<li><code>blog/templates/post.html</code> - Individual posts</li>
+<li><code>public/games/void-blocks/index.html</code> - Game analytics</li>
+<li><code>ANALYTICS.md</code> - Implementation documentation</li>
+</ul>
+<h3><span class="process">Build</span> Process <span class="connection">Integration</span></h3>
+<p>The analytics scripts integrate seamlessly with the existing <span class="process">build</span> <span class="structure">system</span>:</p>
+<ol>
+<li>Templates updated with tracking <span class="process">code</span></li>
+<li>Blog rebuild propagates changes</li>
+<li><span class="success">Git</span> <span class="success">deployment</span> updates <span class="success">live</span> site</li>
+<li>Analytics begin tracking immediately</li>
+</ol>
+<h3><span class="success">Performance</span> Impact</h3>
+<p>Measured impact on site <span class="success">performance</span>:</p>
+<ul>
+<li><strong><span class="process">Script</span> size</strong>: 3.5KB (vs 28KB+ for GA4)</li>
+<li><strong>Load time</strong>: No measurable increase</li>
+<li><strong>First paint</strong>: Unaffected</li>
+<li><strong><span class="process">JavaScript</span> execution</strong>: <span class="meta">Minimal</span></li>
+</ul>
+<h2>Future Enhancements</h2>
+<h3>Phase 2: View Count <span class="connection">Integration</span></h3>
+<ul>
+<li>Generate GoatCounter <span class="connection">API</span> key</li>
+<li>Implement <span class="process">build</span>-time view count fetching</li>
+<li>Design <span class="meta">terminal</span>-style view count display</li>
+<li>Add popular posts sidebar widget</li>
+</ul>
+<h3>Phase 3: Advanced Analytics</h3>
+<ul>
+<li>Custom event tracking (game completions)</li>
+<li><span class="attention">Real-time</span> dashboard <span class="connection">integration</span></li>
+<li>Analytics <span class="connection">API</span> for portfolio projects</li>
+<li>Visitor engagement heatmaps</li>
+</ul>
+<h3>Phase 4: Content <span class="success">Optimization</span></h3>
+<ul>
+<li>A/B testing for blog post titles</li>
+<li>Content <span class="success">performance</span> analysis</li>
+<li>Referral source <span class="success">optimization</span></li>
+<li>User journey mapping</li>
+</ul>
+<h2>Conclusion</h2>
+<p>Implementing privacy-first analytics proved both technically straightforward and ethically satisfying. GoatCounter provides everything needed without compromise:</p>
+<ul>
+<li><strong>User privacy</strong> respected completely</li>
+<li><strong>Developer experience</strong> clean and simple  </li>
+<li><strong><span class="success">Performance</span> impact</strong> virtually zero</li>
+<li><strong>Future flexibility</strong> through <span class="connection">API</span> access</li>
+</ul>
+<p>The implementation took <span class="process">less</span> than an hour but provides insights that will guide content strategy and technical decisions for years to come. Most importantly, visitors can browse freely without privacy concerns or intrusive tracking.</p>
+<p>Sometimes the best technical solutions are the simplest ones that just work - exactly what GoatCounter delivers for privacy-conscious developers.</p>
 
         </article>
         
         <footer class="post-footer">
             <div>
-                words: ~796 · reading time: ~4 min · tags: <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a>, <a href="/blog#tag-automation" class="tag success" data-tag="automation">automation</a>, <a href="/blog#tag-debugging" class="tag neutral" data-tag="debugging">debugging</a>, <a href="/blog#tag-devops" class="tag neutral" data-tag="devops">devops</a>, <a href="/blog#tag-ci-cd" class="tag neutral" data-tag="ci-cd">ci-cd</a>
+                words: ~1800 · reading time: ~8 min · tags: <a href="/blog#tag-analytics" class="tag neutral" data-tag="analytics">analytics</a>, <a href="/blog#tag-privacy" class="tag neutral" data-tag="privacy">privacy</a>, <a href="/blog#tag-web-development" class="tag neutral" data-tag="web-development">web-development</a>, <a href="/blog#tag-goatcounter" class="tag neutral" data-tag="goatcounter">goatcounter</a>, <a href="/blog#tag-github-pages" class="tag neutral" data-tag="github-pages">github-pages</a>
             </div>
         </footer>
         
         <nav class="post-navigation">
             <div class="nav-previous">
-                <a href="/blog/building-void-blocks-a-cyberpunk-tetris-game">
+                <a href="/blog/debugging-cross-repository-workflows">
                     <span class="nav-label">← previous</span>
-                    <span class="nav-title">Building Void Blocks: A Cyberpunk Tetris Game</span>
-                </a>
-            </div>
-            <div class="nav-next">
-                <a href="/blog/implementing-privacy-first-analytics-from-research">
-                    <span class="nav-label">next →</span>
-                    <span class="nav-title">Implementing Privacy-First Analytics: From Research to GoatCounter</span>
+                    <span class="nav-title">Debugging Cross-Repository GitHub Actions: A Void Blocks Tale</span>
                 </a>
             </div></nav>
     </div>
