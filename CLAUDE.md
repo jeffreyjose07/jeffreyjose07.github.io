@@ -126,6 +126,13 @@ wordCount: 1200
 
 ## Workflow Preferences
 
+### Git Workflow (CRITICAL)
+- **ALWAYS start work session with**: `git pull --rebase origin main`
+- **Never start coding** without pulling latest changes first
+- **Prevents merge conflicts** and ensures clean commit history
+- **Do this before any file modifications** to avoid divergent branches
+
+### Development Process
 - **ALWAYS check existing documentation** before suggesting new implementations
 - **Refer to `BLOG.md`** for user-facing blog instructions
 - **Refer to `blog/README.md`** for technical implementation details

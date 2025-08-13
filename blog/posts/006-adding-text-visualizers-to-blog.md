@@ -4,8 +4,8 @@ slug: "ascii-visualizers"
 date: "2025-01-24"
 tags: ["frontend", "tutorials", "meta"]
 description: "How I reverse-engineered and implemented animated ASCII art visualizers inspired by musicforprogramming.net for my blog's sidebar"
-readingTime: 5
-wordCount: 1200
+readingTime: 6
+wordCount: 1116
 ---
 
 Sometimes you see something cool on the internet and think "I want that for my site." That's exactly what happened when I noticed the subtle text-based music visualizer on **musicforprogramming.net**. The ambient, matrix-like animation perfectly complemented their minimal aesthetic without being distracting.

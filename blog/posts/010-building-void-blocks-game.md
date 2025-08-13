@@ -3,8 +3,8 @@ title: "Building Void Blocks: A Cyberpunk Tetris Game"
 date: "2025-01-26"
 tags: ["gamedev", "vanilla-js", "tetris", "cyberpunk", "single-file", "github-actions"]
 description: "creating a cyberpunk-inspired tetris variant, from littlejs to vanilla javascript, with automated deployment and terminal aesthetics"
-readingTime: 10
-wordCount: 2800
+readingTime: 13
+wordCount: 2505
 ---
 
 I built Void Blocks, a cyberpunk-inspired Tetris variant where players manipulate data fragments to prevent system corruption in a virtual reality network. The project evolved from a complex LittleJS engine implementation to a streamlined single-file vanilla JavaScript solution, demonstrating both modern web game development patterns and the power of simplification.

@@ -3,8 +3,8 @@ title: "Implementing Privacy-First Analytics: From Research to GoatCounter"
 date: "2025-01-13"
 tags: ["analytics", "privacy", "web-development", "goatcounter", "github-pages"]
 description: "A comprehensive guide to implementing privacy-friendly analytics across portfolio and blog - from researching solutions to deploying GoatCounter with future API integration plans."
-readingTime: 8
-wordCount: 1800
+readingTime: 6
+wordCount: 1266
 ---
 
 After months of running my portfolio and blog without any visitor insights, I finally decided it was time to implement analytics. But not just any analytics - I wanted a solution that respected user privacy, didn't require consent banners, and provided the data I actually needed.

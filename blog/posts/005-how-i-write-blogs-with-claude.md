@@ -4,8 +4,8 @@ slug: "ai-assisted-writing"
 date: "2025-01-24"
 tags: ["ai-tools", "meta"]
 description: "A detailed walkthrough of how I use Claude to create blog posts, from initial prompts to final output"
-readingTime: 4
-wordCount: 800
+readingTime: 5
+wordCount: 1077
 ---
 
 Let me be direct about something: I use **AI** to write my blog posts, and I'm not apologizing for it. This isn't about replacing creativity or taking shortcuts - it's about building something instead of staying stuck in perfectionism paralysis.

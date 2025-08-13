@@ -3,8 +3,8 @@ title: "AI as Learning Catalyst: How to Gain Skills Without Losing Competence"
 date: "2025-01-25"
 tags: ["ai-tools", "meta", "tutorials", "learning"]
 description: "how artificial intelligence can democratize skill acquisition without creating cognitive dependency - if you use it strategically"
-readingTime: 12
-wordCount: 3500
+readingTime: 13
+wordCount: 2540
 ---
 
 The relationship between artificial intelligence and human learning is more complex than the simple narrative of "AI makes us dumber" or "AI makes learning easier." Based on recent research and practical implementation, AI can serve as a powerful catalyst for skill acquisition - but only if we understand both its capabilities and its pitfalls.
