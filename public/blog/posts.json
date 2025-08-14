@@ -1,0 +1,202 @@
+[
+  {
+    "url": "/blog/implementing-privacy-first-analytics-from-research",
+    "title": "Implementing Privacy-First Analytics: From Research to GoatCounter",
+    "episode": "012",
+    "date": "2025-01-13",
+    "tags": [
+      "analytics",
+      "privacy",
+      "web-development",
+      "goatcounter",
+      "github-pages"
+    ],
+    "description": "A comprehensive guide to implementing privacy-friendly analytics across portfolio and blog - from researching solutions to deploying GoatCounter with future API integration plans.",
+    "readingTime": 5,
+    "wordCount": 1000,
+    "slug": "implementing-privacy-first-analytics-from-research"
+  },
+  {
+    "url": "/blog/debugging-cross-repository-workflows",
+    "title": "Debugging Cross-Repository GitHub Actions: A Void Blocks Tale",
+    "episode": "011",
+    "date": "2025-08-11",
+    "tags": [
+      "github-actions",
+      "automation",
+      "debugging",
+      "devops",
+      "ci-cd"
+    ],
+    "description": "A deep dive into the complex world of cross-repository workflows, race conditions, and permission errors I encountered while deploying my Void Blocks game.",
+    "readingTime": 5,
+    "wordCount": 1000,
+    "slug": "debugging-cross-repository-workflows"
+  },
+  {
+    "url": "/blog/building-void-blocks-a-cyberpunk-tetris-game",
+    "title": "Building Void Blocks: A Cyberpunk Tetris Game",
+    "episode": "010",
+    "date": "2025-01-26",
+    "tags": [
+      "gamedev",
+      "vanilla-js",
+      "tetris",
+      "cyberpunk",
+      "single-file",
+      "github-actions"
+    ],
+    "description": "creating a cyberpunk-inspired tetris variant, from littlejs to vanilla javascript, with automated deployment and terminal aesthetics",
+    "readingTime": 5,
+    "wordCount": 1000,
+    "slug": "building-void-blocks-a-cyberpunk-tetris-game"
+  },
+  {
+    "url": "/blog/deploying-a-chat-platform-to-render",
+    "title": "Deploying a Chat Platform to Render",
+    "episode": "009",
+    "date": "2025-01-25",
+    "tags": [
+      "deployment",
+      "render",
+      "spring-boot",
+      "react",
+      "github-actions"
+    ],
+    "description": "deploying a production-ready chat platform with spring boot, react, and multiple databases to render",
+    "readingTime": 5,
+    "wordCount": 1000,
+    "slug": "deploying-a-chat-platform-to-render"
+  },
+  {
+    "url": "/blog/ai-as-learning-catalyst-how-to-gain-skills-without",
+    "title": "AI as Learning Catalyst: How to Gain Skills Without Losing Competence",
+    "episode": "008",
+    "date": "2025-01-25",
+    "tags": [
+      "ai-tools",
+      "meta",
+      "tutorials",
+      "learning"
+    ],
+    "description": "how artificial intelligence can democratize skill acquisition without creating cognitive dependency - if you use it strategically",
+    "readingTime": 5,
+    "wordCount": 1000,
+    "slug": "ai-as-learning-catalyst-how-to-gain-skills-without"
+  },
+  {
+    "url": "/blog/bugfixes-and-lessons-learned",
+    "title": "Lessons from the Bugs: How We Improved the Portfolio and Blog",
+    "episode": "007",
+    "date": "2025-07-25",
+    "tags": [
+      "meta",
+      "bugfixes",
+      "engineering",
+      "changelog"
+    ],
+    "description": "A retrospective on bugs encountered while building this portfolio/blog, and how each was fixed.",
+    "readingTime": 5,
+    "wordCount": 1000,
+    "slug": "bugfixes-and-lessons-learned"
+  },
+  {
+    "url": "/blog/ascii-visualizers",
+    "title": "Adding Text-Based Visualizers to the Blog Homepage",
+    "episode": "006",
+    "date": "2025-01-24",
+    "tags": [
+      "frontend",
+      "tutorials",
+      "meta"
+    ],
+    "description": "How I reverse-engineered and implemented animated ASCII art visualizers inspired by musicforprogramming.net for my blog's sidebar",
+    "readingTime": 5,
+    "wordCount": 1000,
+    "slug": "ascii-visualizers"
+  },
+  {
+    "url": "/blog/ai-assisted-writing",
+    "title": "How I Write Blogs with Claude - A Transparent Process",
+    "episode": "005",
+    "date": "2025-01-24",
+    "tags": [
+      "ai-tools",
+      "meta"
+    ],
+    "description": "A detailed walkthrough of how I use Claude to create blog posts, from initial prompts to final output",
+    "readingTime": 5,
+    "wordCount": 1000,
+    "slug": "ai-assisted-writing"
+  },
+  {
+    "url": "/blog/automated-blog-system",
+    "title": "Automating the Void - Building a Frictionless Blog System",
+    "episode": "004",
+    "date": "2025-01-24",
+    "tags": [
+      "automation",
+      "meta"
+    ],
+    "description": "How I Solved the Pain of Manual Blog Creation by Building an Automated System That Preserves the Terminal Aesthetic While Eliminating Friction",
+    "readingTime": 5,
+    "wordCount": 1000,
+    "slug": "automated-blog-system"
+  },
+  {
+    "url": "/blog/scalable-chat-platform",
+    "title": "Building a Scalable Chat Platform with Claude Code",
+    "episode": "003",
+    "date": "2025-01-24",
+    "tags": [
+      "backend",
+      "system-design",
+      "ai-tools"
+    ],
+    "description": "How I Built a Real-Time Chat Platform Using Spring Boot, React, and Claude Code as My Pair Programming Partner",
+    "readingTime": 5,
+    "wordCount": 1000,
+    "slug": "scalable-chat-platform"
+  },
+  {
+    "url": "/blog/creating-this-portfolio-website-and-blog",
+    "title": "Creating This Portfolio Website and Blog",
+    "episode": "002",
+    "date": "2025-01-24",
+    "tags": [
+      "frontend",
+      "meta"
+    ],
+    "description": "How I built my portfolio website and blog using React, TypeScript, and Vite",
+    "readingTime": 5,
+    "wordCount": 1000,
+    "slug": "creating-this-portfolio-website-and-blog"
+  },
+  {
+    "url": "/blog/brainwash-yourself-for-success",
+    "title": "Brainwash Yourself for Success",
+    "episode": "001",
+    "date": "2017-04-22",
+    "tags": [
+      "personal",
+      "tutorials"
+    ],
+    "description": "how i overcame procrastination and transformed my study habits for GATE preparation - a journey from last-minute cramming to systematic learning",
+    "readingTime": 5,
+    "wordCount": 1000,
+    "slug": "brainwash-yourself-for-success"
+  },
+  {
+    "url": "/blog/revelations-of-a-btech-student",
+    "title": "The Revelations of a BTech Student",
+    "episode": "000",
+    "date": "2017-04-20",
+    "tags": [
+      "personal"
+    ],
+    "description": "my journey from failing semester exams to achieving GATE rank 170 - lessons learned about learning, persistence, and finding your own path",
+    "readingTime": 5,
+    "wordCount": 1000,
+    "slug": "revelations-of-a-btech-student"
+  }
+]

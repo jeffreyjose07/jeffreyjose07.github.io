@@ -475,6 +475,28 @@ ${allUrls.map(page => `  <url>
     fs.writeFileSync(path.join(OUTPUT_DIR, 'sitemap.xml'), sitemapXml);
 }
 
+// Generate posts.json for analytics consumption
+function generatePostsJson(posts) {
+    // Create a clean data structure for analytics
+    const postsData = posts.map(post => ({
+        url: `/blog/${post.slug}`,
+        title: post.title,
+        episode: post.episodeNumber.toString().padStart(3, '0'),
+        date: post.date,
+        tags: post.tags || [],
+        description: post.description || '',
+        readingTime: post.readingTime || 5,
+        wordCount: post.wordCount || 1000,
+        slug: post.slug
+    }));
+    
+    // Sort by episode number (newest first)
+    postsData.sort((a, b) => parseInt(b.episode) - parseInt(a.episode));
+    
+    const postsJson = JSON.stringify(postsData, null, 2);
+    fs.writeFileSync(path.join(OUTPUT_DIR, 'posts.json'), postsJson);
+}
+
 // Generate archive page
 function generateArchive(posts) {
     const template = loadTemplate('archive');
@@ -596,7 +618,12 @@ function build() {
     generateSitemap(posts);
     console.log('✅ Generated sitemap.xml');
     
-    console.log(`🎉 Blog build complete! Generated ${posts.length} posts with navigation, RSS feed, archive, sitemap, and semantic highlighting.`);
+    // Generate posts.json for analytics
+    console.log('📊 Generating posts.json for analytics...');
+    generatePostsJson(posts);
+    console.log('✅ Generated posts.json');
+    
+    console.log(`🎉 Blog build complete! Generated ${posts.length} posts with navigation, RSS feed, archive, sitemap, posts.json, and semantic highlighting.`);
 }
 
 // Run build if called directly

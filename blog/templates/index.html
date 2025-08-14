@@ -772,10 +772,22 @@
             const popularPostsContainer = document.getElementById('popular-posts-widget');
             
             try {
-                // Get top 5 posts based on view count
+                // Use allPostsData if available, otherwise fetch posts.json
+                let postsData = typeof allPostsData !== 'undefined' ? allPostsData : [];
+                
+                if (postsData.length === 0) {
+                    try {
+                        const response = await fetch('/blog/posts.json');
+                        postsData = await response.json();
+                    } catch (error) {
+                        console.warn('Could not fetch posts.json:', error);
+                        // Will show fallback UI below
+                    }
+                }
+                
                 const popularPosts = [];
                 
-                for (const post of allPostsData.slice(0, 8)) { // Check recent posts for popularity
+                for (const post of postsData.slice(0, 8)) { // Check recent posts for popularity
                     try {
                         const response = await fetch(`https://jeffreyjose.goatcounter.com/counter${post.url}.json`);
                         const data = await response.json();
@@ -839,9 +851,22 @@
             const rankingsContainer = document.getElementById('episode-rankings');
             
             try {
+                // Use allPostsData if available, otherwise fetch posts.json
+                let postsData = typeof allPostsData !== 'undefined' ? allPostsData : [];
+                
+                if (postsData.length === 0) {
+                    try {
+                        const response = await fetch('/blog/posts.json');
+                        postsData = await response.json();
+                    } catch (error) {
+                        console.warn('Could not fetch posts.json for rankings:', error);
+                        // Will show fallback UI below
+                    }
+                }
+                
                 const rankings = [];
                 
-                for (const post of allPostsData) {
+                for (const post of postsData) {
                     try {
                         const response = await fetch(`https://jeffreyjose.goatcounter.com/counter${post.url}.json`);
                         const data = await response.json();

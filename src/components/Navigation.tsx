@@ -71,13 +71,6 @@ const Navigation = () => {
             >
               Jeffrey Jose
             </a>
-            <div className={`text-xs mt-1 transition-colors duration-300 ${
-              isScrolled 
-                ? "text-foreground/60" 
-                : "text-white/60"
-            }`}>
-              <span id="live-visitors">👀 - visitors</span>
-            </div>
           </div>
 
           {/* Desktop Navigation */}
