@@ -917,7 +917,7 @@ npm run preview # Local preview of production build
         
         <footer class="post-footer">
             <div>
-                words: ~2505 · reading time: ~13 min · tags: <a href="/blog#tag-gamedev" class="tag neutral" data-tag="gamedev">gamedev</a>, <a href="/blog#tag-vanilla-js" class="tag neutral" data-tag="vanilla-js">vanilla-js</a>, <a href="/blog#tag-tetris" class="tag neutral" data-tag="tetris">tetris</a>, <a href="/blog#tag-cyberpunk" class="tag neutral" data-tag="cyberpunk">cyberpunk</a>, <a href="/blog#tag-single-file" class="tag neutral" data-tag="single-file">single-file</a>, <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a>
+                words: ~2505 · reading time: ~13 min · <span id="view-count">👀 views loading...</span> · tags: <a href="/blog#tag-gamedev" class="tag neutral" data-tag="gamedev">gamedev</a>, <a href="/blog#tag-vanilla-js" class="tag neutral" data-tag="vanilla-js">vanilla-js</a>, <a href="/blog#tag-tetris" class="tag neutral" data-tag="tetris">tetris</a>, <a href="/blog#tag-cyberpunk" class="tag neutral" data-tag="cyberpunk">cyberpunk</a>, <a href="/blog#tag-single-file" class="tag neutral" data-tag="single-file">single-file</a>, <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a>
             </div>
         </footer>
         
@@ -992,7 +992,27 @@ npm run preview # Local preview of production build
         // Initialize materialization effect on page load
         document.addEventListener('DOMContentLoaded', () => {
             initializeMaterializationEffect();
+            loadViewCount();
         });
+        
+        // Load view count from GoatCounter
+        function loadViewCount() {
+            const path = window.location.pathname;
+            const viewCountElement = document.getElementById('view-count');
+            
+            fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.count || '0';
+                    viewCountElement.innerHTML = `👀 ${count} views`;
+                    viewCountElement.style.color = '#55ffff'; // Terminal cyan
+                })
+                .catch(error => {
+                    console.warn('Could not load view count:', error);
+                    viewCountElement.innerHTML = '👀 views';
+                    viewCountElement.style.color = '#888888';
+                });
+        }
     </script>
     <footer class="rss-footer" style="text-align:center; margin:2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;">
       <a href="/blog/feed.xml" class="rss-button" target="_blank" rel="noopener">

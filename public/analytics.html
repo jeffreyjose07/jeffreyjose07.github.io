@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Jeffrey Jose</title>
+    <meta name="description" content="Live analytics dashboard for jeffreyjose07.github.io - view traffic stats, popular posts, and visitor insights.">
+    
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <style>
+        :root {
+            --bg: #000000;
+            --terminal: #55ff55;
+            --data: #55ffff;
+            --warning: #ffaa55;
+            --text: #c9c9c9;
+            --border: #333333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Monaco, Menlo, 'Ubuntu Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+        
+        .title {
+            color: var(--data);
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px currentColor;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            color: var(--terminal);
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .nav-links {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: var(--warning);
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+        
+        .nav-links a:hover {
+            color: var(--data);
+            border-color: var(--data);
+            box-shadow: 0 0 10px rgba(85, 255, 255, 0.3);
+        }
+        
+        .analytics-frame {
+            border: 2px solid var(--terminal);
+            border-radius: 8px;
+            background: rgba(0, 17, 34, 0.3);
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(85, 255, 85, 0.2);
+        }
+        
+        .frame-header {
+            background: rgba(85, 255, 85, 0.1);
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--terminal);
+            font-size: 12px;
+            color: var(--terminal);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--terminal);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .dashboard-iframe {
+            width: 100%;
+            height: 800px;
+            border: none;
+            background: #fff;
+        }
+        
+        .info-panel {
+            background: rgba(0, 17, 34, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        
+        .info-title {
+            color: var(--data);
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .loading-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--terminal);
+            font-size: 14px;
+            text-align: center;
+            z-index: 10;
+        }
+        
+        .frame-container {
+            position: relative;
+            min-height: 800px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .title {
+                font-size: 20px;
+            }
+            
+            .dashboard-iframe {
+                height: 600px;
+            }
+            
+            .frame-container {
+                min-height: 600px;
+            }
+            
+            .nav-links {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">ANALYTICS DASHBOARD</div>
+            <div class="subtitle">Live traffic insights • Privacy-friendly • No tracking</div>
+            <div class="nav-links">
+                <a href="/">← Portfolio</a>
+                <a href="/blog/">Blog</a>
+                <a href="/games/void-blocks/">Void Blocks</a>
+                <a href="https://jeffreyjose.goatcounter.com" target="_blank">Raw Dashboard ↗</a>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="info-title">📊 Analytics Information</div>
+            <p>This dashboard shows real-time visitor statistics powered by <strong>GoatCounter</strong> - a privacy-first analytics platform. No personal data is collected, no cookies are used, and no tracking consent is required.</p>
+        </div>
+        
+        <div class="analytics-frame">
+            <div class="frame-header">
+                <div class="status-dot"></div>
+                <span>Live Analytics • jeffreyjose.goatcounter.com</span>
+            </div>
+            <div class="frame-container">
+                <div class="loading-message" id="loadingMsg">
+                    Loading analytics dashboard...<br>
+                    <small style="opacity: 0.7;">If this takes too long, try the <a href="https://jeffreyjose.goatcounter.com" target="_blank" style="color: var(--data);">direct link</a></small>
+                </div>
+                <iframe 
+                    id="analyticsFrame"
+                    class="dashboard-iframe" 
+                    src="https://jeffreyjose.goatcounter.com?hideui=1"
+                    title="GoatCounter Analytics Dashboard"
+                    loading="lazy">
+                </iframe>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Hide loading message once iframe loads
+        const iframe = document.getElementById('analyticsFrame');
+        const loadingMsg = document.getElementById('loadingMsg');
+        
+        iframe.addEventListener('load', function() {
+            loadingMsg.style.display = 'none';
+        });
+        
+        // Fallback timeout to hide loading message
+        setTimeout(() => {
+            loadingMsg.style.display = 'none';
+        }, 10000);
+    </script>
+    
+    <!-- GoatCounter Analytics -->
+    <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

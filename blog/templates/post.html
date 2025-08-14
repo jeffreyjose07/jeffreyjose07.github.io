@@ -521,7 +521,7 @@
         
         <footer class="post-footer">
             <div>
-                words: ~{{wordCount}} · reading time: ~{{readingTime}} min · tags: {{tagsFormatted}}
+                words: ~{{wordCount}} · reading time: ~{{readingTime}} min · <span id="view-count">👀 views loading...</span> · tags: {{tagsFormatted}}
             </div>
         </footer>
         
@@ -584,7 +584,27 @@
         // Initialize materialization effect on page load
         document.addEventListener('DOMContentLoaded', () => {
             initializeMaterializationEffect();
+            loadViewCount();
         });
+        
+        // Load view count from GoatCounter
+        function loadViewCount() {
+            const path = window.location.pathname;
+            const viewCountElement = document.getElementById('view-count');
+            
+            fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.count || '0';
+                    viewCountElement.innerHTML = `👀 ${count} views`;
+                    viewCountElement.style.color = '#55ffff'; // Terminal cyan
+                })
+                .catch(error => {
+                    console.warn('Could not load view count:', error);
+                    viewCountElement.innerHTML = '👀 views';
+                    viewCountElement.style.color = '#888888';
+                });
+        }
     </script>
     <footer class="rss-footer" style="text-align:center; margin:2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;">
       <a href="/blog/feed.xml" class="rss-button" target="_blank" rel="noopener">
