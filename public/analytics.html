@@ -319,6 +319,93 @@
             position: relative;
             min-height: 800px;
         }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            background: rgba(0, 17, 34, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            color: var(--terminal);
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-family: Monaco, monospace;
+        }
+
+        .stat-label {
+            color: var(--text);
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .popular-content {
+            background: rgba(0, 17, 34, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .popular-content h3 {
+            color: var(--data);
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .popular-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 15px;
+        }
+
+        .popular-item:last-child {
+            border-bottom: none;
+        }
+
+        .popular-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .popular-title {
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.3;
+            margin-bottom: 4px;
+        }
+
+        .popular-path {
+            color: var(--terminal);
+            font-size: 12px;
+            font-family: Monaco, monospace;
+            opacity: 0.7;
+            word-break: break-all;
+        }
+
+        .popular-visits {
+            color: var(--data);
+            font-weight: bold;
+            font-size: 16px;
+            white-space: nowrap;
+            text-align: right;
+        }
         
         @media (max-width: 768px) {
             .container {
@@ -357,6 +444,24 @@
         </div>
         
 
+        <!-- Real Analytics Summary -->
+        <div class="stats-summary">
+            <div class="stat-item">
+                <div class="stat-value" id="total-visits">-</div>
+                <div class="stat-label">Total Visits</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="pages-tracked">-</div>
+                <div class="stat-label">Pages Tracked</div>
+            </div>
+        </div>
+
+        <!-- Most Popular Content -->
+        <div class="popular-content">
+            <h3>📈 Most Popular Content</h3>
+            <div id="popular-list">Loading real data...</div>
+        </div>
+
         <div class="info-panel">
             <div class="info-title">📊 Analytics Information</div>
             <p>This dashboard shows real-time visitor statistics powered by <strong>GoatCounter</strong> - a privacy-first analytics platform. No personal data is collected, no cookies are used, and no tracking consent is required.</p>
@@ -384,12 +489,108 @@
     </div>
     
     <script>
-        // Only keep the iframe loading handler since that's the only thing that actually works
+        // Load real analytics data from GoatCounter
+        async function loadRealAnalytics() {
+            try {
+                const response = await fetch('https://jeffreyjose.goatcounter.com/');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Extract total visits
+                const totalElement = doc.querySelector('h2');
+                const totalText = totalElement ? totalElement.textContent : '';
+                const totalMatch = totalText.match(/(\d+) out of (\d+) visits/);
+                const totalVisits = totalMatch ? parseInt(totalMatch[2]) : 0;
+                const pagesShown = totalMatch ? parseInt(totalMatch[1]) : 0;
+                
+                // Extract page data from the table
+                const rows = doc.querySelectorAll('table tbody tr');
+                const pages = [];
+                
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 2) {
+                        const visitsCell = cells[0];
+                        const pathCell = cells[1];
+                        
+                        const visitsMatch = visitsCell.textContent.match(/(\d+)/);
+                        const visits = visitsMatch ? parseInt(visitsMatch[1]) : 0;
+                        
+                        // Extract path and title from the cell content
+                        const pathText = pathCell.textContent.trim();
+                        const lines = pathText.split('\n').map(line => line.trim()).filter(line => line);
+                        
+                        if (lines.length >= 2 && visits > 0) {
+                            const path = lines[0];
+                            const title = lines[1];
+                            
+                            // Skip the analytics page itself to focus on content
+                            if (!path.includes('/analytics.html')) {
+                                pages.push({ path, title, visits });
+                            }
+                        }
+                    }
+                });
+                
+                // Sort by visits descending
+                pages.sort((a, b) => b.visits - a.visits);
+                
+                // Update UI
+                document.getElementById('total-visits').textContent = totalVisits.toLocaleString();
+                document.getElementById('pages-tracked').textContent = pagesShown.toLocaleString();
+                
+                // Display popular content
+                const popularList = document.getElementById('popular-list');
+                if (pages.length > 0) {
+                    popularList.innerHTML = pages.slice(0, 8).map(page => {
+                        // Clean up the title
+                        const cleanTitle = page.title.replace(' - Jeffrey Jose', '').replace('jeffreyjose.goatcounter.com', '');
+                        const displayPath = page.path.length > 40 ? page.path.substring(0, 37) + '...' : page.path;
+                        
+                        return `
+                            <div class="popular-item">
+                                <div class="popular-info">
+                                    <div class="popular-title">${cleanTitle}</div>
+                                    <div class="popular-path">${displayPath}</div>
+                                </div>
+                                <div class="popular-visits">${page.visits} visit${page.visits !== 1 ? 's' : ''}</div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    popularList.innerHTML = '<div style="color: var(--text); opacity: 0.7;">No content data available yet</div>';
+                }
+                
+            } catch (error) {
+                console.warn('Could not load analytics data:', error);
+                
+                // Graceful fallback
+                document.getElementById('total-visits').textContent = '-';
+                document.getElementById('pages-tracked').textContent = '-';
+                document.getElementById('popular-list').innerHTML = 
+                    '<div style="color: var(--text); opacity: 0.7;">Analytics data temporarily unavailable</div>';
+            }
+        }
+
+        // Iframe loading handler
         const iframe = document.getElementById('analyticsFrame');
         const loadingMsg = document.getElementById('loadingMsg');
         
         iframe.addEventListener('load', function() {
             loadingMsg.style.display = 'none';
+        });
+        
+        // Initialize real analytics
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRealAnalytics();
+            
+            // Auto-refresh every 30 minutes (GoatCounter updates hourly)
+            setInterval(loadRealAnalytics, 30 * 60 * 1000);
         });
         
         // Fallback timeout to hide loading message
