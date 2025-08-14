@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Privacy Policy - Jeffrey Jose</title>
+    <meta name="description" content="Transparent analytics privacy policy for jeffreyjose07.github.io. Learn what data we collect, how it's used, and your privacy options with GoatCounter analytics.">
+    <meta name="keywords" content="Analytics Privacy, Data Collection, GoatCounter, Website Analytics, Privacy Policy, GDPR, User Privacy">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://jeffreyjose07.github.io/analytics-privacy.html">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Analytics Privacy Policy - Jeffrey Jose">
+    <meta property="og:description" content="Transparent privacy policy for website analytics. No tracking cookies, no personal data collection.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jeffreyjose07.github.io/analytics-privacy.html">
+    
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    
+    <style>
+        :root {
+            --bg: #000000;
+            --terminal: #55ff55;
+            --data: #55ffff;
+            --warning: #ffaa55;
+            --text: #c9c9c9;
+            --border: #333333;
+            --success: #55ff55;
+            --attention: #ff8855;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Monaco, Menlo, 'Ubuntu Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            font-size: 14px;
+        }
+        
+        @media (min-width: 768px) {
+            body {
+                font-size: 15px;
+                padding: 40px 20px;
+            }
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+        
+        .title {
+            color: var(--data);
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px currentColor;
+        }
+        
+        @media (min-width: 768px) {
+            .title {
+                font-size: 28px;
+            }
+        }
+        
+        .subtitle {
+            color: var(--terminal);
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        @media (min-width: 768px) {
+            .subtitle {
+                font-size: 14px;
+            }
+        }
+        
+        .nav-links {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: var(--warning);
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            font-size: 11px;
+        }
+        
+        @media (min-width: 768px) {
+            .nav-links a {
+                font-size: 12px;
+            }
+        }
+        
+        .nav-links a:hover {
+            color: var(--data);
+            border-color: var(--data);
+            box-shadow: 0 0 10px rgba(85, 255, 255, 0.3);
+        }
+        
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: rgba(0, 17, 34, 0.3);
+        }
+        
+        .section-title {
+            color: var(--terminal);
+            font-size: 16px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(85, 255, 85, 0.3);
+            padding-bottom: 8px;
+        }
+        
+        @media (min-width: 768px) {
+            .section-title {
+                font-size: 18px;
+            }
+        }
+        
+        .section p {
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+        
+        @media (min-width: 768px) {
+            .section p {
+                font-size: 14px;
+            }
+        }
+        
+        .highlight {
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .warning {
+            color: var(--attention);
+        }
+        
+        .data-point {
+            color: var(--data);
+        }
+        
+        .code-block {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: Monaco, monospace;
+            font-size: 12px;
+            color: var(--terminal);
+            overflow-x: auto;
+        }
+        
+        ul {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+        
+        li {
+            margin: 8px 0;
+            font-size: 13px;
+        }
+        
+        @media (min-width: 768px) {
+            li {
+                font-size: 14px;
+            }
+        }
+        
+        .privacy-badge {
+            display: inline-block;
+            background: rgba(85, 255, 85, 0.1);
+            border: 1px solid var(--terminal);
+            border-radius: 3px;
+            padding: 4px 8px;
+            margin: 2px;
+            font-size: 11px;
+            color: var(--terminal);
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 12px;
+        }
+        
+        @media (min-width: 768px) {
+            .comparison-table {
+                font-size: 13px;
+            }
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            text-align: left;
+        }
+        
+        .comparison-table th {
+            background: rgba(85, 255, 85, 0.1);
+            color: var(--terminal);
+            font-weight: bold;
+        }
+        
+        .comparison-table td.yes {
+            color: var(--success);
+        }
+        
+        .comparison-table td.no {
+            color: var(--attention);
+        }
+        
+        @media (max-width: 767px) {
+            .comparison-table {
+                font-size: 10px;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 6px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">ANALYTICS PRIVACY POLICY</div>
+            <div class="subtitle">Transparent data collection • Privacy-first approach • No tracking consent required</div>
+            <div class="nav-links">
+                <a href="/">← Portfolio</a>
+                <a href="/blog/">Blog</a>
+                <a href="/analytics.html">Analytics Dashboard</a>
+                <a href="https://www.goatcounter.com/privacy" target="_blank">GoatCounter Privacy ↗</a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">🔒 Our Privacy Philosophy</div>
+            <p>This website uses <span class="highlight">privacy-first analytics</span> powered by GoatCounter. We believe you should know exactly what data is collected, how it's used, and have full control over your privacy.</p>
+            
+            <div class="privacy-badge">No Cookies</div>
+            <div class="privacy-badge">No Tracking</div>
+            <div class="privacy-badge">No Personal Data</div>
+            <div class="privacy-badge">GDPR Compliant</div>
+            <div class="privacy-badge">Open Source</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📊 What Data We Collect</div>
+            <p>We collect <span class="data-point">minimal, anonymized data</span> to understand how the website is used:</p>
+            
+            <ul>
+                <li><span class="data-point">Page views</span> - Which pages are visited</li>
+                <li><span class="data-point">Referrers</span> - Where visitors came from (search engines, social media)</li>
+                <li><span class="data-point">Country</span> - Approximate location (country level only)</li>
+                <li><span class="data-point">Browser type</span> - General browser information</li>
+                <li><span class="data-point">Screen size</span> - To improve mobile experience</li>
+            </ul>
+            
+            <p><span class="warning">We do NOT collect:</span></p>
+            <ul>
+                <li>IP addresses (automatically discarded)</li>
+                <li>Personal information or user accounts</li>
+                <li>Precise location data</li>
+                <li>Search queries or form data</li>
+                <li>Cross-site tracking data</li>
+                <li>Behavioral profiles</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">⚙️ How GoatCounter Works</div>
+            <p>GoatCounter is an <span class="highlight">open-source, privacy-friendly</span> analytics platform that doesn't use cookies or track users across sites.</p>
+            
+            <div class="code-block">// Example of data collected:
+{
+  "path": "/blog/automated-blog-system",
+  "title": "Automating the Void - Building a Frictionless Blog System",
+  "event": true,
+  "referrer": "https://google.com",
+  "size": "1920,1080",
+  "country": "US"
+}</div>
+            
+            <p>All data is <span class="data-point">aggregated and anonymized</span>. Individual sessions cannot be tracked or linked together.</p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🔍 Comparison with Other Analytics</div>
+            <table class="comparison-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>GoatCounter</th>
+                    <th>Google Analytics</th>
+                    <th>Traditional Analytics</th>
+                </tr>
+                <tr>
+                    <td>Uses Cookies</td>
+                    <td class="no">No</td>
+                    <td class="yes">Yes</td>
+                    <td class="yes">Yes</td>
+                </tr>
+                <tr>
+                    <td>Tracks Across Sites</td>
+                    <td class="no">No</td>
+                    <td class="yes">Yes</td>
+                    <td class="yes">Yes</td>
+                </tr>
+                <tr>
+                    <td>Stores IP Addresses</td>
+                    <td class="no">No</td>
+                    <td class="yes">Yes</td>
+                    <td class="yes">Yes</td>
+                </tr>
+                <tr>
+                    <td>Requires Consent</td>
+                    <td class="no">No</td>
+                    <td class="yes">Yes (GDPR)</td>
+                    <td class="yes">Yes (GDPR)</td>
+                </tr>
+                <tr>
+                    <td>Open Source</td>
+                    <td class="yes">Yes</td>
+                    <td class="no">No</td>
+                    <td class="no">Usually No</td>
+                </tr>
+                <tr>
+                    <td>Data Retention</td>
+                    <td class="yes">Configurable</td>
+                    <td class="warning">14-50 months</td>
+                    <td class="warning">Varies</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🎯 How We Use This Data</div>
+            <p>The analytics data helps us:</p>
+            
+            <ul>
+                <li><span class="highlight">Understand popular content</span> - Which blog posts are most helpful</li>
+                <li><span class="highlight">Improve performance</span> - Optimize for common screen sizes and browsers</li>
+                <li><span class="highlight">Track growth</span> - See if the site is reaching more people</li>
+                <li><span class="highlight">Fix issues</span> - Identify broken links or loading problems</li>
+            </ul>
+            
+            <p>Data is <span class="data-point">never sold, shared with third parties, or used for advertising</span>.</p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">⚡ Your Privacy Options</div>
+            <p>You have full control over your privacy:</p>
+            
+            <ul>
+                <li><span class="highlight">Opt-out</span> - Block the analytics script with any ad blocker</li>
+                <li><span class="highlight">Do Not Track</span> - We respect browser DNT headers</li>
+                <li><span class="highlight">View live data</span> - See exactly what's collected on our <a href="/analytics.html" style="color: var(--data);">public dashboard</a></li>
+                <li><span class="highlight">Source code</span> - GoatCounter is open source and auditable</li>
+            </ul>
+            
+            <div class="code-block">// To opt-out, add this to your ad blocker:
+||gc.zgo.at^$script
+||goatcounter.com^$script</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📋 Technical Implementation</div>
+            <p>For developers and security researchers, here's how analytics are implemented:</p>
+            
+            <div class="code-block">// Analytics script (only on page load):
+&lt;script data-goatcounter="https://jeffreyjose.goatcounter.com/count" 
+        async src="//gc.zgo.at/count.js"&gt;&lt;/script&gt;
+
+// View count API (public, no auth):
+fetch('https://jeffreyjose.goatcounter.com/counter/[path].json')</div>
+            
+            <p>The implementation:</p>
+            <ul>
+                <li>Runs <span class="data-point">only on page load</span> (no continuous tracking)</li>
+                <li>Uses <span class="data-point">public API endpoints</span> for view counts</li>
+                <li>Respects <span class="data-point">DNT headers</span> and reduced motion preferences</li>
+                <li>Falls back gracefully if blocked</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📞 Contact & Questions</div>
+            <p>Questions about our analytics or privacy practices?</p>
+            
+            <ul>
+                <li>Email: <a href="mailto:jeffrey.jose07@gmail.com" style="color: var(--data);">jeffrey.jose07@gmail.com</a></li>
+                <li>View source: <a href="https://github.com/jeffreyjose07/jeffreyjose07.github.io" style="color: var(--data);">GitHub Repository ↗</a></li>
+                <li>GoatCounter docs: <a href="https://www.goatcounter.com/help" style="color: var(--data);">Official Documentation ↗</a></li>
+            </ul>
+            
+            <p><span class="highlight">Last updated:</span> January 2025</p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🌟 Why This Matters</div>
+            <p>Privacy-first analytics demonstrates that you can understand your audience without compromising their privacy. This approach:</p>
+            
+            <ul>
+                <li><span class="highlight">Builds trust</span> through transparency</li>
+                <li><span class="highlight">Reduces legal complexity</span> (no GDPR consent needed)</li>
+                <li><span class="highlight">Improves performance</span> (no heavy tracking scripts)</li>
+                <li><span class="highlight">Respects users</span> as humans, not data points</li>
+            </ul>
+            
+            <p>Every website should consider privacy-first analytics. <span class="data-point">Analytics can be useful without being invasive.</span></p>
+        </div>
+    </div>
+    
+    <!-- GoatCounter Analytics -->
+    <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
