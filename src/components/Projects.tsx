@@ -7,35 +7,36 @@ const Projects = () => {
   const projects = [
     {
       title: "Scalable Chat Platform",
-      description: "A full-stack real-time chat application with enterprise-grade architecture, featuring Spring Boot backend, React TypeScript frontend, WebSocket communication, and microservices design with comprehensive CI/CD pipeline.",
+      description: "A production-ready real-time chat application built with Spring Boot 3.2 and React 18. Features multi-database architecture, WebSocket messaging, and horizontal scaling design supporting 1000+ concurrent users.",
       image: "/scalable-chat-platform.png",
       liveUrl: "https://scalable-chat-platform.onrender.com/",
       githubUrl: "https://github.com/jeffreyjose07/scalable-chat-platform",
-      technologies: ["Spring Boot", "React", "TypeScript", "WebSocket", "Kafka", "Docker", "GitHub Actions", "Java"],
+      technologies: ["Spring Boot 3.2", "React 18", "TypeScript", "PostgreSQL", "MongoDB", "Redis", "Docker", "WebSocket"],
       highlights: [
-        "Real-time messaging with WebSocket connections",
-        "Microservices architecture with Spring Boot",
-        "Comprehensive CI/CD pipeline with GitHub Actions",
-        "Automated testing and security scanning",
-        "Docker containerization for deployment",
-        "Event-driven architecture with Kafka integration",
-        "Enterprise-grade development workflow",
-        "Automated dependency updates and vulnerability scanning"
+        "Multi-database strategy: PostgreSQL, MongoDB, Redis",
+        "Real-time WebSocket messaging with 500+ msg/sec capacity",
+        "Role-based access control with JWT authentication",
+        "Supports 1000+ concurrent users with horizontal scaling",
+        "Private and group conversations with read receipts",
+        "Message search and filtering capabilities",
+        "Dockerized deployment on Render platform",
+        "Event-driven architecture with async processing"
       ]
     },
     {
       title: "VOID BLOCKS",
-      description: "A cyberpunk-inspired Tetris variant where you manipulate data fragments to prevent system corruption. Features virus blocks, progressive difficulty, and terminal-aesthetic design.",
+      description: "A single-file cyberpunk Tetris variant built with vanilla JavaScript and HTML5 Canvas. Features unique virus spreading mechanics, firewall challenges, and terminal-aesthetic design with zero external dependencies.",
       image: "/games/void-blocks/screenshot.png",
       liveUrl: "/games/void-blocks/",
       githubUrl: "https://github.com/jeffreyjose07/void-blocks-game",
-      technologies: ["LittleJS", "JavaScript", "WebGL", "Game Development", "CSS3"],
+      technologies: ["Vanilla JavaScript", "HTML5 Canvas", "CSS3", "Game Development"],
       highlights: [
-        "Cyberpunk Tetris variant with unique virus block mechanics",
-        "Built with ultra-lightweight LittleJS engine (7KB)",
-        "Terminal aesthetic with glitch effects and neon styling",
-        "Progressive difficulty with firewall challenge modes",
-        "Mobile-responsive design optimized for all devices"
+        "Single HTML file under 50KB with zero dependencies",
+        "Virus spreading mechanics with 30% infection chance",
+        "Firewall challenges triggered every 10 levels",
+        "Time manipulation via data fragments",
+        "Optimized 60fps performance with requestAnimationFrame",
+        "Terminal-inspired cyberpunk aesthetic with glow effects"
       ]
     },
     {
