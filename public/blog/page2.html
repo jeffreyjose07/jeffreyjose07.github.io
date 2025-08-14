@@ -831,6 +831,11 @@
                 const popularPosts = [];
                 
                 for (const post of postsData.slice(0, 8)) { // Check recent posts for popularity
+                    if (!post || !post.url) {
+                        console.warn('Invalid post data:', post);
+                        continue;
+                    }
+                    
                     try {
                         const response = await fetch(`https://jeffreyjose.goatcounter.com/counter${post.url}.json`);
                         const data = await response.json();
@@ -910,6 +915,11 @@
                 const rankings = [];
                 
                 for (const post of postsData) {
+                    if (!post || !post.url) {
+                        console.warn('Invalid post data:', post);
+                        continue;
+                    }
+                    
                     try {
                         const response = await fetch(`https://jeffreyjose.goatcounter.com/counter${post.url}.json`);
                         const data = await response.json();

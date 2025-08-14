@@ -25,14 +25,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://jeffreyjose07.github.io/blog/debugging-cross-repository-workflows</loc>
-    <lastmod>2025-08-11</lastmod>
+    <loc>https://jeffreyjose07.github.io/blog/implementing-privacy-first-analytics-from-research</loc>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://jeffreyjose07.github.io/blog/bugfixes-and-lessons-learned</loc>
-    <lastmod>2025-07-25</lastmod>
+    <loc>https://jeffreyjose07.github.io/blog/debugging-cross-repository-workflows</loc>
+    <lastmod>2025-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -51,6 +51,12 @@
   <url>
     <loc>https://jeffreyjose07.github.io/blog/ai-as-learning-catalyst-how-to-gain-skills-without</loc>
     <lastmod>2025-01-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jeffreyjose07.github.io/blog/bugfixes-and-lessons-learned</loc>
+    <lastmod>2025-07-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -81,12 +87,6 @@
   <url>
     <loc>https://jeffreyjose07.github.io/blog/creating-this-portfolio-website-and-blog</loc>
     <lastmod>2025-01-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://jeffreyjose07.github.io/blog/implementing-privacy-first-analytics-from-research</loc>
-    <lastmod>2025-01-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
