@@ -43,14 +43,14 @@ const Hero = () => {
         </div>
         
         <div className="slide-up-delayed">
-          <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight text-gradient bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-shadow">
+          <h1 className="text-6xl md:text-8xl font-bold mb-12 leading-relaxed text-gradient bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-shadow" style={{ paddingBottom: '0.25rem' }}>
             Jeffrey Jose
           </h1>
-          <div className="relative inline-block mb-6">
-            <h2 className="text-2xl md:text-3xl font-medium text-white/90 tracking-wide">
+          <div className="relative inline-block mb-8">
+            <h2 className="text-2xl md:text-3xl font-medium text-white/90 tracking-wide pb-3">
               Code craftsman • Tech explorer • Minimalist
             </h2>
-            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-primary to-primary-glow rounded-full"></div>
+            <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-32 h-0.5 bg-gradient-to-r from-primary to-primary-glow rounded-full"></div>
           </div>
           <p className="text-lg md:text-xl mb-12 text-white/80 max-w-4xl mx-auto leading-relaxed font-light">
             Passionate about crafting scalable solutions and driving innovation in software engineering. 
