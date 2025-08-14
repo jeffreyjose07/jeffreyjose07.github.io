@@ -138,7 +138,8 @@
         
         .dashboard-iframe {
             width: 100%;
-            height: 600px;
+            height: 800px;
+            min-height: 600px;
             border: none;
             background: #fff;
         }
@@ -317,7 +318,7 @@
         
         .frame-container {
             position: relative;
-            min-height: 800px;
+            min-height: 900px;
         }
 
         
@@ -331,15 +332,60 @@
             }
             
             .dashboard-iframe {
-                height: 600px;
+                height: 700px;
             }
             
             .frame-container {
-                min-height: 600px;
+                min-height: 750px;
             }
             
             .nav-links {
                 gap: 10px;
+            }
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding: 30px 0;
+            border-top: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .footer-content {
+            text-align: center;
+            color: var(--text);
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .footer-links {
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--terminal);
+            text-decoration: none;
+            font-size: 12px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--data);
+        }
+
+        .footer-tech {
+            margin-top: 10px;
+            font-size: 11px;
+            color: var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .footer-links {
+                gap: 15px;
             }
         }
     </style>
@@ -383,6 +429,25 @@
                 </iframe>
             </div>
         </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="/">Portfolio</a>
+                    <a href="/blog/">Blog</a>
+                    <a href="/analytics.html">Analytics</a>
+                    <a href="https://github.com/jeffreyjose07" target="_blank">GitHub</a>
+                    <a href="https://linkedin.com/in/jeffrey-jose-07-k/" target="_blank">LinkedIn</a>
+                    <a href="mailto:jeffreyjose.k@gmail.com">Contact</a>
+                </div>
+                <div>
+                    © 2025 Jeffrey Jose • Code craftsman • Tech explorer • Minimalist
+                </div>
+                <div class="footer-tech">
+                    Privacy-first analytics • Terminal aesthetic • Built with passion
+                </div>
+            </div>
+        </footer>
     </div>
     
     <script>

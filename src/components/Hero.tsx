@@ -48,7 +48,7 @@ const Hero = () => {
           </h1>
           <div className="relative inline-block mb-6">
             <h2 className="text-2xl md:text-3xl font-medium text-white/90 tracking-wide">
-              Senior Software Engineer
+              Code craftsman • Tech explorer • Minimalist
             </h2>
             <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-primary to-primary-glow rounded-full"></div>
           </div>
