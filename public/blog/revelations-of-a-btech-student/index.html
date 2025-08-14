@@ -602,22 +602,24 @@
     <div class="reading-progress"></div>
     
     <script>
-        // Force scroll to top on page load/refresh
-        window.addEventListener('beforeunload', () => {
-            window.scrollTo(0, 0);
-        });
+        // Prevent scroll restoration but don't interfere with navigation
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
         
-        // Also scroll to top immediately when page loads
+        // Only scroll to top on actual page refresh (not navigation)
         window.addEventListener('load', () => {
+            // Check if this is a refresh vs navigation
+            const isRefresh = (
+                (performance.navigation && performance.navigation.type === performance.navigation.TYPE_RELOAD) ||
+                (performance.getEntriesByType('navigation')[0] && performance.getEntriesByType('navigation')[0].type === 'reload')
+            );
+            
+            // Always start at top for new page loads
             setTimeout(() => {
                 window.scrollTo(0, 0);
             }, 0);
         });
-        
-        // Prevent scroll restoration
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
         
         // Simple reading progress indicator
         window.addEventListener('scroll', () => {
