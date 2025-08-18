@@ -5,7 +5,14 @@
 /* Smooth scrolling for anchor navigation */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 4rem; /* Account for fixed navigation */
+  scroll-padding-top: 5rem; /* Account for fixed navigation */
+}
+
+/* Enhanced responsive breakpoints */
+@media (max-width: 475px) {
+  html {
+    scroll-padding-top: 6rem;
+  }
 }
 
 /* Portfolio Design System - Inspired by Lovable's beautiful gradient aesthetics */
@@ -133,6 +140,11 @@ html {
   body {
     @apply bg-background text-foreground;
     scroll-behavior: smooth;
+    /* Cross-browser font smoothing */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevent horizontal scrolling on mobile */
+    overflow-x: hidden;
   }
 
   /* Modern scrollbar styling */
@@ -160,6 +172,15 @@ html {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    /* Fallback for browsers that don't support background-clip: text */
+    color: hsl(var(--primary));
+  }
+  
+  /* Support check for background-clip: text */
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .text-gradient {
+      color: transparent;
+    }
   }
 
   .glass-effect {
@@ -305,6 +326,47 @@ html {
     }
   }
 
+  /* Enhanced responsive design for all screen sizes */
+  @media (max-width: 480px) {
+    /* Extra small screens */
+    .hero-container {
+      padding: 1rem 0.75rem;
+    }
+    
+    .hero-content {
+      text-align: center;
+    }
+    
+    .profile-image-xs {
+      width: 100px !important;
+      height: 100px !important;
+    }
+    
+    .title-xs {
+      font-size: 2.5rem !important;
+      line-height: 1.2;
+    }
+    
+    .subtitle-xs {
+      font-size: 1rem !important;
+    }
+    
+    .navigation-safe-area {
+      padding-top: 80px !important;
+    }
+
+    /* Better button spacing on mobile */
+    .mobile-button-spacing {
+      margin-bottom: 1rem;
+    }
+
+    /* Improved container padding */
+    .container {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+  }
+
   /* Mobile navigation enhancements for webview compatibility */
   @media (max-width: 768px) {
     /* Ensure mobile menu button is always visible and touchable */
@@ -353,6 +415,35 @@ html {
         background: hsl(var(--background) / 0.95);
         border: 1px solid hsl(var(--border));
       }
+    }
+
+    /* Safari specific fixes */
+    @supports (-webkit-backdrop-filter: blur(16px)) {
+      .glass-effect {
+        -webkit-backdrop-filter: blur(16px);
+      }
+    }
+  }
+
+  /* Cross-browser compatibility fixes */
+  @media (max-width: 768px) {
+    /* iOS Safari specific fixes */
+    @supports (-webkit-overflow-scrolling: touch) {
+      .hero-section {
+        -webkit-overflow-scrolling: touch;
+        transform: translateZ(0);
+      }
+      
+      .mobile-menu {
+        -webkit-overflow-scrolling: touch;
+        will-change: transform;
+      }
+    }
+
+    /* Fix for older Android browsers */
+    .profile-image {
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
     }
   }
 }

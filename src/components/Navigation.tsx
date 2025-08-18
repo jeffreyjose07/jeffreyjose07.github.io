@@ -54,7 +54,7 @@ const Navigation = () => {
         : "bg-transparent"
     }`}>
       <div className="container mx-auto px-6">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
             <a 
@@ -158,11 +158,11 @@ const Navigation = () => {
         </div>
 
         {/* Mobile Navigation - Enhanced for webview compatibility */}
-        <div className={`md:hidden fixed top-16 left-0 right-0 z-40 transform transition-all duration-300 ease-in-out ${
+        <div className={`md:hidden fixed left-0 right-0 z-40 transform transition-all duration-300 ease-in-out ${
           isMobileMenuOpen 
             ? "translate-y-0 opacity-100" 
             : "-translate-y-full opacity-0 pointer-events-none"
-        }`}>
+        }`} style={{ top: isScrolled ? '64px' : '64px' }}>
           <div className="bg-background border-b border-border shadow-lg">
             <div className="px-4 py-3 space-y-2">
               {navItems.map((item) => (
