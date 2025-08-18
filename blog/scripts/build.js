@@ -226,6 +226,7 @@ function processPost(filename, episodeNumber, allPosts = []) {
     const wordCount = frontmatter.wordCount || countWords(content);
     const readingTime = frontmatter.readingTime || estimateReadingTime(content);
     
+    
     // Format tags with colors and make them clickable
     const tagsFormatted = frontmatter.tags
         ? frontmatter.tags.map(tag => {
@@ -279,7 +280,9 @@ function processPost(filename, episodeNumber, allPosts = []) {
         slug,
         date: frontmatter.date,
         description: frontmatter.description,
-        tags: frontmatter.tags || []
+        tags: frontmatter.tags || [],
+        readingTime,
+        wordCount
     };
 }
 
@@ -477,6 +480,7 @@ ${allUrls.map(page => `  <url>
 
 // Generate posts.json for analytics consumption
 function generatePostsJson(posts) {
+    
     // Create a clean data structure for analytics
     const postsData = posts.map(post => ({
         url: `/blog/${post.slug}`,
@@ -587,8 +591,10 @@ function build() {
         console.log(`📄 Processing ${file} as episode ${episodeNumber.toString().padStart(3, '0')}...`);
         
         try {
-            const post = processPost(file, episodeNumber, posts);
-            console.log(`✅ Generated ${post.slug}/index.html with navigation`);
+            const processedPost = processPost(file, episodeNumber, posts);
+            // Update the posts array with the complete processed data
+            posts[index] = processedPost;
+            console.log(`✅ Generated ${processedPost.slug}/index.html with navigation`);
         } catch (error) {
             console.error(`❌ Error processing ${file}:`, error.message);
         }

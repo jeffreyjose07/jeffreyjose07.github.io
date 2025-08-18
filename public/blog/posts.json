@@ -1,5 +1,25 @@
 [
   {
+    "url": "/blog/migrating-from-render-to-neon-postgresql-lessons-f",
+    "title": "Migrating from Render to Neon PostgreSQL: Lessons from a Zero-Downtime Database Migration",
+    "episode": "013",
+    "date": "2025-01-18",
+    "tags": [
+      "database",
+      "migration",
+      "postgresql",
+      "neon",
+      "render",
+      "spring-boot",
+      "devops",
+      "scaling"
+    ],
+    "description": "A detailed walkthrough of migrating a production chat platform from Render PostgreSQL to Neon, including challenges faced, solutions implemented, and performance improvements achieved.",
+    "readingTime": 7,
+    "wordCount": 1379,
+    "slug": "migrating-from-render-to-neon-postgresql-lessons-f"
+  },
+  {
     "url": "/blog/implementing-privacy-first-analytics-from-research",
     "title": "Implementing Privacy-First Analytics: From Research to GoatCounter",
     "episode": "012",
@@ -12,8 +32,8 @@
       "github-pages"
     ],
     "description": "A comprehensive guide to implementing privacy-friendly analytics across portfolio and blog - from researching solutions to deploying GoatCounter with future API integration plans.",
-    "readingTime": 5,
-    "wordCount": 1000,
+    "readingTime": 6,
+    "wordCount": 1266,
     "slug": "implementing-privacy-first-analytics-from-research"
   },
   {
@@ -29,8 +49,8 @@
       "ci-cd"
     ],
     "description": "A deep dive into the complex world of cross-repository workflows, race conditions, and permission errors I encountered while deploying my Void Blocks game.",
-    "readingTime": 5,
-    "wordCount": 1000,
+    "readingTime": 4,
+    "wordCount": 796,
     "slug": "debugging-cross-repository-workflows"
   },
   {
@@ -47,8 +67,8 @@
       "github-actions"
     ],
     "description": "creating a cyberpunk-inspired tetris variant, from littlejs to vanilla javascript, with automated deployment and terminal aesthetics",
-    "readingTime": 5,
-    "wordCount": 1000,
+    "readingTime": 13,
+    "wordCount": 2505,
     "slug": "building-void-blocks-a-cyberpunk-tetris-game"
   },
   {
@@ -64,8 +84,8 @@
       "github-actions"
     ],
     "description": "deploying a production-ready chat platform with spring boot, react, and multiple databases to render",
-    "readingTime": 5,
-    "wordCount": 1000,
+    "readingTime": 6,
+    "wordCount": 1600,
     "slug": "deploying-a-chat-platform-to-render"
   },
   {
@@ -80,8 +100,8 @@
       "learning"
     ],
     "description": "how artificial intelligence can democratize skill acquisition without creating cognitive dependency - if you use it strategically",
-    "readingTime": 5,
-    "wordCount": 1000,
+    "readingTime": 13,
+    "wordCount": 2540,
     "slug": "ai-as-learning-catalyst-how-to-gain-skills-without"
   },
   {
@@ -96,8 +116,8 @@
       "changelog"
     ],
     "description": "A retrospective on bugs encountered while building this portfolio/blog, and how each was fixed.",
-    "readingTime": 5,
-    "wordCount": 1000,
+    "readingTime": 6,
+    "wordCount": 1200,
     "slug": "bugfixes-and-lessons-learned"
   },
   {
@@ -111,8 +131,8 @@
       "meta"
     ],
     "description": "How I reverse-engineered and implemented animated ASCII art visualizers inspired by musicforprogramming.net for my blog's sidebar",
-    "readingTime": 5,
-    "wordCount": 1000,
+    "readingTime": 6,
+    "wordCount": 1116,
     "slug": "ascii-visualizers"
   },
   {
@@ -126,7 +146,7 @@
     ],
     "description": "A detailed walkthrough of how I use Claude to create blog posts, from initial prompts to final output",
     "readingTime": 5,
-    "wordCount": 1000,
+    "wordCount": 1077,
     "slug": "ai-assisted-writing"
   },
   {
@@ -140,7 +160,7 @@
     ],
     "description": "How I Solved the Pain of Manual Blog Creation by Building an Automated System That Preserves the Terminal Aesthetic While Eliminating Friction",
     "readingTime": 5,
-    "wordCount": 1000,
+    "wordCount": 889,
     "slug": "automated-blog-system"
   },
   {
@@ -154,8 +174,8 @@
       "ai-tools"
     ],
     "description": "How I Built a Real-Time Chat Platform Using Spring Boot, React, and Claude Code as My Pair Programming Partner",
-    "readingTime": 5,
-    "wordCount": 1000,
+    "readingTime": 3,
+    "wordCount": 700,
     "slug": "scalable-chat-platform"
   },
   {
@@ -168,8 +188,8 @@
       "meta"
     ],
     "description": "How I built my portfolio website and blog using React, TypeScript, and Vite",
-    "readingTime": 5,
-    "wordCount": 1000,
+    "readingTime": 2,
+    "wordCount": 500,
     "slug": "creating-this-portfolio-website-and-blog"
   },
   {
@@ -183,7 +203,7 @@
     ],
     "description": "how i overcame procrastination and transformed my study habits for GATE preparation - a journey from last-minute cramming to systematic learning",
     "readingTime": 5,
-    "wordCount": 1000,
+    "wordCount": 801,
     "slug": "brainwash-yourself-for-success"
   },
   {
@@ -195,8 +215,8 @@
       "personal"
     ],
     "description": "my journey from failing semester exams to achieving GATE rank 170 - lessons learned about learning, persistence, and finding your own path",
-    "readingTime": 5,
-    "wordCount": 1000,
+    "readingTime": 6,
+    "wordCount": 1131,
     "slug": "revelations-of-a-btech-student"
   }
 ]
