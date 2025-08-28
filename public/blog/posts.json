@@ -1,5 +1,25 @@
 [
   {
+    "url": "/blog/from-neon-to-supabase-to-aiven-a-postgresql-migrat",
+    "title": "From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey",
+    "episode": "014",
+    "date": "2025-08-28",
+    "tags": [
+      "postgresql",
+      "database",
+      "migration",
+      "cloud",
+      "devops",
+      "aiven",
+      "neon",
+      "supabase"
+    ],
+    "description": "A technical journey through multiple PostgreSQL providers due to Neon's 50-hour weekly limit, failed Supabase migration, and successful Aiven implementation",
+    "readingTime": 8,
+    "wordCount": 1800,
+    "slug": "from-neon-to-supabase-to-aiven-a-postgresql-migrat"
+  },
+  {
     "url": "/blog/migrating-from-render-to-neon-postgresql-lessons-f",
     "title": "Migrating from Render to Neon PostgreSQL: Lessons from a Zero-Downtime Database Migration",
     "episode": "013",
