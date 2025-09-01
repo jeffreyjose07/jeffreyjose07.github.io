@@ -14,13 +14,13 @@ jobs:
     - name: Ping Health Endpoint
       run: |
         echo "Pinging chat platform health endpoint..."
-        response=$(curl -s -o /dev/null -w "%{http_code}" https://scalable-chat-platform.onrender.com/health)
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://scalable-chat-platform.onrender.com/api/health/status)
         
         if [ $response -eq 200 ]; then
           echo "✅ Health check successful (HTTP $response)"
           
           # Get and display the health response
-          health_data=$(curl -s https://scalable-chat-platform.onrender.com/health)
+          health_data=$(curl -s https://scalable-chat-platform.onrender.com/api/health/status)
           echo "Health data: $health_data"
           
         else
