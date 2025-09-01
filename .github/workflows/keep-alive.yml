@@ -2,8 +2,8 @@ name: Keep Chat Platform Alive
 
 on:
   schedule:
-    # Run every 12 minutes (offset from other services)
-    - cron: '*/12 * * * *'
+    # Run every 5 minutes (offset from other services)
+    - cron: '*/5 * * * *'
   workflow_dispatch: # Allow manual triggering
 
 jobs:
