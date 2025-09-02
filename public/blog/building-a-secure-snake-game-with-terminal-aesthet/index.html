@@ -4,17 +4,17 @@
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey - Jeffrey Jose</title>
-    <meta name="description" content="A technical journey through multiple PostgreSQL providers due to Neon's 50-hour weekly limit, failed Supabase migration, and successful Aiven implementation" />
+    <title>Building a Secure Snake Game with Terminal Aesthetic - Jeffrey Jose</title>
+    <meta name="description" content="How we built a security-hardened Snake game with terminal aesthetic styling and integrated it into the portfolio" />
     
     <!-- SEO Meta Tags -->
-    <meta property="og:title" content="From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey">
-    <meta property="og:description" content="A technical journey through multiple PostgreSQL providers due to Neon's 50-hour weekly limit, failed Supabase migration, and successful Aiven implementation">
-    <meta property="og:url" content="https://jeffreyjose07.github.io/blog/from-neon-to-supabase-to-aiven-a-postgresql-migrat">
+    <meta property="og:title" content="Building a Secure Snake Game with Terminal Aesthetic">
+    <meta property="og:description" content="How we built a security-hardened Snake game with terminal aesthetic styling and integrated it into the portfolio">
+    <meta property="og:url" content="https://jeffreyjose07.github.io/blog/building-a-secure-snake-game-with-terminal-aesthet">
     <meta property="og:type" content="article">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey">
-    <meta name="twitter:description" content="A technical journey through multiple PostgreSQL providers due to Neon's 50-hour weekly limit, failed Supabase migration, and successful Aiven implementation">
+    <meta name="twitter:title" content="Building a Secure Snake Game with Terminal Aesthetic">
+    <meta name="twitter:description" content="How we built a security-hardened Snake game with terminal aesthetic styling and integrated it into the portfolio">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <style>
         * {
@@ -491,7 +491,7 @@
 
     <div class="container">
         <div class="breadcrumb">
-            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey</span>
+            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>Building a Secure Snake Game with Terminal Aesthetic</span>
         </div>
         
         <div class="back-link">
@@ -513,202 +513,252 @@
         </div>
         
         <header class="post-header">
-            <h1 class="post-title">014: From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey</h1>
-            <div class="post-meta">28 Aug 2025</div>
+            <h1 class="post-title">015: Building a Secure Snake Game with Terminal Aesthetic</h1>
+            <div class="post-meta">2 Sep 2025</div>
         </header>
         
         <article class="post-content">
-            <h1>From Neon to Supabase to Aiven: A <span class="structure">PostgreSQL</span> Migration Odyssey</h1>
-<h2>The Problem: Neon&#39;s 50-Hour Weekly Limit</h2>
-<p>Our <a href="https://github.com/jeffreyjose07/scalable-chat-platform"><span class="success">scalable</span> chat platform</a> was initially <span class="success">deployed</span> with <strong>Neon <span class="structure">PostgreSQL</span></strong> as the <span class="structure">database</span> provider. Everything worked perfectly... until it didn&#39;t.</p>
-<p><strong>The Issue</strong>: Neon&#39;s free tier has a <strong>50-hour weekly compute quota</strong>. Once exhausted, the <span class="structure">database</span> simply goes offline, taking our entire application down with it.</p>
-<pre><code>[ERROR] Connection refused: Database compute time exceeded weekly limit
-[ERROR] Service unavailable: Chat platform offline
-</code></pre>
-<p>This wasn&#39;t sustainable for a <span class="success">production</span> application. Time to migrate.</p>
-<h2>Migration Journey: Three Providers, One Solution</h2>
-<h3>Phase 1: The Supabase Attempt 🔴</h3>
-<p><strong>Target</strong>: Migrate from Neon to Supabase <span class="structure">PostgreSQL</span><br><strong>Outcome</strong>: Failed due to connectivity issues</p>
-<p>Supabase seemed like the logical choice - generous free tier, <span class="structure">PostgreSQL</span> compatibility, and great developer experience. But reality had other plans.</p>
-<h4>The Technical Roadblocks</h4>
-<pre><code class="language-bash"># Connection attempts failed consistently
-Connection to supabase.co:5432 refused
-Network unreachable from Render servers
-Timeout after 30s connection attempt
-</code></pre>
-<p><strong>Root Causes Identified</strong>:</p>
+            <h1>Building a Secure Snake Game with <span class="meta">Terminal</span> <span class="meta">Aesthetic</span></h1>
+<p>Adding games to a developer portfolio creates an engaging way to showcase technical skills while providing interactive entertainment. Today, I&#39;ll walk through how we built and integrated a <span class="attention">security</span>-hardened Snake game that perfectly matches our <span class="meta">terminal</span> <span class="meta">aesthetic</span>.</p>
+<h2>Project Requirements</h2>
+<p>Our goals were clear from the start:</p>
 <ul>
-<li><strong><span class="connection">Network</span> Connectivity</strong>: Render servers couldn&#39;t establish <span class="success">stable</span> connections to Supabase</li>
-<li><strong><span class="attention">Authentication</span> Errors</strong>: JWT token issues with <span class="connection">connection</span> pooling</li>
-<li><strong><span class="connection">Connection</span> Pool Conflicts</strong>: HikariCP configuration incompatible with Supabase&#39;s pooler</li>
-<li><strong>AutoCommit Configuration</strong>: Transaction handling mismatches</li>
+<li><strong><span class="attention">Security</span> first</strong>: No vulnerabilities or backdoors</li>
+<li><strong><span class="meta">Terminal</span> <span class="meta">aesthetic</span></strong>: Match the existing 90s BBS styling</li>
+<li><strong>Zero dependencies</strong>: Self-contained, no external libraries</li>
+<li><strong><span class="success">Performance</span> optimized</strong>: Smooth 60fps gameplay</li>
+<li><strong>Responsive design</strong>: Works on desktop and mobile</li>
+<li><strong>Portfolio <span class="connection">integration</span></strong>: Seamless navigation experience</li>
 </ul>
-<h4>Failed Configuration Attempts</h4>
-<pre><code class="language-properties"># Multiple failed connection string variations
-jdbc:postgresql://db.supabase.co:5432/postgres?user=postgres.xyz&amp;password=***
-jdbc:postgresql://aws-0-us-west-1.pooler.supabase.com:5432/postgres
-jdbc:postgresql://db.xyz.supabase.co:6543/postgres?pgbouncer=true
+<h2><span class="attention">Security</span> <span class="structure">Architecture</span></h2>
+<p><span class="attention">Security</span> was our top priority, implementing multiple layers of protection:</p>
+<h3>Strict Mode <span class="process">JavaScript</span></h3>
+<pre><code class="language-javascript">(() =&gt; {
+  &#39;use strict&#39;;
+  // All code runs in strict mode to prevent common security issues
+})();
 </code></pre>
-<p>Every variation resulted in timeouts or <span class="connection">connection</span> refused errors.</p>
-<h3>Phase 2: The Aiven <span class="success">Success</span> Story 🟢</h3>
-<p><strong>Target</strong>: Migrate from failed Supabase to Aiven <span class="structure">PostgreSQL</span><br><strong>Outcome</strong>: Complete <span class="success">success</span> with optimized configuration</p>
-<p>After Supabase failed, we discovered <strong>Aiven</strong> - a managed cloud <span class="structure">database</span> service with excellent <span class="structure">PostgreSQL</span> offerings.</p>
-<h4>Why Aiven Worked</h4>
+<h3>Secure Random Generation</h3>
+<p>Instead of <code>Math.random()</code>, we use cryptographically secure randomness:</p>
+<pre><code class="language-javascript">function secureRandom(min, max) {
+  const range = max - min + 1;
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  return Math.floor((array[0] / (0xFFFFFFFF + 1)) * range) + min;
+}
+</code></pre>
+<h3>Input Validation and Sanitization</h3>
+<p>All user inputs are validated with strict bounds checking:</p>
+<pre><code class="language-javascript">function updateSpeed(newSpeed) {
+  const speed = parseInt(newSpeed, 10);
+  if (speed &gt;= 1 &amp;&amp; speed &lt;= 50) { // Security: validate range
+    gameState.speed = speed;
+    gameState.stepMs = 1000 / speed;
+  }
+}
+</code></pre>
+<h3>DOM Element Validation</h3>
+<p>We validate all DOM references exist before use:</p>
+<pre><code class="language-javascript">for (const [key, element] of Object.entries(elements)) {
+  if (!element) {
+    console.error(`Critical element missing: ${key}`);
+    return;
+  }
+}
+</code></pre>
+<h2><span class="meta">Terminal</span> <span class="meta">Aesthetic</span> Implementation</h2>
+<p>The visual design follows our strict <span class="meta">terminal</span> color palette and typography conventions.</p>
+<h3>Color <span class="structure">System</span></h3>
+<pre><code class="language-css">:root {
+  --terminal-green: #55ff55;
+  --terminal-amber: #ff8855;
+  --terminal-cyan: #55ffff;
+  --terminal-magenta: #ff55ff;
+  --terminal-bg: #000000;
+  --terminal-gray: #c9c9c9;
+  --terminal-dark-gray: #333333;
+}
+</code></pre>
+<h3>Typography and Layout</h3>
+<p>All text uses our monospace font stack:</p>
+<pre><code class="language-css">font-family: &#39;Monaco&#39;, &#39;Menlo&#39;, &#39;Ubuntu Mono&#39;, monospace;
+</code></pre>
+<p>Visual elements include:</p>
+<ul>
+<li><strong>Grid-based game board</strong> with <span class="meta">terminal</span>-style borders</li>
+<li><strong>ASCII key representations</strong> for controls (<code>[↑]</code>, <code>[Space]</code>, <code>[R]</code>)</li>
+<li><strong>Glowing effects</strong> on food items</li>
+<li><strong><span class="meta">Terminal</span> window styling</strong> for overlays and banners</li>
+</ul>
+<h2>Game Engine <span class="structure">Architecture</span></h2>
+<p>The game engine uses a clean, modular <span class="structure">architecture</span> optimized for <span class="success">performance</span> and maintainability.</p>
+<h3>Game State Management</h3>
+<pre><code class="language-javascript">const gameState = {
+  status: &#39;idle&#39;, // &#39;idle&#39; | &#39;running&#39; | &#39;paused&#39; | &#39;gameover&#39;
+  wrapMode: false,
+  speed: 8,
+  stepMs: 125,
+  score: 0,
+  snake: [],
+  dir: {x: 1, y: 0},
+  nextDir: {x: 1, y: 0},
+  food: {x: 0, y: 0}
+};
+</code></pre>
+<h3>Game Loop Implementation</h3>
+<p>The game loop uses <code>requestAnimationFrame</code> for smooth 60fps <span class="success">performance</span>:</p>
+<pre><code class="language-javascript">function gameLoop(timestamp) {
+  if (gameState.status !== &#39;running&#39;) return;
+  
+  const deltaTime = timestamp - gameState.last;
+  gameState.last = timestamp;
+  gameState.acc += deltaTime;
+
+  while (gameState.acc &gt;= gameState.stepMs) {
+    gameStep();
+    gameState.acc -= gameState.stepMs;
+  }
+  
+  draw();
+  gameState.rafId = requestAnimationFrame(gameLoop);
+}
+</code></pre>
+<h2>Advanced Features</h2>
+<h3>Collision Detection</h3>
+<p>The collision <span class="structure">system</span> prevents self-collision while allowing tail movement:</p>
+<pre><code class="language-javascript">const selfCollision = gameState.snake.some((segment, index) =&gt; {
+  if (!willEat &amp;&amp; index === gameState.snake.length - 1 &amp;&amp; 
+      segment.x === tail.x &amp;&amp; segment.y === tail.y) {
+    return false;
+  }
+  return index &gt; 0 &amp;&amp; segment.x === headX &amp;&amp; segment.y === headY;
+});
+</code></pre>
+<h3>Touch Controls</h3>
+<p>Mobile support with gesture recognition:</p>
+<pre><code class="language-javascript">function handleTouchMove(e) {
+  const dx = touch.clientX - gameState.touchStart.x;
+  const dy = touch.clientY - gameState.touchStart.y;
+  const threshold = 30;
+  
+  if (Math.abs(dx) &gt; Math.abs(dy)) {
+    queueTurn(dx &gt; 0 ? 1 : -1, 0);
+  } else {
+    queueTurn(0, dy &gt; 0 ? 1 : -1);
+  }
+}
+</code></pre>
+<h3>Rendering <span class="structure">System</span></h3>
+<p>The canvas rendering <span class="structure">system</span> includes grid visualization and visual effects:</p>
+<pre><code class="language-javascript">function drawCell(gridX, gridY, color, glow = false) {
+  const x = gridX * CELL + 2;
+  const y = gridY * CELL + 2;
+  const size = CELL - 4;
+
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, size, size);
+
+  if (glow) {
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 10;
+    ctx.fillRect(x, y, size, size);
+    ctx.shadowBlur = 0;
+  }
+}
+</code></pre>
+<h2>Portfolio <span class="connection">Integration</span></h2>
+<h3>Navigation <span class="connection">Integration</span></h3>
+<p>We added the Snake game to the main navigation menu:</p>
+<pre><code class="language-javascript">const navItems = [
+  { label: &quot;Home&quot;, href: &quot;#hero&quot; },
+  { label: &quot;Experience&quot;, href: &quot;#experience&quot; },
+  { label: &quot;Projects&quot;, href: &quot;#projects&quot; },
+  { label: &quot;Skills&quot;, href: &quot;#skills&quot; },
+  { label: &quot;Education&quot;, href: &quot;#education&quot; },
+  { label: &quot;Blog&quot;, href: &quot;/blog&quot;, external: true },
+  { label: &quot;Snake&quot;, href: &quot;/snake.html&quot;, external: true }, // New addition
+  { label: &quot;Analytics&quot;, href: &quot;/analytics.html&quot;, external: true },
+  { label: &quot;Contact&quot;, href: &quot;#contact&quot; }
+];
+</code></pre>
+<h3>File <span class="structure">Structure</span></h3>
+<pre><code>public/
+├── snake.html          # Self-contained game file
+└── favicon.ico
+
+src/components/
+└── Navigation.tsx       # Updated with Snake link
+</code></pre>
+<h2><span class="success">Performance</span> Optimizations</h2>
+<h3>Memory Management</h3>
+<ul>
+<li><strong>Object pooling</strong> for game entities</li>
+<li><strong><span class="success">Efficient</span> collision detection</strong> with early exits</li>
+<li><strong><span class="meta">Minimal</span> DOM manipulation</strong> during gameplay</li>
+<li><strong>RequestAnimationFrame</strong> for smooth rendering</li>
+</ul>
+<h3><span class="process">Code</span> Size <span class="success">Optimization</span></h3>
+<p>The entire game fits in a single <span class="process">HTML</span> file under 50KB:</p>
+<ul>
+<li><strong>No external dependencies</strong></li>
+<li><strong>Minified <span class="process">CSS</span> embedded inline</strong></li>
+<li><strong>Optimized <span class="process">JavaScript</span> with no libraries</strong></li>
+<li><strong>Compressed assets and <span class="success">efficient</span> algorithms</strong></li>
+</ul>
+<h2><span class="attention">Security</span> Testing Results</h2>
+<p>Our <span class="attention">security</span> audit revealed zero vulnerabilities:</p>
+<ul>
+<li>✅ <strong>No XSS vectors</strong> - all user input sanitized</li>
+<li>✅ <strong>No injection risks</strong> - no eval() or dynamic <span class="process">code</span> execution</li>
+<li>✅ <strong>Safe localStorage usage</strong> - properly sanitized data storage</li>
+<li>✅ <strong>Input validation</strong> - all user inputs bounded and validated</li>
+<li>✅ <strong>No external dependencies</strong> - zero attack surface from third-party <span class="process">code</span></li>
+</ul>
+<h2>Technical Specifications</h2>
+<ul>
+<li><strong>File size</strong>: &lt;50KB total</li>
+<li><strong><span class="success">Performance</span></strong>: 60fps consistent gameplay</li>
+<li><strong>Browser support</strong>: All modern browsers</li>
+<li><strong>Mobile support</strong>: Full touch controls</li>
+<li><strong>Accessibility</strong>: Keyboard navigation and ARIA labels</li>
+<li><strong><span class="attention">Security</span></strong>: Multiple layers of input validation and sanitization</li>
+</ul>
+<h2>Lessons Learned</h2>
+<p>Building this game reinforced several important principles:</p>
 <ol>
-<li><strong><span class="success">Stable</span> <span class="connection">Network</span> Connectivity</strong>: Direct <span class="connection">connection</span> from Render to Aiven</li>
-<li><strong>Optimized for Cloud Deployments</strong>: Built for container orchestration</li>
-<li><strong>Generous Free Tier</strong>: 1-month trial with <span class="success">production</span> features</li>
-<li><strong>Excellent Documentation</strong>: Clear migration guides and best practices</li>
+<li><strong><span class="attention">Security</span> by design</strong> - implementing <span class="attention">security</span> from the ground up is easier than retrofitting</li>
+<li><strong><span class="success">Performance</span> matters</strong> - smooth gameplay requires careful <span class="success">optimization</span></li>
+<li><strong><span class="meta">Aesthetic</span> consistency</strong> - maintaining visual coherence across portfolio sections</li>
+<li><strong>Mobile-first thinking</strong> - touch controls are just as important as keyboard input</li>
+<li><strong><span class="process">Code</span> organization</strong> - clean <span class="structure">architecture</span> makes maintenance easier</li>
 </ol>
-<h2>The Technical Implementation</h2>
-<h3><span class="structure">Database</span> Schema Migration</h3>
-<pre><code class="language-bash"># Export from Neon
-pg_dump $NEON_DATABASE_URL &gt; neon_backup.sql
-
-# Clean and optimize for Aiven
-sed -i &#39;s/OWNER TO neondb_owner/OWNER TO avnadmin/g&#39; neon_backup.sql
-
-# Import to Aiven
-psql $AIVEN_DATABASE_URL &lt; neon_backup.sql
-</code></pre>
-<h3>Application Configuration <span class="success">Optimization</span></h3>
-<p>The key to <span class="success">success</span> was <strong>optimizing HikariCP for cloud <span class="success">deployment</span></strong>:</p>
-<pre><code class="language-properties"># Critical configuration changes
-spring.datasource.hikari.auto-commit=false
-spring.datasource.hikari.connection-timeout=60000
-spring.datasource.hikari.validation-timeout=30000
-spring.datasource.hikari.max-lifetime=1800000
-spring.datasource.hikari.maximum-pool-size=2
-spring.datasource.hikari.minimum-idle=0
-</code></pre>
-<h3>JDBC URL <span class="success">Optimization</span></h3>
-<pre><code class="language-java">// Optimized connection string for cloud deployment
-jdbc:postgresql://chat-platform-jeffrey-defaultdb.h.aivencloud.com:25578/defaultdb
-  ?sslmode=require
-  &amp;autoCommit=false
-  &amp;connectTimeout=60
-  &amp;socketTimeout=60
-  &amp;loginTimeout=60
-</code></pre>
-<h3><span class="connection">Connection</span> Pool <span class="structure">Architecture</span></h3>
-<pre><code>┌─────────────────────┐    ┌─────────────────────┐    ┌─────────────────────┐
-│   Render Instance   │    │   Aiven PostgreSQL  │    │   Connection Pool   │
-│                     │    │                     │    │                     │
-│ ┌─────────────────┐ │    │ ┌─────────────────┐ │    │ ┌─────────────────┐ │
-│ │  Spring Boot    │ │───▶│ │  PostgreSQL 15  │ │◄───│ │  HikariCP       │ │
-│ │  Application    │ │    │ │  Database       │ │    │ │  Max Pool: 2    │ │
-│ └─────────────────┘ │    │ └─────────────────┘ │    │ │  Min Idle: 0    │ │
-│                     │    │                     │    │ └─────────────────┘ │
-│ ┌─────────────────┐ │    │ ┌─────────────────┐ │    │                     │
-│ │  WebSocket      │ │    │ │  SSL/TLS        │ │    │ ┌─────────────────┐ │
-│ │  Connections    │ │    │ │  Encryption     │ │    │ │  Health Checks  │ │
-│ └─────────────────┘ │    │ └─────────────────┘ │    │ │  SELECT 1       │ │
-└─────────────────────┘    └─────────────────────┘    └─────────────────────┘
-</code></pre>
-<h2><span class="success">Performance</span> Optimizations Applied</h2>
-<h3>1. <span class="attention">Timeout</span> Configuration</h3>
-<pre><code class="language-properties"># Increased timeouts for cloud latency
-connection-timeout=60000ms
-validation-timeout=30000ms
-socket-timeout=60000ms
-</code></pre>
-<h3>2. Pool Size <span class="success">Optimization</span></h3>
-<pre><code class="language-properties"># Conservative pool sizing for free tier
-maximum-pool-size=2
-minimum-idle=0
-max-lifetime=30min
-</code></pre>
-<h3>3. <span class="connection">Connection</span> Validation</h3>
-<pre><code class="language-properties"># Proactive connection testing
-connection-test-query=SELECT 1
-test-while-idle=true
-test-on-borrow=true
-</code></pre>
-<h3>4. AutoCommit Handling</h3>
-<pre><code class="language-properties"># Multiple levels of autoCommit control
-hikari.auto-commit=false
-jdbc.url=...&amp;autoCommit=false
-transaction.auto-commit=false
-</code></pre>
-<h2>Migration Results</h2>
-<h3>Before (Neon)</h3>
+<h2>Future Enhancements</h2>
+<p>Potential improvements for future iterations:</p>
 <ul>
-<li>❌ <strong>50-hour weekly limit</strong></li>
-<li>❌ <strong>Frequent downtime</strong></li>
-<li>❌ <strong>Unpredictable availability</strong></li>
-<li>✅ <strong>Fast <span class="success">performance</span> when available</strong></li>
+<li><strong>Sound effects</strong> with <span class="meta">terminal</span>-style beeps and bleeps</li>
+<li><strong>High score leaderboard</strong> with persistent storage</li>
+<li><strong>Multiple game modes</strong> like timed challenges or obstacles</li>
+<li><strong>Power-ups</strong> that fit the <span class="meta">terminal</span> <span class="meta">aesthetic</span></li>
+<li><strong>Multiplayer support</strong> via <span class="connection">WebSocket</span> connections</li>
 </ul>
-<h3>Failed Attempt (Supabase)</h3>
-<ul>
-<li>❌ <strong><span class="connection">Network</span> connectivity issues</strong></li>
-<li>❌ <strong><span class="connection">Connection</span> pool conflicts</strong></li>
-<li>❌ <strong><span class="attention">Authentication</span> problems</strong></li>
-<li>❌ <strong>Unable to establish <span class="success">stable</span> <span class="connection">connection</span></strong></li>
-</ul>
-<h3>After (Aiven)</h3>
-<ul>
-<li>✅ <strong><span class="success">Stable</span> 24/7 availability</strong></li>
-<li>✅ <strong>No usage time limits</strong></li>
-<li>✅ <strong>Optimized cloud connectivity</strong></li>
-<li>✅ <strong><span class="success">Production</span>-ready configuration</strong></li>
-<li>✅ <strong>Excellent <span class="success">performance</span></strong></li>
-</ul>
-<h2>Key Lessons Learned</h2>
-<h3>1. Cloud <span class="structure">Database</span> Connectivity Varies</h3>
-<p>Not all <span class="structure">PostgreSQL</span> providers work equally well with all hosting platforms. <strong>Render + Aiven</strong> proved to be a winning combination where <strong>Render + Supabase</strong> failed.</p>
-<h3>2. <span class="connection">Connection</span> Pool Configuration is <span class="attention">Critical</span></h3>
-<pre><code class="language-java">// The magic configuration that made it work
-spring.datasource.hikari.maximum-pool-size=2
-spring.datasource.hikari.minimum-idle=0
-spring.datasource.hikari.auto-commit=false
-</code></pre>
-<h3>3. Multiple <span class="attention">Timeout</span> Layers Required</h3>
-<p>Cloud deployments need timeouts at every level:</p>
-<ul>
-<li>JDBC driver timeouts</li>
-<li><span class="connection">Connection</span> pool timeouts  </li>
-<li>Application-level timeouts</li>
-<li><span class="connection">Network</span> stack timeouts</li>
-</ul>
-<h3>4. Migration Strategy Importance</h3>
-<p>Always have a <strong>rollback plan</strong> and <span class="process">test</span> connectivity before full migration.</p>
-<h2>Current <span class="structure">Architecture</span></h2>
-<pre><code>Production Stack:
-├── Frontend: React + TypeScript (Vercel)
-├── Backend: Spring Boot (Render)
-├── Database: PostgreSQL (Aiven)
-├── Cache: Redis (Upstash)
-└── Storage: MongoDB Atlas
-</code></pre>
-<p>The application is now running <strong>stably on Aiven <span class="structure">PostgreSQL</span></strong> with a robust, cloud-optimized <span class="structure">database</span> configuration. No more unexpected downtime due to quota limits.</p>
-<h2>Resources</h2>
-<ul>
-<li><strong>Migration Summary</strong>: <a href="https://github.com/jeffreyjose07/scalable-chat-platform/blob/main/DATABASE_MIGRATION_SUMMARY.md">DATABASE_MIGRATION_SUMMARY.md</a></li>
-<li><strong><span class="success">Live</span> Application</strong>: <a href="https://scalable-chat-platform.onrender.com"><span class="success">scalable</span>-chat-platform.onrender.com</a></li>
-<li><strong><span class="success">GitHub</span> Repository</strong>: <a href="https://github.com/jeffreyjose07/scalable-chat-platform">jeffreyjose07/<span class="success">scalable</span>-chat-platform</a></li>
-</ul>
-<hr>
-<p><em>Sometimes the third time&#39;s the charm. From Neon&#39;s limitations to Supabase&#39;s connectivity issues to Aiven&#39;s <span class="success">success</span> - each failed attempt taught us valuable lessons about cloud <span class="structure">database</span> <span class="success">deployment</span>.</em></p>
+<h2>Conclusion</h2>
+<p>This project demonstrates how to <span class="process">build</span> secure, performant games while maintaining strict <span class="meta">aesthetic</span> guidelines. The combination of <span class="attention">security</span>-first development, <span class="meta">terminal</span> styling, and smooth gameplay creates an engaging portfolio piece that showcases both technical skills and attention to detail.</p>
+<p>The Snake game now serves as both entertainment and a demonstration of our development capabilities, seamlessly integrated into the portfolio experience while maintaining our commitment to <span class="attention">security</span> and <span class="success">performance</span>.</p>
+<p><em>View the <span class="success">live</span> game at <a href="/snake.html">/snake.<span class="process">html</span></a> and explore the source <span class="process">code</span> to see these techniques in action.</em></p>
 
         </article>
         
         <footer class="post-footer">
             <div>
-                words: ~1800 · reading time: ~8 min · <span id="view-count">👀 views loading...</span> · tags: <a href="/blog#tag-postgresql" class="tag neutral" data-tag="postgresql">postgresql</a>, <a href="/blog#tag-database" class="tag neutral" data-tag="database">database</a>, <a href="/blog#tag-migration" class="tag neutral" data-tag="migration">migration</a>, <a href="/blog#tag-cloud" class="tag neutral" data-tag="cloud">cloud</a>, <a href="/blog#tag-devops" class="tag neutral" data-tag="devops">devops</a>, <a href="/blog#tag-aiven" class="tag neutral" data-tag="aiven">aiven</a>, <a href="/blog#tag-neon" class="tag neutral" data-tag="neon">neon</a>, <a href="/blog#tag-supabase" class="tag neutral" data-tag="supabase">supabase</a>
+                words: ~1600 · reading time: ~8 min · <span id="view-count">👀 views loading...</span> · tags: <a href="/blog#tag-game-development" class="tag neutral" data-tag="game-development">game-development</a>, <a href="/blog#tag-javascript" class="tag process" data-tag="javascript">javascript</a>, <a href="/blog#tag-security" class="tag neutral" data-tag="security">security</a>, <a href="/blog#tag-terminal-ui" class="tag neutral" data-tag="terminal-ui">terminal-ui</a>, <a href="/blog#tag-web-development" class="tag neutral" data-tag="web-development">web-development</a>
             </div>
         </footer>
         
         <nav class="post-navigation">
             <div class="nav-previous">
-                <a href="/blog/migrating-from-render-to-neon-postgresql-lessons-f">
+                <a href="/blog/from-neon-to-supabase-to-aiven-a-postgresql-migrat">
                     <span class="nav-label">← previous</span>
-                    <span class="nav-title">Migrating from Render to Neon PostgreSQL: Lessons from a Zero-Downtime Database Migration</span>
-                </a>
-            </div>
-            <div class="nav-next">
-                <a href="/blog/building-a-secure-snake-game-with-terminal-aesthet">
-                    <span class="nav-label">next →</span>
-                    <span class="nav-title">Building a Secure Snake Game with Terminal Aesthetic</span>
+                    <span class="nav-title">From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey</span>
                 </a>
             </div></nav>
     </div>
