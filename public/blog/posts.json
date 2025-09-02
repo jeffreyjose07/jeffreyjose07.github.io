@@ -1,5 +1,22 @@
 [
   {
+    "url": "/blog/building-a-secure-snake-game-with-terminal-aesthet",
+    "title": "Building a Secure Snake Game with Terminal Aesthetic",
+    "episode": "015",
+    "date": "2025-09-02",
+    "tags": [
+      "game-development",
+      "javascript",
+      "security",
+      "terminal-ui",
+      "web-development"
+    ],
+    "description": "How we built a security-hardened Snake game with terminal aesthetic styling and integrated it into the portfolio",
+    "readingTime": 8,
+    "wordCount": 1600,
+    "slug": "building-a-secure-snake-game-with-terminal-aesthet"
+  },
+  {
     "url": "/blog/from-neon-to-supabase-to-aiven-a-postgresql-migrat",
     "title": "From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey",
     "episode": "014",
