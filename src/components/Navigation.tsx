@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X, Sun, Moon, ChevronDown } from "lucide-react";
 import { useTheme } from "next-themes";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isGamesDropdownOpen, setIsGamesDropdownOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -15,9 +16,13 @@ const Navigation = () => {
     { label: "Skills", href: "#skills" },
     { label: "Education", href: "#education" },
     { label: "Blog", href: "/blog", external: true },
-    { label: "Snake", href: "/snake.html", external: true },
     { label: "Analytics", href: "/analytics.html", external: true },
     { label: "Contact", href: "#contact" }
+  ];
+
+  const gameItems = [
+    { label: "Snake", href: "/games/snake/" },
+    { label: "Void Blocks", href: "/games/void-blocks/" }
   ];
 
   useEffect(() => {
@@ -100,6 +105,46 @@ const Navigation = () => {
                 </a>
               ))}
               
+              {/* Games Dropdown */}
+              <div className="relative group" 
+                   onMouseEnter={() => setIsGamesDropdownOpen(true)}
+                   onMouseLeave={() => setIsGamesDropdownOpen(false)}>
+                <button
+                  className={`px-3 py-2 text-sm font-medium transition-all duration-300 relative group/games flex items-center gap-1 ${
+                    isScrolled 
+                      ? "text-foreground hover:text-primary" 
+                      : "text-white/90 hover:text-white"
+                  }`}
+                >
+                  Games
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isGamesDropdownOpen ? 'rotate-180' : ''}`} />
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover/games:w-full ${
+                    isScrolled 
+                      ? "bg-gradient-to-r from-primary to-primary-glow" 
+                      : "bg-gradient-to-r from-white to-white/80"
+                  }`}></span>
+                </button>
+                
+                {/* Dropdown Menu */}
+                <div className={`absolute top-full left-0 mt-2 w-40 bg-background border border-border/50 rounded-lg shadow-lg transition-all duration-200 ${
+                  isGamesDropdownOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
+                }`}>
+                  {gameItems.map((game) => (
+                    <a
+                      key={game.href}
+                      href={game.href}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.location.href = game.href;
+                      }}
+                      className="block px-4 py-3 text-sm text-foreground hover:text-primary hover:bg-accent/50 transition-all duration-200 first:rounded-t-lg last:rounded-b-lg"
+                    >
+                      {game.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+              
               {/* Desktop Theme Toggle - integrated into nav */}
               {mounted && (
                 <button
@@ -179,6 +224,27 @@ const Navigation = () => {
                   {item.label}
                 </a>
               ))}
+              
+              {/* Mobile Games Section */}
+              <div className="space-y-1">
+                <div className="text-foreground font-medium px-4 py-2 text-base">
+                  Games
+                </div>
+                {gameItems.map((game) => (
+                  <a
+                    key={game.href}
+                    href={game.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsMobileMenuOpen(false);
+                      window.location.href = game.href;
+                    }}
+                    className="text-foreground hover:text-primary hover:bg-accent/50 block px-8 py-2 text-base font-medium transition-all duration-200 rounded-lg border border-transparent hover:border-border/30 active:bg-accent/70"
+                  >
+                    {game.label}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
           
