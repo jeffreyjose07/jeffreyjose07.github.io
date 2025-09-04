@@ -6,11 +6,11 @@ import profileImage from "@/assets/jeffrey-profile.jpg";
 
 const Hero = () => {
   return (
-    <section id="hero" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100 dark:from-gray-900 dark:to-slate-800 relative pt-16">
+    <section id="hero" className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 relative pt-16">
       {/* Clean geometric background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-bl from-blue-50/50 to-transparent dark:from-blue-950/30" />
-        <div className="absolute bottom-0 left-0 w-1/3 h-2/3 bg-gradient-to-tr from-violet-50/30 to-transparent dark:from-violet-950/20" />
+      <div className="absolute inset-0 overflow-hidden opacity-30">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-blue-100/40 to-transparent dark:from-blue-900/20"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-violet-100/40 to-transparent dark:from-violet-900/20"></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 text-center relative z-10 max-w-4xl">
@@ -21,8 +21,9 @@ const Hero = () => {
             <AvatarFallback className="text-2xl font-bold bg-gradient-to-br from-blue-500 to-violet-500 text-white">JJ</AvatarFallback>
           </Avatar>
           <div className="flex justify-center mb-4">
-            <Badge variant="secondary" className="px-3 py-1 text-sm font-medium">
-              Available for opportunities
+            <Badge variant="outline" className="inline-flex items-center gap-2 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-4 py-2 border-green-200 dark:border-green-700">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium">Available for opportunities</span>
             </Badge>
           </div>
         </div>
@@ -44,7 +45,7 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button 
               size="lg" 
-              className="group px-8 py-4 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 shadow-lg hover:shadow-xl transition-all duration-300"
+              className="group px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
               onClick={() => {
                 const contactSection = document.getElementById('contact');
                 contactSection?.scrollIntoView({ behavior: 'smooth' });
