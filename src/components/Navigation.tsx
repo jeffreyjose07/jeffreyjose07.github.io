@@ -151,7 +151,7 @@ const Navigation = () => {
                   onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                   className={`p-2 rounded-lg transition-all duration-300 ${
                     isScrolled
-                      ? "text-foreground hover:text-primary bg-accent/20 hover:bg-accent/40 border border-border/30"
+                      ? "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 bg-gray-100/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600"
                       : "text-white/90 hover:text-white bg-white/10 hover:bg-white/20 border border-white/20"
                   }`}
                   aria-label="Toggle theme"
@@ -174,7 +174,7 @@ const Navigation = () => {
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className={`p-2 touch-manipulation rounded-lg border transition-all duration-200 active:scale-95 ${
                 isScrolled
-                  ? "text-foreground hover:text-primary bg-accent/20 hover:bg-accent/40 border-border/30"
+                  ? "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 bg-gray-100/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600 border-gray-200 dark:border-gray-600"
                   : "text-white/90 hover:text-white bg-white/10 hover:bg-white/20 border-white/20"
               }`}
               aria-label="Toggle theme"
@@ -192,7 +192,7 @@ const Navigation = () => {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`p-3 touch-manipulation rounded-lg border transition-all duration-200 active:scale-95 ${
                 isScrolled
-                  ? "text-foreground hover:text-primary bg-accent/20 hover:bg-accent/40 border-border/30"
+                  ? "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 bg-gray-100/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600 border-gray-200 dark:border-gray-600"
                   : "text-white/90 hover:text-white bg-white/10 hover:bg-white/20 border-white/20"
               }`}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
@@ -209,7 +209,7 @@ const Navigation = () => {
             ? "translate-y-0 opacity-100" 
             : "-translate-y-full opacity-0 pointer-events-none"
         }`} style={{ top: isScrolled ? '64px' : '64px' }}>
-          <div className="bg-background border-b border-border shadow-lg">
+          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-lg">
             <div className="px-4 py-3 space-y-2">
               {navItems.map((item) => (
                 <a
@@ -219,7 +219,7 @@ const Navigation = () => {
                     e.preventDefault();
                     handleNavClick(item.href, (item as any).external);
                   }}
-                  className="text-foreground hover:text-primary hover:bg-accent/50 block px-4 py-3 text-base font-medium transition-all duration-200 rounded-lg border border-transparent hover:border-border/30 active:bg-accent/70"
+                  className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 block px-4 py-3 text-base font-medium transition-all duration-200 rounded-lg border border-transparent hover:border-gray-200 dark:hover:border-gray-600 active:bg-gray-100 dark:active:bg-gray-700"
                 >
                   {item.label}
                 </a>
@@ -227,7 +227,7 @@ const Navigation = () => {
               
               {/* Mobile Games Section */}
               <div className="space-y-1">
-                <div className="text-foreground font-medium px-4 py-2 text-base">
+                <div className="text-gray-900 dark:text-white font-medium px-4 py-2 text-base">
                   Games
                 </div>
                 {gameItems.map((game) => (
@@ -239,7 +239,7 @@ const Navigation = () => {
                       setIsMobileMenuOpen(false);
                       window.location.href = game.href;
                     }}
-                    className="text-foreground hover:text-primary hover:bg-accent/50 block px-8 py-2 text-base font-medium transition-all duration-200 rounded-lg border border-transparent hover:border-border/30 active:bg-accent/70"
+                    className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 block px-8 py-2 text-base font-medium transition-all duration-200 rounded-lg border border-transparent hover:border-gray-200 dark:hover:border-gray-600 active:bg-gray-100 dark:active:bg-gray-700"
                   >
                     {game.label}
                   </a>

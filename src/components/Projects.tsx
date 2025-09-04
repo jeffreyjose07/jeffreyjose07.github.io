@@ -195,7 +195,7 @@ const Projects = () => {
                 </div>
                 
                 {/* Action Buttons - Inside the card */}
-                <div className="flex gap-3 justify-start px-8 pb-8">
+                <div className="flex flex-col sm:flex-row gap-3 justify-start px-8 pb-8">
                   {project.liveUrl && (
                     <Button 
                       onClick={() => window.open(project.liveUrl, '_blank')}
