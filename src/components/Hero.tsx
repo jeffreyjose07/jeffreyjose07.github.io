@@ -6,11 +6,25 @@ import profileImage from "@/assets/jeffrey-profile.jpg";
 
 const Hero = () => {
   return (
-    <section id="hero" className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 relative pt-16">
-      {/* Clean geometric background */}
-      <div className="absolute inset-0 overflow-hidden opacity-30">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-blue-100/40 to-transparent dark:from-blue-900/20"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-violet-100/40 to-transparent dark:from-violet-900/20"></div>
+    <section id="hero" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-900 dark:to-blue-950/30 relative pt-16">
+      {/* Enhanced dynamic background with floating elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Main gradient layers */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-blue-200/30 to-transparent dark:from-blue-900/30 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-violet-200/30 to-transparent dark:from-violet-900/30 animate-pulse" style={{ animationDelay: '2s' }}></div>
+        
+        {/* Floating orbs - stars/bubbles effect */}
+        <div className="absolute top-20 left-20 w-4 h-4 bg-blue-400/20 dark:bg-blue-400/30 rounded-full animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}></div>
+        <div className="absolute top-40 right-32 w-3 h-3 bg-violet-400/20 dark:bg-violet-400/30 rounded-full animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}></div>
+        <div className="absolute bottom-40 left-32 w-2 h-2 bg-blue-500/30 dark:bg-blue-500/40 rounded-full animate-bounce" style={{ animationDelay: '2s', animationDuration: '5s' }}></div>
+        <div className="absolute bottom-20 right-20 w-5 h-5 bg-violet-500/20 dark:bg-violet-500/30 rounded-full animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}></div>
+        <div className="absolute top-60 left-1/3 w-3 h-3 bg-indigo-400/20 dark:bg-indigo-400/30 rounded-full animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '4.5s' }}></div>
+        <div className="absolute bottom-60 right-1/3 w-4 h-4 bg-blue-300/20 dark:bg-blue-300/30 rounded-full animate-bounce" style={{ animationDelay: '2.5s', animationDuration: '3.2s' }}></div>
+        
+        {/* Additional smaller particles */}
+        <div className="absolute top-32 left-1/2 w-1 h-1 bg-blue-600/40 dark:bg-blue-400/50 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-32 left-1/4 w-1 h-1 bg-violet-600/40 dark:bg-violet-400/50 rounded-full animate-ping" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 right-1/4 w-1 h-1 bg-indigo-600/40 dark:bg-indigo-400/50 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 text-center relative z-10 max-w-4xl">
@@ -29,15 +43,15 @@ const Hero = () => {
         </div>
         
         <div className="slide-up-delayed">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent leading-tight">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white bg-clip-text text-transparent leading-tight drop-shadow-sm">
             Jeffrey Jose
           </h1>
           <div className="mb-8">
-            <p className="text-xl sm:text-2xl md:text-3xl font-light text-gray-600 dark:text-gray-300">
+            <p className="text-xl sm:text-2xl md:text-3xl font-light text-gray-700 dark:text-gray-200 drop-shadow-sm">
               Code craftsman • Tech explorer • Minimalist
             </p>
           </div>
-          <p className="text-lg md:text-xl mb-12 text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl mb-12 text-gray-700 dark:text-gray-200 max-w-3xl mx-auto leading-relaxed drop-shadow-sm">
             Passionate about crafting scalable solutions and driving innovation in software engineering. 
             Building the future with clean code and thoughtful architecture.
           </p>
