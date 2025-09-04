@@ -23,9 +23,9 @@ const Education = () => {
   ];
 
   const achievements = [
-    { title: "IIT Kharagpur", subtitle: "M.Tech. Computer Science", icon: GraduationCap },
-    { title: "GATE 2017", subtitle: "All India Rank 170 among 200,000+ candidates", icon: Calendar },
-    { title: "Teaching Assistant", subtitle: "2+ Years Experience at IIT Kharagpur", icon: GraduationCap }
+    { title: "IIT Kharagpur", subtitle: "M.Tech. Computer Science", icon: "🎓" },
+    { title: "GATE 2017", subtitle: "All India Rank 170 among 200,000+ candidates", icon: "📅" },
+    { title: "Teaching Assistant", subtitle: "2+ Years Experience at IIT Kharagpur", icon: "🎓" }
   ];
 
   return (
@@ -121,7 +121,11 @@ const Education = () => {
                 {achievements.map((achievement, index) => (
                   <div key={index} className="group/item text-center">
                     <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center group-hover/item:bg-blue-100 dark:group-hover/item:bg-blue-900/50 transition-all duration-300">
-                      <achievement.icon className="h-8 w-8 text-blue-600 dark:text-blue-400 group-hover/item:scale-110 transition-transform duration-300" />
+                      {achievement.title.includes('IIT') || achievement.title.includes('Teaching') ? (
+                        <GraduationCap className="h-8 w-8 text-blue-600 dark:text-blue-400 group-hover/item:scale-110 transition-transform duration-300" />
+                      ) : (
+                        <Calendar className="h-8 w-8 text-blue-600 dark:text-blue-400 group-hover/item:scale-110 transition-transform duration-300" />
+                      )}
                     </div>
                     <h4 className="font-bold text-gray-900 dark:text-white mb-2 group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors duration-300">
                       {achievement.title}

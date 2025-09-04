@@ -446,6 +446,10 @@
 
     /* Mobile Responsive Design */
     @media (max-width: 768px) {
+      body {
+        /* Create safe-space so fixed mobile controls don't overlap content */
+        padding-bottom: 180px;
+      }
       .container {
         flex-direction: column;
         gap: 10px;
@@ -513,6 +517,8 @@
       .version {
         bottom: 160px;
       }
+      /* Hide keyboard instructions panel on mobile to avoid duplication */
+      #controlsPanel { display: none; }
     }
 
     @media (max-width: 480px) {
@@ -592,7 +598,7 @@
           <canvas id="nextCanvas" width="120" height="80"></canvas>
         </div>
         
-        <div class="panel">
+        <div class="panel" id="controlsPanel">
           <div class="panel-title">Controls</div>
           <div class="controls">
             <div class="control-row"><span class="key">← / →</span> Move</div>
@@ -660,7 +666,18 @@
   <div class="paused hidden" id="pausedScreen">
     <div class="overlay-text">SYSTEM PAUSED</div>
     <div class="overlay-subtitle">Security protocol suspended</div>
-    <div class="restart-hint">Press P to resume</div>
+    <div class="restart-hint" style="margin-bottom: 16px;">Press P or tap ⏯ to resume</div>
+    <div class="panel" style="max-width: 90vw;">
+      <div class="panel-title" style="text-align:center;">Controls (Mobile)</div>
+      <div class="controls">
+        <div class="control-row"><span class="key">← / →</span> Move</div>
+        <div class="control-row"><span class="key">↓</span> Soft Drop</div>
+        <div class="control-row"><span class="key">SPACE</span> Hard Drop</div>
+        <div class="control-row"><span class="key">↑ / Z / X</span> Rotate</div>
+        <div class="control-row"><span class="key">P</span> Pause</div>
+        <div class="control-row"><span class="key">R</span> Restart</div>
+      </div>
+    </div>
   </div>
   
   <div class="start-screen" id="startScreen">
@@ -1381,8 +1398,7 @@
       // Pause/Resume
       document.getElementById('mobilePause').addEventListener('click', () => {
         if (gameStarted && !gameOver) {
-          paused = !paused;
-          console.log(`⏸️ Game ${paused ? 'paused' : 'resumed'}`);
+          togglePause();
         }
       });
       

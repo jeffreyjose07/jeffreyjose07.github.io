@@ -303,6 +303,9 @@
   }
 
   @media (max-width: 768px) {
+    body {
+      padding-bottom: 20px;
+    }
     .back-link {
       position: relative;
       top: 0;
@@ -661,6 +664,9 @@
 
   function handleTouchStart(e) {
     if (e.touches.length !== 1) return;
+    if (gameState.status === 'idle') {
+      startGame();
+    }
     gameState.touchStart = {
       x: e.touches[0].clientX,
       y: e.touches[0].clientY
@@ -826,10 +832,13 @@
   const touchPause = document.getElementById("touchPause");
   const touchRestart = document.getElementById("touchRestart");
 
-  if (touchUp) touchUp.addEventListener("click", () => queueTurn(0, -1));
-  if (touchDown) touchDown.addEventListener("click", () => queueTurn(0, 1));
-  if (touchLeft) touchLeft.addEventListener("click", () => queueTurn(-1, 0));
-  if (touchRight) touchRight.addEventListener("click", () => queueTurn(1, 0));
+  function ensureRunning() {
+    if (gameState.status === 'idle') startGame();
+  }
+  if (touchUp) touchUp.addEventListener("click", () => { ensureRunning(); queueTurn(0, -1); });
+  if (touchDown) touchDown.addEventListener("click", () => { ensureRunning(); queueTurn(0, 1); });
+  if (touchLeft) touchLeft.addEventListener("click", () => { ensureRunning(); queueTurn(-1, 0); });
+  if (touchRight) touchRight.addEventListener("click", () => { ensureRunning(); queueTurn(1, 0); });
   if (touchPause) touchPause.addEventListener("click", pauseToggle);
   if (touchRestart) touchRestart.addEventListener("click", startGame);
 
