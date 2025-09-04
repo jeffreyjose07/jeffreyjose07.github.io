@@ -40,9 +40,26 @@ const Projects = () => {
       ]
     },
     {
+      title: "Snake Game - Terminal Aesthetic",
+      description: "A modern take on the classic Snake game with terminal-inspired cyberpunk aesthetics. Built with vanilla JavaScript and HTML5 Canvas, featuring smooth gameplay, retro glow effects, and responsive controls optimized for both desktop and mobile.",
+      image: "/snake-game-screenshot.png",
+      liveUrl: "/games/snake/",
+      githubUrl: "https://github.com/jeffreyjose07/snake-game",
+      technologies: ["Vanilla JavaScript", "HTML5 Canvas", "CSS3", "Game Development", "Responsive Design"],
+      highlights: [
+        "Classic Snake gameplay with modern enhancements",
+        "Terminal-inspired cyberpunk visual design",
+        "Smooth 60fps performance with requestAnimationFrame",
+        "Responsive controls for desktop and mobile",
+        "Retro glow effects and ASCII-style aesthetics",
+        "Score tracking and game over animations",
+        "Single HTML file with zero dependencies"
+      ]
+    },
+    {
       title: "Detection of Forest Area in SAR Images",
       description: "Computer vision project focused on detecting and classifying forest areas in polarimetric SAR RISAT-1 images using advanced image processing techniques and machine learning algorithms.",
-      image: "/placeholder.svg",
+      image: "/generic-project.png",
       technologies: ["Python", "Computer Vision", "Machine Learning", "SAR Image Processing", "Pattern Recognition"],
       highlights: [
         "Implemented advanced SAR image processing algorithms",
@@ -55,7 +72,7 @@ const Projects = () => {
     {
       title: "Graph-based Document Summarization",
       description: "Natural language processing system that generates concise summaries of word documents using graph-based approaches including text-rank and degree-centrality algorithms.",
-      image: "/placeholder.svg",
+      image: "/generic-project.png",
       technologies: ["Python", "NLP", "Graph Theory", "Text Processing", "Algorithm Design"],
       highlights: [
         "Implemented TextRank algorithm for document summarization",
@@ -68,7 +85,7 @@ const Projects = () => {
     {
       title: "Emotional Intelligence in Social Media",
       description: "Data analytics project analyzing emotional intelligence patterns in Twitter users based on gender differences in tweets posted on sensitive topics, providing insights into social media behavior.",
-      image: "/placeholder.svg",
+      image: "/generic-project.png",
       technologies: ["Python", "Data Analytics", "Social Media Mining", "Sentiment Analysis", "Statistical Analysis"],
       highlights: [
         "Analyzed large-scale Twitter dataset",
