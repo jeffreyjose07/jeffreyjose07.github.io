@@ -117,7 +117,7 @@ const Education = () => {
                 M.Tech., mentoring students in Programming, Data Structures, and Theory of Computations.
               </p>
               
-              <div className="grid md:grid-cols-3 gap-8 mt-12">
+              <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-8 mt-12">
                 {achievements.map((achievement, index) => (
                   <div key={index} className="group/item text-center">
                     <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center group-hover/item:bg-blue-100 dark:group-hover/item:bg-blue-900/50 transition-all duration-300">

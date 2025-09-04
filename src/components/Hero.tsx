@@ -13,17 +13,17 @@ const Hero = () => {
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-blue-200/30 to-transparent dark:from-blue-900/30 animate-pulse"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-violet-200/30 to-transparent dark:from-violet-900/30 animate-pulse" style={{ animationDelay: '2s' }}></div>
         
-        {/* Floating orbs - stars/bubbles effect */}
-        <div className="absolute top-20 left-20 w-4 h-4 bg-blue-400/20 dark:bg-blue-400/30 rounded-full animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}></div>
-        <div className="absolute top-40 right-32 w-3 h-3 bg-violet-400/20 dark:bg-violet-400/30 rounded-full animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}></div>
-        <div className="absolute bottom-40 left-32 w-2 h-2 bg-blue-500/30 dark:bg-blue-500/40 rounded-full animate-bounce" style={{ animationDelay: '2s', animationDuration: '5s' }}></div>
-        <div className="absolute bottom-20 right-20 w-5 h-5 bg-violet-500/20 dark:bg-violet-500/30 rounded-full animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}></div>
-        <div className="absolute top-60 left-1/3 w-3 h-3 bg-indigo-400/20 dark:bg-indigo-400/30 rounded-full animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '4.5s' }}></div>
-        <div className="absolute bottom-60 right-1/3 w-4 h-4 bg-blue-300/20 dark:bg-blue-300/30 rounded-full animate-bounce" style={{ animationDelay: '2.5s', animationDuration: '3.2s' }}></div>
+        {/* Floating orbs - stars/bubbles effect - Mobile responsive */}
+        <div className="hidden sm:block absolute top-20 left-20 w-4 h-4 bg-blue-400/20 dark:bg-blue-400/30 rounded-full animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}></div>
+        <div className="absolute top-16 right-8 sm:top-40 sm:right-32 w-2 sm:w-3 h-2 sm:h-3 bg-violet-400/20 dark:bg-violet-400/30 rounded-full animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}></div>
+        <div className="hidden sm:block absolute bottom-40 left-32 w-2 h-2 bg-blue-500/30 dark:bg-blue-500/40 rounded-full animate-bounce" style={{ animationDelay: '2s', animationDuration: '5s' }}></div>
+        <div className="absolute bottom-16 right-8 sm:bottom-20 sm:right-20 w-3 sm:w-5 h-3 sm:h-5 bg-violet-500/20 dark:bg-violet-500/30 rounded-full animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}></div>
+        <div className="absolute top-32 left-1/4 sm:top-60 sm:left-1/3 w-2 sm:w-3 h-2 sm:h-3 bg-indigo-400/20 dark:bg-indigo-400/30 rounded-full animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '4.5s' }}></div>
+        <div className="hidden sm:block absolute bottom-60 right-1/3 w-4 h-4 bg-blue-300/20 dark:bg-blue-300/30 rounded-full animate-bounce" style={{ animationDelay: '2.5s', animationDuration: '3.2s' }}></div>
         
-        {/* Additional smaller particles */}
-        <div className="absolute top-32 left-1/2 w-1 h-1 bg-blue-600/40 dark:bg-blue-400/50 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-32 left-1/4 w-1 h-1 bg-violet-600/40 dark:bg-violet-400/50 rounded-full animate-ping" style={{ animationDelay: '2s' }}></div>
+        {/* Additional smaller particles - Reduced on mobile */}
+        <div className="absolute top-24 left-1/2 w-1 h-1 bg-blue-600/40 dark:bg-blue-400/50 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
+        <div className="hidden sm:block absolute bottom-32 left-1/4 w-1 h-1 bg-violet-600/40 dark:bg-violet-400/50 rounded-full animate-ping" style={{ animationDelay: '2s' }}></div>
         <div className="absolute top-1/2 right-1/4 w-1 h-1 bg-indigo-600/40 dark:bg-indigo-400/50 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
       </div>
 

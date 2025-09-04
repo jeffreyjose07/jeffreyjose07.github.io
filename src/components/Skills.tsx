@@ -80,7 +80,7 @@ const Skills = () => {
               <div className="w-16 h-1 bg-blue-600 rounded-full mx-auto"></div>
             </CardHeader>
             <CardContent className="relative z-10">
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="text-center group/comp">
                   <h4 className="font-semibold text-gray-900 dark:text-white mb-2 group-hover/comp:text-blue-600 dark:group-hover/comp:text-blue-400 transition-colors duration-300">Technical Leadership</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-300">System design, distributed architecture, cross-functional team collaboration, technical mentoring</p>
@@ -148,7 +148,7 @@ const Skills = () => {
             <div className="w-20 h-1 bg-blue-600 rounded-full mx-auto"></div>
           </CardHeader>
           <CardContent className="relative z-10">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {certifications.map((cert, index) => (
                 <div
                   key={index}
