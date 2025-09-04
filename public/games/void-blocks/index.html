@@ -370,6 +370,176 @@
       color: rgba(204, 204, 204, 0.3);
       font-size: 10px;
     }
+
+    /* Mobile Touch Controls */
+    .mobile-controls {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 17, 34, 0.95);
+      border: 2px solid var(--data);
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 0 20px rgba(85, 255, 255, 0.3);
+      z-index: 1000;
+    }
+
+    .mobile-row {
+      display: flex;
+      gap: 10px;
+      margin: 8px 0;
+      justify-content: center;
+    }
+
+    .mobile-btn {
+      background: var(--panel);
+      border: 2px solid var(--terminal);
+      color: var(--terminal);
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border-radius: 8px;
+      min-height: 45px;
+      min-width: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .action-btn {
+      border-color: var(--data);
+      color: var(--data);
+    }
+
+    .move-btn {
+      border-color: var(--terminal);
+      color: var(--terminal);
+      font-size: 20px;
+    }
+
+    .drop-btn {
+      border-color: var(--warning);
+      color: var(--warning);
+      font-size: 12px;
+      min-width: 120px;
+    }
+
+    .mobile-btn:active {
+      background: rgba(85, 255, 85, 0.1);
+      transform: scale(0.95);
+      box-shadow: 0 0 10px currentColor;
+    }
+
+    .action-btn:active {
+      background: rgba(85, 255, 255, 0.1);
+    }
+
+    .drop-btn:active {
+      background: rgba(255, 170, 85, 0.1);
+    }
+
+    /* Mobile Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+        height: auto;
+        min-height: 100vh;
+      }
+
+      .game-area {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+
+      canvas {
+        max-width: 90vw;
+        height: auto;
+      }
+
+      #gameCanvas {
+        width: 250px;
+        height: 500px;
+      }
+
+      .panels {
+        width: 100%;
+        max-width: 400px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .title-panel {
+        grid-column: 1 / 3;
+      }
+
+      .panel {
+        padding: 8px;
+        font-size: 11px;
+      }
+
+      .panel-title {
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
+
+      .controls .control-row {
+        margin: 2px 0;
+        font-size: 10px;
+      }
+
+      .mobile-controls {
+        display: block;
+      }
+
+      .start-content {
+        padding: 20px;
+        max-width: 95vw;
+      }
+
+      .start-title {
+        font-size: 20px;
+      }
+
+      .version {
+        bottom: 160px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #gameCanvas {
+        width: 200px;
+        height: 400px;
+      }
+
+      .panels {
+        grid-template-columns: 1fr;
+      }
+
+      .title-panel {
+        grid-column: 1;
+      }
+
+      .mobile-btn {
+        min-height: 40px;
+        min-width: 50px;
+        font-size: 14px;
+      }
+
+      .drop-btn {
+        min-width: 100px;
+        font-size: 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -458,6 +628,23 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Mobile Touch Controls -->
+  <div class="mobile-controls" id="mobileControls">
+    <div class="mobile-row">
+      <button class="mobile-btn action-btn" id="mobileRotate">🔄</button>
+      <button class="mobile-btn action-btn" id="mobilePause">⏸</button>
+      <button class="mobile-btn action-btn" id="mobileRestart">🆁</button>
+    </div>
+    <div class="mobile-row">
+      <button class="mobile-btn move-btn" id="mobileLeft">←</button>
+      <button class="mobile-btn move-btn" id="mobileDown">↓</button>
+      <button class="mobile-btn move-btn" id="mobileRight">→</button>
+    </div>
+    <div class="mobile-row">
+      <button class="mobile-btn drop-btn" id="mobileDrop">HARD DROP</button>
     </div>
   </div>
   
@@ -1146,6 +1333,68 @@
     console.log('⌨️ Adding keyboard listener...');
     document.addEventListener('keydown', handleKeyInput);
     console.log('✅ Keyboard listener added');
+    
+    // Mobile touch control handlers
+    console.log('📱 Adding mobile control listeners...');
+    const mobileControls = document.getElementById('mobileControls');
+    if (mobileControls) {
+      // Movement controls
+      document.getElementById('mobileLeft').addEventListener('click', () => {
+        if (current && gameStarted && !gameOver && !paused && isValidMove(current, -1, 0)) {
+          current.x--;
+        }
+      });
+      
+      document.getElementById('mobileRight').addEventListener('click', () => {
+        if (current && gameStarted && !gameOver && !paused && isValidMove(current, 1, 0)) {
+          current.x++;
+        }
+      });
+      
+      document.getElementById('mobileDown').addEventListener('click', () => {
+        if (current && gameStarted && !gameOver && !paused && isValidMove(current, 0, 1)) {
+          current.y++;
+          dropTime = 0;
+        }
+      });
+      
+      // Hard drop
+      document.getElementById('mobileDrop').addEventListener('click', () => {
+        if (current && gameStarted && !gameOver && !paused) {
+          while (isValidMove(current, 0, 1)) {
+            current.y++;
+          }
+          dropTime = 0;
+        }
+      });
+      
+      // Rotation
+      document.getElementById('mobileRotate').addEventListener('click', () => {
+        if (current && gameStarted && !gameOver && !paused) {
+          const rotatedPiece = rotatePiece(current);
+          if (isValidMove(rotatedPiece, 0, 0)) {
+            current.shape = rotatedPiece.shape;
+          }
+        }
+      });
+      
+      // Pause/Resume
+      document.getElementById('mobilePause').addEventListener('click', () => {
+        if (gameStarted && !gameOver) {
+          paused = !paused;
+          console.log(`⏸️ Game ${paused ? 'paused' : 'resumed'}`);
+        }
+      });
+      
+      // Restart
+      document.getElementById('mobileRestart').addEventListener('click', () => {
+        if (gameStarted) {
+          restart();
+        }
+      });
+      
+      console.log('✅ Mobile control listeners added');
+    }
   }
   
   function handleKeyInput(e) {
