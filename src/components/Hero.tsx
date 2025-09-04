@@ -1,79 +1,66 @@
 import { Button } from "@/components/ui/button";
-import { Download, Mail, Linkedin, Github } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Download, Mail, Linkedin, Github, ArrowRight } from "lucide-react";
 import profileImage from "@/assets/jeffrey-profile.jpg";
 
 const Hero = () => {
   return (
-    <section id="hero" className="min-h-screen flex items-center justify-center bg-gradient-hero text-white relative overflow-hidden pt-16">
-      {/* Enhanced animated background elements */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-white rounded-full blur-3xl floating" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-glow rounded-full blur-3xl floating-delayed" />
-        <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-primary rounded-full blur-2xl pulse-glow" />
+    <section id="hero" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100 dark:from-gray-900 dark:to-slate-800 relative pt-16">
+      {/* Clean geometric background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-bl from-blue-50/50 to-transparent dark:from-blue-950/30" />
+        <div className="absolute bottom-0 left-0 w-1/3 h-2/3 bg-gradient-to-tr from-violet-50/30 to-transparent dark:from-violet-950/20" />
       </div>
 
-      {/* Floating particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-2 h-2 bg-white rounded-full opacity-60 floating" />
-        <div className="absolute top-40 right-20 w-1 h-1 bg-primary-glow rounded-full opacity-80 floating-delayed" />
-        <div className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-white rounded-full opacity-50 floating" />
-        <div className="absolute bottom-20 right-1/3 w-1 h-1 bg-primary rounded-full opacity-70 floating-delayed" />
-        {/* More bubbles */}
-        <div className="absolute top-10 left-1/2 w-1.5 h-1.5 bg-primary-glow rounded-full opacity-60 floating" />
-        <div className="absolute bottom-10 right-1/4 w-2 h-2 bg-white rounded-full opacity-40 floating-delayed" />
-        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-primary rounded-full opacity-50 floating" />
-        <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 bg-primary-glow rounded-full opacity-70 floating-delayed" />
-      </div>
-
-      <div className="container mx-auto px-4 sm:px-6 text-center relative z-10">
-        {/* Enhanced Profile Image */}
-        <div className="mb-12 slide-up">
-          <div className="relative inline-block">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary-glow rounded-full blur-xl opacity-30 animate-pulse"></div>
-            <div className="relative w-28 h-28 xs:w-32 xs:h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-44 lg:h-44 xl:w-48 xl:h-48 mx-auto rounded-full overflow-hidden border-4 border-white/30 backdrop-blur-sm shadow-glow glow-hover transition-all duration-500 hover:scale-105">
-              <img 
-                src={profileImage} 
-                alt="Jeffrey Jose" 
-                className="w-full h-full object-cover relative z-10"
-                loading="eager"
-              />
-            </div>
-            <div className="absolute -inset-2 bg-gradient-to-r from-primary via-primary-glow to-primary rounded-full opacity-20 blur-lg"></div>
+      <div className="container mx-auto px-4 sm:px-6 text-center relative z-10 max-w-4xl">
+        {/* Modern Profile Section */}
+        <div className="mb-8 slide-up">
+          <Avatar className="w-24 h-24 mx-auto mb-6 ring-4 ring-white/10 shadow-2xl">
+            <AvatarImage src={profileImage} alt="Jeffrey Jose" />
+            <AvatarFallback className="text-2xl font-bold bg-gradient-to-br from-blue-500 to-violet-500 text-white">JJ</AvatarFallback>
+          </Avatar>
+          <div className="flex justify-center mb-4">
+            <Badge variant="secondary" className="px-3 py-1 text-sm font-medium">
+              Available for opportunities
+            </Badge>
           </div>
         </div>
         
         <div className="slide-up-delayed">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-8 sm:mb-12 leading-tight sm:leading-relaxed text-gradient bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-shadow" style={{ paddingBottom: '0.25rem' }}>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent leading-tight">
             Jeffrey Jose
           </h1>
-          <div className="relative inline-block mb-6 sm:mb-8">
-            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium text-white/90 tracking-wide pb-3">
+          <div className="mb-8">
+            <p className="text-xl sm:text-2xl md:text-3xl font-light text-gray-600 dark:text-gray-300 mb-4">
+              Full Stack Developer & Tech Innovator
+            </p>
+            <p className="text-lg text-gray-500 dark:text-gray-400">
               Code craftsman • Tech explorer • Minimalist
-            </h2>
-            <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-32 h-0.5 bg-gradient-to-r from-primary to-primary-glow rounded-full"></div>
+            </p>
           </div>
-          <p className="text-base sm:text-lg md:text-xl mb-8 sm:mb-12 text-white/80 max-w-4xl mx-auto leading-relaxed font-light px-4 sm:px-0">
+          <p className="text-lg md:text-xl mb-12 text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
             Passionate about crafting scalable solutions and driving innovation in software engineering. 
-            Always eager to learn new technologies and solve complex real-world problems.
+            Building the future with clean code and thoughtful architecture.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8 sm:mb-12 px-4 sm:px-0">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button 
-              variant="outline" 
               size="lg" 
-              className="glass-effect border-white/30 text-white hover:bg-white/20 transition-all duration-500 shadow-elegant btn-modern group px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium w-full sm:w-auto"
+              className="group px-8 py-4 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 shadow-lg hover:shadow-xl transition-all duration-300"
               onClick={() => {
-                const contactSection = document.getElementById('contact-section');
+                const contactSection = document.getElementById('contact');
                 contactSection?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
-              <Mail className="mr-3 h-5 w-5 group-hover:scale-110 transition-transform duration-300" />
+              <Mail className="mr-2 h-5 w-5 group-hover:translate-x-0.5 transition-transform" />
               Get in Touch
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
             </Button>
             <Button 
-              variant="secondary" 
+              variant="outline" 
               size="lg"
-              className="bg-gradient-to-r from-white to-gray-100 text-primary hover:from-gray-100 hover:to-white transition-all duration-500 shadow-elegant btn-modern group px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium border-0 w-full sm:w-auto"
+              className="group px-8 py-4 border-2 hover:bg-gray-50 dark:hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300"
               onClick={() => {
                 const link = document.createElement('a');
                 link.href = '/resume.pdf';
@@ -83,36 +70,33 @@ const Hero = () => {
                 document.body.removeChild(link);
               }}
             >
-              <Download className="mr-3 h-5 w-5 group-hover:scale-110 transition-transform duration-300" />
-              Download Resume
+              <Download className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
+              Resume
             </Button>
           </div>
 
-          <div className="flex gap-8 justify-center">
+          <div className="flex gap-6 justify-center">
             <a 
               href="https://www.linkedin.com/in/jeffrey-jose-07-k/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="group relative p-3 rounded-full glass-effect border border-white/20 text-white/80 hover:text-white transition-all duration-500 hover:scale-110 glow-hover"
+              className="group p-3 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
             >
-              <Linkedin className="h-6 w-6 group-hover:scale-110 transition-transform duration-300" />
-              <div className="absolute inset-0 rounded-full bg-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
+              <Linkedin className="h-6 w-6" />
             </a>
             <a 
               href="https://github.com/jeffreyjose07" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="group relative p-3 rounded-full glass-effect border border-white/20 text-white/80 hover:text-white transition-all duration-500 hover:scale-110 glow-hover"
+              className="group p-3 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
             >
-              <Github className="h-6 w-6 group-hover:scale-110 transition-transform duration-300" />
-              <div className="absolute inset-0 rounded-full bg-gray-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
+              <Github className="h-6 w-6" />
             </a>
             <a 
               href="mailto:jeffreyjose.k@gmail.com"
-              className="group relative p-3 rounded-full glass-effect border border-white/20 text-white/80 hover:text-white transition-all duration-500 hover:scale-110 glow-hover"
+              className="group p-3 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:text-red-600 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950/50 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
             >
-              <Mail className="h-6 w-6 group-hover:scale-110 transition-transform duration-300" />
-              <div className="absolute inset-0 rounded-full bg-red-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
+              <Mail className="h-6 w-6" />
             </a>
           </div>
         </div>
