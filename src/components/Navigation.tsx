@@ -54,9 +54,9 @@ const Navigation = () => {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
-        ? "bg-background/95 backdrop-blur-md shadow-lg border-b border-border/20" 
+        ? "bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-sm border-b border-gray-200/20 dark:border-gray-700/20" 
         : "bg-transparent"
     }`}>
       <div className="container mx-auto px-6">
@@ -71,8 +71,8 @@ const Navigation = () => {
               }}
               className={`text-2xl font-bold transition-colors duration-300 ${
                 isScrolled 
-                  ? "text-foreground hover:text-primary" 
-                  : "text-white hover:text-white/80"
+                  ? "text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400" 
+                  : "text-white hover:text-blue-200"
               }`}
             >
               Jeffrey Jose
@@ -92,15 +92,15 @@ const Navigation = () => {
                   }}
                   className={`px-3 py-2 text-sm font-medium transition-all duration-300 relative group ${
                     isScrolled 
-                      ? "text-foreground hover:text-primary" 
+                      ? "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" 
                       : "text-white/90 hover:text-white"
                   }`}
                 >
                   {item.label}
                   <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${
                     isScrolled 
-                      ? "bg-gradient-to-r from-primary to-primary-glow" 
-                      : "bg-gradient-to-r from-white to-white/80"
+                      ? "bg-blue-600 dark:bg-blue-400" 
+                      : "bg-white"
                   }`}></span>
                 </a>
               ))}
@@ -112,7 +112,7 @@ const Navigation = () => {
                 <button
                   className={`px-3 py-2 text-sm font-medium transition-all duration-300 relative group/games flex items-center gap-1 ${
                     isScrolled 
-                      ? "text-foreground hover:text-primary" 
+                      ? "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" 
                       : "text-white/90 hover:text-white"
                   }`}
                 >
@@ -120,13 +120,13 @@ const Navigation = () => {
                   <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isGamesDropdownOpen ? 'rotate-180' : ''}`} />
                   <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover/games:w-full ${
                     isScrolled 
-                      ? "bg-gradient-to-r from-primary to-primary-glow" 
-                      : "bg-gradient-to-r from-white to-white/80"
+                      ? "bg-blue-600 dark:bg-blue-400" 
+                      : "bg-white"
                   }`}></span>
                 </button>
                 
                 {/* Dropdown Menu */}
-                <div className={`absolute top-full left-0 mt-2 w-40 bg-background border border-border/50 rounded-lg shadow-lg transition-all duration-200 ${
+                <div className={`absolute top-full left-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl transition-all duration-200 ${
                   isGamesDropdownOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
                 }`}>
                   {gameItems.map((game) => (
@@ -137,7 +137,7 @@ const Navigation = () => {
                         e.preventDefault();
                         window.location.href = game.href;
                       }}
-                      className="block px-4 py-3 text-sm text-foreground hover:text-primary hover:bg-accent/50 transition-all duration-200 first:rounded-t-lg last:rounded-b-lg"
+                      className="block px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200 first:rounded-t-lg last:rounded-b-lg"
                     >
                       {game.label}
                     </a>
