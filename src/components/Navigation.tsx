@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Sun, Moon, ChevronDown } from "lucide-react";
 import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -11,13 +12,13 @@ const Navigation = () => {
 
   const navItems = [
     { label: "Home", href: "#hero" },
-    { label: "Experience", href: "#experience" },
     { label: "Projects", href: "#projects" },
     { label: "Skills", href: "#skills" },
+    { label: "Experience", href: "#experience" },
     { label: "Education", href: "#education" },
+    { label: "Contact", href: "#contact" },
     { label: "Blog", href: "/blog", external: true },
-    { label: "Analytics", href: "/analytics.html", external: true },
-    { label: "Contact", href: "#contact" }
+    { label: "Analytics", href: "/analytics.html", external: true }
   ];
 
   const gameItems = [
@@ -83,7 +84,7 @@ const Navigation = () => {
               className={`text-2xl font-bold transition-colors duration-300 ${
                 isScrolled 
                   ? "text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400" 
-                  : "text-white hover:text-blue-200"
+                  : "text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
               }`}
             >
               Jeffrey Jose
@@ -104,14 +105,14 @@ const Navigation = () => {
                   className={`px-3 py-2 text-sm font-medium transition-all duration-300 relative group ${
                     isScrolled 
                       ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400" 
-                      : "text-white/90 hover:text-white"
+                      : "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
                   }`}
                 >
                   {item.label}
                   <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${
                     isScrolled 
                       ? "bg-blue-600 dark:bg-blue-400" 
-                      : "bg-white"
+                      : "bg-blue-600 dark:bg-blue-400"
                   }`}></span>
                 </a>
               ))}
@@ -126,7 +127,7 @@ const Navigation = () => {
                   className={`px-3 py-2 text-sm font-medium transition-all duration-300 relative group/games flex items-center gap-1 ${
                     isScrolled 
                       ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400" 
-                      : "text-white/90 hover:text-white"
+                      : "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
                   }`}
                 >
                   Games
@@ -134,7 +135,7 @@ const Navigation = () => {
                   <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover/games:w-full ${
                     isScrolled 
                       ? "bg-blue-600 dark:bg-blue-400" 
-                      : "bg-white"
+                      : "bg-blue-600 dark:bg-blue-400"
                   }`}></span>
                 </button>
                 
@@ -161,22 +162,19 @@ const Navigation = () => {
               
               {/* Desktop Theme Toggle - integrated into nav */}
               {mounted && (
-                <button
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  className={`p-2 rounded-lg transition-all duration-300 ${
-                    isScrolled
-                      ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 bg-gray-100/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600"
-                      : "text-white/90 hover:text-white bg-white/10 hover:bg-white/20 border border-white/20"
-                  }`}
+                  className="h-10 w-10 p-0"
                   aria-label="Toggle theme"
-                  type="button"
                 >
                   {theme === "dark" ? (
                     <Sun size={18} />
                   ) : (
                     <Moon size={18} />
                   )}
-                </button>
+                </Button>
               )}
             </div>
           </div>
@@ -184,36 +182,30 @@ const Navigation = () => {
           {/* Mobile controls - Theme toggle and menu button */}
           <div className="md:hidden flex items-center space-x-2">
             {/* Theme toggle for mobile */}
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className={`p-2 touch-manipulation rounded-lg border transition-all duration-200 active:scale-95 ${
-                isScrolled
-                  ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 bg-gray-100/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600 border-gray-200 dark:border-gray-600"
-                  : "text-white/90 hover:text-white bg-white/10 hover:bg-white/20 border-white/20"
-              }`}
+              className="h-10 w-10 p-0"
               aria-label="Toggle theme"
-              type="button"
             >
               {mounted && theme === "dark" ? (
                 <Sun size={20} />
               ) : (
                 <Moon size={20} />
               )}
-            </button>
+            </Button>
             
             {/* Hamburger menu button */}
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`p-3 touch-manipulation rounded-lg border transition-all duration-200 active:scale-95 ${
-                isScrolled
-                  ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 bg-gray-100/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600 border-gray-200 dark:border-gray-600"
-                  : "text-white/90 hover:text-white bg-white/10 hover:bg-white/20 border-white/20"
-              }`}
+              className="h-12 w-12 p-0"
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-              type="button"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            </Button>
           </div>
         </div>
 
