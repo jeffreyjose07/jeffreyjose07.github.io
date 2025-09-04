@@ -38,6 +38,17 @@ const Navigation = () => {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isGamesDropdownOpen) {
+        setIsGamesDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isGamesDropdownOpen]);
+
   const handleNavClick = (href: string, external?: boolean) => {
     setIsMobileMenuOpen(false);
     if (external) {
@@ -92,7 +103,7 @@ const Navigation = () => {
                   }}
                   className={`px-3 py-2 text-sm font-medium transition-all duration-300 relative group ${
                     isScrolled 
-                      ? "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" 
+                      ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400" 
                       : "text-white/90 hover:text-white"
                   }`}
                 >
@@ -106,13 +117,15 @@ const Navigation = () => {
               ))}
               
               {/* Games Dropdown */}
-              <div className="relative group" 
-                   onMouseEnter={() => setIsGamesDropdownOpen(true)}
-                   onMouseLeave={() => setIsGamesDropdownOpen(false)}>
+              <div className="relative group">
                 <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsGamesDropdownOpen(!isGamesDropdownOpen);
+                  }}
                   className={`px-3 py-2 text-sm font-medium transition-all duration-300 relative group/games flex items-center gap-1 ${
                     isScrolled 
-                      ? "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" 
+                      ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400" 
                       : "text-white/90 hover:text-white"
                   }`}
                 >
@@ -126,7 +139,7 @@ const Navigation = () => {
                 </button>
                 
                 {/* Dropdown Menu */}
-                <div className={`absolute top-full left-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl transition-all duration-200 ${
+                <div className={`absolute top-full left-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl transition-all duration-200 z-50 ${
                   isGamesDropdownOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
                 }`}>
                   {gameItems.map((game) => (
@@ -135,9 +148,10 @@ const Navigation = () => {
                       href={game.href}
                       onClick={(e) => {
                         e.preventDefault();
+                        setIsGamesDropdownOpen(false);
                         window.location.href = game.href;
                       }}
-                      className="block px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200 first:rounded-t-lg last:rounded-b-lg"
+                      className="block px-4 py-3 text-sm text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200 first:rounded-t-lg last:rounded-b-lg"
                     >
                       {game.label}
                     </a>
@@ -151,7 +165,7 @@ const Navigation = () => {
                   onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                   className={`p-2 rounded-lg transition-all duration-300 ${
                     isScrolled
-                      ? "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 bg-gray-100/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600"
+                      ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 bg-gray-100/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600"
                       : "text-white/90 hover:text-white bg-white/10 hover:bg-white/20 border border-white/20"
                   }`}
                   aria-label="Toggle theme"
@@ -174,7 +188,7 @@ const Navigation = () => {
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className={`p-2 touch-manipulation rounded-lg border transition-all duration-200 active:scale-95 ${
                 isScrolled
-                  ? "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 bg-gray-100/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600 border-gray-200 dark:border-gray-600"
+                  ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 bg-gray-100/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600 border-gray-200 dark:border-gray-600"
                   : "text-white/90 hover:text-white bg-white/10 hover:bg-white/20 border-white/20"
               }`}
               aria-label="Toggle theme"
@@ -192,7 +206,7 @@ const Navigation = () => {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`p-3 touch-manipulation rounded-lg border transition-all duration-200 active:scale-95 ${
                 isScrolled
-                  ? "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 bg-gray-100/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600 border-gray-200 dark:border-gray-600"
+                  ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 bg-gray-100/50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600 border-gray-200 dark:border-gray-600"
                   : "text-white/90 hover:text-white bg-white/10 hover:bg-white/20 border-white/20"
               }`}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
@@ -219,7 +233,7 @@ const Navigation = () => {
                     e.preventDefault();
                     handleNavClick(item.href, (item as any).external);
                   }}
-                  className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 block px-4 py-3 text-base font-medium transition-all duration-200 rounded-lg border border-transparent hover:border-gray-200 dark:hover:border-gray-600 active:bg-gray-100 dark:active:bg-gray-700"
+                  className="text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 block px-4 py-3 text-base font-medium transition-all duration-200 rounded-lg border border-transparent hover:border-gray-200 dark:hover:border-gray-600 active:bg-gray-100 dark:active:bg-gray-700"
                 >
                   {item.label}
                 </a>
@@ -239,7 +253,7 @@ const Navigation = () => {
                       setIsMobileMenuOpen(false);
                       window.location.href = game.href;
                     }}
-                    className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 block px-8 py-2 text-base font-medium transition-all duration-200 rounded-lg border border-transparent hover:border-gray-200 dark:hover:border-gray-600 active:bg-gray-100 dark:active:bg-gray-700"
+                    className="text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 block px-8 py-2 text-base font-medium transition-all duration-200 rounded-lg border border-transparent hover:border-gray-200 dark:hover:border-gray-600 active:bg-gray-100 dark:active:bg-gray-700"
                   >
                     {game.label}
                   </a>
