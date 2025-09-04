@@ -32,10 +32,7 @@ const Hero = () => {
             Jeffrey Jose
           </h1>
           <div className="mb-8">
-            <p className="text-xl sm:text-2xl md:text-3xl font-light text-gray-600 dark:text-gray-300 mb-4">
-              Full Stack Developer & Tech Innovator
-            </p>
-            <p className="text-lg text-gray-500 dark:text-gray-400">
+            <p className="text-xl sm:text-2xl md:text-3xl font-light text-gray-600 dark:text-gray-300">
               Code craftsman • Tech explorer • Minimalist
             </p>
           </div>
