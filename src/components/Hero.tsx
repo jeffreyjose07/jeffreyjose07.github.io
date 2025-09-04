@@ -43,7 +43,7 @@ const Hero = () => {
         </div>
         
         <div className="slide-up-delayed">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white bg-clip-text text-transparent leading-tight drop-shadow-sm">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-8 pb-2 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white bg-clip-text text-transparent leading-normal drop-shadow-sm">
             Jeffrey Jose
           </h1>
           <div className="mb-8">
