@@ -4,17 +4,17 @@
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Building a Secure Snake Game with Terminal Aesthetic - Jeffrey Jose</title>
-    <meta name="description" content="How we built a security-hardened Snake game with terminal aesthetic styling and integrated it into the portfolio" />
+    <title>adding custom domain: jeffreyjose07.is-a.dev - Jeffrey Jose</title>
+    <meta name="description" content="How I configured a custom domain for my portfolio and blog, moving from jeffreyjose07.github.io to jeffreyjose07.is-a.dev" />
     
     <!-- SEO Meta Tags -->
-    <meta property="og:title" content="Building a Secure Snake Game with Terminal Aesthetic">
-    <meta property="og:description" content="How we built a security-hardened Snake game with terminal aesthetic styling and integrated it into the portfolio">
-    <meta property="og:url" content="https://jeffreyjose07.github.io/blog/building-a-secure-snake-game-with-terminal-aesthet">
+    <meta property="og:title" content="adding custom domain: jeffreyjose07.is-a.dev">
+    <meta property="og:description" content="How I configured a custom domain for my portfolio and blog, moving from jeffreyjose07.github.io to jeffreyjose07.is-a.dev">
+    <meta property="og:url" content="https://jeffreyjose07.github.io/blog/adding-custom-domain-jeffreyjose07is-adev">
     <meta property="og:type" content="article">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Building a Secure Snake Game with Terminal Aesthetic">
-    <meta name="twitter:description" content="How we built a security-hardened Snake game with terminal aesthetic styling and integrated it into the portfolio">
+    <meta name="twitter:title" content="adding custom domain: jeffreyjose07.is-a.dev">
+    <meta name="twitter:description" content="How I configured a custom domain for my portfolio and blog, moving from jeffreyjose07.github.io to jeffreyjose07.is-a.dev">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <style>
         * {
@@ -491,7 +491,7 @@
 
     <div class="container">
         <div class="breadcrumb">
-            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>Building a Secure Snake Game with Terminal Aesthetic</span>
+            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>adding custom domain: jeffreyjose07.is-a.dev</span>
         </div>
         
         <div class="back-link">
@@ -513,258 +513,165 @@
         </div>
         
         <header class="post-header">
-            <h1 class="post-title">015: Building a Secure Snake Game with Terminal Aesthetic</h1>
-            <div class="post-meta">2 Sep 2025</div>
+            <h1 class="post-title">016: adding custom domain: jeffreyjose07.is-a.dev</h1>
+            <div class="post-meta">24 Jan 2025</div>
         </header>
         
         <article class="post-content">
-            <h1>Building a Secure Snake Game with <span class="meta">Terminal</span> <span class="meta">Aesthetic</span></h1>
-<p>Adding games to a developer portfolio creates an engaging way to showcase technical skills while providing interactive entertainment. Today, I&#39;ll walk through how we built and integrated a <span class="attention">security</span>-hardened Snake game that perfectly matches our <span class="meta">terminal</span> <span class="meta">aesthetic</span>.</p>
-<h2>Project Requirements</h2>
-<p>Our goals were clear from the start:</p>
+            <p>The journey from a default <strong><span class="success">GitHub</span> Pages</strong> subdomain to a custom domain is a rite of passage for any developer&#39;s portfolio. Today, I&#39;m documenting how I successfully migrated my site from <code>jeffreyjose07.github.io</code> to <code>jeffreyjose07.is-a.dev</code> - a cleaner, more professional URL that better represents my digital presence.</p>
+<h2>why a custom domain matters</h2>
+<p>A custom domain isn&#39;t just vanity - it&#39;s about <strong>professionalism</strong> and <strong>branding</strong>. When someone sees <code>jeffreyjose07.is-a.dev</code>, they immediately understand this is a developer&#39;s personal site. The <code>.is-a.dev</code> TLD specifically signals technical expertise, which aligns perfectly with my portfolio&#39;s <strong><span class="meta">terminal</span> <span class="meta">aesthetic</span></strong> and technical focus.</p>
+<p>Beyond aesthetics, custom domains provide:</p>
 <ul>
-<li><strong><span class="attention">Security</span> first</strong>: No vulnerabilities or backdoors</li>
-<li><strong><span class="meta">Terminal</span> <span class="meta">aesthetic</span></strong>: Match the existing 90s BBS styling</li>
-<li><strong>Zero dependencies</strong>: Self-contained, no external libraries</li>
-<li><strong><span class="success">Performance</span> optimized</strong>: Smooth 60fps gameplay</li>
-<li><strong>Responsive design</strong>: Works on desktop and mobile</li>
-<li><strong>Portfolio <span class="connection">integration</span></strong>: Seamless navigation experience</li>
+<li><strong>SEO benefits</strong> - cleaner URLs are more memorable and shareable</li>
+<li><strong>Professional credibility</strong> - shows attention to detail and technical competence  </li>
+<li><strong>Future flexibility</strong> - easier to migrate hosting providers if needed</li>
+<li><strong>Brand consistency</strong> - matches the minimalist, technical approach of the site</li>
 </ul>
-<h2><span class="attention">Security</span> <span class="structure">Architecture</span></h2>
-<p><span class="attention">Security</span> was our top priority, implementing multiple layers of protection:</p>
-<h3>Strict Mode <span class="process">JavaScript</span></h3>
-<pre><code class="language-javascript">(() =&gt; {
-  &#39;use strict&#39;;
-  // All code runs in strict mode to prevent common security issues
-})();
-</code></pre>
-<h3>Secure Random Generation</h3>
-<p>Instead of <code>Math.random()</code>, we use cryptographically secure randomness:</p>
-<pre><code class="language-javascript">function secureRandom(min, max) {
-  const range = max - min + 1;
-  const array = new Uint32Array(1);
-  crypto.getRandomValues(array);
-  return Math.floor((array[0] / (0xFFFFFFFF + 1)) * range) + min;
+<h2>choosing the right domain</h2>
+<p>I selected <code>jeffreyjose07.is-a.dev</code> for several strategic reasons:</p>
+<p><strong>Technical alignment</strong>: The <code>.is-a.dev</code> TLD immediately communicates that this is a developer&#39;s site, perfectly matching my portfolio&#39;s <strong><span class="meta">terminal</span> <span class="meta">aesthetic</span></strong> and technical content.</p>
+<p><strong>Memorability</strong>: Shorter than the default <span class="success">GitHub</span> subdomain, easier to type and remember.</p>
+<p><strong>Availability</strong>: Unlike <code>.com</code> domains, <code>.is-a.dev</code> had my preferred username available without compromise.</p>
+<p><strong>Cost efficiency</strong>: More affordable than premium <code>.com</code> domains while maintaining professional credibility.</p>
+<h2>the technical setup process</h2>
+<h3>step 1: is-a.dev subdomain registration</h3>
+<p>Unlike traditional domain registration, <strong>is-a.dev</strong> operates as a community-driven service. I submitted a pull request to their <a href="https://github.com/is-a-dev/register"><span class="success">GitHub</span> repository</a> with a domain configuration file.</p>
+<p><strong>Domain file <span class="structure">structure</span></strong> (<code>domains/jeffreyjose07.json</code>):</p>
+<pre><code class="language-json">{
+    &quot;owner&quot;: {
+        &quot;username&quot;: &quot;jeffreyjose07&quot;,
+        &quot;email&quot;: &quot;jeffreyjose07@example.com&quot;
+    },
+    &quot;records&quot;: {
+        &quot;CNAME&quot;: &quot;jeffreyjose07.github.io&quot;
+    }
 }
 </code></pre>
-<h3>Input Validation and Sanitization</h3>
-<p>All user inputs are validated with strict bounds checking:</p>
-<pre><code class="language-javascript">function updateSpeed(newSpeed) {
-  const speed = parseInt(newSpeed, 10);
-  if (speed &gt;= 1 &amp;&amp; speed &lt;= 50) { // Security: validate range
-    gameState.speed = speed;
-    gameState.stepMs = 1000 / speed;
-  }
-}
-</code></pre>
-<h3>DOM Element Validation</h3>
-<p>We validate all DOM references exist before use:</p>
-<pre><code class="language-javascript">for (const [key, element] of Object.entries(elements)) {
-  if (!element) {
-    console.error(`Critical element missing: ${key}`);
-    return;
-  }
-}
-</code></pre>
-<h2><span class="meta">Terminal</span> <span class="meta">Aesthetic</span> Implementation</h2>
-<p>The visual design follows our strict <span class="meta">terminal</span> color palette and typography conventions.</p>
-<h3>Color <span class="structure">System</span></h3>
-<pre><code class="language-css">:root {
-  --terminal-green: #55ff55;
-  --terminal-amber: #ff8855;
-  --terminal-cyan: #55ffff;
-  --terminal-magenta: #ff55ff;
-  --terminal-bg: #000000;
-  --terminal-gray: #c9c9c9;
-  --terminal-dark-gray: #333333;
-}
-</code></pre>
-<h3>Typography and Layout</h3>
-<p>All text uses our monospace font stack:</p>
-<pre><code class="language-css">font-family: &#39;Monaco&#39;, &#39;Menlo&#39;, &#39;Ubuntu Mono&#39;, monospace;
-</code></pre>
-<p>Visual elements include:</p>
-<ul>
-<li><strong>Grid-based game board</strong> with <span class="meta">terminal</span>-style borders</li>
-<li><strong>ASCII key representations</strong> for controls (<code>[↑]</code>, <code>[Space]</code>, <code>[R]</code>)</li>
-<li><strong>Glowing effects</strong> on food items</li>
-<li><strong><span class="meta">Terminal</span> window styling</strong> for overlays and banners</li>
-</ul>
-<h2>Game Engine <span class="structure">Architecture</span></h2>
-<p>The game engine uses a clean, modular <span class="structure">architecture</span> optimized for <span class="success">performance</span> and maintainability.</p>
-<h3>Game State Management</h3>
-<pre><code class="language-javascript">const gameState = {
-  status: &#39;idle&#39;, // &#39;idle&#39; | &#39;running&#39; | &#39;paused&#39; | &#39;gameover&#39;
-  wrapMode: false,
-  speed: 8,
-  stepMs: 125,
-  score: 0,
-  snake: [],
-  dir: {x: 1, y: 0},
-  nextDir: {x: 1, y: 0},
-  food: {x: 0, y: 0}
-};
-</code></pre>
-<h3>Game Loop Implementation</h3>
-<p>The game loop uses <code>requestAnimationFrame</code> for smooth 60fps <span class="success">performance</span>:</p>
-<pre><code class="language-javascript">function gameLoop(timestamp) {
-  if (gameState.status !== &#39;running&#39;) return;
-  
-  const deltaTime = timestamp - gameState.last;
-  gameState.last = timestamp;
-  gameState.acc += deltaTime;
-
-  while (gameState.acc &gt;= gameState.stepMs) {
-    gameStep();
-    gameState.acc -= gameState.stepMs;
-  }
-  
-  draw();
-  gameState.rafId = requestAnimationFrame(gameLoop);
-}
-</code></pre>
-<h2>Advanced Features</h2>
-<h3>Collision Detection</h3>
-<p>The collision <span class="structure">system</span> prevents self-collision while allowing tail movement:</p>
-<pre><code class="language-javascript">const selfCollision = gameState.snake.some((segment, index) =&gt; {
-  if (!willEat &amp;&amp; index === gameState.snake.length - 1 &amp;&amp; 
-      segment.x === tail.x &amp;&amp; segment.y === tail.y) {
-    return false;
-  }
-  return index &gt; 0 &amp;&amp; segment.x === headX &amp;&amp; segment.y === headY;
-});
-</code></pre>
-<h3>Touch Controls</h3>
-<p>Mobile support with gesture recognition:</p>
-<pre><code class="language-javascript">function handleTouchMove(e) {
-  const dx = touch.clientX - gameState.touchStart.x;
-  const dy = touch.clientY - gameState.touchStart.y;
-  const threshold = 30;
-  
-  if (Math.abs(dx) &gt; Math.abs(dy)) {
-    queueTurn(dx &gt; 0 ? 1 : -1, 0);
-  } else {
-    queueTurn(0, dy &gt; 0 ? 1 : -1);
-  }
-}
-</code></pre>
-<h3>Rendering <span class="structure">System</span></h3>
-<p>The canvas rendering <span class="structure">system</span> includes grid visualization and visual effects:</p>
-<pre><code class="language-javascript">function drawCell(gridX, gridY, color, glow = false) {
-  const x = gridX * CELL + 2;
-  const y = gridY * CELL + 2;
-  const size = CELL - 4;
-
-  ctx.fillStyle = color;
-  ctx.fillRect(x, y, size, size);
-
-  if (glow) {
-    ctx.shadowColor = color;
-    ctx.shadowBlur = 10;
-    ctx.fillRect(x, y, size, size);
-    ctx.shadowBlur = 0;
-  }
-}
-</code></pre>
-<h2>Portfolio <span class="connection">Integration</span></h2>
-<h3>Navigation <span class="connection">Integration</span></h3>
-<p>We added the Snake game to the main navigation menu:</p>
-<pre><code class="language-javascript">const navItems = [
-  { label: &quot;Home&quot;, href: &quot;#hero&quot; },
-  { label: &quot;Experience&quot;, href: &quot;#experience&quot; },
-  { label: &quot;Projects&quot;, href: &quot;#projects&quot; },
-  { label: &quot;Skills&quot;, href: &quot;#skills&quot; },
-  { label: &quot;Education&quot;, href: &quot;#education&quot; },
-  { label: &quot;Blog&quot;, href: &quot;/blog&quot;, external: true },
-  { label: &quot;Snake&quot;, href: &quot;/snake.html&quot;, external: true }, // New addition
-  { label: &quot;Analytics&quot;, href: &quot;/analytics.html&quot;, external: true },
-  { label: &quot;Contact&quot;, href: &quot;#contact&quot; }
-];
-</code></pre>
-<h3>File <span class="structure">Structure</span></h3>
-<pre><code>public/
-├── snake.html          # Self-contained game file
-└── favicon.ico
-
-src/components/
-└── Navigation.tsx       # Updated with Snake link
-</code></pre>
-<h2><span class="success">Performance</span> Optimizations</h2>
-<h3>Memory Management</h3>
-<ul>
-<li><strong>Object pooling</strong> for game entities</li>
-<li><strong><span class="success">Efficient</span> collision detection</strong> with early exits</li>
-<li><strong><span class="meta">Minimal</span> DOM manipulation</strong> during gameplay</li>
-<li><strong>RequestAnimationFrame</strong> for smooth rendering</li>
-</ul>
-<h3><span class="process">Code</span> Size <span class="success">Optimization</span></h3>
-<p>The entire game fits in a single <span class="process">HTML</span> file under 50KB:</p>
-<ul>
-<li><strong>No external dependencies</strong></li>
-<li><strong>Minified <span class="process">CSS</span> embedded inline</strong></li>
-<li><strong>Optimized <span class="process">JavaScript</span> with no libraries</strong></li>
-<li><strong>Compressed assets and <span class="success">efficient</span> algorithms</strong></li>
-</ul>
-<h2><span class="attention">Security</span> Testing Results</h2>
-<p>Our <span class="attention">security</span> audit revealed zero vulnerabilities:</p>
-<ul>
-<li>✅ <strong>No XSS vectors</strong> - all user input sanitized</li>
-<li>✅ <strong>No injection risks</strong> - no eval() or dynamic <span class="process">code</span> execution</li>
-<li>✅ <strong>Safe localStorage usage</strong> - properly sanitized data storage</li>
-<li>✅ <strong>Input validation</strong> - all user inputs bounded and validated</li>
-<li>✅ <strong>No external dependencies</strong> - zero attack surface from third-party <span class="process">code</span></li>
-</ul>
-<h2>Technical Specifications</h2>
-<ul>
-<li><strong>File size</strong>: &lt;50KB total</li>
-<li><strong><span class="success">Performance</span></strong>: 60fps consistent gameplay</li>
-<li><strong>Browser support</strong>: All modern browsers</li>
-<li><strong>Mobile support</strong>: Full touch controls</li>
-<li><strong>Accessibility</strong>: Keyboard navigation and ARIA labels</li>
-<li><strong><span class="attention">Security</span></strong>: Multiple layers of input validation and sanitization</li>
-</ul>
-<h2>Lessons Learned</h2>
-<p>Building this game reinforced several important principles:</p>
+<p>This <strong><span class="process">JSON</span> configuration</strong> tells the is-a.dev DNS <span class="structure">system</span> to point <code>jeffreyjose07.is-a.dev</code> to my <strong><span class="success">GitHub</span> Pages</strong> repository.</p>
+<h3>step 2: <span class="success">github</span> pages configuration</h3>
+<p>After the pull request was merged, I configured <strong><span class="success">GitHub</span> Pages</strong>:</p>
 <ol>
-<li><strong><span class="attention">Security</span> by design</strong> - implementing <span class="attention">security</span> from the ground up is easier than retrofitting</li>
-<li><strong><span class="success">Performance</span> matters</strong> - smooth gameplay requires careful <span class="success">optimization</span></li>
-<li><strong><span class="meta">Aesthetic</span> consistency</strong> - maintaining visual coherence across portfolio sections</li>
-<li><strong>Mobile-first thinking</strong> - touch controls are just as important as keyboard input</li>
-<li><strong><span class="process">Code</span> organization</strong> - clean <span class="structure">architecture</span> makes maintenance easier</li>
+<li><strong>Settings</strong> → <strong>Pages</strong> → <strong>Custom domain</strong></li>
+<li>Added <code>jeffreyjose07.is-a.dev</code> in the custom domain field</li>
+<li><strong>Enforce <span class="connection">HTTPS</span></strong> checkbox enabled for <span class="attention">security</span></li>
 </ol>
-<h2>Future Enhancements</h2>
-<p>Potential improvements for future iterations:</p>
+<p><strong>Important</strong>: Only configure the custom domain in <strong><span class="success">GitHub</span> Pages</strong> <em>after</em> the is-a.dev pull request is merged, otherwise you&#39;ll see 404 errors.</p>
+<h3>step 3: domain verification process</h3>
+<p><strong><span class="success">GitHub</span> Pages</strong> requires domain verification through a <strong>TXT record</strong>. The process involves:</p>
+<ol>
+<li><strong>Get verification string</strong>: In <span class="success">GitHub</span> Pages settings, click &quot;Add a domain&quot; and enter <code>jeffreyjose07.is-a.dev</code></li>
+<li><strong>Copy hostname and verification <span class="process">code</span></strong> provided by <span class="success">GitHub</span></li>
+<li><strong>Create verification file</strong>: Submit another pull request to is-a.dev with:</li>
+</ol>
+<pre><code class="language-json">{
+    &quot;owner&quot;: {
+        &quot;username&quot;: &quot;jeffreyjose07&quot;, 
+        &quot;email&quot;: &quot;jeffreyjose07@example.com&quot;
+    },
+    &quot;records&quot;: {
+        &quot;TXT&quot;: &quot;github-verification-string-here&quot;
+    }
+}
+</code></pre>
+<ol start="4">
+<li><strong>Wait for DNS propagation</strong> (can take up to 24 hours)</li>
+<li><strong>Verify domain</strong> in <span class="success">GitHub</span> Pages settings</li>
+</ol>
+<h3>step 4: dns propagation and testing</h3>
+<p>The <strong>is-a.dev</strong> service handles all DNS configuration automatically. Once the pull requests are merged:</p>
 <ul>
-<li><strong>Sound effects</strong> with <span class="meta">terminal</span>-style beeps and bleeps</li>
-<li><strong>High score leaderboard</strong> with persistent storage</li>
-<li><strong>Multiple game modes</strong> like timed challenges or obstacles</li>
-<li><strong>Power-ups</strong> that fit the <span class="meta">terminal</span> <span class="meta">aesthetic</span></li>
-<li><strong>Multiplayer support</strong> via <span class="connection">WebSocket</span> connections</li>
+<li><strong>CNAME record</strong> points <code>jeffreyjose07.is-a.dev</code> → <code>jeffreyjose07.github.io</code></li>
+<li><strong>TXT record</strong> provides domain verification for <span class="success">GitHub</span></li>
+<li><strong><span class="connection">HTTPS</span> certificate</strong> is automatically provisioned by <span class="success">GitHub</span> Pages</li>
 </ul>
-<h2>Conclusion</h2>
-<p>This project demonstrates how to <span class="process">build</span> secure, performant games while maintaining strict <span class="meta">aesthetic</span> guidelines. The combination of <span class="attention">security</span>-first development, <span class="meta">terminal</span> styling, and smooth gameplay creates an engaging portfolio piece that showcases both technical skills and attention to detail.</p>
-<p>The Snake game now serves as both entertainment and a demonstration of our development capabilities, seamlessly integrated into the portfolio experience while maintaining our commitment to <span class="attention">security</span> and <span class="success">performance</span>.</p>
-<p><em>View the <span class="success">live</span> game at <a href="/snake.html">/snake.<span class="process">html</span></a> and explore the source <span class="process">code</span> to see these techniques in action.</em></p>
+<p>I monitored the setup using online <strong>DNS checker</strong> tools to verify propagation across different global locations.</p>
+<h2>the migration experience</h2>
+<h3>dns propagation</h3>
+<p>The most nerve-wracking part was waiting for <strong>DNS propagation</strong>. Changes can take up to 24 hours, but mine propagated within 2 hours. I used online <strong>DNS checker</strong> tools to monitor progress across different global locations.</p>
+<h3><span class="connection">https</span> enforcement</h3>
+<p>Once the domain was verified, I enabled <strong><span class="connection">HTTPS</span> enforcement</strong> in <strong><span class="success">GitHub</span> Pages</strong> settings. This ensures all traffic is encrypted and provides the <span class="attention">security</span> padlock that users expect.</p>
+<h3>testing the migration</h3>
+<p>I thoroughly tested:</p>
+<ul>
+<li><strong>Root domain</strong> access (<code>jeffreyjose07.is-a.dev</code>)</li>
+<li><strong>WWW subdomain</strong> redirects</li>
+<li><strong><span class="connection">HTTPS</span></strong> enforcement and certificate validity</li>
+<li><strong>All existing URLs</strong> and internal links</li>
+<li><strong>Mobile responsiveness</strong> on the new domain</li>
+</ul>
+<h2>lessons learned</h2>
+<h3>community-driven domain service</h3>
+<p><strong>is-a.dev</strong> operates differently from traditional domain registrars. The process involves:</p>
+<ul>
+<li><strong>Pull request <span class="connection">workflow</span></strong> instead of automated registration</li>
+<li><strong>Community review</strong> of domain requests</li>
+<li><strong>Free service</strong> supported by donations and community contributions</li>
+<li><strong>Developer-focused</strong> TLD that signals technical expertise</li>
+</ul>
+<h3>timing is <span class="attention">critical</span></h3>
+<p>The order of operations matters significantly:</p>
+<ol>
+<li><strong>First</strong>: Submit is-a.dev pull request and wait for merge</li>
+<li><strong>Then</strong>: Configure custom domain in <span class="success">GitHub</span> Pages</li>
+<li><strong>Finally</strong>: Submit verification TXT record pull request</li>
+</ol>
+<p>Doing these steps out of order results in 404 errors and verification failures.</p>
+<h3>dns patience required</h3>
+<p><strong>DNS propagation</strong> through is-a.dev can take longer than traditional registrars:</p>
+<ul>
+<li><strong>Initial setup</strong>: 2-6 hours for pull request merge</li>
+<li><strong>DNS propagation</strong>: Up to 24 hours for global availability</li>
+<li><strong>Verification</strong>: Additional 24 hours for <span class="success">GitHub</span> domain verification</li>
+</ul>
+<h3><span class="success">github</span> actions compatibility</h3>
+<p>My existing <strong><span class="success">GitHub</span> Actions</strong> <span class="connection">workflow</span> continued <span class="success">working</span> seamlessly. The <span class="process">build</span> process automatically detected the custom domain and updated all generated URLs accordingly.</p>
+<h3>seo considerations</h3>
+<p><strong><span class="success">GitHub</span> Pages</strong> automatically handles redirects from the old subdomain, preserving <strong>SEO value</strong> and ensuring existing bookmarks continue <span class="success">working</span>.</p>
+<h3>monitoring and maintenance</h3>
+<p><strong>is-a.dev</strong> handles DNS management, while <strong><span class="success">GitHub</span> Pages</strong> manages <span class="connection">HTTPS</span> certificates. Both services provide <span class="success">reliable</span> uptime and automatic renewal.</p>
+<h2>the result</h2>
+<p>The migration was successful and transparent. My portfolio now lives at <code>https://jeffreyjose07.is-a.dev/</code> with:</p>
+<ul>
+<li><strong>Faster perceived loading</strong> due to cleaner URLs</li>
+<li><strong>Professional credibility</strong> from the custom domain</li>
+<li><strong>Maintained functionality</strong> - all features work identically</li>
+<li><strong>Enhanced branding</strong> that aligns with the technical <span class="meta">aesthetic</span></li>
+</ul>
+<p>The <strong><span class="meta">terminal</span> <span class="meta">aesthetic</span></strong> of the site now has a domain that matches its technical sophistication. The <code>.is-a.dev</code> TLD perfectly complements the minimalist, developer-focused design <span class="meta">philosophy</span>.</p>
+<h2>the is-a.dev community</h2>
+<p><strong>is-a.dev</strong> is more than just a domain service - it&#39;s a community of developers who value:</p>
+<ul>
+<li><strong>Open source principles</strong> with transparent domain management</li>
+<li><strong>Developer-first approach</strong> with technical TLDs</li>
+<li><strong>Community support</strong> through <span class="success">GitHub</span>-based workflows</li>
+<li><strong>Accessibility</strong> with free subdomains for developers</li>
+</ul>
+<p>The pull request process ensures quality control and prevents domain squatting, while the community-driven approach aligns perfectly with the <strong>open source</strong> nature of my portfolio and blog.</p>
+<h2>next steps</h2>
+<p>With the custom domain in place, I&#39;m considering:</p>
+<ul>
+<li><strong>Email setup</strong> using the domain for professional communication</li>
+<li><strong>Subdomain experiments</strong> for different projects or experiments  </li>
+<li><strong>Analytics <span class="success">optimization</span></strong> to track the impact of the domain change</li>
+<li><strong>Community contribution</strong> back to the is-a.dev project</li>
+</ul>
+<p>The custom domain represents more than just a URL change - it&#39;s a commitment to professional presentation, technical excellence, and community participation that matches the quality of the content and design.</p>
+<p><em>The site is now <span class="success">live</span> at <a href="https://jeffreyjose07.is-a.dev/"><span class="connection">https</span>://jeffreyjose07.is-a.dev/</a> - a cleaner, more professional home for my technical thoughts and projects, powered by the developer community.</em></p>
 
         </article>
         
         <footer class="post-footer">
             <div>
-                words: ~1600 · reading time: ~8 min · <span id="view-count">👀 views loading...</span> · tags: <a href="/blog#tag-game-development" class="tag neutral" data-tag="game-development">game-development</a>, <a href="/blog#tag-javascript" class="tag process" data-tag="javascript">javascript</a>, <a href="/blog#tag-security" class="tag neutral" data-tag="security">security</a>, <a href="/blog#tag-terminal-ui" class="tag neutral" data-tag="terminal-ui">terminal-ui</a>, <a href="/blog#tag-web-development" class="tag neutral" data-tag="web-development">web-development</a>
+                words: ~800 · reading time: ~4 min · <span id="view-count">👀 views loading...</span> · tags: <a href="/blog#tag-domain" class="tag neutral" data-tag="domain">domain</a>, <a href="/blog#tag-github-pages" class="tag neutral" data-tag="github-pages">github-pages</a>, <a href="/blog#tag-deployment" class="tag neutral" data-tag="deployment">deployment</a>, <a href="/blog#tag-infrastructure" class="tag neutral" data-tag="infrastructure">infrastructure</a>
             </div>
         </footer>
         
         <nav class="post-navigation">
             <div class="nav-previous">
-                <a href="/blog/from-neon-to-supabase-to-aiven-a-postgresql-migrat">
+                <a href="/blog/building-a-secure-snake-game-with-terminal-aesthet">
                     <span class="nav-label">← previous</span>
-                    <span class="nav-title">From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey</span>
-                </a>
-            </div>
-            <div class="nav-next">
-                <a href="/blog/adding-custom-domain-jeffreyjose07is-adev">
-                    <span class="nav-label">next →</span>
-                    <span class="nav-title">adding custom domain: jeffreyjose07.is-a.dev</span>
+                    <span class="nav-title">Building a Secure Snake Game with Terminal Aesthetic</span>
                 </a>
             </div></nav>
     </div>

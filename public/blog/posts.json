@@ -1,5 +1,21 @@
 [
   {
+    "url": "/blog/adding-custom-domain-jeffreyjose07is-adev",
+    "title": "adding custom domain: jeffreyjose07.is-a.dev",
+    "episode": "016",
+    "date": "2025-01-24",
+    "tags": [
+      "domain",
+      "github-pages",
+      "deployment",
+      "infrastructure"
+    ],
+    "description": "How I configured a custom domain for my portfolio and blog, moving from jeffreyjose07.github.io to jeffreyjose07.is-a.dev",
+    "readingTime": 4,
+    "wordCount": 800,
+    "slug": "adding-custom-domain-jeffreyjose07is-adev"
+  },
+  {
     "url": "/blog/building-a-secure-snake-game-with-terminal-aesthet",
     "title": "Building a Secure Snake Game with Terminal Aesthetic",
     "episode": "015",
