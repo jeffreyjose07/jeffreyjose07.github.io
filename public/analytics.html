@@ -4,25 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics - Jeffrey Jose</title>
-    <meta name="description" content="Live analytics dashboard for jeffreyjose07.github.io - view traffic stats, popular posts, and visitor insights. Privacy-friendly GoatCounter analytics with real-time data.">
+    <meta name="description" content="Live analytics dashboard for jeffreyjose07.is-a.dev - view traffic stats, popular posts, and visitor insights. Privacy-friendly GoatCounter analytics with real-time data.">
     <meta name="keywords" content="Jeffrey Jose Analytics, Website Analytics, GoatCounter, Privacy Analytics, Web Traffic, Blog Analytics, Portfolio Analytics, Real-time Analytics Dashboard">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Jeffrey Jose">
-    <link rel="canonical" href="https://jeffreyjose07.github.io/analytics.html">
+    <link rel="canonical" href="https://jeffreyjose07.is-a.dev/analytics.html">
     
     <!-- Open Graph -->
     <meta property="og:title" content="Analytics Dashboard - Jeffrey Jose">
     <meta property="og:description" content="Live website analytics dashboard with privacy-friendly GoatCounter. View real-time traffic stats, popular content, and visitor insights.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://jeffreyjose07.github.io/analytics.html">
-    <meta property="og:image" content="https://jeffreyjose07.github.io/scalable-chat-platform.png">
+    <meta property="og:url" content="https://jeffreyjose07.is-a.dev/analytics.html">
+    <meta property="og:image" content="https://jeffreyjose07.is-a.dev/scalable-chat-platform.png">
     <meta property="og:site_name" content="Jeffrey Jose Portfolio">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Analytics Dashboard - Jeffrey Jose">
     <meta name="twitter:description" content="Live privacy-friendly analytics dashboard showing website traffic and popular content.">
-    <meta name="twitter:image" content="https://jeffreyjose07.github.io/scalable-chat-platform.png">
+    <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/scalable-chat-platform.png">
     <meta name="twitter:creator" content="@jeffreyjose07">
     
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -423,9 +423,10 @@
                 <iframe 
                     id="analyticsFrame"
                     class="dashboard-iframe" 
-                    src="https://jeffreyjose.goatcounter.com?hideui=1"
+                    src="https://jeffreyjose.goatcounter.com/"
                     title="GoatCounter Analytics Dashboard"
-                    loading="lazy">
+                    loading="lazy"
+                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups">
                 </iframe>
             </div>
         </div>
@@ -451,18 +452,53 @@
     </div>
     
     <script>
-        // Simple iframe loading handler - only keep what actually works
+        // Enhanced iframe loading handler with error detection
         const iframe = document.getElementById('analyticsFrame');
         const loadingMsg = document.getElementById('loadingMsg');
         
+        // Handle successful load
         iframe.addEventListener('load', function() {
             loadingMsg.style.display = 'none';
         });
         
-        // Fallback timeout to hide loading message
+        // Handle iframe errors (CSP blocking, etc.)
+        iframe.addEventListener('error', function() {
+            loadingMsg.innerHTML = `
+                <div style="color: var(--warning); margin-bottom: 15px;">
+                    ⚠️ Dashboard embedding blocked by security policy
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <a href="https://jeffreyjose.goatcounter.com" target="_blank" 
+                       style="color: var(--data); text-decoration: none; padding: 10px 20px; border: 1px solid var(--data); border-radius: 4px; display: inline-block;">
+                        Open Dashboard in New Tab ↗
+                    </a>
+                </div>
+                <div style="font-size: 12px; opacity: 0.7;">
+                    This is likely due to Content Security Policy restrictions.<br>
+                    The dashboard is accessible directly at the link above.
+                </div>
+            `;
+        });
+        
+        // Fallback timeout to show alternative access
         setTimeout(() => {
-            loadingMsg.style.display = 'none';
-        }, 10000);
+            if (loadingMsg.style.display !== 'none') {
+                loadingMsg.innerHTML = `
+                    <div style="color: var(--warning); margin-bottom: 15px;">
+                        ⏱️ Loading is taking longer than expected
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <a href="https://jeffreyjose.goatcounter.com" target="_blank" 
+                           style="color: var(--data); text-decoration: none; padding: 10px 20px; border: 1px solid var(--data); border-radius: 4px; display: inline-block;">
+                            Open Dashboard in New Tab ↗
+                        </a>
+                    </div>
+                    <div style="font-size: 12px; opacity: 0.7;">
+                        If the iframe doesn't load, use the direct link above.
+                    </div>
+                `;
+            }
+        }, 8000);
     </script>
     
     <!-- GoatCounter Analytics -->
