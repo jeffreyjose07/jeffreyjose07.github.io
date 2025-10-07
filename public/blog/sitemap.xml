@@ -25,12 +25,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://jeffreyjose07.github.io/blog/adding-custom-domain-jeffreyjose07is-adev</loc>
-    <lastmod>2025-01-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://jeffreyjose07.github.io/blog/building-a-secure-snake-game-with-terminal-aesthet</loc>
     <lastmod>2025-09-02</lastmod>
     <changefreq>monthly</changefreq>
@@ -43,20 +37,14 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://jeffreyjose07.github.io/blog/migrating-from-render-to-neon-postgresql-lessons-f</loc>
-    <lastmod>2025-01-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://jeffreyjose07.github.io/blog/implementing-privacy-first-analytics-from-research</loc>
-    <lastmod>2025-01-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://jeffreyjose07.github.io/blog/debugging-cross-repository-workflows</loc>
     <lastmod>2025-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jeffreyjose07.github.io/blog/bugfixes-and-lessons-learned</loc>
+    <lastmod>2025-07-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -79,8 +67,8 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://jeffreyjose07.github.io/blog/bugfixes-and-lessons-learned</loc>
-    <lastmod>2025-07-25</lastmod>
+    <loc>https://jeffreyjose07.github.io/blog/adding-custom-domain-jeffreyjose07is-adev</loc>
+    <lastmod>2025-01-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -111,6 +99,18 @@
   <url>
     <loc>https://jeffreyjose07.github.io/blog/creating-this-portfolio-website-and-blog</loc>
     <lastmod>2025-01-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jeffreyjose07.github.io/blog/migrating-from-render-to-neon-postgresql-lessons-f</loc>
+    <lastmod>2025-01-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jeffreyjose07.github.io/blog/implementing-privacy-first-analytics-from-research</loc>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
