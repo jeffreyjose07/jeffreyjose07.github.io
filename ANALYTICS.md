@@ -4,6 +4,7 @@
 
 ### Current Status: ✅ IMPLEMENTED
 - **Service**: GoatCounter (https://jeffreyjose.goatcounter.com)
+- **Domain**: jeffreyjose07.is-a.dev (updated from jeffreyjose07.github.io)
 - **Cost**: FREE (donation-supported)
 - **Script Size**: ~3.5KB (privacy-friendly)
 
