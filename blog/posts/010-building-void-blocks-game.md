@@ -432,7 +432,7 @@ The deployment workflow includes comprehensive verification:
 ### Live Deployment Verification
 
 Each deployment automatically verifies:
-- Game loads correctly at `https://jeffreyjose07.github.io/games/void-blocks/`
+- Game loads correctly at `https://jeffreyjose07.is-a.dev/games/void-blocks/`
 - Canvas rendering initializes properly
 - All game mechanics function as expected
 - Performance metrics meet targets
@@ -502,4 +502,4 @@ The automated deployment pipeline proved invaluable throughout both implementati
 - **Instant loading**: No external requests or build complexity
 - **Full feature parity**: All cyberpunk mechanics preserved
 
-The complete source code evolution, deployment configuration, and development history are available at [void-blocks-game](https://github.com/jeffreyjose07/void-blocks-game) on GitHub. The live game is playable at [jeffreyjose07.github.io/games/void-blocks/](https://jeffreyjose07.github.io/games/void-blocks/) - try it to experience the smooth, dependency-free gameplay that vanilla JavaScript delivers.
+The complete source code evolution, deployment configuration, and development history are available at [void-blocks-game](https://github.com/jeffreyjose07/void-blocks-game) on GitHub. The live game is playable at [jeffreyjose07.is-a.dev/games/void-blocks/](https://jeffreyjose07.is-a.dev/games/void-blocks/) - try it to experience the smooth, dependency-free gameplay that vanilla JavaScript delivers.
