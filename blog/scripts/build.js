@@ -393,13 +393,13 @@ function generateRSSfeed(posts) {
             htmlContent = '';
         }
         const pubDate = new Date(post.date).toUTCString();
-        const postUrl = `https://jeffreyjose07.github.io/blog/${post.slug}`;
+        const postUrl = `https://jeffreyjose07.is-a.dev/blog/${post.slug}`;
         const author = post.author || (config.authorEmail ? `${config.authorEmail} (${config.author})` : config.author) || '';
         const tags = post.tags || [];
         // Try to get image from frontmatter or first image in content (if available)
         let imageUrl = '';
         if (post.image) {
-            imageUrl = post.image.startsWith('http') ? post.image : `https://jeffreyjose07.github.io/blog/${post.image}`;
+            imageUrl = post.image.startsWith('http') ? post.image : `https://jeffreyjose07.is-a.dev/blog/${post.image}`;
         }
         // Optionally, try to extract from post.content if desired
         // const imageMatch = post.content && post.content.match(/<img[^>]+src=["']([^"'>]+)["']/);
@@ -429,8 +429,8 @@ ${imageUrl ? `      <media:thumbnail url="${imageUrl}" />` : ''}
   <channel>
     <title>${config.title} - ${config.author}</title>
     <description>${config.description}</description>
-    <link>https://jeffreyjose07.github.io/blog</link>
-    <atom:link href="https://jeffreyjose07.github.io/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <link>https://jeffreyjose07.is-a.dev/blog</link>
+    <atom:link href="https://jeffreyjose07.is-a.dev/blog/feed.xml" rel="self" type="application/rss+xml"/>
     <language>en-us</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <generator>Custom Node.js Blog Builder</generator>
@@ -444,7 +444,7 @@ ${rssItems}
 
 // Generate sitemap.xml
 function generateSitemap(posts) {
-    const baseUrl = 'https://jeffreyjose07.github.io';
+    const baseUrl = 'https://jeffreyjose07.is-a.dev';
     const currentDate = new Date().toISOString().split('T')[0];
     
     // Static pages
