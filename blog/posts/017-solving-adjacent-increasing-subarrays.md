@@ -1,5 +1,5 @@
 ---
-title: "solving adjacent increasing subarrays: from naive to optimal"
+title: "Solving Adjacent Increasing Subarrays: From Naive to Optimal"
 date: "2025-01-26"
 tags: ["algorithms", "optimization", "leetcode", "data-structures", "problem-solving"]
 description: "A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization"
