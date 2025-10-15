@@ -643,9 +643,7 @@ Single pass, constant space.
             <a href="#" onclick="document.getElementById('arrayInput').value='1,2,3,4,4,4,4,5,6,7'; loadCustomArray(); return false;">bridge runs example</a>
         </div>
     </div>
-
     <div class="array-container" id="arrayContainer"></div>
-
     <div class="state-container">
         <div class="state-box">
             <h4>current state</h4>
@@ -662,7 +660,6 @@ Single pass, constant space.
                 <span class="state-value" id="previousRun">0</span>
             </div>
         </div>
-
         <div class="state-box">
             <h4>maximum k</h4>
             <div style="text-align: center; padding: 12px 0;">
@@ -670,20 +667,16 @@ Single pass, constant space.
             </div>
         </div>
     </div>
-
     <div class="explanation">
         <h4>what's happening</h4>
         <p id="explanation">click next step to begin</p>
     </div>
-
     <div id="scenarios"></div>
-
     <div class="controls">
         <button onclick="reset()">reset</button>
         <button id="stepBtn" onclick="step()">next step</button>
         <button onclick="autoPlay()">auto play</button>
     </div>
-
     <div class="result-box" id="resultBox">
         <h3>algorithm complete</h3>
         <p id="resultText"></p>
