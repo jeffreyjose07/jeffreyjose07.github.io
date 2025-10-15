@@ -1,5 +1,5 @@
 ---
-title: "adding interactive scripts to blog posts"
+title: "Adding Interactive Scripts to Blog Posts"
 date: "2025-01-26"
 tags: ["meta", "engineering", "frontend", "tutorials"]
 description: "how we extended the blog system to support inline JavaScript and CSS for interactive visualizations"

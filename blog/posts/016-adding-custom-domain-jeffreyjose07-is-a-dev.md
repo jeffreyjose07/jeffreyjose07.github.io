@@ -1,5 +1,5 @@
 ---
-title: "adding custom domain: jeffreyjose07.is-a.dev"
+title: "Adding Custom Domain: jeffreyjose07.is-a.dev"
 date: "2025-01-24"
 tags: ["domain", "github-pages", "deployment", "infrastructure"]
 description: "How I configured a custom domain for my portfolio and blog, moving from jeffreyjose07.github.io to jeffreyjose07.is-a.dev"
