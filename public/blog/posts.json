@@ -10,9 +10,9 @@
       "frontend",
       "tutorials"
     ],
-    "description": "how we extended the blog system to support inline JavaScript and CSS for interactive visualizations",
-    "readingTime": 5,
-    "wordCount": 1030,
+    "description": "how we extended the blog system to support inline JavaScript and CSS for interactive visualizations - with live demos",
+    "readingTime": 8,
+    "wordCount": 1650,
     "slug": "adding-interactive-scripts-to-blog-posts"
   },
   {

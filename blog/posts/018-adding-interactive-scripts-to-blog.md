@@ -2,282 +2,470 @@
 title: "Adding Interactive Scripts to Blog Posts"
 date: "2025-01-26"
 tags: ["meta", "engineering", "frontend", "tutorials"]
-description: "how we extended the blog system to support inline JavaScript and CSS for interactive visualizations"
-readingTime: 5
-wordCount: 1030
+description: "how we extended the blog system to support inline JavaScript and CSS for interactive visualizations - with live demos"
+readingTime: 8
+wordCount: 1650
+inlineStyles: |
+  /* Demo 1: Terminal greeting */
+  .demo-box {
+      background: #0a0a0a;
+      border: 1px solid #333333;
+      border-radius: 4px;
+      padding: 20px;
+      margin: 24px 0;
+  }
+  .demo-title {
+      color: #55ffff;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 12px;
+  }
+  .terminal-input {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+  }
+  .terminal-input input {
+      flex: 1;
+      padding: 8px 12px;
+      background: #000000;
+      border: 1px solid #333333;
+      border-radius: 3px;
+      color: #55ff55;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 14px;
+  }
+  .terminal-input input:focus {
+      outline: none;
+      border-color: #55ff55;
+      box-shadow: 0 0 0 2px rgba(85, 255, 85, 0.2);
+  }
+  .terminal-input button {
+      padding: 8px 16px;
+      background: #0a0a0a;
+      border: 1px solid #333333;
+      border-radius: 3px;
+      color: #55ff55;
+      cursor: pointer;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 14px;
+  }
+  .terminal-input button:hover {
+      background: #1a1a1a;
+      border-color: #55ff55;
+  }
+  .terminal-output {
+      background: #000000;
+      border: 1px solid #333333;
+      padding: 12px;
+      border-radius: 3px;
+      min-height: 40px;
+      color: #55ff55;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 14px;
+  }
+  /* Demo 2: Color picker */
+  .color-demo {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+  }
+  .color-swatch {
+      width: 100px;
+      height: 100px;
+      border: 2px solid #333333;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+  }
+  .color-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+  }
+  .color-buttons button {
+      padding: 8px 16px;
+      background: #0a0a0a;
+      border: 1px solid #333333;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+      transition: all 0.2s ease;
+  }
+  .color-buttons button.green { color: #55ff55; }
+  .color-buttons button.yellow { color: #ffff55; }
+  .color-buttons button.cyan { color: #55ffff; }
+  .color-buttons button.magenta { color: #ff55ff; }
+  .color-buttons button:hover {
+      background: #1a1a1a;
+  }
+  /* Demo 3: Click counter */
+  .counter-display {
+      text-align: center;
+      padding: 20px;
+      background: #000000;
+      border: 1px solid #333333;
+      border-radius: 3px;
+      margin: 12px 0;
+  }
+  .counter-number {
+      font-size: 48px;
+      color: #55ff55;
+      font-weight: bold;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  }
+  .counter-label {
+      color: #888888;
+      font-size: 12px;
+      margin-top: 8px;
+  }
+  .counter-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+  }
+  .counter-buttons button {
+      padding: 10px 20px;
+      background: #0a0a0a;
+      border: 1px solid #333333;
+      border-radius: 3px;
+      color: #55ff55;
+      cursor: pointer;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+  }
+  .counter-buttons button:hover {
+      background: #1a1a1a;
+      border-color: #55ff55;
+  }
+  /* Demo 4: Matrix rain mini */
+  .matrix-canvas {
+      width: 100%;
+      height: 150px;
+      background: #000000;
+      border: 1px solid #333333;
+      border-radius: 3px;
+  }
+  .matrix-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      justify-content: center;
+  }
+  .matrix-controls button {
+      padding: 8px 16px;
+      background: #0a0a0a;
+      border: 1px solid #333333;
+      border-radius: 3px;
+      color: #55ff55;
+      cursor: pointer;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+  }
+  .matrix-controls button:hover {
+      background: #1a1a1a;
+      border-color: #55ff55;
+  }
+inlineScripts: |
+  // Demo 1: Terminal greeting
+  function greetUser() {
+      const nameInput = document.getElementById('nameInput');
+      const output = document.getElementById('terminalOutput');
+      const name = nameInput.value.trim() || 'anonymous';
+      output.innerHTML = `> hello, ${name}!<br>> welcome to the interactive blog system<br>> type: help`;
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+      const nameInput = document.getElementById('nameInput');
+      if (nameInput) {
+          nameInput.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter') greetUser();
+          });
+      }
+  });
+  // Demo 2: Color picker
+  function changeColor(color) {
+      const swatch = document.getElementById('colorSwatch');
+      const colors = {
+          green: '#55ff55',
+          yellow: '#ffff55',
+          cyan: '#55ffff',
+          magenta: '#ff55ff'
+      };
+      swatch.style.backgroundColor = colors[color];
+      swatch.style.borderColor = colors[color];
+      swatch.style.boxShadow = `0 0 20px ${colors[color]}40`;
+  }
+  // Demo 3: Click counter
+  let clickCount = 0;
+  function incrementCounter() {
+      clickCount++;
+      updateCounter();
+  }
+  function decrementCounter() {
+      if (clickCount > 0) clickCount--;
+      updateCounter();
+  }
+  function resetCounter() {
+      clickCount = 0;
+      updateCounter();
+  }
+  function updateCounter() {
+      const display = document.getElementById('counterDisplay');
+      if (display) {
+          display.textContent = clickCount;
+          if (clickCount > 10) {
+              display.style.color = '#ffff55';
+          } else if (clickCount > 20) {
+              display.style.color = '#ff8855';
+          } else {
+              display.style.color = '#55ff55';
+          }
+      }
+  }
+  // Demo 4: Matrix rain
+  let matrixInterval = null;
+  function startMatrix() {
+      const canvas = document.getElementById('matrixCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 150;
+      const columns = Math.floor(canvas.width / 20);
+      const drops = Array(columns).fill(0);
+      if (matrixInterval) clearInterval(matrixInterval);
+      matrixInterval = setInterval(() => {
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#55ff55';
+          ctx.font = '15px monospace';
+          for (let i = 0; i < drops.length; i++) {
+              const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+              ctx.fillText(text, i * 20, drops[i] * 20);
+              if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+                  drops[i] = 0;
+              }
+              drops[i]++;
+          }
+      }, 50);
+  }
+  function stopMatrix() {
+      if (matrixInterval) {
+          clearInterval(matrixInterval);
+          matrixInterval = null;
+          const canvas = document.getElementById('matrixCanvas');
+          if (canvas) {
+              const ctx = canvas.getContext('2d');
+              ctx.fillStyle = '#000000';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+          }
+      }
+  }
 ---
 
 The blog has always been **markdown-first**. Write a `.md` file, run the build script, and get a fully styled HTML page. This workflow was **frictionless** for text content, but what happens when you need an **interactive visualization**?
 
-This post documents how we extended the system to support **inline scripts** and **styles** without breaking the markdown workflow.
+This post documents how we extended the system to support **inline scripts** and **styles**—and includes **live demos** you can play with right now.
 
 ## the problem
 
-I wanted to add an interactive algorithm visualization to [blog post 017](/blog/solving-adjacent-increasing-subarrays-from-naive-t). The visualization needed:
-
-- **Custom CSS** for terminal-aesthetic styling
-- **JavaScript functions** for array manipulation and state tracking
-- **Event handlers** for user interactions
-- **Dynamic DOM updates** as the algorithm runs
+I wanted to add an interactive algorithm visualization to [blog post 017](/blog/solving-adjacent-increasing-subarrays-from-naive-t). The visualization needed custom CSS, JavaScript functions, event handlers, and dynamic DOM updates.
 
 The existing system couldn't handle this. Markdown files became HTML through `marked.js`, but there was no way to inject **custom scripts** or **styles** into individual posts.
 
-## design considerations
+## the solution: frontmatter injection
 
-### option 1: embed everything in markdown
-
-Just write the HTML, CSS, and JavaScript directly in the markdown file.
-
-**Problems:**
-- Markdown parsers treat indented content as code blocks
-- Blank lines within HTML break parsing
-- No separation of concerns
-- Difficult to maintain
-
-### option 2: create a custom component system
-
-Build a React-like component system with special syntax.
-
-**Problems:**
-- Over-engineered for a static blog
-- Adds build complexity
-- Breaks the markdown-first principle
-
-### option 3: frontmatter injection
-
-Use YAML frontmatter to specify inline styles and scripts, then inject them into the template.
-
-**Benefits:**
-- Keeps markdown clean
-- Separates concerns (content vs. styling vs. behavior)
-- Works with existing build system
-- No special syntax needed
-
-We went with **option 3**.
-
-## implementation
-
-### step 1: extend frontmatter schema
-
-Added two new optional fields to the frontmatter:
+We extended the YAML frontmatter to accept `inlineStyles` and `inlineScripts` fields:
 
 ```yaml
 ---
-title: "post title"
-date: "2025-01-26"
-tags: ["tag1", "tag2"]
+title: "Post Title"
 inlineStyles: |
   .custom-class {
       color: #55ff55;
   }
 inlineScripts: |
-  function customFunction() {
-      console.log('hello');
+  function demo() {
+      alert('hello!');
   }
 ---
 ```
 
-The `|` symbol indicates a **multiline string** in YAML. Everything indented under it becomes part of the field.
+The build script extracts these fields and injects them into the HTML template. Simple, clean, backward compatible.
 
-### step 2: modify the build script
+## live demos
 
-The build script (`blog/scripts/build.js`) already processes frontmatter using `gray-matter`. We just needed to extract the new fields and inject them.
+Let's see what this enables. Try these interactive examples—they're all powered by the inline script system.
+
+### demo 1: terminal greeting
+
+Type your name and press enter (or click the button).
+
+<div class="demo-box">
+    <div class="demo-title">terminal greeting</div>
+    <div class="terminal-input">
+        <input type="text" id="nameInput" placeholder="enter your name">
+        <button onclick="greetUser()">greet</button>
+    </div>
+    <div class="terminal-output" id="terminalOutput">> awaiting input...</div>
+</div>
+
+**How it works:** The `greetUser()` function is defined in the frontmatter's `inlineScripts`. When you click the button, it reads the input, processes it, and updates the output div with terminal-style text.
+
+### demo 2: terminal color palette
+
+Click the buttons to change the color. This demonstrates CSS variable updates from JavaScript.
+
+<div class="demo-box">
+    <div class="demo-title">terminal colors</div>
+    <div class="color-demo">
+        <div class="color-swatch" id="colorSwatch" style="background-color: #55ff55; border-color: #55ff55;"></div>
+        <div class="color-buttons">
+            <button class="green" onclick="changeColor('green')">terminal green</button>
+            <button class="yellow" onclick="changeColor('yellow')">warning yellow</button>
+            <button class="cyan" onclick="changeColor('cyan')">info cyan</button>
+            <button class="magenta" onclick="changeColor('magenta')">error magenta</button>
+        </div>
+    </div>
+</div>
+
+**How it works:** The `changeColor()` function updates the swatch's background color and adds a glow effect using inline styles. All the color definitions are in the frontmatter CSS.
+
+### demo 3: click counter
+
+A simple state management demo. See how many clicks you can get.
+
+<div class="demo-box">
+    <div class="demo-title">click counter</div>
+    <div class="counter-display">
+        <div class="counter-number" id="counterDisplay">0</div>
+        <div class="counter-label">clicks registered</div>
+    </div>
+    <div class="counter-buttons">
+        <button onclick="incrementCounter()">+ increment</button>
+        <button onclick="decrementCounter()">- decrement</button>
+        <button onclick="resetCounter()">reset</button>
+    </div>
+</div>
+
+**How it works:** JavaScript maintains a `clickCount` variable. The buttons call functions that modify the count and update the DOM. The color changes when you hit certain thresholds.
+
+### demo 4: matrix rain mini
+
+The classic Matrix falling characters effect—in your blog post.
+
+<div class="demo-box">
+    <div class="demo-title">matrix rain</div>
+    <canvas class="matrix-canvas" id="matrixCanvas"></canvas>
+    <div class="matrix-controls">
+        <button onclick="startMatrix()">start</button>
+        <button onclick="stopMatrix()">stop</button>
+    </div>
+</div>
+
+**How it works:** A Canvas 2D context with an interval-based animation loop. The `startMatrix()` function creates falling characters using Unicode characters and alpha blending for the trail effect.
+
+## implementation details
+
+### build script changes
+
+Modified `blog/scripts/build.js` to extract and inject the new frontmatter fields:
 
 ```javascript
 // Process inline styles and scripts from frontmatter
 const inlineStyles = frontmatter.inlineStyles || '';
 const inlineScripts = frontmatter.inlineScripts || '';
 
-// Load and populate template
-const template = loadTemplate('post');
+// Inject into template
 const html = template
-    .replace(/{{title}}/g, frontmatter.title)
-    // ... other replacements ...
     .replace(/{{inlineStyles}}/g, inlineStyles)
     .replace(/{{inlineScripts}}/g, inlineScripts);
 ```
 
-If a post doesn't have `inlineStyles` or `inlineScripts`, we inject **empty strings**. This ensures backward compatibility.
+### template modifications
 
-### step 3: update the template
-
-Modified `blog/templates/post.html` to include injection points:
+Added injection points to `blog/templates/post.html`:
 
 ```html
 <style>
-    /* Regular post styles */
-    .post-content {
-        line-height: 1.7;
-    }
+    /* Regular styles */
+    /* ... */
 
     /* Inline styles injected from frontmatter */
     {{inlineStyles}}
 </style>
-```
 
-And at the bottom of the script section:
-
-```html
 <script>
-    // Regular page scripts
-    function initializeMaterializationEffect() {
-        // ...
-    }
+    /* Regular scripts */
+    /* ... */
 
     /* Inline scripts injected from frontmatter */
     {{inlineScripts}}
 </script>
 ```
 
-### step 4: write the HTML in markdown
+### markdown HTML rules
 
-With the infrastructure in place, the markdown file can include **raw HTML** for the visualization:
+When embedding HTML in markdown for these demos, **critical rules**:
 
-```markdown
-## the visualization
+1. **No blank lines** within the HTML block—markdown parsers reset on blank lines
+2. **Consistent indentation**—keeps the parser happy
+3. **Treat as single unit**—the entire HTML block should flow without interruption
 
-<div class="viz-container">
-    <div class="input-section">
-        <label>enter an array</label>
-        <input type="text" id="arrayInput">
-        <button onclick="loadCustomArray()">load</button>
-    </div>
-    <div class="array-container" id="arrayContainer"></div>
-    <div class="controls">
-        <button onclick="reset()">reset</button>
-        <button onclick="step()">next step</button>
-    </div>
-</div>
-```
-
-**Critical rule:** No blank lines within the HTML block. Markdown parsers reset their state on blank lines and will treat subsequent indented content as code blocks.
-
-## the tricky part: markdown and html
-
-Markdown's HTML handling is **surprisingly finicky**. Here's what went wrong initially:
-
-### attempt 1: blank lines everywhere
+Example of what **not** to do:
 
 ```html
-<div class="viz-container">
-    <div class="input-section">
-        ...
-    </div>
+<div class="demo">
+    <button>Click</button>
 
-    <div class="array-container"></div>
-
-    <div class="controls">
-        ...
-    </div>
+    <div class="output"></div>  <!-- blank line above breaks this -->
 </div>
 ```
 
-**Result:** Everything after the first blank line got wrapped in `<pre><code>` tags and escaped.
-
-### attempt 2: inconsistent indentation
+Example of what **works**:
 
 ```html
-<div class="viz-container">
-<div class="input-section">
-    ...
-</div>
-    <div class="array-container"></div>
+<div class="demo">
+    <button>Click</button>
+    <div class="output"></div>
 </div>
 ```
 
-**Result:** Parsing broke. Some sections rendered, others escaped.
+## what this enables
 
-### attempt 3: no blank lines, consistent indentation
+The inline script system makes these possible:
 
-```html
-<div class="viz-container">
-    <div class="input-section">
-        ...
-    </div>
-    <div class="array-container"></div>
-    <div class="controls">
-        ...
-    </div>
-</div>
-```
+**Algorithm visualizations** - Like the sorting visualizer in post 017, with state tracking and step-by-step execution.
 
-**Result:** Perfect rendering. All HTML treated as raw HTML.
+**Interactive code playgrounds** - Users can modify code and see results instantly.
 
-**Lesson learned:** When embedding HTML in markdown, treat the entire block as a single unit. No blank lines. Consistent indentation.
+**Data visualizations** - Charts, graphs, and diagrams that update based on user input.
 
-## writing the visualization
+**Games** - Simple browser games embedded directly in blog posts.
 
-With the system working, I could write the visualization logic entirely in the frontmatter:
+**Calculators and tools** - Practical utilities that solve real problems.
 
-**282 lines of CSS** defining:
-- Terminal color palette (#55ff55 green, #ffff55 yellow, etc.)
-- Array item styling with hover states
-- State boxes and explanation panels
-- Button styles with disabled states
-- Mobile responsive breakpoints
+All of this while maintaining the **markdown-first philosophy**. No complex build pipeline, no frontend framework, just YAML frontmatter and vanilla JavaScript.
 
-**185 lines of JavaScript** implementing:
-- Array input validation
-- Visualization state management
-- Step-by-step algorithm execution
-- Auto-play functionality
-- DOM manipulation for visual updates
+## benefits
 
-The visualization in [blog post 017](/blog/solving-adjacent-increasing-subarrays-from-naive-t) uses **all of this**. Users can input custom arrays, step through the algorithm, and see how the optimal solution works in real time.
+**Separation of concerns:** Content lives in markdown, styling in CSS, behavior in JavaScript—all colocated in one file.
 
-## benefits of this approach
-
-**Separation of concerns:** Content (markdown), styling (CSS), behavior (JavaScript) are separate but colocated.
-
-**Reusability:** The same visualization logic could be used in multiple posts by copying the frontmatter.
-
-**Maintainability:** Need to fix a bug in the visualization? Edit the frontmatter, rebuild. No scattered files.
-
-**Backward compatibility:** Posts without inline scripts still work perfectly. Empty string injection ensures no breaking changes.
+**Backward compatibility:** Posts without inline scripts work perfectly. Old posts don't break.
 
 **Terminal aesthetic preservation:** Custom CSS ensures every interactive element matches the 90s BBS aesthetic.
 
-## future improvements
+**Maintainability:** Fix a bug? Edit the frontmatter, rebuild. No scattered files or complex refactors.
 
-**1. script library system**
+**Performance:** Static HTML generation means fast page loads. JavaScript only runs for interactive features.
 
-Instead of duplicating visualization code across posts, create a library:
+## the full picture
 
-```yaml
-inlineScripts: |
-  import { ArrayVisualizer } from '/blog/scripts/visualizers.js';
-  const viz = new ArrayVisualizer('arrayContainer');
-```
+This post itself uses **127 lines of CSS** and **98 lines of JavaScript** in its frontmatter to power all four demos. Check the source markdown to see how it all fits together.
 
-**2. style theming**
-
-Extract common visualization styles into a shared theme:
-
-```yaml
-visualizationTheme: "terminal"
-```
-
-The build script would inject the corresponding CSS automatically.
-
-**3. component registry**
-
-Pre-built interactive components users can reference:
-
-```markdown
-[interactive-code-editor lang="javascript"]
-[algorithm-visualizer type="sorting"]
-```
-
-## lessons learned
-
-**Markdown is powerful but opinionated.** Understanding how parsers handle HTML blocks is crucial. Blank lines matter. Indentation matters.
-
-**Frontmatter is underrated.** YAML's multiline strings make it perfect for embedding code. No special escaping needed.
-
-**Build systems should be extensible.** Adding two fields to the frontmatter and two placeholders to the template gave us full scripting support. No architectural changes needed.
-
-**Backward compatibility matters.** The `|| ''` fallback ensures old posts don't break. New features shouldn't require updating everything.
-
-The system now supports **any** interactive content. Algorithm visualizations, code playgrounds, interactive diagrams—all possible within the markdown-first workflow.
+The [algorithm visualization in post 017](/blog/solving-adjacent-increasing-subarrays-from-naive-t) uses even more—**282 lines of CSS** and **185 lines of JavaScript**—for a full step-by-step algorithm execution interface.
 
 And the blog remains what it's always been: text files that become beautiful, functional web pages.
+
+**Try the demos above.** Every button click, color change, and matrix character proves the system works. The blog is no longer just static text—it's an interactive platform.

@@ -5,16 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adding Interactive Scripts to Blog Posts - Jeffrey Jose</title>
-    <meta name="description" content="how we extended the blog system to support inline JavaScript and CSS for interactive visualizations" />
+    <meta name="description" content="how we extended the blog system to support inline JavaScript and CSS for interactive visualizations - with live demos" />
     
     <!-- SEO Meta Tags -->
     <meta property="og:title" content="Adding Interactive Scripts to Blog Posts">
-    <meta property="og:description" content="how we extended the blog system to support inline JavaScript and CSS for interactive visualizations">
+    <meta property="og:description" content="how we extended the blog system to support inline JavaScript and CSS for interactive visualizations - with live demos">
     <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/adding-interactive-scripts-to-blog-posts">
     <meta property="og:type" content="article">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Adding Interactive Scripts to Blog Posts">
-    <meta name="twitter:description" content="how we extended the blog system to support inline JavaScript and CSS for interactive visualizations">
+    <meta name="twitter:description" content="how we extended the blog system to support inline JavaScript and CSS for interactive visualizations - with live demos">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <style>
         * {
@@ -485,7 +485,169 @@
         }
 
         /* Inline styles injected from frontmatter */
-        
+        /* Demo 1: Terminal greeting */
+.demo-box {
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 4px;
+    padding: 20px;
+    margin: 24px 0;
+}
+.demo-title {
+    color: #55ffff;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+.terminal-input {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.terminal-input input {
+    flex: 1;
+    padding: 8px 12px;
+    background: #000000;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    color: #55ff55;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+}
+.terminal-input input:focus {
+    outline: none;
+    border-color: #55ff55;
+    box-shadow: 0 0 0 2px rgba(85, 255, 85, 0.2);
+}
+.terminal-input button {
+    padding: 8px 16px;
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    color: #55ff55;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+}
+.terminal-input button:hover {
+    background: #1a1a1a;
+    border-color: #55ff55;
+}
+.terminal-output {
+    background: #000000;
+    border: 1px solid #333333;
+    padding: 12px;
+    border-radius: 3px;
+    min-height: 40px;
+    color: #55ff55;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+}
+/* Demo 2: Color picker */
+.color-demo {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.color-swatch {
+    width: 100px;
+    height: 100px;
+    border: 2px solid #333333;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+.color-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.color-buttons button {
+    padding: 8px 16px;
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+.color-buttons button.green { color: #55ff55; }
+.color-buttons button.yellow { color: #ffff55; }
+.color-buttons button.cyan { color: #55ffff; }
+.color-buttons button.magenta { color: #ff55ff; }
+.color-buttons button:hover {
+    background: #1a1a1a;
+}
+/* Demo 3: Click counter */
+.counter-display {
+    text-align: center;
+    padding: 20px;
+    background: #000000;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    margin: 12px 0;
+}
+.counter-number {
+    font-size: 48px;
+    color: #55ff55;
+    font-weight: bold;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+.counter-label {
+    color: #888888;
+    font-size: 12px;
+    margin-top: 8px;
+}
+.counter-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+.counter-buttons button {
+    padding: 10px 20px;
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    color: #55ff55;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+}
+.counter-buttons button:hover {
+    background: #1a1a1a;
+    border-color: #55ff55;
+}
+/* Demo 4: Matrix rain mini */
+.matrix-canvas {
+    width: 100%;
+    height: 150px;
+    background: #000000;
+    border: 1px solid #333333;
+    border-radius: 3px;
+}
+.matrix-controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: center;
+}
+.matrix-controls button {
+    padding: 8px 16px;
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    color: #55ff55;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+}
+.matrix-controls button:hover {
+    background: #1a1a1a;
+    border-color: #55ff55;
+}
+
     </style>
 </head>
 <body>
@@ -522,211 +684,668 @@
         
         <article class="post-content">
             <p>The blog has always been <strong><span class="process">markdown</span>-first</strong>. Write a <code>.md</code> file, <span class="process">run</span> the <span class="process">build</span> <span class="process">script</span>, and get a fully styled <span class="process">HTML</span> page. This <span class="connection">workflow</span> was <strong>frictionless</strong> for text content, but what happens when you need an <strong>interactive visualization</strong>?</p>
-<p>This post documents how we extended the <span class="structure">system</span> to support <strong>inline scripts</strong> and <strong>styles</strong> without <span class="attention">breaking</span> the <span class="process">markdown</span> <span class="connection">workflow</span>.</p>
+<p>This post documents how we extended the <span class="structure">system</span> to support <strong>inline scripts</strong> and <strong>styles</strong>—and includes <strong><span class="success">live</span> demos</strong> you can play with right now.</p>
 <h2>the problem</h2>
-<p>I wanted to add an interactive <span class="process">algorithm</span> visualization to <a href="/blog/solving-adjacent-increasing-subarrays-from-naive-t">blog post 017</a>. The visualization needed:</p>
-<ul>
-<li><strong>Custom <span class="process">CSS</span></strong> for <span class="meta">terminal</span>-<span class="meta">aesthetic</span> styling</li>
-<li><strong><span class="process">JavaScript</span> functions</strong> for array manipulation and state tracking</li>
-<li><strong>Event handlers</strong> for user interactions</li>
-<li><strong>Dynamic DOM updates</strong> as the <span class="process">algorithm</span> runs</li>
-</ul>
+<p>I wanted to add an interactive <span class="process">algorithm</span> visualization to <a href="/blog/solving-adjacent-increasing-subarrays-from-naive-t">blog post 017</a>. The visualization needed custom <span class="process">CSS</span>, <span class="process">JavaScript</span> functions, event handlers, and dynamic DOM updates.</p>
 <p>The existing <span class="structure">system</span> couldn&#39;t handle this. <span class="process">Markdown</span> files became <span class="process">HTML</span> through <code>marked.js</code>, but there was no way to inject <strong>custom scripts</strong> or <strong>styles</strong> into individual posts.</p>
-<h2>design considerations</h2>
-<h3>option 1: embed everything in <span class="process">markdown</span></h3>
-<p>Just write the <span class="process">HTML</span>, <span class="process">CSS</span>, and <span class="process">JavaScript</span> directly in the <span class="process">markdown</span> file.</p>
-<p><strong>Problems:</strong></p>
-<ul>
-<li><span class="process">Markdown</span> parsers treat indented content as <span class="process">code</span> blocks</li>
-<li>Blank lines within <span class="process">HTML</span> break parsing</li>
-<li>No separation of concerns</li>
-<li>Difficult to maintain</li>
-</ul>
-<h3>option 2: create a custom <span class="structure">component</span> <span class="structure">system</span></h3>
-<p><span class="process">Build</span> a <span class="structure">React</span>-like <span class="structure">component</span> <span class="structure">system</span> with special syntax.</p>
-<p><strong>Problems:</strong></p>
-<ul>
-<li>Over-engineered for a <span class="meta">static</span> blog</li>
-<li>Adds <span class="process">build</span> <span class="meta">complexity</span></li>
-<li>Breaks the <span class="process">markdown</span>-first principle</li>
-</ul>
-<h3>option 3: frontmatter injection</h3>
-<p>Use <span class="process">YAML</span> frontmatter to specify inline styles and scripts, then inject them into the template.</p>
-<p><strong>Benefits:</strong></p>
-<ul>
-<li>Keeps <span class="process">markdown</span> clean</li>
-<li>Separates concerns (content vs. styling vs. behavior)</li>
-<li>Works with existing <span class="process">build</span> <span class="structure">system</span></li>
-<li>No special syntax needed</li>
-</ul>
-<p>We went with <strong>option 3</strong>.</p>
-<h2>implementation</h2>
-<h3>step 1: extend frontmatter schema</h3>
-<p>Added two new optional fields to the frontmatter:</p>
+<h2>the solution: frontmatter injection</h2>
+<p>We extended the <span class="process">YAML</span> frontmatter to accept <code>inlineStyles</code> and <code>inlineScripts</code> fields:</p>
 <pre><code class="language-yaml">---
-title: &quot;post title&quot;
-date: &quot;2025-01-26&quot;
-tags: [&quot;tag1&quot;, &quot;tag2&quot;]
+title: &quot;Post Title&quot;
 inlineStyles: |
   .custom-class {
       color: #55ff55;
   }
 inlineScripts: |
-  function customFunction() {
-      console.log(&#39;hello&#39;);
+  function demo() {
+      alert(&#39;hello!&#39;);
   }
 ---
 </code></pre>
-<p>The <code>|</code> symbol indicates a <strong>multiline string</strong> in <span class="process">YAML</span>. Everything indented under it becomes part of the field.</p>
-<h3>step 2: modify the <span class="process">build</span> <span class="process">script</span></h3>
-<p>The <span class="process">build</span> <span class="process">script</span> (<code>blog/scripts/build.js</code>) already processes frontmatter using <code>gray-matter</code>. We just needed to extract the new fields and inject them.</p>
+<p>The <span class="process">build</span> <span class="process">script</span> extracts these fields and injects them into the <span class="process">HTML</span> template. Simple, clean, backward compatible.</p>
+<h2><span class="success">live</span> demos</h2>
+<p>Let&#39;s see what this enables. Try these interactive examples—they&#39;re all powered by the inline <span class="process">script</span> <span class="structure">system</span>.</p>
+<h3>demo 1: <span class="meta">terminal</span> greeting</h3>
+<p>Type your name and press enter (or click the button).</p>
+<div class="demo-box">
+    <div class="demo-title">terminal greeting</div>
+    <div class="terminal-input">
+        <input type="text" id="nameInput" placeholder="enter your name">
+        <button onclick="greetUser()">greet</button>
+    </div>
+    <div class="terminal-output" id="terminalOutput">> awaiting input...</div>
+</div>
+
+<p><strong>How it works:</strong> The <code>greetUser()</code> <span class="structure">function</span> is defined in the frontmatter&#39;s <code>inlineScripts</code>. When you click the button, it reads the input, processes it, and updates the output div with <span class="meta">terminal</span>-style text.</p>
+<h3>demo 2: <span class="meta">terminal</span> color palette</h3>
+<p>Click the buttons to change the color. This demonstrates <span class="process">CSS</span> <span class="process">variable</span> updates from <span class="process">JavaScript</span>.</p>
+<div class="demo-box">
+    <div class="demo-title">terminal colors</div>
+    <div class="color-demo">
+        <div class="color-swatch" id="colorSwatch" style="background-color: #55ff55; border-color: #55ff55;"></div>
+        <div class="color-buttons">
+            <button class="green" onclick="changeColor('green')">terminal green</button>
+            <button class="yellow" onclick="changeColor('yellow')">warning yellow</button>
+            <button class="cyan" onclick="changeColor('cyan')">info cyan</button>
+            <button class="magenta" onclick="changeColor('magenta')">error magenta</button>
+        </div>
+    </div>
+</div>
+
+<p><strong>How it works:</strong> The <code>changeColor()</code> <span class="structure">function</span> updates the swatch&#39;s background color and adds a glow effect using inline styles. All the color definitions are in the frontmatter <span class="process">CSS</span>.</p>
+<h3>demo 3: click counter</h3>
+<p>A simple state management demo. See how many clicks you can get.</p>
+<div class="demo-box">
+    <div class="demo-title">click counter</div>
+    <div class="counter-display">
+        <div class="counter-number" id="counterDisplay">0</div>
+        <div class="counter-label">clicks registered</div>
+    </div>
+    <div class="counter-buttons">
+        <button onclick="incrementCounter()">+ increment</button>
+        <button onclick="decrementCounter()">- decrement</button>
+        <button onclick="resetCounter()">reset</button>
+    </div>
+</div>
+
+<p><strong>How it works:</strong> <span class="process">JavaScript</span> maintains a <code>clickCount</code> <span class="process">variable</span>. The buttons call functions that modify the count and update the DOM. The color changes when you hit certain thresholds.</p>
+<h3>demo 4: matrix rain mini</h3>
+<p>The classic Matrix falling characters effect—in your blog post.</p>
+<div class="demo-box">
+    <div class="demo-title">matrix rain</div>
+    <canvas class="matrix-canvas" id="matrixCanvas"></canvas>
+    <div class="matrix-controls">
+        <button onclick="startMatrix()">start</button>
+        <button onclick="stopMatrix()">stop</button>
+    </div>
+</div>
+
+<p><strong>How it works:</strong> A Canvas 2D context with an interval-based animation loop. The <code>startMatrix()</code> <span class="structure">function</span> creates falling characters using Unicode characters and alpha blending for the trail effect.</p>
+<h2>implementation details</h2>
+<h3><span class="process">build</span> <span class="process">script</span> changes</h3>
+<p>Modified <code>blog/scripts/build.js</code> to extract and inject the new frontmatter fields:</p>
 <pre><code class="language-javascript">// Process inline styles and scripts from frontmatter
 const inlineStyles = frontmatter.inlineStyles || &#39;&#39;;
 const inlineScripts = frontmatter.inlineScripts || &#39;&#39;;
 
-// Load and populate template
-const template = loadTemplate(&#39;post&#39;);
+// Inject into template
 const html = template
-    .replace(/{{title}}/g, frontmatter.title)
-    // ... other replacements ...
-    .replace(//g, inlineStyles)
-    .replace(//g, inlineScripts);
-</code></pre>
-<p>If a post doesn&#39;t have <code>inlineStyles</code> or <code>inlineScripts</code>, we inject <strong>empty strings</strong>. This ensures backward compatibility.</p>
-<h3>step 3: update the template</h3>
-<p>Modified <code>blog/templates/post.html</code> to include injection points:</p>
-<pre><code class="language-html">&lt;style&gt;
-    /* Regular post styles */
-    .post-content {
-        line-height: 1.7;
+    .replace(//* Demo 1: Terminal greeting */
+.demo-box {
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 4px;
+    padding: 20px;
+    margin: 24px 0;
+}
+.demo-title {
+    color: #55ffff;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+.terminal-input {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.terminal-input input {
+    flex: 1;
+    padding: 8px 12px;
+    background: #000000;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    color: #55ff55;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+}
+.terminal-input input:focus {
+    outline: none;
+    border-color: #55ff55;
+    box-shadow: 0 0 0 2px rgba(85, 255, 85, 0.2);
+}
+.terminal-input button {
+    padding: 8px 16px;
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    color: #55ff55;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+}
+.terminal-input button:hover {
+    background: #1a1a1a;
+    border-color: #55ff55;
+}
+.terminal-output {
+    background: #000000;
+    border: 1px solid #333333;
+    padding: 12px;
+    border-radius: 3px;
+    min-height: 40px;
+    color: #55ff55;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+}
+/* Demo 2: Color picker */
+.color-demo {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.color-swatch {
+    width: 100px;
+    height: 100px;
+    border: 2px solid #333333;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+.color-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.color-buttons button {
+    padding: 8px 16px;
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+.color-buttons button.green { color: #55ff55; }
+.color-buttons button.yellow { color: #ffff55; }
+.color-buttons button.cyan { color: #55ffff; }
+.color-buttons button.magenta { color: #ff55ff; }
+.color-buttons button:hover {
+    background: #1a1a1a;
+}
+/* Demo 3: Click counter */
+.counter-display {
+    text-align: center;
+    padding: 20px;
+    background: #000000;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    margin: 12px 0;
+}
+.counter-number {
+    font-size: 48px;
+    color: #55ff55;
+    font-weight: bold;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+.counter-label {
+    color: #888888;
+    font-size: 12px;
+    margin-top: 8px;
+}
+.counter-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+.counter-buttons button {
+    padding: 10px 20px;
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    color: #55ff55;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+}
+.counter-buttons button:hover {
+    background: #1a1a1a;
+    border-color: #55ff55;
+}
+/* Demo 4: Matrix rain mini */
+.matrix-canvas {
+    width: 100%;
+    height: 150px;
+    background: #000000;
+    border: 1px solid #333333;
+    border-radius: 3px;
+}
+.matrix-controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: center;
+}
+.matrix-controls button {
+    padding: 8px 16px;
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    color: #55ff55;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+}
+.matrix-controls button:hover {
+    background: #1a1a1a;
+    border-color: #55ff55;
+}
+/g, inlineStyles)
+    .replace(/// Demo 1: Terminal greeting
+function greetUser() {
+    const nameInput = document.getElementById('nameInput');
+    const output = document.getElementById('terminalOutput');
+    const name = nameInput.value.trim() || 'anonymous';
+    output.innerHTML = `> hello, ${name}!<br>> welcome to the interactive blog system<br>> type: help`;
+}
+document.addEventListener('DOMContentLoaded', () => {
+    const nameInput = document.getElementById('nameInput');
+    if (nameInput) {
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') greetUser();
+        });
     }
+});
+// Demo 2: Color picker
+function changeColor(color) {
+    const swatch = document.getElementById('colorSwatch');
+    const colors = {
+        green: '#55ff55',
+        yellow: '#ffff55',
+        cyan: '#55ffff',
+        magenta: '#ff55ff'
+    };
+    swatch.style.backgroundColor = colors[color];
+    swatch.style.borderColor = colors[color];
+    swatch.style.boxShadow = `0 0 20px ${colors[color]}40`;
+}
+// Demo 3: Click counter
+let clickCount = 0;
+function incrementCounter() {
+    clickCount++;
+    updateCounter();
+}
+function decrementCounter() {
+    if (clickCount > 0) clickCount--;
+    updateCounter();
+}
+function resetCounter() {
+    clickCount = 0;
+    updateCounter();
+}
+function updateCounter() {
+    const display = document.getElementById('counterDisplay');
+    if (display) {
+        display.textContent = clickCount;
+        if (clickCount > 10) {
+            display.style.color = '#ffff55';
+        } else if (clickCount > 20) {
+            display.style.color = '#ff8855';
+        } else {
+            display.style.color = '#55ff55';
+        }
+    }
+}
+// Demo 4: Matrix rain
+let matrixInterval = null;
+function startMatrix() {
+    const canvas = document.getElementById('matrixCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth;
+    canvas.height = 150;
+    const columns = Math.floor(canvas.width / 20);
+    const drops = Array(columns).fill(0);
+    if (matrixInterval) clearInterval(matrixInterval);
+    matrixInterval = setInterval(() => {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#55ff55';
+        ctx.font = '15px monospace';
+        for (let i = 0; i < drops.length; i++) {
+            const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+            ctx.fillText(text, i * 20, drops[i] * 20);
+            if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }, 50);
+}
+function stopMatrix() {
+    if (matrixInterval) {
+        clearInterval(matrixInterval);
+        matrixInterval = null;
+        const canvas = document.getElementById('matrixCanvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+}
+/g, inlineScripts);
+</code></pre>
+<h3>template modifications</h3>
+<p>Added injection points to <code>blog/templates/post.html</code>:</p>
+<pre><code class="language-html">&lt;style&gt;
+    /* Regular styles */
+    /* ... */
 
     /* Inline styles injected from frontmatter */
-    
+    /* Demo 1: Terminal greeting */
+.demo-box {
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 4px;
+    padding: 20px;
+    margin: 24px 0;
+}
+.demo-title {
+    color: #55ffff;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+.terminal-input {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.terminal-input input {
+    flex: 1;
+    padding: 8px 12px;
+    background: #000000;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    color: #55ff55;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+}
+.terminal-input input:focus {
+    outline: none;
+    border-color: #55ff55;
+    box-shadow: 0 0 0 2px rgba(85, 255, 85, 0.2);
+}
+.terminal-input button {
+    padding: 8px 16px;
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    color: #55ff55;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+}
+.terminal-input button:hover {
+    background: #1a1a1a;
+    border-color: #55ff55;
+}
+.terminal-output {
+    background: #000000;
+    border: 1px solid #333333;
+    padding: 12px;
+    border-radius: 3px;
+    min-height: 40px;
+    color: #55ff55;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+}
+/* Demo 2: Color picker */
+.color-demo {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.color-swatch {
+    width: 100px;
+    height: 100px;
+    border: 2px solid #333333;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+.color-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.color-buttons button {
+    padding: 8px 16px;
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+.color-buttons button.green { color: #55ff55; }
+.color-buttons button.yellow { color: #ffff55; }
+.color-buttons button.cyan { color: #55ffff; }
+.color-buttons button.magenta { color: #ff55ff; }
+.color-buttons button:hover {
+    background: #1a1a1a;
+}
+/* Demo 3: Click counter */
+.counter-display {
+    text-align: center;
+    padding: 20px;
+    background: #000000;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    margin: 12px 0;
+}
+.counter-number {
+    font-size: 48px;
+    color: #55ff55;
+    font-weight: bold;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+.counter-label {
+    color: #888888;
+    font-size: 12px;
+    margin-top: 8px;
+}
+.counter-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+.counter-buttons button {
+    padding: 10px 20px;
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    color: #55ff55;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+}
+.counter-buttons button:hover {
+    background: #1a1a1a;
+    border-color: #55ff55;
+}
+/* Demo 4: Matrix rain mini */
+.matrix-canvas {
+    width: 100%;
+    height: 150px;
+    background: #000000;
+    border: 1px solid #333333;
+    border-radius: 3px;
+}
+.matrix-controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: center;
+}
+.matrix-controls button {
+    padding: 8px 16px;
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    color: #55ff55;
+    cursor: pointer;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+}
+.matrix-controls button:hover {
+    background: #1a1a1a;
+    border-color: #55ff55;
+}
+
 &lt;/style&gt;
-</code></pre>
-<p>And at the bottom of the <span class="process">script</span> section:</p>
-<pre><code class="language-html">&lt;script&gt;
-    // Regular page scripts
-    function initializeMaterializationEffect() {
-        // ...
-    }
+
+&lt;script&gt;
+    /* Regular scripts */
+    /* ... */
 
     /* Inline scripts injected from frontmatter */
-    
+    // Demo 1: Terminal greeting
+function greetUser() {
+    const nameInput = document.getElementById('nameInput');
+    const output = document.getElementById('terminalOutput');
+    const name = nameInput.value.trim() || 'anonymous';
+    output.innerHTML = `> hello, ${name}!<br>> welcome to the interactive blog system<br>> type: help`;
+}
+document.addEventListener('DOMContentLoaded', () => {
+    const nameInput = document.getElementById('nameInput');
+    if (nameInput) {
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') greetUser();
+        });
+    }
+});
+// Demo 2: Color picker
+function changeColor(color) {
+    const swatch = document.getElementById('colorSwatch');
+    const colors = {
+        green: '#55ff55',
+        yellow: '#ffff55',
+        cyan: '#55ffff',
+        magenta: '#ff55ff'
+    };
+    swatch.style.backgroundColor = colors[color];
+    swatch.style.borderColor = colors[color];
+    swatch.style.boxShadow = `0 0 20px ${colors[color]}40`;
+}
+// Demo 3: Click counter
+let clickCount = 0;
+function incrementCounter() {
+    clickCount++;
+    updateCounter();
+}
+function decrementCounter() {
+    if (clickCount > 0) clickCount--;
+    updateCounter();
+}
+function resetCounter() {
+    clickCount = 0;
+    updateCounter();
+}
+function updateCounter() {
+    const display = document.getElementById('counterDisplay');
+    if (display) {
+        display.textContent = clickCount;
+        if (clickCount > 10) {
+            display.style.color = '#ffff55';
+        } else if (clickCount > 20) {
+            display.style.color = '#ff8855';
+        } else {
+            display.style.color = '#55ff55';
+        }
+    }
+}
+// Demo 4: Matrix rain
+let matrixInterval = null;
+function startMatrix() {
+    const canvas = document.getElementById('matrixCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth;
+    canvas.height = 150;
+    const columns = Math.floor(canvas.width / 20);
+    const drops = Array(columns).fill(0);
+    if (matrixInterval) clearInterval(matrixInterval);
+    matrixInterval = setInterval(() => {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#55ff55';
+        ctx.font = '15px monospace';
+        for (let i = 0; i < drops.length; i++) {
+            const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+            ctx.fillText(text, i * 20, drops[i] * 20);
+            if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }, 50);
+}
+function stopMatrix() {
+    if (matrixInterval) {
+        clearInterval(matrixInterval);
+        matrixInterval = null;
+        const canvas = document.getElementById('matrixCanvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+}
+
 &lt;/script&gt;
 </code></pre>
-<h3>step 4: write the <span class="process">HTML</span> in <span class="process">markdown</span></h3>
-<p>With the infrastructure in place, the <span class="process">markdown</span> file can include <strong>raw <span class="process">HTML</span></strong> for the visualization:</p>
-<pre><code class="language-markdown">## the visualization
+<h3><span class="process">markdown</span> <span class="process">HTML</span> rules</h3>
+<p>When embedding <span class="process">HTML</span> in <span class="process">markdown</span> for these demos, <strong><span class="attention">critical</span> rules</strong>:</p>
+<ol>
+<li><strong>No blank lines</strong> within the <span class="process">HTML</span> block—<span class="process">markdown</span> parsers reset on blank lines</li>
+<li><strong>Consistent indentation</strong>—keeps the parser happy</li>
+<li><strong>Treat as single unit</strong>—the entire <span class="process">HTML</span> block should flow without interruption</li>
+</ol>
+<p>Example of what <strong>not</strong> to do:</p>
+<pre><code class="language-html">&lt;div class=&quot;demo&quot;&gt;
+    &lt;button&gt;Click&lt;/button&gt;
 
-&lt;div class=&quot;viz-container&quot;&gt;
-    &lt;div class=&quot;input-section&quot;&gt;
-        &lt;label&gt;enter an array&lt;/label&gt;
-        &lt;input type=&quot;text&quot; id=&quot;arrayInput&quot;&gt;
-        &lt;button onclick=&quot;loadCustomArray()&quot;&gt;load&lt;/button&gt;
-    &lt;/div&gt;
-    &lt;div class=&quot;array-container&quot; id=&quot;arrayContainer&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;controls&quot;&gt;
-        &lt;button onclick=&quot;reset()&quot;&gt;reset&lt;/button&gt;
-        &lt;button onclick=&quot;step()&quot;&gt;next step&lt;/button&gt;
-    &lt;/div&gt;
+    &lt;div class=&quot;output&quot;&gt;&lt;/div&gt;  &lt;!-- blank line above breaks this --&gt;
 &lt;/div&gt;
 </code></pre>
-<p><strong><span class="attention">Critical</span> rule:</strong> No blank lines within the <span class="process">HTML</span> block. <span class="process">Markdown</span> parsers reset their state on blank lines and will treat subsequent indented content as <span class="process">code</span> blocks.</p>
-<h2>the tricky part: <span class="process">markdown</span> and <span class="process">html</span></h2>
-<p><span class="process">Markdown</span>&#39;s <span class="process">HTML</span> handling is <strong>surprisingly finicky</strong>. Here&#39;s what went wrong initially:</p>
-<h3>attempt 1: blank lines everywhere</h3>
-<pre><code class="language-html">&lt;div class=&quot;viz-container&quot;&gt;
-    &lt;div class=&quot;input-section&quot;&gt;
-        ...
-    &lt;/div&gt;
-
-    &lt;div class=&quot;array-container&quot;&gt;&lt;/div&gt;
-
-    &lt;div class=&quot;controls&quot;&gt;
-        ...
-    &lt;/div&gt;
+<p>Example of what <strong>works</strong>:</p>
+<pre><code class="language-html">&lt;div class=&quot;demo&quot;&gt;
+    &lt;button&gt;Click&lt;/button&gt;
+    &lt;div class=&quot;output&quot;&gt;&lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-<p><strong>Result:</strong> Everything after the first blank line got wrapped in <code>&lt;pre&gt;&lt;code&gt;</code> tags and escaped.</p>
-<h3>attempt 2: inconsistent indentation</h3>
-<pre><code class="language-html">&lt;div class=&quot;viz-container&quot;&gt;
-&lt;div class=&quot;input-section&quot;&gt;
-    ...
-&lt;/div&gt;
-    &lt;div class=&quot;array-container&quot;&gt;&lt;/div&gt;
-&lt;/div&gt;
-</code></pre>
-<p><strong>Result:</strong> Parsing broke. Some sections rendered, others escaped.</p>
-<h3>attempt 3: no blank lines, consistent indentation</h3>
-<pre><code class="language-html">&lt;div class=&quot;viz-container&quot;&gt;
-    &lt;div class=&quot;input-section&quot;&gt;
-        ...
-    &lt;/div&gt;
-    &lt;div class=&quot;array-container&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;controls&quot;&gt;
-        ...
-    &lt;/div&gt;
-&lt;/div&gt;
-</code></pre>
-<p><strong>Result:</strong> Perfect rendering. All <span class="process">HTML</span> treated as raw <span class="process">HTML</span>.</p>
-<p><strong>Lesson learned:</strong> When embedding <span class="process">HTML</span> in <span class="process">markdown</span>, treat the entire block as a single unit. No blank lines. Consistent indentation.</p>
-<h2>writing the visualization</h2>
-<p>With the <span class="structure">system</span> <span class="success">working</span>, I could write the visualization <span class="process">logic</span> entirely in the frontmatter:</p>
-<p><strong>282 lines of <span class="process">CSS</span></strong> defining:</p>
-<ul>
-<li><span class="meta">Terminal</span> color palette (#55ff55 green, #ffff55 yellow, etc.)</li>
-<li>Array item styling with hover states</li>
-<li>State boxes and explanation panels</li>
-<li>Button styles with disabled states</li>
-<li>Mobile responsive breakpoints</li>
-</ul>
-<p><strong>185 lines of <span class="process">JavaScript</span></strong> implementing:</p>
-<ul>
-<li>Array input validation</li>
-<li>Visualization state management</li>
-<li>Step-by-step <span class="process">algorithm</span> execution</li>
-<li>Auto-play functionality</li>
-<li>DOM manipulation for visual updates</li>
-</ul>
-<p>The visualization in <a href="/blog/solving-adjacent-increasing-subarrays-from-naive-t">blog post 017</a> uses <strong>all of this</strong>. Users can input custom arrays, step through the <span class="process">algorithm</span>, and see how the optimal solution works in real time.</p>
-<h2>benefits of this approach</h2>
-<p><strong>Separation of concerns:</strong> Content (<span class="process">markdown</span>), styling (<span class="process">CSS</span>), behavior (<span class="process">JavaScript</span>) are separate but colocated.</p>
-<p><strong>Reusability:</strong> The same visualization <span class="process">logic</span> could be used in multiple posts by copying the frontmatter.</p>
-<p><strong>Maintainability:</strong> Need to fix a bug in the visualization? Edit the frontmatter, rebuild. No scattered files.</p>
-<p><strong>Backward compatibility:</strong> Posts without inline scripts still work perfectly. Empty string injection ensures no <span class="attention">breaking</span> changes.</p>
+<h2>what this enables</h2>
+<p>The inline <span class="process">script</span> <span class="structure">system</span> makes these possible:</p>
+<p><strong><span class="process">Algorithm</span> visualizations</strong> - Like the sorting visualizer in post 017, with state tracking and step-by-step execution.</p>
+<p><strong>Interactive <span class="process">code</span> playgrounds</strong> - Users can modify <span class="process">code</span> and see results instantly.</p>
+<p><strong>Data visualizations</strong> - Charts, graphs, and diagrams that update based on user input.</p>
+<p><strong>Games</strong> - Simple browser games embedded directly in blog posts.</p>
+<p><strong>Calculators and tools</strong> - Practical utilities that solve real problems.</p>
+<p>All of this while maintaining the <strong><span class="process">markdown</span>-first <span class="meta">philosophy</span></strong>. No complex <span class="process">build</span> <span class="connection">pipeline</span>, no frontend <span class="structure">framework</span>, just <span class="process">YAML</span> frontmatter and vanilla <span class="process">JavaScript</span>.</p>
+<h2>benefits</h2>
+<p><strong>Separation of concerns:</strong> Content lives in <span class="process">markdown</span>, styling in <span class="process">CSS</span>, behavior in <span class="process">JavaScript</span>—all colocated in one file.</p>
+<p><strong>Backward compatibility:</strong> Posts without inline scripts work perfectly. Old posts don&#39;t break.</p>
 <p><strong><span class="meta">Terminal</span> <span class="meta">aesthetic</span> preservation:</strong> Custom <span class="process">CSS</span> ensures every interactive element matches the 90s BBS <span class="meta">aesthetic</span>.</p>
-<h2>future improvements</h2>
-<p><strong>1. <span class="process">script</span> library <span class="structure">system</span></strong></p>
-<p>Instead of duplicating visualization <span class="process">code</span> across posts, create a library:</p>
-<pre><code class="language-yaml">inlineScripts: |
-  import { ArrayVisualizer } from &#39;/blog/scripts/visualizers.js&#39;;
-  const viz = new ArrayVisualizer(&#39;arrayContainer&#39;);
-</code></pre>
-<p><strong>2. style theming</strong></p>
-<p>Extract common visualization styles into a shared theme:</p>
-<pre><code class="language-yaml">visualizationTheme: &quot;terminal&quot;
-</code></pre>
-<p>The <span class="process">build</span> <span class="process">script</span> would inject the corresponding <span class="process">CSS</span> automatically.</p>
-<p><strong>3. <span class="structure">component</span> registry</strong></p>
-<p>Pre-built interactive components users can <span class="connection">reference</span>:</p>
-<pre><code class="language-markdown">[interactive-code-editor lang=&quot;javascript&quot;]
-[algorithm-visualizer type=&quot;sorting&quot;]
-</code></pre>
-<h2>lessons learned</h2>
-<p><strong><span class="process">Markdown</span> is powerful but opinionated.</strong> Understanding how parsers handle <span class="process">HTML</span> blocks is crucial. Blank lines matter. Indentation matters.</p>
-<p><strong>Frontmatter is underrated.</strong> <span class="process">YAML</span>&#39;s multiline strings make it perfect for embedding <span class="process">code</span>. No special escaping needed.</p>
-<p><strong><span class="process">Build</span> systems should be extensible.</strong> Adding two fields to the frontmatter and two placeholders to the template gave us full scripting support. No architectural changes needed.</p>
-<p><strong>Backward compatibility matters.</strong> The <code>|| &#39;&#39;</code> fallback ensures old posts don&#39;t break. New features shouldn&#39;t require updating everything.</p>
-<p>The <span class="structure">system</span> now supports <strong>any</strong> interactive content. <span class="process">Algorithm</span> visualizations, <span class="process">code</span> playgrounds, interactive diagrams—all possible within the <span class="process">markdown</span>-first <span class="connection">workflow</span>.</p>
+<p><strong>Maintainability:</strong> Fix a bug? Edit the frontmatter, rebuild. No scattered files or complex refactors.</p>
+<p><strong><span class="success">Performance</span>:</strong> <span class="meta">Static</span> <span class="process">HTML</span> generation means fast page loads. <span class="process">JavaScript</span> only runs for interactive features.</p>
+<h2>the full picture</h2>
+<p>This post itself uses <strong>127 lines of <span class="process">CSS</span></strong> and <strong>98 lines of <span class="process">JavaScript</span></strong> in its frontmatter to power all four demos. Check the source <span class="process">markdown</span> to see how it all fits together.</p>
+<p>The <a href="/blog/solving-adjacent-increasing-subarrays-from-naive-t"><span class="process">algorithm</span> visualization in post 017</a> uses even more—<strong>282 lines of <span class="process">CSS</span></strong> and <strong>185 lines of <span class="process">JavaScript</span></strong>—for a full step-by-step <span class="process">algorithm</span> execution <span class="structure">interface</span>.</p>
 <p>And the blog remains what it&#39;s always been: text files that become beautiful, functional web pages.</p>
+<p><strong>Try the demos above.</strong> Every button click, color change, and matrix character proves the <span class="structure">system</span> works. The blog is no longer just <span class="meta">static</span> text—it&#39;s an interactive platform.</p>
 
         </article>
         
         <footer class="post-footer">
             <div>
-                words: ~1030 · reading time: ~5 min · <span id="view-count">👀 views loading...</span> · tags: <a href="/blog#tag-meta" class="tag meta" data-tag="meta">meta</a>, <a href="/blog#tag-engineering" class="tag neutral" data-tag="engineering">engineering</a>, <a href="/blog#tag-frontend" class="tag process" data-tag="frontend">frontend</a>, <a href="/blog#tag-tutorials" class="tag attention" data-tag="tutorials">tutorials</a>
+                words: ~1650 · reading time: ~8 min · <span id="view-count">👀 views loading...</span> · tags: <a href="/blog#tag-meta" class="tag meta" data-tag="meta">meta</a>, <a href="/blog#tag-engineering" class="tag neutral" data-tag="engineering">engineering</a>, <a href="/blog#tag-frontend" class="tag process" data-tag="frontend">frontend</a>, <a href="/blog#tag-tutorials" class="tag attention" data-tag="tutorials">tutorials</a>
             </div>
         </footer>
         
@@ -837,7 +1456,100 @@ const html = template
         }
 
         /* Inline scripts injected from frontmatter */
-        
+        // Demo 1: Terminal greeting
+function greetUser() {
+    const nameInput = document.getElementById('nameInput');
+    const output = document.getElementById('terminalOutput');
+    const name = nameInput.value.trim() || 'anonymous';
+    output.innerHTML = `> hello, ${name}!<br>> welcome to the interactive blog system<br>> type: help`;
+}
+document.addEventListener('DOMContentLoaded', () => {
+    const nameInput = document.getElementById('nameInput');
+    if (nameInput) {
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') greetUser();
+        });
+    }
+});
+// Demo 2: Color picker
+function changeColor(color) {
+    const swatch = document.getElementById('colorSwatch');
+    const colors = {
+        green: '#55ff55',
+        yellow: '#ffff55',
+        cyan: '#55ffff',
+        magenta: '#ff55ff'
+    };
+    swatch.style.backgroundColor = colors[color];
+    swatch.style.borderColor = colors[color];
+    swatch.style.boxShadow = `0 0 20px ${colors[color]}40`;
+}
+// Demo 3: Click counter
+let clickCount = 0;
+function incrementCounter() {
+    clickCount++;
+    updateCounter();
+}
+function decrementCounter() {
+    if (clickCount > 0) clickCount--;
+    updateCounter();
+}
+function resetCounter() {
+    clickCount = 0;
+    updateCounter();
+}
+function updateCounter() {
+    const display = document.getElementById('counterDisplay');
+    if (display) {
+        display.textContent = clickCount;
+        if (clickCount > 10) {
+            display.style.color = '#ffff55';
+        } else if (clickCount > 20) {
+            display.style.color = '#ff8855';
+        } else {
+            display.style.color = '#55ff55';
+        }
+    }
+}
+// Demo 4: Matrix rain
+let matrixInterval = null;
+function startMatrix() {
+    const canvas = document.getElementById('matrixCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth;
+    canvas.height = 150;
+    const columns = Math.floor(canvas.width / 20);
+    const drops = Array(columns).fill(0);
+    if (matrixInterval) clearInterval(matrixInterval);
+    matrixInterval = setInterval(() => {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#55ff55';
+        ctx.font = '15px monospace';
+        for (let i = 0; i < drops.length; i++) {
+            const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+            ctx.fillText(text, i * 20, drops[i] * 20);
+            if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }, 50);
+}
+function stopMatrix() {
+    if (matrixInterval) {
+        clearInterval(matrixInterval);
+        matrixInterval = null;
+        const canvas = document.getElementById('matrixCanvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+}
+
     </script>
     <footer class="rss-footer" style="text-align:center; margin:2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;">
       <a href="/blog/feed.xml" class="rss-button" target="_blank" rel="noopener">
