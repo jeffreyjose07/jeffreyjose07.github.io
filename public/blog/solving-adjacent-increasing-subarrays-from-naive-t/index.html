@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>solving adjacent increasing subarrays: from naive to optimal - Jeffrey Jose</title>
+    <meta name="description" content="A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization" />
+    
+    <!-- SEO Meta Tags -->
+    <meta property="og:title" content="solving adjacent increasing subarrays: from naive to optimal">
+    <meta property="og:description" content="A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization">
+    <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/solving-adjacent-increasing-subarrays-from-naive-t">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="solving adjacent increasing subarrays: from naive to optimal">
+    <meta name="twitter:description" content="A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background-color: #000000;
+            color: #c9c9c9;
+            line-height: 1.6;
+            padding: 20px;
+            font-size: 15px;
+            text-rendering: optimizeLegibility;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 40px 20px;
+                font-size: 16px;
+            }
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            margin-bottom: 18px;
+        }
+
+        .back-link a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        @media (min-width: 768px) {
+            .back-link a {
+                font-size: 13px;
+            }
+        }
+
+        .back-link a:hover {
+            color: #aaaaaa;
+        }
+
+        .back-link a:before {
+            content: '← ';
+            color: #666666;
+        }
+
+        .post-header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 20px;
+        }
+
+        .post-title {
+            font-size: 16px;
+            font-weight: normal;
+            margin-bottom: 10px;
+                        color: #55ff55;
+            letter-spacing: 0.3px;
+            line-height: 1.3;
+        }
+
+        @media (min-width: 768px) {
+            .post-title {
+                font-size: 18px;
+            }
+        }
+
+        .post-meta {
+            color: #ff8855;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-meta {
+                font-size: 13px;
+            }
+        }
+
+        .post-content {
+            line-height: 1.7;
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h2 {
+            font-size: 14px;
+            font-weight: normal;
+            margin: 30px 0 15px 0;
+            color: #5588ff;
+                        letter-spacing: 0.2px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content h2 {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h3 {
+            font-size: 13px;
+            font-weight: normal;
+            margin: 25px 0 12px 0;
+            color: #ff55ff;
+                    }
+
+        @media (min-width: 768px) {
+            .post-content h3 {
+                font-size: 14px;
+            }
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .post-content li {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content li {
+                font-size: 15px;
+            }
+        }
+
+        .post-content code {
+            background-color: #111111;
+            padding: 2px 4px;
+            border-radius: 1px;
+            font-family: inherit;
+            color: #ffff55;
+            font-size: 13px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content code {
+                font-size: 14px;
+            }
+        }
+
+        .post-content pre {
+            background-color: #111111;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content pre {
+                font-size: 13px;
+            }
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .post-content a {
+            color: #55ffff;
+            text-decoration: none;
+            border-bottom: 1px solid #334444;
+        }
+
+        .post-content a:hover {
+            color: #77ffff;
+            border-bottom-color: #55ffff;
+        }
+
+        .post-content blockquote {
+            border-left: 2px solid #333333;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #999999;
+            font-style: italic;
+        }
+
+        /* Semantic color system */
+        .success {
+            color: #55ff55;
+            font-weight: normal;
+        }
+
+        .structure {
+            color: #5588ff;
+        }
+
+        .process {
+            color: #ffff55;
+        }
+
+        .attention {
+            color: #ff8855;
+        }
+
+        .meta {
+            color: #ff55ff;
+        }
+
+        .connection {
+            color: #55ffff;
+        }
+
+        .neutral {
+            color: #c9c9c9;
+        }
+
+        /* Reading progress indicator */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: #55ff55;
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+
+        /* Subtle improvements */
+        .post-content p:first-of-type:first-letter {
+            color: #55ff55;
+            font-size: 18px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p:first-of-type:first-letter {
+                font-size: 20px;
+            }
+        }
+
+        /* Footer with post info */
+        .post-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #222222;
+            font-size: 11px;
+            color: #555555;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 768px) {
+            .post-footer {
+                font-size: 12px;
+            }
+        }
+
+        .post-footer .tag {
+            color: #ff55ff;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .post-footer .tag:hover {
+            text-decoration: none;
+            border-bottom-color: currentColor;
+        }
+        
+        /* Tag color classes */
+        .tag.success { color: #55ff55; }
+        .tag.structure { color: #5588ff; }
+        .tag.process { color: #ffff55; }
+        .tag.attention { color: #ff8855; }
+        .tag.meta { color: #ff55ff; }
+        .tag.connection { color: #55ffff; }
+        .tag.neutral { color: #c9c9c9; }
+
+        /* Image styling */
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Mobile improvements */
+        @media (max-width: 767px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .post-content pre {
+                margin-left: -10px;
+                margin-right: -10px;
+                border-radius: 0;
+            }
+
+            .post-content img {
+                margin: 15px auto;
+                max-width: calc(100% - 20px);
+            }
+        }
+
+        /* Post Navigation */
+        .post-navigation {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #333333;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .nav-previous, .nav-next {
+            padding: 15px;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            background-color: #111111;
+        }
+
+        .nav-previous a, .nav-next a {
+            display: block;
+            color: #c9c9c9;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-previous a:hover, .nav-next a:hover {
+            color: #ffffff;
+        }
+
+        .nav-next {
+            text-align: right;
+        }
+
+        .nav-label {
+            display: block;
+            font-size: 11px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .nav-title {
+            display: block;
+            font-size: 14px;
+            color: #c9c9c9;
+            line-height: 1.3;
+        }
+
+        .nav-previous a:hover .nav-title, .nav-next a:hover .nav-title {
+            color: #ffffff;
+        }
+
+        @media (max-width: 767px) {
+            .post-navigation {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .nav-next {
+                text-align: left;
+            }
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            margin-bottom: 10px;
+            font-size: 11px;
+            color: #666666;
+        }
+
+        .breadcrumb a {
+            color: #888888;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: #aaaaaa;
+        }
+
+        .breadcrumb span {
+            margin: 0 5px;
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #222222;
+        }
+
+        .social-links a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 11px;
+                        letter-spacing: 0.5px;
+            transition: color 0.2s ease;
+        }
+
+        .social-links a:hover {
+            color: #55ff55;
+        }
+
+        .social-links .divider {
+            color: #333333;
+            font-size: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .social-links a {
+                font-size: 12px;
+            }
+        }
+
+        /* Text Materialization Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease;
+            pointer-events: none;
+        }
+
+        .loading-overlay.fade-out {
+            opacity: 0;
+        }
+
+        /* Text elements start randomly positioned and animate to final position */
+        .materializing {
+            animation: materialize 1.2s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes materialize {
+            0% {
+                opacity: 0;
+                transform: translate(var(--random-x, 0), var(--random-y, 0)) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+        }
+
+        /* Inline styles injected from frontmatter */
+        /* Visualization styles adapted to terminal aesthetic */
+.viz-container {
+    margin: 32px 0;
+    border: 1px solid #333333;
+    border-radius: 4px;
+    padding: 24px;
+    background-color: #0a0a0a;
+}
+
+.array-container {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+}
+
+.array-item {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #333333;
+    border-radius: 3px;
+    font-weight: 600;
+    font-size: 16px;
+    background: #000000;
+    color: #c9c9c9;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.array-item.current {
+    background: #1a1a00;
+    border-color: #ffff55;
+    color: #ffff55;
+}
+
+.array-item.current-run {
+    background: #001a00;
+    border-color: #55ff55;
+    color: #55ff55;
+}
+
+.array-item.previous-run {
+    background: #1a0000;
+    border-color: #ff5555;
+    color: #ff5555;
+}
+
+.array-item .index {
+    position: absolute;
+    top: -18px;
+    font-size: 11px;
+    color: #666666;
+    font-weight: normal;
+}
+
+.state-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+}
+
+.state-box {
+    background: #000000;
+    border: 1px solid #333333;
+    padding: 16px;
+    border-radius: 3px;
+}
+
+.state-box h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #55ffff;
+}
+
+.state-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 14px;
+}
+
+.state-label {
+    color: #888888;
+}
+
+.state-value {
+    font-weight: 600;
+    color: #55ff55;
+}
+
+.explanation {
+    background: #000000;
+    border: 1px solid #333333;
+    padding: 16px;
+    border-radius: 3px;
+    margin: 16px 0;
+}
+
+.explanation h4 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ff55ff;
+}
+
+.explanation p {
+    margin: 0;
+    font-size: 14px;
+    color: #c9c9c9;
+}
+
+.scenario-box {
+    background: #000000;
+    border: 1px solid #333333;
+    padding: 12px;
+    border-radius: 3px;
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.scenario-box.winning {
+    border-color: #55ff55;
+    background: #001a00;
+}
+
+.scenario-title {
+    font-weight: 600;
+    color: #55ffff;
+    margin-bottom: 6px;
+}
+
+.scenario-box div {
+    color: #888888;
+}
+
+.scenario-box.winning .winner-badge {
+    color: #55ff55;
+    font-weight: 600;
+    margin-top: 6px;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+}
+
+.viz-container button {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    cursor: pointer;
+    background-color: #0a0a0a;
+    color: #55ff55;
+    transition: all 0.2s ease;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.viz-container button:hover {
+    background-color: #1a1a1a;
+    border-color: #55ff55;
+}
+
+.viz-container button:disabled {
+    color: #333333;
+    border-color: #222222;
+    cursor: not-allowed;
+}
+
+.result-box {
+    background: #001a00;
+    border: 1px solid #55ff55;
+    border-radius: 3px;
+    padding: 16px;
+    text-align: center;
+    margin-top: 16px;
+    display: none;
+}
+
+.result-box.show {
+    display: block;
+}
+
+.result-box h3 {
+    color: #55ff55;
+    margin: 0 0 8px 0;
+    font-size: 16px;
+}
+
+.input-section {
+    background: #000000;
+    border: 1px solid #333333;
+    padding: 16px;
+    border-radius: 3px;
+    margin-bottom: 16px;
+}
+
+.input-section label {
+    display: block;
+    text-align: center;
+    color: #55ffff;
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.input-group {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.viz-container input[type="text"] {
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #55ff55;
+    background-color: #000000;
+    border: 1px solid #333333;
+    border-radius: 3px;
+    outline: none;
+    width: 280px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.viz-container input[type="text"]:focus {
+    border-color: #55ff55;
+    box-shadow: 0 0 0 2px rgba(85, 255, 85, 0.2);
+}
+
+.error-message {
+    color: #ff5555;
+    text-align: center;
+    margin-top: 8px;
+    font-size: 12px;
+}
+
+.presets {
+    text-align: center;
+    color: #888888;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.presets a {
+    color: #55ffff;
+    text-decoration: none;
+}
+
+.presets a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 767px) {
+    .state-container {
+        grid-template-columns: 1fr;
+    }
+    .viz-container input[type="text"] {
+        width: 100%;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay"></div>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>solving adjacent increasing subarrays: from naive to optimal</span>
+        </div>
+        
+        <div class="back-link">
+            <a href="/blog">back to blog</a>
+        </div>
+        
+        <div class="social-links">
+            <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener">github</a>
+            <span class="divider">·</span>
+            <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener">linkedin</a>
+            <span class="divider">·</span>
+            <a href="/analytics.html">analytics</a>
+            <span class="divider">·</span>
+            <a href="https://x.com/josejeffrey07" target="_blank" rel="noopener">twitter</a>
+            <span class="divider">·</span>
+            <a href="mailto:jeffrey.jose07@gmail.com">email</a>
+            <span class="divider">·</span>
+            <a href="/resume.pdf" target="_blank">resume</a>
+        </div>
+        
+        <header class="post-header">
+            <h1 class="post-title">017: solving adjacent increasing subarrays: from naive to optimal</h1>
+            <div class="post-meta">26 Jan 2025</div>
+        </header>
+        
+        <article class="post-content">
+            <p>When I first encountered this problem on <strong>LeetCode</strong>, I did what most developers do - jumped straight to the naive solution. What followed was a journey through increasingly elegant <strong>optimizations</strong>, each revealing deeper insights about algorithmic thinking. This documents that evolution from a <span class="success">working</span>-but-<span class="attention">slow</span> O(n³) solution to an optimal O(n) <strong><span class="process">algorithm</span></strong>.</p>
+<h2>the problem</h2>
+<p>Given an <strong>array</strong> of integers, find the maximum value of <code>k</code> for which there exist two adjacent subarrays of length <code>k</code> each, where both subarrays are strictly increasing.</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li>Both subarrays must be strictly increasing</li>
+<li>The subarrays must be adjacent</li>
+<li><strong>Array</strong> length can be up to 200,000 elements</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code>nums = [2,5,7,8,9,2,3,4,3,1]
+output = 3
+
+The subarray [7,8,9] is strictly increasing
+The subarray [2,3,4] is strictly increasing
+They are adjacent, and k=3 is the maximum
+</code></pre>
+<h2>the naive approach</h2>
+<p>The straightforward solution: try every possible value of k, check every possible window, and verify if both halves are increasing.</p>
+<pre><code class="language-cpp">class Solution {
+public:
+    bool isStrictlyIncreasing(vector&lt;int&gt;&amp; nums, int start, int length) {
+        for (int i = start + 1; i &lt; start + length; i++) {
+            if (nums[i] &lt;= nums[i-1]) return false;
+        }
+        return true;
+    }
+
+    int maxIncreasingSubarrays(vector&lt;int&gt;&amp; nums) {
+        int n = nums.size();
+
+        for (int k = n/2; k &gt;= 1; k--) {
+            for (int i = 0; i &lt;= n - 2*k; i++) {
+                if (isStrictlyIncreasing(nums, i, k) &amp;&amp;
+                    isStrictlyIncreasing(nums, i + k, k)) {
+                    return k;
+                }
+            }
+        }
+        return 0;
+    }
+};
+</code></pre>
+<p><strong>Time <span class="meta">complexity</span>:</strong> O(n² × k) ≈ O(n³)
+<strong>Space <span class="meta">complexity</span>:</strong> O(1)</p>
+<p>With n = 200,000, this times out immediately.</p>
+<h2>first <span class="success">optimization</span>: precomputation</h2>
+<p>The naive solution repeatedly checks if subarrays are increasing. The key insight: <strong>precompute</strong> how long each increasing sequence is.</p>
+<h3><span class="process">run</span> length array</h3>
+<pre><code>nums      = [2, 5, 7, 8, 9, 2, 3, 4, 3, 1]
+runLength = [1, 2, 3, 4, 5, 1, 2, 3, 1, 1]
+</code></pre>
+<p>At index 4, <code>runLength[4] = 5</code> means there&#39;s an increasing sequence of length 5 ending at position 4.</p>
+<pre><code class="language-cpp">class Solution {
+public:
+    int maxIncreasingSubarrays(vector&lt;int&gt;&amp; nums) {
+        int n = nums.size();
+        vector&lt;int&gt; runLength(n, 1);
+
+        for (int i = 1; i &lt; n; i++) {
+            if (nums[i] &gt; nums[i-1]) {
+                runLength[i] = runLength[i-1] + 1;
+            }
+        }
+
+        int maxK = 0;
+        for (int i = 0; i &lt; n - 1; i++) {
+            for (int k = 1; k &lt;= (n - i) / 2; k++) {
+                if (runLength[i + k - 1] &gt;= k &amp;&amp;
+                    runLength[i + 2*k - 1] &gt;= k) {
+                    maxK = max(maxK, k);
+                }
+            }
+        }
+
+        return maxK;
+    }
+};
+</code></pre>
+<p><strong>Time <span class="meta">complexity</span>:</strong> O(n²)
+<strong>Space <span class="meta">complexity</span>:</strong> O(n)</p>
+<p>Better, but still quadratic. With n = 200,000, we&#39;re at 40 billion <strong>operations</strong>.</p>
+<h2>the optimal solution</h2>
+<p>The breakthrough: at any point in the <strong>array</strong>, there are exactly two ways to form adjacent increasing subarrays.</p>
+<h3>scenario 1: <span class="connection">bridge</span> two separate runs</h3>
+<pre><code>Previous Run          Current Run
+[...........] [break] [...........]
+   length=A              length=B
+
+maximum k = min(A, B)
+</code></pre>
+<h3>scenario 2: split a single <span class="process">run</span></h3>
+<pre><code>One Long Run
+[........................]
+        length=L
+
+maximum k = L / 2
+</code></pre>
+<h3>the <span class="process">algorithm</span></h3>
+<pre><code class="language-cpp">class Solution {
+public:
+    int maxIncreasingSubarrays(vector&lt;int&gt;&amp; nums) {
+        int n = nums.size();
+
+        int currentRunLength = 1;
+        int previousRunLength = 0;
+        int maxK = 0;
+
+        for (int i = 1; i &lt; n; i++) {
+            if (nums[i] &gt; nums[i - 1]) {
+                currentRunLength++;
+            } else {
+                previousRunLength = currentRunLength;
+                currentRunLength = 1;
+            }
+
+            int kFromTwoRuns = min(previousRunLength, currentRunLength);
+            int kFromSplittingRun = currentRunLength / 2;
+
+            maxK = max({maxK, kFromTwoRuns, kFromSplittingRun});
+        }
+
+        return maxK;
+    }
+};
+</code></pre>
+<p><strong>Time <span class="meta">complexity</span>:</strong> O(n)
+<strong>Space <span class="meta">complexity</span>:</strong> O(1)</p>
+<p>Single pass, <span class="process">constant</span> space.</p>
+<h2>the visualization</h2>
+<div class="viz-container">
+    <div class="input-section">
+        <label>enter an array (max 10 numbers, comma-separated)</label>
+        <div class="input-group">
+            <input type="text" id="arrayInput" placeholder="2,5,7,8,9,2,3,4,3,1"
+                   onkeypress="if(event.key==='Enter') loadCustomArray()">
+            <button onclick="loadCustomArray()">load</button>
+        </div>
+        <div class="presets">
+            <a href="#" onclick="document.getElementById('arrayInput').value='1,2,3,4,5,6,7,8'; loadCustomArray(); return false;">split run example</a> |
+            <a href="#" onclick="document.getElementById('arrayInput').value='1,2,3,4,4,4,4,5,6,7'; loadCustomArray(); return false;">bridge runs example</a>
+        </div>
+    </div>
+
+<pre><code>&lt;div class=&quot;array-container&quot; id=&quot;arrayContainer&quot;&gt;&lt;/div&gt;
+
+&lt;div class=&quot;state-container&quot;&gt;
+    &lt;div class=&quot;state-box&quot;&gt;
+        &lt;h4&gt;current state&lt;/h4&gt;
+        &lt;div class=&quot;state-item&quot;&gt;
+            &lt;span class=&quot;state-label&quot;&gt;position&lt;/span&gt;
+            &lt;span class=&quot;state-value&quot; id=&quot;position&quot;&gt;0&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;state-item&quot;&gt;
+            &lt;span class=&quot;state-label&quot;&gt;current run&lt;/span&gt;
+            &lt;span class=&quot;state-value&quot; id=&quot;currentRun&quot;&gt;1&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;state-item&quot;&gt;
+            &lt;span class=&quot;state-label&quot;&gt;previous run&lt;/span&gt;
+            &lt;span class=&quot;state-value&quot; id=&quot;previousRun&quot;&gt;0&lt;/span&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;state-box&quot;&gt;
+        &lt;h4&gt;maximum k&lt;/h4&gt;
+        &lt;div style=&quot;text-align: center; padding: 12px 0;&quot;&gt;
+            &lt;span class=&quot;state-value&quot; id=&quot;maxK&quot; style=&quot;font-size: 32px;&quot;&gt;0&lt;/span&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;explanation&quot;&gt;
+    &lt;h4&gt;what&#39;s happening&lt;/h4&gt;
+    &lt;p id=&quot;explanation&quot;&gt;click next step to begin&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;scenarios&quot;&gt;&lt;/div&gt;
+
+&lt;div class=&quot;controls&quot;&gt;
+    &lt;button onclick=&quot;reset()&quot;&gt;reset&lt;/button&gt;
+    &lt;button id=&quot;stepBtn&quot; onclick=&quot;step()&quot;&gt;next step&lt;/button&gt;
+    &lt;button onclick=&quot;autoPlay()&quot;&gt;auto play&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;result-box&quot; id=&quot;resultBox&quot;&gt;
+    &lt;h3&gt;algorithm complete&lt;/h3&gt;
+    &lt;p id=&quot;resultText&quot;&gt;&lt;/p&gt;
+&lt;/div&gt;
+</code></pre>
+</div>
+
+<h2><span class="meta">complexity</span> comparison</h2>
+<table>
+<thead>
+<tr>
+<th>approach</th>
+<th>time</th>
+<th>space</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>naive</td>
+<td>O(n³)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>precomputation</td>
+<td>O(n²)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>optimal</td>
+<td>O(n)</td>
+<td>O(1)</td>
+</tr>
+</tbody></table>
+<h2>lessons learned</h2>
+<p><strong>start simple</strong> - The naive solution helped understand the problem deeply.</p>
+<p><strong>precomputation is powerful</strong> - When repeating calculations, precompute them.</p>
+<p><strong>state tracking enables single passes</strong> - Track just enough <strong>state</strong> to make decisions without looking back.</p>
+<p><strong><span class="meta">pattern</span> recognition matters</strong> - Recognizing there are exactly two ways to form the answer unlocks the O(n) solution.</p>
+<p>This problem taught me that <strong><span class="success">optimization</span></strong> isn&#39;t just about making <span class="process">code</span> faster - it&#39;s about understanding the problem <span class="structure">structure</span> deeply enough to see elegant solutions. The journey from O(n³) to O(n) wasn&#39;t just about removing loops; it was about recognizing fundamental <strong>patterns</strong> in the problem itself.</p>
+
+        </article>
+        
+        <footer class="post-footer">
+            <div>
+                words: ~2000 · reading time: ~10 min · <span id="view-count">👀 views loading...</span> · tags: <a href="/blog#tag-algorithms" class="tag neutral" data-tag="algorithms">algorithms</a>, <a href="/blog#tag-optimization" class="tag neutral" data-tag="optimization">optimization</a>, <a href="/blog#tag-leetcode" class="tag neutral" data-tag="leetcode">leetcode</a>, <a href="/blog#tag-data-structures" class="tag neutral" data-tag="data-structures">data-structures</a>, <a href="/blog#tag-problem-solving" class="tag neutral" data-tag="problem-solving">problem-solving</a>
+            </div>
+        </footer>
+        
+        <nav class="post-navigation">
+            <div class="nav-previous">
+                <a href="/blog/adding-custom-domain-jeffreyjose07is-adev">
+                    <span class="nav-label">← previous</span>
+                    <span class="nav-title">adding custom domain: jeffreyjose07.is-a.dev</span>
+                </a>
+            </div></nav>
+    </div>
+    
+    <div class="reading-progress"></div>
+    
+    <script>
+        // Prevent scroll restoration but don't interfere with navigation
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        
+        // Only scroll to top on actual page refresh (not navigation)
+        window.addEventListener('load', () => {
+            // Check if this is a refresh vs navigation
+            const isRefresh = (
+                (performance.navigation && performance.navigation.type === performance.navigation.TYPE_RELOAD) ||
+                (performance.getEntriesByType('navigation')[0] && performance.getEntriesByType('navigation')[0].type === 'reload')
+            );
+            
+            // Always start at top for new page loads
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 0);
+        });
+        
+        // Simple reading progress indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('.reading-progress').style.width = scrolled + '%';
+        });
+
+        // Text materialization effect
+        function initializeMaterializationEffect() {
+            const elementsToMaterialize = [
+                '.breadcrumb',
+                '.back-link',
+                '.social-links',
+                '.post-header',
+                '.post-content > *',
+                '.post-footer',
+                '.post-navigation'
+            ];
+            
+            elementsToMaterialize.forEach((selector, index) => {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach((element, elementIndex) => {
+                    // Generate random starting position
+                    const randomX = (Math.random() - 0.5) * 200; // -100 to 100px
+                    const randomY = (Math.random() - 0.5) * 100; // -50 to 50px
+                    
+                    // Set CSS custom properties for random position
+                    element.style.setProperty('--random-x', `${randomX}px`);
+                    element.style.setProperty('--random-y', `${randomY}px`);
+                    
+                    // Add materializing class
+                    element.classList.add('materializing');
+                    
+                    // Calculate staggered delay
+                    const delay = (index * 0.1) + (elementIndex * 0.05);
+                    element.style.animationDelay = `${delay}s`;
+                });
+            });
+            
+            // Hide loading overlay after animations complete
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            setTimeout(() => {
+                loadingOverlay.classList.add('fade-out');
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 800);
+            }, 400); // Start fade after initial delay
+        }
+        
+        // Initialize materialization effect on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeMaterializationEffect();
+            loadViewCount();
+        });
+        
+        // Load view count from GoatCounter
+        function loadViewCount() {
+            const path = window.location.pathname;
+            const viewCountElement = document.getElementById('view-count');
+            
+            fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.count || '0';
+                    viewCountElement.innerHTML = `👀 ${count} views`;
+                    viewCountElement.style.color = '#55ffff'; // Terminal cyan
+                })
+                .catch(error => {
+                    console.warn('Could not load view count:', error);
+                    viewCountElement.innerHTML = '👀 views';
+                    viewCountElement.style.color = '#888888';
+                });
+        }
+
+        /* Inline scripts injected from frontmatter */
+        let nums = [2, 5, 7, 8, 9, 2, 3, 4, 3, 1];
+let i = 1;
+let currentRunLength = 1;
+let previousRunLength = 0;
+let maxK = 0;
+let isPlaying = false;
+
+function loadCustomArray() {
+    const input = document.getElementById('arrayInput').value.trim();
+
+    const existingError = document.querySelector('.error-message');
+    if (existingError) existingError.remove();
+
+    if (!input) {
+        showError('please enter an array');
+        return;
+    }
+
+    const parsed = input.split(',').map(s => s.trim()).filter(s => s !== '');
+
+    if (parsed.length < 2) {
+        showError('array must have at least 2 elements');
+        return;
+    }
+
+    if (parsed.length > 10) {
+        showError('array must have at most 10 elements');
+        return;
+    }
+
+    const numbers = [];
+    for (let val of parsed) {
+        const num = parseInt(val);
+        if (isNaN(num)) {
+            showError(`"${val}" is not a valid number`);
+            return;
+        }
+        numbers.push(num);
+    }
+
+    nums = numbers;
+    reset();
+
+    const inputSection = document.querySelector('.input-section');
+    const successMsg = document.createElement('p');
+    successMsg.className = 'error-message';
+    successMsg.style.color = '#55ff55';
+    successMsg.textContent = 'array loaded';
+    inputSection.appendChild(successMsg);
+    setTimeout(() => successMsg.remove(), 2000);
+}
+
+function showError(message) {
+    const inputSection = document.querySelector('.input-section');
+    const errorMsg = document.createElement('p');
+    errorMsg.className = 'error-message';
+    errorMsg.textContent = message;
+    inputSection.appendChild(errorMsg);
+}
+
+function initArray() {
+    const container = document.getElementById('arrayContainer');
+    container.innerHTML = '';
+    nums.forEach((num, idx) => {
+        const div = document.createElement('div');
+        div.className = 'array-item';
+        div.id = `item-${idx}`;
+        div.innerHTML = `<span class="index">${idx}</span>${num}`;
+        if (idx === 0) {
+            div.classList.add('current-run');
+        }
+        container.appendChild(div);
+    });
+}
+
+function updateDisplay() {
+    document.getElementById('position').textContent = i;
+    document.getElementById('currentRun').textContent = currentRunLength;
+    document.getElementById('previousRun').textContent = previousRunLength;
+    document.getElementById('maxK').textContent = maxK;
+
+    for (let j = 0; j < nums.length; j++) {
+        const item = document.getElementById(`item-${j}`);
+        item.classList.remove('current', 'current-run', 'previous-run');
+
+        if (j === i) {
+            item.classList.add('current');
+        } else {
+            if (j <= i && j > i - currentRunLength) {
+                item.classList.add('current-run');
+            }
+            if (previousRunLength > 0 && j < i - currentRunLength + 1 && j >= i - currentRunLength - previousRunLength + 1) {
+                item.classList.add('previous-run');
+            }
+        }
+    }
+}
+
+function step() {
+    if (i >= nums.length) {
+        showResult();
+        return;
+    }
+
+    const isIncreasing = nums[i] > nums[i - 1];
+
+    if (isIncreasing) {
+        currentRunLength++;
+        document.getElementById('explanation').innerHTML =
+            `position ${i}: ${nums[i]} > ${nums[i-1]}<br>sequence continues. current run: ${currentRunLength}`;
+    } else {
+        previousRunLength = currentRunLength;
+        currentRunLength = 1;
+        document.getElementById('explanation').innerHTML =
+            `position ${i}: ${nums[i]} ≤ ${nums[i-1]}<br>sequence breaks. previous run: ${previousRunLength}, starting new`;
+    }
+
+    const kFromTwoRuns = Math.min(previousRunLength, currentRunLength);
+    const kFromSplittingRun = Math.floor(currentRunLength / 2);
+
+    const prevMaxK = maxK;
+    maxK = Math.max(maxK, kFromTwoRuns, kFromSplittingRun);
+
+    const scenariosDiv = document.getElementById('scenarios');
+    scenariosDiv.innerHTML = `
+        <div class="scenario-box ${kFromTwoRuns === maxK && kFromTwoRuns > prevMaxK ? 'winning' : ''}">
+            <div class="scenario-title">scenario 1: bridge two runs</div>
+            <div>min(${previousRunLength}, ${currentRunLength}) = ${kFromTwoRuns}</div>
+            ${kFromTwoRuns === maxK && kFromTwoRuns > prevMaxK ? '<div class="winner-badge">✓ new maximum</div>' : ''}
+        </div>
+        <div class="scenario-box ${kFromSplittingRun === maxK && kFromSplittingRun > prevMaxK ? 'winning' : ''}">
+            <div class="scenario-title">scenario 2: split current run</div>
+            <div>${currentRunLength} / 2 = ${kFromSplittingRun}</div>
+            ${kFromSplittingRun === maxK && kFromSplittingRun > prevMaxK ? '<div class="winner-badge">✓ new maximum</div>' : ''}
+        </div>
+    `;
+
+    updateDisplay();
+    i++;
+
+    if (i >= nums.length) {
+        document.getElementById('stepBtn').disabled = true;
+        showResult();
+    }
+}
+
+function showResult() {
+    const resultBox = document.getElementById('resultBox');
+    const resultText = document.getElementById('resultText');
+    resultBox.classList.add('show');
+    resultText.innerHTML = `maximum k = ${maxK}`;
+}
+
+function reset() {
+    i = 1;
+    currentRunLength = 1;
+    previousRunLength = 0;
+    maxK = 0;
+    isPlaying = false;
+    document.getElementById('stepBtn').disabled = false;
+    document.getElementById('resultBox').classList.remove('show');
+    document.getElementById('scenarios').innerHTML = '';
+    document.getElementById('explanation').textContent = 'click next step to begin';
+    initArray();
+    updateDisplay();
+}
+
+async function autoPlay() {
+    if (isPlaying) return;
+    isPlaying = true;
+
+    while (i < nums.length && isPlaying) {
+        step();
+        await new Promise(resolve => setTimeout(resolve, 1500));
+    }
+
+    isPlaying = false;
+}
+
+// Initialize on page load
+setTimeout(() => {
+    initArray();
+    updateDisplay();
+}, 500);
+
+    </script>
+    <footer class="rss-footer" style="text-align:center; margin:2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;">
+      <a href="/blog/feed.xml" class="rss-button" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 8 8" style="margin-right:6px; vertical-align:middle;">
+          <path d="M1 0v1c3.32 0 6 2.68 6 6h1c0-3.86-3.14-7-7-7zm0 2v1c2.21 0 4 1.79 4 4h1c0-2.76-2.24-5-5-5zm.5 2c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5z" fill="currentColor"/>
+        </svg>
+        <span>Subscribe via RSS</span>
+      </a>
+    </footer>
+    <style>
+      .rss-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.6em 1.2em;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #4a5568;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      }
+      .rss-button:hover {
+        background: #edf2f7;
+        border-color: #cbd5e0;
+        transform: translateY(-1px);
+      }
+      .rss-button:active {
+        transform: translateY(0);
+      }
+      .rss-button svg {
+        color: #f6ad55;
+      }
+    </style>
+    
+    <!-- GoatCounter Analytics -->
+    <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
