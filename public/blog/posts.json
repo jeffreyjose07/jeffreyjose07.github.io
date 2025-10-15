@@ -1,5 +1,21 @@
 [
   {
+    "url": "/blog/adding-interactive-scripts-to-blog-posts",
+    "title": "adding interactive scripts to blog posts",
+    "episode": "018",
+    "date": "2025-01-26",
+    "tags": [
+      "meta",
+      "engineering",
+      "frontend",
+      "tutorials"
+    ],
+    "description": "how we extended the blog system to support inline JavaScript and CSS for interactive visualizations",
+    "readingTime": 5,
+    "wordCount": 1030,
+    "slug": "adding-interactive-scripts-to-blog-posts"
+  },
+  {
     "url": "/blog/solving-adjacent-increasing-subarrays-from-naive-t",
     "title": "solving adjacent increasing subarrays: from naive to optimal",
     "episode": "017",
