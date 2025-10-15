@@ -368,42 +368,15 @@ The classic Matrix falling characters effect—in your blog post.
 
 ## implementation details
 
-### build script changes
+The system works through three simple changes:
 
-Modified `blog/scripts/build.js` to extract and inject the new frontmatter fields:
+**1. Build script extraction** - Modified `blog/scripts/build.js` to extract inlineStyles and inlineScripts from frontmatter and inject them into the HTML template using placeholder replacement.
 
-```javascript
-// Process inline styles and scripts from frontmatter
-const inlineStyles = frontmatter.inlineStyles || '';
-const inlineScripts = frontmatter.inlineScripts || '';
+**2. Template injection points** - Added placeholder markers to `blog/templates/post.html` that get replaced during build with the actual CSS and JavaScript from frontmatter.
 
-// Inject into template
-const html = template
-    .replace(/{{inlineStyles}}/g, inlineStyles)
-    .replace(/{{inlineScripts}}/g, inlineScripts);
-```
+**3. Frontmatter fields** - Added two optional YAML fields (inlineStyles and inlineScripts) that accept multi-line CSS and JavaScript code blocks.
 
-### template modifications
-
-Added injection points to `blog/templates/post.html`:
-
-```html
-<style>
-    /* Regular styles */
-    /* ... */
-
-    /* Inline styles injected from frontmatter */
-    {{inlineStyles}}
-</style>
-
-<script>
-    /* Regular scripts */
-    /* ... */
-
-    /* Inline scripts injected from frontmatter */
-    {{inlineScripts}}
-</script>
-```
+For developers interested in the implementation details, see the [source code on GitHub](https://github.com/jeffreyjose07/jeffreyjose07.github.io/blob/main/blog/posts/018-adding-interactive-scripts-to-blog.md) - view the raw markdown to see the frontmatter with all 170 lines of CSS and 94 lines of JavaScript powering the demos above.
 
 ### markdown HTML rules
 
@@ -462,10 +435,8 @@ All of this while maintaining the **markdown-first philosophy**. No complex buil
 
 ## the full picture
 
-This post itself uses **127 lines of CSS** and **98 lines of JavaScript** in its frontmatter to power all four demos. Check the source markdown to see how it all fits together.
+This post demonstrates the inline script system by using it—all four demos above are powered by CSS and JavaScript in the frontmatter. The [algorithm visualization in post 017](/blog/solving-adjacent-increasing-subarrays-from-naive-t) takes it further with a complete step-by-step execution interface.
 
-The [algorithm visualization in post 017](/blog/solving-adjacent-increasing-subarrays-from-naive-t) uses even more—**282 lines of CSS** and **185 lines of JavaScript**—for a full step-by-step algorithm execution interface.
-
-And the blog remains what it's always been: text files that become beautiful, functional web pages.
+The blog remains what it's always been: text files that become beautiful, functional web pages. No build complexity, no frameworks—just markdown, YAML, and vanilla JavaScript.
 
 **Try the demos above.** Every button click, color change, and matrix character proves the system works. The blog is no longer just static text—it's an interactive platform.
