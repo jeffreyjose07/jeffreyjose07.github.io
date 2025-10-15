@@ -245,6 +245,10 @@ function processPost(filename, episodeNumber, allPosts = []) {
     
     const navigationHtml = generatePostNavigation(prevPost, nextPost);
     
+    // Process inline styles and scripts from frontmatter
+    const inlineStyles = frontmatter.inlineStyles || '';
+    const inlineScripts = frontmatter.inlineScripts || '';
+
     // Load and populate template
     const template = loadTemplate('post');
     const html = template
@@ -262,7 +266,9 @@ function processPost(filename, episodeNumber, allPosts = []) {
         .replace(/{{linkedinUrl}}/g, config.social.linkedin)
         .replace(/{{twitterUrl}}/g, config.social.twitter)
         .replace(/{{emailUrl}}/g, config.social.email)
-        .replace(/{{resumeUrl}}/g, config.resumeUrl);
+        .replace(/{{resumeUrl}}/g, config.resumeUrl)
+        .replace(/{{inlineStyles}}/g, inlineStyles)
+        .replace(/{{inlineScripts}}/g, inlineScripts);
     
     // Create output directory
     const outputDir = path.join(OUTPUT_DIR, slug);
