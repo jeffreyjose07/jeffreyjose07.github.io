@@ -2,100 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github } from "lucide-react";
+import { projects } from "@/data/projects";
 
 const Projects = () => {
-  const projects = [
-    {
-      title: "Scalable Chat Platform",
-      description: "A production-ready real-time chat application built with Spring Boot 3.2 and React 18. Features multi-database architecture, WebSocket messaging, and horizontal scaling design supporting 1000+ concurrent users.",
-      image: "/scalable-chat-platform.png",
-      liveUrl: "https://scalable-chat-platform.onrender.com/",
-      githubUrl: "https://github.com/jeffreyjose07/scalable-chat-platform",
-      technologies: ["Spring Boot 3.2", "React 18", "TypeScript", "PostgreSQL", "MongoDB", "Redis", "Docker", "WebSocket"],
-      highlights: [
-        "Multi-database strategy: PostgreSQL, MongoDB, Redis",
-        "Real-time WebSocket messaging with 500+ msg/sec capacity",
-        "Role-based access control with JWT authentication",
-        "Supports 1000+ concurrent users with horizontal scaling",
-        "Private and group conversations with read receipts",
-        "Message search and filtering capabilities",
-        "Dockerized deployment on Render platform",
-        "Event-driven architecture with async processing"
-      ]
-    },
-    {
-      title: "VOID BLOCKS",
-      description: "A single-file cyberpunk Tetris variant built with vanilla JavaScript and HTML5 Canvas. Features unique virus spreading mechanics, firewall challenges, and terminal-aesthetic design with zero external dependencies.",
-      image: "/games/void-blocks/screenshot.png",
-      liveUrl: "/games/void-blocks/",
-      githubUrl: "https://github.com/jeffreyjose07/void-blocks-game",
-      technologies: ["Vanilla JavaScript", "HTML5 Canvas", "CSS3", "Game Development"],
-      highlights: [
-        "Single HTML file under 50KB with zero dependencies",
-        "Virus spreading mechanics with 30% infection chance",
-        "Firewall challenges triggered every 10 levels",
-        "Time manipulation via data fragments",
-        "Optimized 60fps performance with requestAnimationFrame",
-        "Terminal-inspired cyberpunk aesthetic with glow effects"
-      ]
-    },
-    {
-      title: "Snake Game - Terminal Aesthetic",
-      description: "A modern take on the classic Snake game with terminal-inspired cyberpunk aesthetics. Built with vanilla JavaScript and HTML5 Canvas, featuring smooth gameplay, retro glow effects, and responsive controls optimized for both desktop and mobile.",
-      image: "/snake-game-screenshot.png",
-      liveUrl: "/games/snake/",
-      githubUrl: "https://github.com/jeffreyjose07/snake-game",
-      technologies: ["Vanilla JavaScript", "HTML5 Canvas", "CSS3", "Game Development", "Responsive Design"],
-      highlights: [
-        "Classic Snake gameplay with modern enhancements",
-        "Terminal-inspired cyberpunk visual design",
-        "Smooth 60fps performance with requestAnimationFrame",
-        "Responsive controls for desktop and mobile",
-        "Retro glow effects and ASCII-style aesthetics",
-        "Score tracking and game over animations",
-        "Single HTML file with zero dependencies"
-      ]
-    },
-    {
-      title: "Detection of Forest Area in SAR Images",
-      description: "Computer vision project focused on detecting and classifying forest areas in polarimetric SAR RISAT-1 images using advanced image processing techniques and machine learning algorithms.",
-      image: "/generic-project.png",
-      technologies: ["Python", "Computer Vision", "Machine Learning", "SAR Image Processing", "Pattern Recognition"],
-      highlights: [
-        "Implemented advanced SAR image processing algorithms",
-        "Developed classification models for forest area detection",
-        "Applied polarimetric analysis techniques",
-        "Achieved accurate forest boundary identification",
-        "Utilized RISAT-1 satellite imagery data"
-      ]
-    },
-    {
-      title: "Graph-based Document Summarization",
-      description: "Natural language processing system that generates concise summaries of word documents using graph-based approaches including text-rank and degree-centrality algorithms.",
-      image: "/generic-project.png",
-      technologies: ["Python", "NLP", "Graph Theory", "Text Processing", "Algorithm Design"],
-      highlights: [
-        "Implemented TextRank algorithm for document summarization",
-        "Applied degree-centrality based sentence ranking",
-        "Developed graph-based text representation",
-        "Automated summary generation pipeline",
-        "Evaluated summarization quality metrics"
-      ]
-    },
-    {
-      title: "Emotional Intelligence in Social Media",
-      description: "Data analytics project analyzing emotional intelligence patterns in Twitter users based on gender differences in tweets posted on sensitive topics, providing insights into social media behavior.",
-      image: "/generic-project.png",
-      technologies: ["Python", "Data Analytics", "Social Media Mining", "Sentiment Analysis", "Statistical Analysis"],
-      highlights: [
-        "Analyzed large-scale Twitter dataset",
-        "Implemented sentiment analysis algorithms",
-        "Studied gender-based emotional patterns",
-        "Applied statistical analysis techniques",
-        "Generated behavioral insights from social media data"
-      ]
-    }
-  ];
+
 
   return (
     <section id="projects" className="py-24 bg-gray-50 dark:bg-gray-900 relative">
@@ -104,7 +14,7 @@ const Projects = () => {
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-blue-100/20 to-transparent dark:from-blue-900/10"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-violet-100/20 to-transparent dark:from-violet-900/10"></div>
       </div>
-      
+
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16 slide-up">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
@@ -122,7 +32,7 @@ const Projects = () => {
               <div className="relative">
                 {/* Subtle gradient overlay on hover */}
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-violet-50/50 dark:from-blue-950/20 dark:to-violet-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                
+
                 <div className="grid lg:grid-cols-2 gap-8 p-8">
                   {/* Project Image */}
                   <div className="relative group/image">
@@ -140,7 +50,7 @@ const Projects = () => {
                       />
                       {/* Overlay with link icon */}
                       <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/10 transition-all duration-300 flex items-center justify-center cursor-pointer"
-                           onClick={() => project.liveUrl && window.open(project.liveUrl, '_blank')}>
+                        onClick={() => project.liveUrl && window.open(project.liveUrl, '_blank')}>
                         <div className="opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 bg-white dark:bg-gray-800 rounded-full p-3 shadow-lg">
                           <ExternalLink className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                         </div>
@@ -155,12 +65,12 @@ const Projects = () => {
                         {project.title}
                       </CardTitle>
                     </CardHeader>
-                    
+
                     <CardContent className="p-0 space-y-6">
                       <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
                         {project.description}
                       </p>
-                      
+
                       {/* Highlights */}
                       <div>
                         <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Key Features:</h4>
@@ -179,9 +89,9 @@ const Projects = () => {
                         <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Technologies:</h4>
                         <div className="flex flex-wrap gap-2">
                           {project.technologies.map((tech, i) => (
-                            <Badge 
-                              key={i} 
-                              variant="secondary" 
+                            <Badge
+                              key={i}
+                              variant="secondary"
                               className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-300 font-medium border-0 hover:scale-105"
                             >
                               {tech}
@@ -193,11 +103,11 @@ const Projects = () => {
                     </CardContent>
                   </div>
                 </div>
-                
+
                 {/* Action Buttons - Inside the card */}
                 <div className="flex flex-col sm:flex-row gap-3 justify-start px-8 pb-8">
                   {project.liveUrl && (
-                    <Button 
+                    <Button
                       onClick={() => window.open(project.liveUrl, '_blank')}
                       className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
                     >
@@ -206,7 +116,7 @@ const Projects = () => {
                     </Button>
                   )}
                   {project.githubUrl && (
-                    <Button 
+                    <Button
                       variant="outline"
                       onClick={() => window.open(project.githubUrl, '_blank')}
                       className="border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-md hover:shadow-lg transition-all duration-300"
