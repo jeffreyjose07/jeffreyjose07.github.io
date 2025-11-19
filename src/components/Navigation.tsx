@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Sun, Moon, ChevronDown } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import GamesDropdown from "./navigation/GamesDropdown";
+import MobileMenu from "./navigation/MobileMenu";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isGamesDropdownOpen, setIsGamesDropdownOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -22,8 +23,8 @@ const Navigation = () => {
   ];
 
   const gameItems = [
-    { label: "Snake", href: "/games/snake/" },
-    { label: "Void Blocks", href: "/games/void-blocks/" }
+    { label: "Snake", href: "/play/snake" },
+    { label: "Void Blocks", href: "/play/void-blocks" }
   ];
 
   useEffect(() => {
@@ -39,17 +40,6 @@ const Navigation = () => {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (isGamesDropdownOpen) {
-        setIsGamesDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, [isGamesDropdownOpen]);
-
   const handleNavClick = (href: string, external?: boolean) => {
     setIsMobileMenuOpen(false);
     if (external) {
@@ -58,7 +48,7 @@ const Navigation = () => {
     }
     const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ 
+      element.scrollIntoView({
         behavior: "smooth",
         block: "start"
       });
@@ -66,26 +56,24 @@ const Navigation = () => {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled 
-        ? "bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-sm border-b border-gray-200/20 dark:border-gray-700/20" 
-        : "bg-white/10 dark:bg-gray-900/10 backdrop-blur-sm"
-    }`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+      ? "bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-sm border-b border-gray-200/20 dark:border-gray-700/20"
+      : "bg-white/10 dark:bg-gray-900/10 backdrop-blur-sm"
+      }`}>
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a 
-              href="#hero" 
+            <a
+              href="#hero"
               onClick={(e) => {
                 e.preventDefault();
                 handleNavClick("#hero");
               }}
-              className={`text-2xl font-bold transition-colors duration-300 ${
-                isScrolled 
-                  ? "text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400" 
-                  : "text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
-              }`}
+              className={`text-2xl font-bold transition-colors duration-300 ${isScrolled
+                ? "text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
+                : "text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
+                }`}
             >
               Jeffrey Jose
             </a>
@@ -102,64 +90,21 @@ const Navigation = () => {
                     e.preventDefault();
                     handleNavClick(item.href, (item as any).external);
                   }}
-                  className={`px-3 py-2 text-sm font-medium transition-all duration-300 relative group ${
-                    isScrolled 
-                      ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400" 
-                      : "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
-                  }`}
+                  className={`px-3 py-2 text-sm font-medium transition-all duration-300 relative group ${isScrolled
+                    ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
+                    : "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
+                    }`}
                 >
                   {item.label}
-                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${
-                    isScrolled 
-                      ? "bg-blue-600 dark:bg-blue-400" 
-                      : "bg-blue-600 dark:bg-blue-400"
-                  }`}></span>
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${isScrolled
+                    ? "bg-blue-600 dark:bg-blue-400"
+                    : "bg-blue-600 dark:bg-blue-400"
+                    }`}></span>
                 </a>
               ))}
-              
-              {/* Games Dropdown */}
-              <div className="relative group">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsGamesDropdownOpen(!isGamesDropdownOpen);
-                  }}
-                  className={`px-3 py-2 text-sm font-medium transition-all duration-300 relative group/games flex items-center gap-1 ${
-                    isScrolled 
-                      ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400" 
-                      : "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
-                  }`}
-                >
-                  Games
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isGamesDropdownOpen ? 'rotate-180' : ''}`} />
-                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover/games:w-full ${
-                    isScrolled 
-                      ? "bg-blue-600 dark:bg-blue-400" 
-                      : "bg-blue-600 dark:bg-blue-400"
-                  }`}></span>
-                </button>
-                
-                {/* Dropdown Menu */}
-                <div className={`absolute top-full left-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl transition-all duration-200 z-50 ${
-                  isGamesDropdownOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
-                }`}>
-                  {gameItems.map((game) => (
-                    <a
-                      key={game.href}
-                      href={game.href}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsGamesDropdownOpen(false);
-                        window.location.href = game.href;
-                      }}
-                      className="block px-4 py-3 text-sm text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200 first:rounded-t-lg last:rounded-b-lg"
-                    >
-                      {game.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-              
+
+              <GamesDropdown isScrolled={isScrolled} gameItems={gameItems} />
+
               {/* Desktop Theme Toggle - integrated into nav */}
               {mounted && (
                 <Button
@@ -195,7 +140,7 @@ const Navigation = () => {
                 <Moon size={20} />
               )}
             </Button>
-            
+
             {/* Hamburger menu button */}
             <Button
               variant="outline"
@@ -209,58 +154,14 @@ const Navigation = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation - Enhanced for webview compatibility */}
-        <div className={`md:hidden fixed left-0 right-0 z-40 transform transition-all duration-300 ease-in-out ${
-          isMobileMenuOpen 
-            ? "translate-y-0 opacity-100" 
-            : "-translate-y-full opacity-0 pointer-events-none"
-        }`} style={{ top: isScrolled ? '64px' : '64px' }}>
-          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-lg">
-            <div className="px-4 py-3 space-y-2">
-              {navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavClick(item.href, (item as any).external);
-                  }}
-                  className="text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 block px-4 py-3 text-base font-medium transition-all duration-200 rounded-lg border border-transparent hover:border-gray-200 dark:hover:border-gray-600 active:bg-gray-100 dark:active:bg-gray-700"
-                >
-                  {item.label}
-                </a>
-              ))}
-              
-              {/* Mobile Games Section */}
-              <div className="space-y-1">
-                <div className="text-gray-900 dark:text-white font-medium px-4 py-2 text-base">
-                  Games
-                </div>
-                {gameItems.map((game) => (
-                  <a
-                    key={game.href}
-                    href={game.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsMobileMenuOpen(false);
-                      window.location.href = game.href;
-                    }}
-                    className="text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 block px-8 py-2 text-base font-medium transition-all duration-200 rounded-lg border border-transparent hover:border-gray-200 dark:hover:border-gray-600 active:bg-gray-100 dark:active:bg-gray-700"
-                  >
-                    {game.label}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-          
-          {/* Mobile menu backdrop - tap to close */}
-          <div 
-            className="fixed inset-0 bg-black/20 -z-10"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={{ top: '0', height: '100vh' }}
-          />
-        </div>
+        <MobileMenu
+          isOpen={isMobileMenuOpen}
+          onClose={() => setIsMobileMenuOpen(false)}
+          isScrolled={isScrolled}
+          navItems={navItems}
+          gameItems={gameItems}
+          onNavClick={handleNavClick}
+        />
       </div>
     </nav>
   );
