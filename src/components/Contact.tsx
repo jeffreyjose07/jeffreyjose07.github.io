@@ -1,9 +1,97 @@
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Linkedin, Github, Phone, MapPin } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { Mail, Linkedin, Github, Phone, MapPin, Send, Loader2 } from "lucide-react";
+import emailjs from '@emailjs/browser';
 
 const Contact = () => {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: ""
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validation
+    if (!formData.name || !formData.email || !formData.message) {
+      toast({
+        title: "Missing fields",
+        description: "Please fill in all fields before submitting.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // EmailJS credentials
+      const serviceId = 'service_7jqfdcf';
+      const templateId = 'template_cz5sr5g';
+      const publicKey = 'CWbZD3ebQ2pDQQJh4';
+
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+          to_name: 'Jeffrey Jose'
+        },
+        publicKey
+      );
+
+      toast({
+        title: "Message sent! ✓",
+        description: "Thank you for reaching out. I'll get back to you soon!",
+      });
+
+      // Clear form
+      setFormData({
+        name: "",
+        email: "",
+        message: ""
+      });
+    } catch (error) {
+      console.error('EmailJS error:', error);
+      toast({
+        title: "Failed to send message",
+        description: "Please try again or email me directly at jeffreyjose.k@gmail.com",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <section id="contact" className="py-24 bg-gray-50 dark:bg-gray-900 relative">
       {/* Clean geometric background */}
@@ -63,8 +151,8 @@ const Contact = () => {
                       Connect with me
                     </h4>
                     <div className="flex gap-4">
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="icon"
                         className="h-12 w-12 border-2 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-300 dark:hover:border-blue-500 transition-all duration-300"
                         asChild
@@ -73,8 +161,8 @@ const Contact = () => {
                           <Linkedin className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                         </a>
                       </Button>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="icon"
                         className="h-12 w-12 border-2 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-all duration-300"
                         asChild
@@ -83,8 +171,8 @@ const Contact = () => {
                           <Github className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                         </a>
                       </Button>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="icon"
                         className="h-12 w-12 border-2 hover:bg-red-50 dark:hover:bg-red-900/30 hover:border-red-300 dark:hover:border-red-500 transition-all duration-300"
                         asChild
@@ -97,40 +185,76 @@ const Contact = () => {
                   </div>
                 </div>
 
-                {/* Call to Action */}
-                <div className="flex flex-col justify-center space-y-8">
-                  <div className="text-center space-y-6">
+                {/* Contact Form */}
+                <div className="flex flex-col justify-center">
+                  <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                      <h4 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
-                        Ready to Start?
+                      <h4 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white text-center">
+                        Send a Message
                       </h4>
-                      <div className="w-16 h-1 bg-blue-600 rounded-full mx-auto"></div>
+                      <div className="w-16 h-1 bg-blue-600 rounded-full mx-auto mb-8"></div>
                     </div>
-                    <p className="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed font-light">
-                      Whether you need backend development, system architecture, or full-stack solutions, 
-                      I'm here to help bring your vision to reality with cutting-edge technology.
-                    </p>
-                    <Button 
-                      size="lg"
-                      className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300 px-8 py-4"
-                      onClick={() => window.location.href = 'mailto:jeffreyjose.k@gmail.com'}
-                    >
-                      <Mail className="mr-3 h-5 w-5" />
-                      Send Message
-                    </Button>
-                  </div>
 
-                  {/* Quick Stats */}
-                  <div className="grid grid-cols-2 gap-6 pt-8 border-t border-gray-200 dark:border-gray-700">
-                    <div className="text-center group/stat">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2 group-hover/stat:text-blue-600 dark:group-hover/stat:text-blue-400 transition-colors duration-300">5+</div>
-                      <div className="text-gray-600 dark:text-gray-400 text-sm font-medium">Years Experience</div>
+                    <div className="space-y-2">
+                      <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">Name</Label>
+                      <Input
+                        id="name"
+                        name="name"
+                        placeholder="Your name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                        className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                      />
                     </div>
-                    <div className="text-center group/stat">
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2 group-hover/stat:text-blue-600 dark:group-hover/stat:text-blue-400 transition-colors duration-300">50+</div>
-                      <div className="text-gray-600 dark:text-gray-400 text-sm font-medium">Projects Completed</div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">Email</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="your.email@example.com"
+                        value={formData.email}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                        className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                      />
                     </div>
-                  </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="message" className="text-gray-700 dark:text-gray-300">Message</Label>
+                      <Textarea
+                        id="message"
+                        name="message"
+                        placeholder="Tell me about your project..."
+                        value={formData.message}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                        rows={5}
+                        className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 resize-none"
+                      />
+                    </div>
+
+                    <Button
+                      type="submit"
+                      size="lg"
+                      disabled={isLoading}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="mr-2 h-5 w-5" />
+                          Send Message
+                        </>
+                      )}
+                    </Button>
+                  </form>
                 </div>
               </div>
             </CardContent>
