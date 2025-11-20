@@ -1,5 +1,21 @@
 [
   {
+    "url": "/blog/building-a-secure-password-reset-flow",
+    "title": "Building a Secure Password Reset Flow",
+    "episode": "019",
+    "date": "2025-11-20",
+    "tags": [
+      "Spring Boot",
+      "React",
+      "Security",
+      "Brevo"
+    ],
+    "description": "A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service.",
+    "readingTime": 5,
+    "wordCount": 800,
+    "slug": "building-a-secure-password-reset-flow"
+  },
+  {
     "url": "/blog/adding-interactive-scripts-to-blog-posts",
     "title": "Adding Interactive Scripts to Blog Posts",
     "episode": "018",

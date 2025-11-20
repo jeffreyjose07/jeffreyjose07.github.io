@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building a Secure Password Reset Flow - Jeffrey Jose</title>
+    <meta name="description" content="A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service." />
+    
+    <!-- SEO Meta Tags -->
+    <meta property="og:title" content="Building a Secure Password Reset Flow">
+    <meta property="og:description" content="A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service.">
+    <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/building-a-secure-password-reset-flow">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Building a Secure Password Reset Flow">
+    <meta name="twitter:description" content="A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background-color: #000000;
+            color: #c9c9c9;
+            line-height: 1.6;
+            padding: 20px;
+            font-size: 15px;
+            text-rendering: optimizeLegibility;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 40px 20px;
+                font-size: 16px;
+            }
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            margin-bottom: 18px;
+        }
+
+        .back-link a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        @media (min-width: 768px) {
+            .back-link a {
+                font-size: 13px;
+            }
+        }
+
+        .back-link a:hover {
+            color: #aaaaaa;
+        }
+
+        .back-link a:before {
+            content: '← ';
+            color: #666666;
+        }
+
+        .post-header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 20px;
+        }
+
+        .post-title {
+            font-size: 16px;
+            font-weight: normal;
+            margin-bottom: 10px;
+                        color: #55ff55;
+            letter-spacing: 0.3px;
+            line-height: 1.3;
+        }
+
+        @media (min-width: 768px) {
+            .post-title {
+                font-size: 18px;
+            }
+        }
+
+        .post-meta {
+            color: #ff8855;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-meta {
+                font-size: 13px;
+            }
+        }
+
+        .post-content {
+            line-height: 1.7;
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h2 {
+            font-size: 14px;
+            font-weight: normal;
+            margin: 30px 0 15px 0;
+            color: #5588ff;
+                        letter-spacing: 0.2px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content h2 {
+                font-size: 16px;
+            }
+        }
+
+        .post-content h3 {
+            font-size: 13px;
+            font-weight: normal;
+            margin: 25px 0 12px 0;
+            color: #ff55ff;
+                    }
+
+        @media (min-width: 768px) {
+            .post-content h3 {
+                font-size: 14px;
+            }
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .post-content li {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content li {
+                font-size: 15px;
+            }
+        }
+
+        .post-content code {
+            background-color: #111111;
+            padding: 2px 4px;
+            border-radius: 1px;
+            font-family: inherit;
+            color: #ffff55;
+            font-size: 13px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content code {
+                font-size: 14px;
+            }
+        }
+
+        .post-content pre {
+            background-color: #111111;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content pre {
+                font-size: 13px;
+            }
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .post-content a {
+            color: #55ffff;
+            text-decoration: none;
+            border-bottom: 1px solid #334444;
+        }
+
+        .post-content a:hover {
+            color: #77ffff;
+            border-bottom-color: #55ffff;
+        }
+
+        .post-content blockquote {
+            border-left: 2px solid #333333;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #999999;
+            font-style: italic;
+        }
+
+        /* Semantic color system */
+        .success {
+            color: #55ff55;
+            font-weight: normal;
+        }
+
+        .structure {
+            color: #5588ff;
+        }
+
+        .process {
+            color: #ffff55;
+        }
+
+        .attention {
+            color: #ff8855;
+        }
+
+        .meta {
+            color: #ff55ff;
+        }
+
+        .connection {
+            color: #55ffff;
+        }
+
+        .neutral {
+            color: #c9c9c9;
+        }
+
+        /* Reading progress indicator */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: #55ff55;
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+
+        /* Subtle improvements */
+        .post-content p:first-of-type:first-letter {
+            color: #55ff55;
+            font-size: 18px;
+        }
+
+        @media (min-width: 768px) {
+            .post-content p:first-of-type:first-letter {
+                font-size: 20px;
+            }
+        }
+
+        /* Footer with post info */
+        .post-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #222222;
+            font-size: 11px;
+            color: #555555;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 768px) {
+            .post-footer {
+                font-size: 12px;
+            }
+        }
+
+        .post-footer .tag {
+            color: #ff55ff;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .post-footer .tag:hover {
+            text-decoration: none;
+            border-bottom-color: currentColor;
+        }
+        
+        /* Tag color classes */
+        .tag.success { color: #55ff55; }
+        .tag.structure { color: #5588ff; }
+        .tag.process { color: #ffff55; }
+        .tag.attention { color: #ff8855; }
+        .tag.meta { color: #ff55ff; }
+        .tag.connection { color: #55ffff; }
+        .tag.neutral { color: #c9c9c9; }
+
+        /* Image styling */
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Mobile improvements */
+        @media (max-width: 767px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .post-content pre {
+                margin-left: -10px;
+                margin-right: -10px;
+                border-radius: 0;
+            }
+
+            .post-content img {
+                margin: 15px auto;
+                max-width: calc(100% - 20px);
+            }
+        }
+
+        /* Post Navigation */
+        .post-navigation {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #333333;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .nav-previous, .nav-next {
+            padding: 15px;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            background-color: #111111;
+        }
+
+        .nav-previous a, .nav-next a {
+            display: block;
+            color: #c9c9c9;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-previous a:hover, .nav-next a:hover {
+            color: #ffffff;
+        }
+
+        .nav-next {
+            text-align: right;
+        }
+
+        .nav-label {
+            display: block;
+            font-size: 11px;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .nav-title {
+            display: block;
+            font-size: 14px;
+            color: #c9c9c9;
+            line-height: 1.3;
+        }
+
+        .nav-previous a:hover .nav-title, .nav-next a:hover .nav-title {
+            color: #ffffff;
+        }
+
+        @media (max-width: 767px) {
+            .post-navigation {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .nav-next {
+                text-align: left;
+            }
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            margin-bottom: 10px;
+            font-size: 11px;
+            color: #666666;
+        }
+
+        .breadcrumb a {
+            color: #888888;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: #aaaaaa;
+        }
+
+        .breadcrumb span {
+            margin: 0 5px;
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #222222;
+        }
+
+        .social-links a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 11px;
+                        letter-spacing: 0.5px;
+            transition: color 0.2s ease;
+        }
+
+        .social-links a:hover {
+            color: #55ff55;
+        }
+
+        .social-links .divider {
+            color: #333333;
+            font-size: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .social-links a {
+                font-size: 12px;
+            }
+        }
+
+        /* Text Materialization Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease;
+            pointer-events: none;
+        }
+
+        .loading-overlay.fade-out {
+            opacity: 0;
+        }
+
+        /* Text elements start randomly positioned and animate to final position */
+        .materializing {
+            animation: materialize 1.2s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes materialize {
+            0% {
+                opacity: 0;
+                transform: translate(var(--random-x, 0), var(--random-y, 0)) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+        }
+
+        /* Inline styles injected from frontmatter */
+        
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay"></div>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>Building a Secure Password Reset Flow</span>
+        </div>
+        
+        <div class="back-link">
+            <a href="/blog">back to blog</a>
+        </div>
+        
+        <div class="social-links">
+            <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener">github</a>
+            <span class="divider">·</span>
+            <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener">linkedin</a>
+            <span class="divider">·</span>
+            <a href="/analytics.html">analytics</a>
+            <span class="divider">·</span>
+            <a href="https://x.com/josejeffrey07" target="_blank" rel="noopener">twitter</a>
+            <span class="divider">·</span>
+            <a href="mailto:jeffrey.jose07@gmail.com">email</a>
+            <span class="divider">·</span>
+            <a href="/resume.pdf" target="_blank">resume</a>
+        </div>
+        
+        <header class="post-header">
+            <h1 class="post-title">019: Building a Secure Password Reset Flow</h1>
+            <div class="post-meta">20 Nov 2025</div>
+        </header>
+        
+        <article class="post-content">
+            <p>Implementing a secure <strong>forgot password</strong> feature is a <span class="attention">critical</span> requirement for any <span class="attention">authentication</span> <span class="structure">system</span>. In this post, I&#39;ll walk through how we added a robust password reset flow to the <strong><span class="success">Scalable</span> Chat Platform</strong>, leveraging <strong><span class="structure">Spring Boot</span></strong> for the backend, <strong><span class="structure">React</span></strong> for the frontend, and <strong>Brevo</strong> (formerly Sendinblue) for <span class="success">reliable</span> email delivery.</p>
+<h2>The <span class="structure">Architecture</span></h2>
+<p>The flow follows a standard secure <span class="meta">pattern</span>:</p>
+<ol>
+<li>User requests a password reset via email.</li>
+<li>Backend generates a unique, time-limited token.</li>
+<li>An email containing a <span class="connection">link</span> with this token is sent to the user.</li>
+<li>User clicks the <span class="connection">link</span>, landing on a frontend page to enter a new password.</li>
+<li>Frontend sends the token and new password to the backend.</li>
+<li>Backend validates the token and updates the password.</li>
+</ol>
+<h2>Backend Implementation</h2>
+<h3>The Controller Layer</h3>
+<p>We extended our <code>AuthController</code> to handle two new endpoints:</p>
+<pre><code class="language-java">@PostMapping(&quot;/forgot-password&quot;)
+public ResponseEntity&lt;MessageResponse&lt;Void&gt;&gt; forgotPassword(
+        @Valid @RequestBody ForgotPasswordRequest request) {
+    try {
+        authService.sendPasswordResetEmail(request.email());
+        return ResponseUtils.success(Constants.PASSWORD_RESET_EMAIL_SENT);
+    } catch (Exception e) {
+        // Security: Always return success to prevent email enumeration
+        return ResponseUtils.success(Constants.PASSWORD_RESET_EMAIL_SENT);
+    }
+}
+</code></pre>
+<blockquote>
+<p>[!NOTE]
+Notice the <span class="attention">security</span> best practice here: we always return a <span class="success">success</span> message, even if the email doesn&#39;t exist in our <span class="structure">system</span>. This prevents attackers from enumerating valid email addresses.</p>
+</blockquote>
+<h3>Email Service with Brevo</h3>
+<p><span class="success">Reliable</span> email delivery is crucial. We integrated <strong>Brevo</strong> using their transactional email <span class="connection">API</span>. The <code>BrevoEmailService</code> constructs a professional <span class="process">HTML</span> email template:</p>
+<pre><code class="language-java">@Service
+public class BrevoEmailService implements EmailService {
+    // ... initialization ...
+
+    @Override
+    public void sendPasswordResetEmail(String to, String resetToken, String userName) {
+        String resetLink = frontendUrl + &quot;/reset-password?token=&quot; + resetToken;
+        
+        // Construct HTML content
+        String htmlContent = buildPasswordResetEmailHtml(userName, resetLink);
+        
+        SendSmtpEmail email = new SendSmtpEmail();
+        email.setTo(List.of(new SendSmtpEmailTo().email(to)));
+        email.setHtmlContent(htmlContent);
+        
+        apiInstance.sendTransacEmail(email);
+    }
+}
+</code></pre>
+<p>We use environment variables to securely store the <span class="connection">API</span> key and configure the sender address.</p>
+<h2>Frontend Implementation</h2>
+<h3>The Reset Page</h3>
+<p>On the <strong><span class="structure">React</span></strong> side, we created a <code>ResetPasswordPage</code> that captures the token from the URL query parameters:</p>
+<pre><code class="language-typescript">const [searchParams] = useSearchParams();
+const token = searchParams.get(&#39;token&#39;);
+</code></pre>
+<h3>Password Strength Meter</h3>
+<p>To encourage better <span class="attention">security</span>, we implemented a <span class="attention">real-time</span> password strength meter. It analyzes the password <span class="meta">complexity</span> based on length, case sensitivity, numbers, and special characters:</p>
+<pre><code class="language-typescript">const calculatePasswordStrength = (password: string) =&gt; {
+    if (password.length &gt;= 12 &amp;&amp; hasAllComplexityRequirements(password)) {
+        return &#39;strong&#39;; // Green
+    } else if (password.length &gt;= 8 &amp;&amp; hasSomeComplexity(password)) {
+        return &#39;medium&#39;; // Yellow
+    }
+    return &#39;weak&#39;; // Red
+};
+</code></pre>
+<p>This gives users immediate visual feedback, guiding them to create stronger credentials.</p>
+<h2><span class="attention">Security</span> Considerations</h2>
+<p>We implemented several layers of <span class="attention">security</span>:</p>
+<ol>
+<li><strong>Token Expiration</strong>: Reset tokens have a short lifespan (30 minutes) to minimize the attack window.</li>
+<li><strong><span class="connection">HTTPS</span></strong>: All communication happens over encrypted channels.</li>
+<li><strong>Input Validation</strong>: Strict validation on both frontend and backend ensures passwords meet <span class="meta">complexity</span> requirements.</li>
+<li><strong>Environment Isolation</strong>: <span class="connection">API</span> keys and sensitive configuration are kept in environment variables, never in the <span class="process">code</span>.</li>
+</ol>
+<h2>Conclusion</h2>
+<p>Adding this feature significantly improves the <span class="meta">user experience</span> and <span class="attention">security</span> of the platform. By combining <strong><span class="structure">Spring Boot</span>&#39;s</strong> robust <span class="attention">security</span> features with <strong><span class="structure">React</span>&#39;s</strong> interactive UI and <strong>Brevo&#39;s</strong> <span class="success">reliable</span> delivery, we&#39;ve created a seamless recovery flow.</p>
+<p>Check out the full implementation in the <a href="https://github.com/jeffreyjose07/scalable-chat-platform"><span class="success">Scalable</span> Chat Platform</a> repository.</p>
+
+        </article>
+        
+        <footer class="post-footer">
+            <div>
+                words: ~800 · reading time: ~5 min · <span id="view-count">👀 views loading...</span> · tags: <a href="/blog#tag-Spring Boot" class="tag neutral" data-tag="Spring Boot">Spring Boot</a>, <a href="/blog#tag-React" class="tag neutral" data-tag="React">React</a>, <a href="/blog#tag-Security" class="tag neutral" data-tag="Security">Security</a>, <a href="/blog#tag-Brevo" class="tag neutral" data-tag="Brevo">Brevo</a>
+            </div>
+        </footer>
+        
+        <nav class="post-navigation">
+            <div class="nav-previous">
+                <a href="/blog/adding-interactive-scripts-to-blog-posts">
+                    <span class="nav-label">← previous</span>
+                    <span class="nav-title">Adding Interactive Scripts to Blog Posts</span>
+                </a>
+            </div></nav>
+    </div>
+    
+    <div class="reading-progress"></div>
+    
+    <script>
+        // Prevent scroll restoration but don't interfere with navigation
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        
+        // Only scroll to top on actual page refresh (not navigation)
+        window.addEventListener('load', () => {
+            // Check if this is a refresh vs navigation
+            const isRefresh = (
+                (performance.navigation && performance.navigation.type === performance.navigation.TYPE_RELOAD) ||
+                (performance.getEntriesByType('navigation')[0] && performance.getEntriesByType('navigation')[0].type === 'reload')
+            );
+            
+            // Always start at top for new page loads
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 0);
+        });
+        
+        // Simple reading progress indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('.reading-progress').style.width = scrolled + '%';
+        });
+
+        // Text materialization effect
+        function initializeMaterializationEffect() {
+            const elementsToMaterialize = [
+                '.breadcrumb',
+                '.back-link',
+                '.social-links',
+                '.post-header',
+                '.post-content > *',
+                '.post-footer',
+                '.post-navigation'
+            ];
+            
+            elementsToMaterialize.forEach((selector, index) => {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach((element, elementIndex) => {
+                    // Generate random starting position
+                    const randomX = (Math.random() - 0.5) * 200; // -100 to 100px
+                    const randomY = (Math.random() - 0.5) * 100; // -50 to 50px
+                    
+                    // Set CSS custom properties for random position
+                    element.style.setProperty('--random-x', `${randomX}px`);
+                    element.style.setProperty('--random-y', `${randomY}px`);
+                    
+                    // Add materializing class
+                    element.classList.add('materializing');
+                    
+                    // Calculate staggered delay
+                    const delay = (index * 0.1) + (elementIndex * 0.05);
+                    element.style.animationDelay = `${delay}s`;
+                });
+            });
+            
+            // Hide loading overlay after animations complete
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            setTimeout(() => {
+                loadingOverlay.classList.add('fade-out');
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 800);
+            }, 400); // Start fade after initial delay
+        }
+        
+        // Initialize materialization effect on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeMaterializationEffect();
+            loadViewCount();
+        });
+        
+        // Load view count from GoatCounter
+        function loadViewCount() {
+            const path = window.location.pathname;
+            const viewCountElement = document.getElementById('view-count');
+            
+            fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.count || '0';
+                    viewCountElement.innerHTML = `👀 ${count} views`;
+                    viewCountElement.style.color = '#55ffff'; // Terminal cyan
+                })
+                .catch(error => {
+                    console.warn('Could not load view count:', error);
+                    viewCountElement.innerHTML = '👀 views';
+                    viewCountElement.style.color = '#888888';
+                });
+        }
+
+        /* Inline scripts injected from frontmatter */
+        
+    </script>
+    <footer class="rss-footer" style="text-align:center; margin:2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;">
+      <a href="/blog/feed.xml" class="rss-button" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 8 8" style="margin-right:6px; vertical-align:middle;">
+          <path d="M1 0v1c3.32 0 6 2.68 6 6h1c0-3.86-3.14-7-7-7zm0 2v1c2.21 0 4 1.79 4 4h1c0-2.76-2.24-5-5-5zm.5 2c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5z" fill="currentColor"/>
+        </svg>
+        <span>Subscribe via RSS</span>
+      </a>
+    </footer>
+    <style>
+      .rss-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.6em 1.2em;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #4a5568;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      }
+      .rss-button:hover {
+        background: #edf2f7;
+        border-color: #cbd5e0;
+        transform: translateY(-1px);
+      }
+      .rss-button:active {
+        transform: translateY(0);
+      }
+      .rss-button svg {
+        color: #f6ad55;
+      }
+    </style>
+    
+    <!-- GoatCounter Analytics -->
+    <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
