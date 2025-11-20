@@ -7,7 +7,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Linkedin, Github, Phone, MapPin, Send, Loader2 } from "lucide-react";
-import emailjs from '@emailjs/browser';
 
 const Contact = () => {
   const { toast } = useToast();
@@ -52,46 +51,47 @@ const Contact = () => {
     setIsLoading(true);
 
     try {
-      // EmailJS credentials from environment variables
-      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_7jqfdcf';
-      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_cz5sr5g';
-      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'CWbZD3ebQ2pDQQJh4';
+      // Web3Forms API endpoint
+      const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || 'd32b9d9e-c870-410c-9153-2f6f627c3baa';
 
-      console.log('Sending email with:', { serviceId, templateId, publicKey: '***' });
-
-      await emailjs.send(
-        serviceId,
-        templateId,
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          message: formData.message,
-          to_name: 'Jeffrey Jose'
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
-        publicKey
-      );
-
-      toast({
-        title: "Message sent! ✓",
-        description: "Thank you for reaching out. I'll get back to you soon!",
+        body: JSON.stringify({
+          access_key: accessKey,
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          subject: `Portfolio Contact: ${formData.name}`,
+        })
       });
 
-      // Clear form
-      setFormData({
-        name: "",
-        email: "",
-        message: ""
-      });
-    } catch (error: any) {
-      console.error('EmailJS error details:', error);
-      // Log specific text if available (EmailJS often returns text field)
-      if (error.text) {
-        console.error('EmailJS error text:', error.text);
+      const result = await response.json();
+
+      if (result.success) {
+        toast({
+          title: "Message sent! ✓",
+          description: "Thank you for reaching out. I'll get back to you soon!",
+        });
+
+        // Clear form
+        setFormData({
+          name: "",
+          email: "",
+          message: ""
+        });
+      } else {
+        throw new Error(result.message || 'Failed to send message');
       }
-      
+    } catch (error: any) {
+      console.error('Web3Forms error:', error);
+
       toast({
         title: "Failed to send message",
-        description: `Error: ${error.text || "Please try again or email me directly at jeffreyjose.k@gmail.com"}`,
+        description: error.message || "Please try again or email me directly at jeffreyjose.k@gmail.com",
         variant: "destructive"
       });
     } finally {
