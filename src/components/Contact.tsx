@@ -52,10 +52,12 @@ const Contact = () => {
     setIsLoading(true);
 
     try {
-      // EmailJS credentials
-      const serviceId = 'service_7jqfdcf';
-      const templateId = 'template_cz5sr5g';
-      const publicKey = 'CWbZD3ebQ2pDQQJh4';
+      // EmailJS credentials from environment variables
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_7jqfdcf';
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_cz5sr5g';
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'CWbZD3ebQ2pDQQJh4';
+
+      console.log('Sending email with:', { serviceId, templateId, publicKey: '***' });
 
       await emailjs.send(
         serviceId,
@@ -80,11 +82,16 @@ const Contact = () => {
         email: "",
         message: ""
       });
-    } catch (error) {
-      console.error('EmailJS error:', error);
+    } catch (error: any) {
+      console.error('EmailJS error details:', error);
+      // Log specific text if available (EmailJS often returns text field)
+      if (error.text) {
+        console.error('EmailJS error text:', error.text);
+      }
+      
       toast({
         title: "Failed to send message",
-        description: "Please try again or email me directly at jeffreyjose.k@gmail.com",
+        description: `Error: ${error.text || "Please try again or email me directly at jeffreyjose.k@gmail.com"}`,
         variant: "destructive"
       });
     } finally {
