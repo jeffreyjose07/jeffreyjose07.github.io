@@ -4,17 +4,17 @@
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Building a Secure Password Reset Flow - Jeffrey Jose</title>
-    <meta name="description" content="A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service." />
+    <title>Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics - Jeffrey Jose</title>
+    <meta name="description" content="Deep dive into fixing mobile UI issues and enhancing dropdown styling for terminal-themed games" />
     
     <!-- SEO Meta Tags -->
-    <meta property="og:title" content="Building a Secure Password Reset Flow">
-    <meta property="og:description" content="A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service.">
-    <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/building-a-secure-password-reset-flow">
+    <meta property="og:title" content="Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics">
+    <meta property="og:description" content="Deep dive into fixing mobile UI issues and enhancing dropdown styling for terminal-themed games">
+    <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/enhancing-game-ui-mobile-responsiveness-and-termin">
     <meta property="og:type" content="article">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Building a Secure Password Reset Flow">
-    <meta name="twitter:description" content="A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service.">
+    <meta name="twitter:title" content="Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics">
+    <meta name="twitter:description" content="Deep dive into fixing mobile UI issues and enhancing dropdown styling for terminal-themed games">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <style>
         * {
@@ -494,7 +494,7 @@
 
     <div class="container">
         <div class="breadcrumb">
-            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>Building a Secure Password Reset Flow</span>
+            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics</span>
         </div>
         
         <div class="back-link">
@@ -516,112 +516,259 @@
         </div>
         
         <header class="post-header">
-            <h1 class="post-title">019: Building a Secure Password Reset Flow</h1>
-            <div class="post-meta">20 Nov 2025</div>
+            <h1 class="post-title">020: Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics</h1>
+            <div class="post-meta">21 Jan 2025</div>
         </header>
         
         <article class="post-content">
-            <p>Implementing a secure <strong>forgot password</strong> feature is a <span class="attention">critical</span> requirement for any <span class="attention">authentication</span> <span class="structure">system</span>. In this post, I&#39;ll walk through how we added a robust password reset flow to the <strong><span class="success">Scalable</span> Chat Platform</strong>, leveraging <strong><span class="structure">Spring Boot</span></strong> for the backend, <strong><span class="structure">React</span></strong> for the frontend, and <strong>Brevo</strong> (formerly Sendinblue) for <span class="success">reliable</span> email delivery.</p>
-<h2>The <span class="structure">Architecture</span></h2>
-<p>The flow follows a standard secure <span class="meta">pattern</span>:</p>
+            <p>After launching <span class="meta">Void</span> Blocks and Snake Game on my portfolio, I discovered several UX issues that needed immediate attention. Mobile users were experiencing overlapping controls, non-functional buttons, and bland dropdown menus that didn&#39;t match the <span class="meta">terminal</span> <span class="meta">aesthetic</span>. Here&#39;s how I fixed everything while maintaining the cyberpunk vibe.</p>
+<h2>The Problems</h2>
+<h3><span class="meta">Void</span> Blocks Mobile View</h3>
 <ol>
-<li>User requests a password reset via email.</li>
-<li>Backend generates a unique, time-limited token.</li>
-<li>An email containing a <span class="connection">link</span> with this token is sent to the user.</li>
-<li>User clicks the <span class="connection">link</span>, landing on a frontend page to enter a new password.</li>
-<li>Frontend sends the token and new password to the backend.</li>
-<li>Backend validates the token and updates the password.</li>
+<li><strong>Overlapping Controls</strong>: Fixed mobile touch controls were overlapping with the instruction panels, making the <span class="structure">interface</span> cluttered and hard to use</li>
+<li><strong>Broken Rotate Button</strong>: The rotate button (🔄) wasn&#39;t <span class="success">working</span> at all - clicking it did nothing</li>
+<li><strong>Insufficient Spacing</strong>: The game panels were too close to the fixed controls at the bottom</li>
 </ol>
-<h2>Backend Implementation</h2>
-<h3>The Controller Layer</h3>
-<p>We extended our <code>AuthController</code> to handle two new endpoints:</p>
-<pre><code class="language-java">@PostMapping(&quot;/forgot-password&quot;)
-public ResponseEntity&lt;MessageResponse&lt;Void&gt;&gt; forgotPassword(
-        @Valid @RequestBody ForgotPasswordRequest request) {
-    try {
-        authService.sendPasswordResetEmail(request.email());
-        return ResponseUtils.success(Constants.PASSWORD_RESET_EMAIL_SENT);
-    } catch (Exception e) {
-        // Security: Always return success to prevent email enumeration
-        return ResponseUtils.success(Constants.PASSWORD_RESET_EMAIL_SENT);
-    }
-}
-</code></pre>
-<blockquote>
-<p>[!NOTE]
-Notice the <span class="attention">security</span> best practice here: we always return a <span class="success">success</span> message, even if the email doesn&#39;t exist in our <span class="structure">system</span>. This prevents attackers from enumerating valid email addresses.</p>
-</blockquote>
-<h3>Email Service with Brevo</h3>
-<p><span class="success">Reliable</span> email delivery is crucial. We integrated <strong>Brevo</strong> using their transactional email <span class="connection">API</span>. The <code>BrevoEmailService</code> constructs a professional <span class="process">HTML</span> email template:</p>
-<pre><code class="language-java">@Service
-public class BrevoEmailService implements EmailService {
-    // ... initialization ...
+<h3>Snake Game Dropdowns</h3>
+<ol>
+<li><strong>Generic Appearance</strong>: The speed and mode dropdowns looked like standard <span class="process">HTML</span> selects - boring and not fitting the <span class="meta">terminal</span> theme</li>
+<li><strong>Poor Mobile Experience</strong>: Dropdowns were cramped on mobile with inadequate touch targets</li>
+<li><strong>No Visual Feedback</strong>: Hover and focus states were <span class="meta">minimal</span></li>
+</ol>
+<h2><span class="meta">Void</span> Blocks: Fixing Mobile Controls</h2>
+<h3>The Overlap Issue</h3>
+<p>The root cause was insufficient bottom padding. The mobile controls were fixed at <code>bottom: 20px</code>, but the body only had <code>padding-bottom: 180px</code>. This created a scenario where scrollable content would collide with fixed controls.</p>
+<p><strong>The Fix:</strong></p>
+<pre><code class="language-css">@media (max-width: 768px) {
+  body {
+    /* Increased from 180px to 220px */
+    padding-bottom: 220px;
+  }
 
-    @Override
-    public void sendPasswordResetEmail(String to, String resetToken, String userName) {
-        String resetLink = frontendUrl + &quot;/reset-password?token=&quot; + resetToken;
-        
-        // Construct HTML content
-        String htmlContent = buildPasswordResetEmailHtml(userName, resetLink);
-        
-        SendSmtpEmail email = new SendSmtpEmail();
-        email.setTo(List.of(new SendSmtpEmailTo().email(to)));
-        email.setHtmlContent(htmlContent);
-        
-        apiInstance.sendTransacEmail(email);
-    }
+  .panels {
+    width: 100%;
+    max-width: 400px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;  /* Added breathing room */
+  }
 }
 </code></pre>
-<p>We use environment variables to securely store the <span class="connection">API</span> key and configure the sender address.</p>
-<h2>Frontend Implementation</h2>
-<h3>The Reset Page</h3>
-<p>On the <strong><span class="structure">React</span></strong> side, we created a <code>ResetPasswordPage</code> that captures the token from the URL query parameters:</p>
-<pre><code class="language-typescript">const [searchParams] = useSearchParams();
-const token = searchParams.get(&#39;token&#39;);
-</code></pre>
-<h3>Password Strength Meter</h3>
-<p>To encourage better <span class="attention">security</span>, we implemented a <span class="attention">real-time</span> password strength meter. It analyzes the password <span class="meta">complexity</span> based on length, case sensitivity, numbers, and special characters:</p>
-<pre><code class="language-typescript">const calculatePasswordStrength = (password: string) =&gt; {
-    if (password.length &gt;= 12 &amp;&amp; hasAllComplexityRequirements(password)) {
-        return &#39;strong&#39;; // Green
-    } else if (password.length &gt;= 8 &amp;&amp; hasSomeComplexity(password)) {
-        return &#39;medium&#39;; // Yellow
+<p>The combination of increased body padding and panel margin creates a safe zone where fixed controls never overlap with scrollable content.</p>
+<h3>The Rotate Button Bug</h3>
+<p>This was a classic case of calling a non-existent <span class="structure">function</span>. The mobile rotate button handler was calling <code>rotatePiece(current)</code>, but this <span class="structure">function</span> didn&#39;t exist in the codebase.</p>
+<p><strong>Before (Broken):</strong></p>
+<pre><code class="language-javascript">document.getElementById(&#39;mobileRotate&#39;).addEventListener(&#39;click&#39;, () =&gt; {
+  if (current &amp;&amp; gameStarted &amp;&amp; !gameOver &amp;&amp; !paused) {
+    const rotatedPiece = rotatePiece(current);  // ❌ Function doesn&#39;t exist
+    if (isValidMove(rotatedPiece, 0, 0)) {
+      current.shape = rotatedPiece.shape;
     }
-    return &#39;weak&#39;; // Red
-};
+  }
+});
 </code></pre>
-<p>This gives users immediate visual feedback, guiding them to create stronger credentials.</p>
-<h2><span class="attention">Security</span> Considerations</h2>
-<p>We implemented several layers of <span class="attention">security</span>:</p>
+<p><strong>After (Fixed):</strong></p>
+<pre><code class="language-javascript">document.getElementById(&#39;mobileRotate&#39;).addEventListener(&#39;click&#39;, () =&gt; {
+  if (current &amp;&amp; gameStarted &amp;&amp; !gameOver &amp;&amp; !paused) {
+    const rotated = rotate(current.shape, true);  // ✅ Use existing rotate()
+    if (isValidMove(current, 0, 0, rotated)) {
+      current.shape = rotated;
+    }
+  }
+});
+</code></pre>
+<p>The fix uses the existing <code>rotate()</code> <span class="structure">function</span> that&#39;s already used by keyboard controls, ensuring consistent behavior across input methods.</p>
+<h2>Snake Game: Lookmaxxing the Dropdowns</h2>
+<p>The term &quot;lookmaxxing&quot; perfectly describes taking something basic and elevating it to its maximum visual potential. The default <span class="process">HTML</span> select elements needed a complete <span class="meta">terminal</span>-<span class="meta">aesthetic</span> transformation.</p>
+<h3>Custom Dropdown Styling</h3>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li>Gradient background with <span class="meta">terminal</span> green tint</li>
+<li>Custom SVG arrow icon</li>
+<li>Multi-layer box shadows for glow effects</li>
+<li>Smooth state transitions</li>
+<li>Removed default browser styling</li>
+</ul>
+<pre><code class="language-css">.controls select, .hud select {
+  background: linear-gradient(135deg,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(17, 34, 17, 0.8) 100%);
+  color: var(--terminal-green);
+  border: 2px solid var(--terminal-green);
+  padding: 10px 35px 10px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  box-shadow:
+    0 0 10px rgba(85, 255, 85, 0.2),
+    inset 0 1px 0 rgba(85, 255, 85, 0.1);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+</code></pre>
+<h3>Custom Arrow Icon</h3>
+<p>The secret to <span class="meta">terminal</span>-<span class="meta">aesthetic</span> dropdowns is a custom SVG arrow that changes color based on state:</p>
+<pre><code class="language-css">background-image:
+  linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(17, 34, 17, 0.8) 100%),
+  url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 24 24&#39; fill=&#39;none&#39; stroke=&#39;%2355ff55&#39; stroke-width=&#39;3&#39; stroke-linecap=&#39;round&#39; stroke-linejoin=&#39;round&#39;%3e%3cpolyline points=&#39;6 9 12 15 18 9&#39;%3e%3c/polyline%3e%3c/svg%3e&quot;);
+background-repeat: no-repeat, no-repeat;
+background-position: center, right 8px center;
+background-size: auto, 16px;
+</code></pre>
+<p>The SVG is embedded as a data URI, and the stroke color changes from <code>#55ff55</code> (<span class="meta">terminal</span> green) to <code>#00ff00</code> (bright green) on hover, and <code>#55ffff</code> (cyan) on focus.</p>
+<h3>Interactive States</h3>
+<p><strong>Hover Effect:</strong></p>
+<pre><code class="language-css">.controls select:hover, .hud select:hover {
+  background: linear-gradient(135deg,
+    rgba(17, 34, 17, 0.9) 0%,
+    rgba(34, 51, 34, 0.8) 100%);
+  color: var(--terminal-bright-green);
+  border-color: var(--terminal-bright-green);
+  box-shadow:
+    0 0 20px rgba(85, 255, 85, 0.4),
+    inset 0 1px 0 rgba(85, 255, 85, 0.2);
+  transform: translateY(-1px);
+}
+</code></pre>
+<p><strong>Focus State (Accessibility):</strong></p>
+<pre><code class="language-css">.controls select:focus, .hud select:focus {
+  outline: none;
+  border-color: var(--terminal-cyan);
+  box-shadow:
+    0 0 25px rgba(85, 255, 255, 0.5),
+    inset 0 0 10px rgba(85, 255, 255, 0.1);
+  color: var(--terminal-cyan);
+}
+</code></pre>
+<p>The focus state uses cyan to differentiate keyboard navigation from mouse hover, improving accessibility.</p>
+<h2>Mobile <span class="success">Optimization</span> Strategy</h2>
+<h3>Touch Target Sizing</h3>
+<p>Mobile devices require larger touch targets for comfortable interaction. Apple&#39;s Human <span class="structure">Interface</span> Guidelines recommend 44pt minimum, Google suggests 48dp. I implemented 48px minimum heights:</p>
+<pre><code class="language-css">@media (max-width: 768px) {
+  .controls select, .hud select {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    font-size: 14px;
+    min-height: 48px;  /* Touch-friendly */
+  }
+}
+</code></pre>
+<h3>Layout Restructuring</h3>
+<p>On mobile, the Snake game HUD switches from a multi-column grid to a single-column layout:</p>
+<p><strong>Desktop:</strong></p>
+<pre><code class="language-css">.hud {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+</code></pre>
+<p><strong>Mobile:</strong></p>
+<pre><code class="language-css">@media (max-width: 768px) {
+  .hud {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+</code></pre>
+<p>This prevents cramped layouts and ensures each stat/control has adequate space.</p>
+<h3>Disabling Hover on Touch Devices</h3>
+<p>Hover effects don&#39;t work well on touch devices and can cause confusion. I disabled the transform on mobile:</p>
+<pre><code class="language-css">@media (max-width: 768px) {
+  .controls select:hover, .hud select:hover {
+    transform: none;  /* No lift animation on touch */
+  }
+}
+</code></pre>
+<p>The glow and color changes remain, but the <code>translateY</code> is removed to prevent visual glitches.</p>
+<h2><span class="success">Performance</span> Considerations</h2>
+<h3><span class="process">CSS</span> Transitions Over <span class="process">JavaScript</span></h3>
+<p>All animations use <span class="process">CSS</span> transitions instead of <span class="process">JavaScript</span>, ensuring:</p>
+<ul>
+<li>Hardware acceleration via GPU</li>
+<li>Smooth 60fps animations</li>
+<li>Better battery life on mobile</li>
+<li>Simpler <span class="process">code</span> maintenance</li>
+</ul>
+<h3>Box Shadow <span class="success">Optimization</span></h3>
+<p>Multiple box shadows can be expensive. I kept them <span class="meta">minimal</span> and used <code>will-change</code> implicitly through transitions:</p>
+<pre><code class="language-css">transition: all 0.3s ease;
+</code></pre>
+<p>This hints to the browser to optimize rendering for the changing properties.</p>
+<h2>Testing Approach</h2>
 <ol>
-<li><strong>Token Expiration</strong>: Reset tokens have a short lifespan (30 minutes) to minimize the attack window.</li>
-<li><strong><span class="connection">HTTPS</span></strong>: All communication happens over encrypted channels.</li>
-<li><strong>Input Validation</strong>: Strict validation on both frontend and backend ensures passwords meet <span class="meta">complexity</span> requirements.</li>
-<li><strong>Environment Isolation</strong>: <span class="connection">API</span> keys and sensitive configuration are kept in environment variables, never in the <span class="process">code</span>.</li>
+<li><strong>Desktop Testing</strong>: Chrome DevTools responsive mode</li>
+<li><strong>Tablet Testing</strong>: iPad Safari (both portrait and landscape)</li>
+<li><strong>Mobile Testing</strong>: iPhone Safari, Android Chrome</li>
+<li><strong>Accessibility</strong>: Keyboard navigation, screen reader compatibility</li>
+<li><strong>Cross-browser</strong>: Safari, Chrome, Firefox</li>
 </ol>
-<h2>Conclusion</h2>
-<p>Adding this feature significantly improves the <span class="meta">user experience</span> and <span class="attention">security</span> of the platform. By combining <strong><span class="structure">Spring Boot</span>&#39;s</strong> robust <span class="attention">security</span> features with <strong><span class="structure">React</span>&#39;s</strong> interactive UI and <strong>Brevo&#39;s</strong> <span class="success">reliable</span> delivery, we&#39;ve created a seamless recovery flow.</p>
-<p>Check out the full implementation in the <a href="https://github.com/jeffreyjose07/scalable-chat-platform"><span class="success">Scalable</span> Chat Platform</a> repository.</p>
+<h2>Results</h2>
+<h3><span class="meta">Void</span> Blocks</h3>
+<ul>
+<li>✅ No more overlapping controls on any device</li>
+<li>✅ Rotate button works perfectly</li>
+<li>✅ Clean visual hierarchy maintained</li>
+<li>✅ Desktop view completely unaffected</li>
+</ul>
+<h3>Snake Game</h3>
+<ul>
+<li>✅ Dropdowns match <span class="meta">terminal</span> <span class="meta">aesthetic</span></li>
+<li>✅ Smooth animations and glow effects</li>
+<li>✅ Touch-friendly on all mobile devices</li>
+<li>✅ Accessible keyboard navigation</li>
+<li>✅ Consistent visual language</li>
+</ul>
+<h2>Key Takeaways</h2>
+<ol>
+<li><strong>Always <span class="process">test</span> on real devices</strong> - Emulators don&#39;t catch everything</li>
+<li><strong><span class="structure">Function</span> naming matters</strong> - <code>rotatePiece()</code> vs <code>rotate()</code> caused hours of debugging</li>
+<li><strong>Spacing is <span class="attention">critical</span></strong> - Insufficient padding creates overlap issues</li>
+<li><strong>Touch targets need 48px+</strong> - Smaller targets frustrate mobile users</li>
+<li><strong><span class="meta">Terminal</span> <span class="meta">aesthetic</span> requires custom styling</strong> - Default <span class="process">HTML</span> elements break the immersion</li>
+<li><strong>Progressive enhancement works</strong> - Desktop-first, then enhance for mobile</li>
+</ol>
+<h2><span class="attention">Technical Debt</span> Avoided</h2>
+<p>By fixing these issues early, I avoided:</p>
+<ul>
+<li>Accumulating user complaints</li>
+<li>Emergency hotfixes</li>
+<li>Inconsistent mobile experiences</li>
+<li>Abandoned game sessions due to frustration</li>
+</ul>
+<h2>Next Steps</h2>
+<p>Future improvements could include:</p>
+<ul>
+<li>Custom sound effects for button interactions</li>
+<li>Haptic feedback on mobile devices</li>
+<li>Progressive Web App capabilities</li>
+<li>Offline mode support</li>
+<li>Game state persistence</li>
+</ul>
+<p>The games now provide a polished, <span class="meta">terminal</span>-<span class="meta">aesthetic</span> experience across all devices while maintaining the cyberpunk vibe that defines my portfolio.</p>
+<hr>
+<p><strong>Tech Stack:</strong> HTML5 Canvas, Vanilla <span class="process">JavaScript</span>, <span class="process">CSS</span> Grid, <span class="process">CSS</span> Custom Properties
+<strong>Repository:</strong> <a href="https://github.com/jeffreyjose07/jeffreyjose07.github.io">jeffreyjose07.<span class="success">github</span>.io</a>
+<strong><span class="success">Live</span> Demos:</strong> <a href="/games/void-blocks/"><span class="meta">Void</span> Blocks</a> • <a href="/games/snake/">Snake Game</a></p>
 
         </article>
         
         <footer class="post-footer">
             <div>
-                words: ~800 · reading time: ~5 min · <span id="view-count">👀 views loading...</span> · tags: <a href="/blog#tag-Spring Boot" class="tag neutral" data-tag="Spring Boot">Spring Boot</a>, <a href="/blog#tag-React" class="tag neutral" data-tag="React">React</a>, <a href="/blog#tag-Security" class="tag neutral" data-tag="Security">Security</a>, <a href="/blog#tag-Brevo" class="tag neutral" data-tag="Brevo">Brevo</a>
+                words: ~1800 · reading time: ~8 min · <span id="view-count">👀 views loading...</span> · tags: <a href="/blog#tag-css" class="tag neutral" data-tag="css">css</a>, <a href="/blog#tag-mobile" class="tag neutral" data-tag="mobile">mobile</a>, <a href="/blog#tag-ux" class="tag neutral" data-tag="ux">ux</a>, <a href="/blog#tag-gamedev" class="tag neutral" data-tag="gamedev">gamedev</a>, <a href="/blog#tag-terminal-aesthetic" class="tag meta" data-tag="terminal-aesthetic">terminal-aesthetic</a>
             </div>
         </footer>
         
         <nav class="post-navigation">
             <div class="nav-previous">
-                <a href="/blog/adding-interactive-scripts-to-blog-posts">
+                <a href="/blog/building-a-secure-password-reset-flow">
                     <span class="nav-label">← previous</span>
-                    <span class="nav-title">Adding Interactive Scripts to Blog Posts</span>
-                </a>
-            </div>
-            <div class="nav-next">
-                <a href="/blog/enhancing-game-ui-mobile-responsiveness-and-termin">
-                    <span class="nav-label">next →</span>
-                    <span class="nav-title">Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics</span>
+                    <span class="nav-title">Building a Secure Password Reset Flow</span>
                 </a>
             </div></nav>
     </div>

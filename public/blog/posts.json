@@ -1,5 +1,22 @@
 [
   {
+    "url": "/blog/enhancing-game-ui-mobile-responsiveness-and-termin",
+    "title": "Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics",
+    "episode": "020",
+    "date": "2025-01-21",
+    "tags": [
+      "css",
+      "mobile",
+      "ux",
+      "gamedev",
+      "terminal-aesthetic"
+    ],
+    "description": "Deep dive into fixing mobile UI issues and enhancing dropdown styling for terminal-themed games",
+    "readingTime": 8,
+    "wordCount": 1800,
+    "slug": "enhancing-game-ui-mobile-responsiveness-and-termin"
+  },
+  {
     "url": "/blog/building-a-secure-password-reset-flow",
     "title": "Building a Secure Password Reset Flow",
     "episode": "019",
