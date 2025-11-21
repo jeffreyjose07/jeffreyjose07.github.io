@@ -24,15 +24,18 @@
       font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
       background: linear-gradient(180deg, var(--bg) 0%, #000022 100%);
       color: var(--text);
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
-    
+
     .container {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       gap: 20px;
+      padding-top: 80px; /* Account for portfolio navbar */
+      padding-bottom: 20px;
     }
     
     .game-area {
@@ -449,15 +452,17 @@
       body {
         padding: 0;
         overflow-x: hidden;
+        overflow-y: auto;
       }
 
       .container {
         flex-direction: column;
         gap: 8px;
-        padding: 8px;
+        padding: 8px 8px 160px 8px; /* Extra bottom padding for fixed controls */
         height: auto;
         min-height: 100vh;
         justify-content: flex-start;
+        padding-top: 10px; /* Less top padding on mobile, no navbar */
       }
 
       .game-area {
@@ -472,11 +477,12 @@
         height: auto;
       }
 
-      /* Optimized game canvas for mobile */
+      /* Optimized game canvas for mobile - centered and prominent */
       #gameCanvas {
         width: 180px !important;
         height: 360px !important;
         margin: 0 auto;
+        display: block;
       }
 
       /* Compact panels - only show essential info */
@@ -487,6 +493,7 @@
         flex-direction: column;
         gap: 6px;
         order: -1; /* Move panels above canvas */
+        margin-bottom: 10px;
       }
 
       .title-panel {
@@ -531,14 +538,18 @@
         height: 50px;
       }
 
-      /* Optimized mobile controls - fixed at bottom */
+      /* Optimized mobile controls - fixed at bottom with visual polish */
       .mobile-controls {
         display: block;
         position: fixed;
         bottom: 8px;
         left: 50%;
         transform: translateX(-50%);
-        padding: 8px;
+        padding: 10px;
+        background: rgba(0, 17, 34, 0.98);
+        border: 2px solid var(--data);
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(85, 255, 255, 0.3);
         z-index: 1000;
         max-width: 95vw;
       }

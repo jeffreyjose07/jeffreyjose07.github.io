@@ -24,17 +24,18 @@
   }
   
   body {
-    min-height: 100vh; 
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     background: var(--terminal-bg);
-    color: var(--terminal-gray); 
+    color: var(--terminal-gray);
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     font-size: 14px;
     line-height: 1.4;
-    padding: 20px;
+    padding: 80px 20px 20px 20px; /* Top padding for portfolio navbar */
+    overflow-x: hidden;
   }
   
   .header {
@@ -360,12 +361,13 @@
 
   @media (max-width: 768px) {
     body {
-      padding: 10px;
+      padding: 10px 10px 180px 10px; /* Extra bottom padding for touch controls */
       justify-content: flex-start;
     }
 
     .game-container {
       margin-top: 0;
+      width: 100%;
     }
 
     .header {
@@ -440,13 +442,23 @@
       aspect-ratio: 4/3;
     }
 
-    /* Touch controls below canvas */
+    /* Touch controls - fixed at bottom for easy access */
     .touch-controls {
       display: flex;
       flex-wrap: nowrap;
       gap: 10px;
       justify-content: center;
-      margin-top: 10px;
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.95);
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid var(--terminal-green);
+      box-shadow: 0 0 20px rgba(85, 255, 85, 0.3);
+      z-index: 100;
+      max-width: 95vw;
     }
 
     .touch-dpad {
@@ -1017,20 +1029,25 @@
   function ensureRunning() {
     if (gameState.status === 'idle') startGame();
   }
-  if (touchUp) touchUp.addEventListener("click", () => { ensureRunning(); queueTurn(0, -1); });
-  if (touchDown) touchDown.addEventListener("click", () => { ensureRunning(); queueTurn(0, 1); });
-  if (touchLeft) touchLeft.addEventListener("click", () => { ensureRunning(); queueTurn(-1, 0); });
-  if (touchRight) touchRight.addEventListener("click", () => { ensureRunning(); queueTurn(1, 0); });
-  if (touchPause) touchPause.addEventListener("click", pauseToggle);
-  if (touchRestart) touchRestart.addEventListener("click", startGame);
 
-  // Prevent touch controls from scrolling the page
-  [touchUp, touchDown, touchLeft, touchRight, touchPause, touchRestart].forEach(btn => {
-    if (btn) {
-      btn.addEventListener("touchstart", (e) => e.preventDefault(), {passive: false});
-      btn.addEventListener("touchend", (e) => e.preventDefault(), {passive: false});
-    }
-  });
+  // Better touch handling - use touchend for more responsive feel
+  function addTouchHandler(element, handler) {
+    if (!element) return;
+
+    element.addEventListener("click", handler);
+    element.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      handler();
+    }, {passive: false});
+    element.addEventListener("touchstart", (e) => e.preventDefault(), {passive: false});
+  }
+
+  addTouchHandler(touchUp, () => { ensureRunning(); queueTurn(0, -1); });
+  addTouchHandler(touchDown, () => { ensureRunning(); queueTurn(0, 1); });
+  addTouchHandler(touchLeft, () => { ensureRunning(); queueTurn(-1, 0); });
+  addTouchHandler(touchRight, () => { ensureRunning(); queueTurn(1, 0); });
+  addTouchHandler(touchPause, pauseToggle);
+  addTouchHandler(touchRestart, startGame);
 
   elements.speed.addEventListener("change", (e) => {
     updateSpeed(e.target.value);
