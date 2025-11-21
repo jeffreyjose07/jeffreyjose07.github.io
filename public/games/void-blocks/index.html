@@ -444,107 +444,198 @@
       background: rgba(255, 170, 85, 0.1);
     }
 
-    /* Mobile Responsive Design */
+    /* Mobile Responsive Design - Game-First Approach */
     @media (max-width: 768px) {
       body {
-        /* Create safe-space so fixed mobile controls don't overlap content */
-        padding-bottom: 220px;
+        padding: 0;
+        overflow-x: hidden;
       }
+
       .container {
         flex-direction: column;
-        gap: 10px;
-        padding: 10px 10px 20px 10px;
+        gap: 8px;
+        padding: 8px;
         height: auto;
         min-height: 100vh;
+        justify-content: flex-start;
       }
 
       .game-area {
         flex-direction: column;
         align-items: center;
-        gap: 15px;
+        gap: 8px;
+        width: 100%;
       }
 
       canvas {
-        max-width: 90vw;
+        max-width: 100%;
         height: auto;
       }
 
+      /* Optimized game canvas for mobile */
       #gameCanvas {
-        width: 250px;
-        height: 500px;
+        width: 180px !important;
+        height: 360px !important;
+        margin: 0 auto;
       }
 
+      /* Compact panels - only show essential info */
       .panels {
         width: 100%;
-        max-width: 400px;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-bottom: 20px;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        order: -1; /* Move panels above canvas */
       }
 
       .title-panel {
-        grid-column: 1 / 3;
+        padding: 4px 8px;
       }
 
-      .panel {
-        padding: 8px;
+      .title-panel .panel-title {
         font-size: 11px;
+        margin-bottom: 2px;
+      }
+
+      .title-panel .subtitle {
+        font-size: 8px;
+      }
+
+      /* Combine stats into one compact panel */
+      .panel {
+        padding: 4px 6px;
+        font-size: 9px;
       }
 
       .panel-title {
-        font-size: 12px;
-        margin-bottom: 6px;
+        font-size: 9px;
+        margin-bottom: 3px;
       }
 
-      .controls .control-row {
+      .stat-row {
         margin: 2px 0;
+        font-size: 9px;
+      }
+
+      .stat-value {
         font-size: 10px;
       }
 
-      .mobile-controls {
-        display: block;
+      .score-value {
+        font-size: 12px;
       }
 
-      .start-content {
-        padding: 20px;
+      #nextCanvas {
+        width: 80px;
+        height: 50px;
+      }
+
+      /* Optimized mobile controls - fixed at bottom */
+      .mobile-controls {
+        display: block;
+        position: fixed;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 8px;
+        z-index: 1000;
         max-width: 95vw;
       }
 
-      .start-title {
-        font-size: 20px;
-      }
-
-      .version {
-        bottom: 160px;
-      }
-      /* Hide keyboard instructions panel on mobile to avoid duplication */
-      #controlsPanel { display: none; }
-    }
-
-    @media (max-width: 480px) {
-      #gameCanvas {
-        width: 200px;
-        height: 400px;
-      }
-
-      .panels {
-        grid-template-columns: 1fr;
-      }
-
-      .title-panel {
-        grid-column: 1;
+      .mobile-row {
+        gap: 6px;
+        margin: 4px 0;
       }
 
       .mobile-btn {
-        min-height: 40px;
-        min-width: 50px;
-        font-size: 14px;
+        min-height: 38px;
+        min-width: 45px;
+        font-size: 13px;
       }
 
       .drop-btn {
-        min-width: 100px;
+        min-width: 90px;
         font-size: 10px;
+      }
+
+      .start-content {
+        padding: 15px;
+        max-width: 95vw;
+        max-height: 85vh;
+      }
+
+      .start-title {
+        font-size: 16px;
+      }
+
+      .section-title {
+        font-size: 13px;
+      }
+
+      .section-content {
+        font-size: 11px;
+      }
+
+      .version {
+        bottom: 140px;
+        font-size: 8px;
+      }
+
+      /* Hide non-essential panels on mobile */
+      #controlsPanel,
+      .panel:not(.title-panel):nth-child(n+4) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 5px;
+        gap: 5px;
+      }
+
+      #gameCanvas {
+        width: 160px !important;
+        height: 320px !important;
+      }
+
+      .title-panel .panel-title {
+        font-size: 10px;
+      }
+
+      .title-panel .subtitle {
+        font-size: 7px;
+      }
+
+      .panel {
+        padding: 3px 5px;
+      }
+
+      .mobile-controls {
+        bottom: 5px;
+        padding: 6px;
+      }
+
+      .mobile-row {
+        gap: 4px;
+        margin: 3px 0;
+      }
+
+      .mobile-btn {
+        min-height: 35px;
+        min-width: 40px;
+        font-size: 12px;
+      }
+
+      .drop-btn {
+        min-width: 80px;
+        font-size: 9px;
+      }
+
+      #nextCanvas {
+        width: 60px;
+        height: 40px;
       }
     }
   </style>

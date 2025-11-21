@@ -271,25 +271,7 @@
     display: none !important; 
   }
   
-  .back-link {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    color: var(--terminal-cyan);
-    text-decoration: none;
-    border: 1px solid var(--terminal-cyan);
-    padding: 8px 12px;
-    font-family: inherit;
-    font-size: 12px;
-    text-transform: uppercase;
-    transition: all 0.2s;
-  }
-  
-  .back-link:hover {
-    background: rgba(85, 255, 255, 0.1);
-    color: var(--terminal-green);
-    border-color: var(--terminal-green);
-  }
+  /* Back link removed - navigation handled by portfolio */
   
   /* Mobile Touch Controls */
   .touch-controls {
@@ -378,141 +360,93 @@
 
   @media (max-width: 768px) {
     body {
-      padding: 15px 15px 20px 15px;
+      padding: 10px;
+      justify-content: flex-start;
     }
 
-    .back-link {
-      position: relative;
-      top: 0;
-      left: 0;
-      margin-bottom: 15px;
-      display: inline-block;
+    .game-container {
+      margin-top: 0;
     }
 
     .header {
-      margin-bottom: 15px;
-      padding: 12px 15px;
+      margin-bottom: 10px;
+      padding: 8px 12px;
     }
 
     .header h1 {
-      font-size: 16px;
+      font-size: 14px;
+      margin-bottom: 3px;
     }
 
     .header .subtitle {
+      font-size: 10px;
+    }
+
+    /* Compact HUD for mobile */
+    .hud {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      padding: 8px;
       font-size: 11px;
     }
 
-    .hud {
-      grid-template-columns: 1fr;
-      gap: 12px;
-      padding: 12px;
-    }
-
     .hud .stat {
-      padding: 10px;
+      padding: 6px;
     }
 
     .hud .label {
-      font-size: 12px;
-      margin-bottom: 5px;
+      font-size: 10px;
+      margin-bottom: 3px;
     }
 
     .hud .value {
-      font-size: 18px;
+      font-size: 14px;
     }
 
     /* Mobile-optimized dropdowns */
     .controls select, .hud select {
       width: 100%;
-      padding: 12px 40px 12px 15px;
-      font-size: 14px;
-      min-height: 48px;
+      padding: 8px 35px 8px 10px;
+      font-size: 12px;
+      min-height: 36px;
       border-width: 2px;
-      background-size: auto, 18px;
-      background-position: center, right 12px center;
+      background-size: auto, 14px;
+      background-position: center, right 8px center;
     }
 
     .controls select:hover, .hud select:hover {
       transform: none;
     }
 
+    /* Compact controls */
     .controls {
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-bottom: 15px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
     }
 
     .controls button {
       width: 100%;
-      padding: 12px;
-      font-size: 14px;
-      min-height: 48px;
+      padding: 8px 4px;
+      font-size: 11px;
+      min-height: 36px;
     }
 
+    /* Canvas - priority element */
     canvas {
       max-width: 100%;
-      height: auto;
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: 4/3;
     }
 
+    /* Touch controls below canvas */
     .touch-controls {
       display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-
-    .touch-dpad {
-      width: 160px;
-      height: 160px;
-    }
-
-    .touch-btn {
-      font-size: 20px;
-      min-height: 45px;
-    }
-
-    .touch-action {
-      font-size: 18px;
-      min-width: 55px;
-      min-height: 55px;
-    }
-
-    .instructions {
-      font-size: 11px;
-      line-height: 1.4;
-      margin-top: 15px;
-      padding: 12px;
-    }
-
-    .key {
-      padding: 3px 7px;
-      font-size: 11px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    body {
-      padding: 10px;
-    }
-
-    .header {
-      padding: 10px;
-    }
-
-    .hud {
-      padding: 10px;
+      flex-wrap: nowrap;
       gap: 10px;
-    }
-
-    .controls select, .hud select {
-      padding: 10px 35px 10px 12px;
-      font-size: 13px;
-      min-height: 44px;
-    }
-
-    .controls button {
-      padding: 10px;
-      font-size: 13px;
-      min-height: 44px;
+      justify-content: center;
+      margin-top: 10px;
     }
 
     .touch-dpad {
@@ -527,19 +461,70 @@
 
     .touch-action {
       font-size: 16px;
-      min-width: 50px;
-      min-height: 50px;
+      min-width: 45px;
+      min-height: 45px;
     }
 
+    /* Hide keyboard instructions on mobile */
     .instructions {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    body {
+      padding: 8px;
+    }
+
+    .header {
+      padding: 6px 8px;
+    }
+
+    .header h1 {
+      font-size: 13px;
+    }
+
+    .hud {
+      padding: 6px;
+      gap: 6px;
+    }
+
+    .hud .stat {
+      padding: 5px;
+    }
+
+    .controls select, .hud select {
+      padding: 6px 30px 6px 8px;
+      font-size: 11px;
+      min-height: 32px;
+    }
+
+    .controls button {
+      padding: 6px 3px;
       font-size: 10px;
+      min-height: 32px;
+    }
+
+    .touch-dpad {
+      width: 120px;
+      height: 120px;
+      gap: 3px;
+    }
+
+    .touch-btn {
+      font-size: 16px;
+      min-height: 35px;
+    }
+
+    .touch-action {
+      font-size: 14px;
+      min-width: 40px;
+      min-height: 40px;
     }
   }
 </style>
 </head>
 <body>
-  <a href="/" class="back-link">← Back to Portfolio</a>
-  
   <div class="header">
     <h1>Snake Game</h1>
     <div class="subtitle">Terminal Edition - Jeffrey Jose Portfolio</div>
