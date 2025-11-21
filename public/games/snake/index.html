@@ -361,13 +361,18 @@
 
   @media (max-width: 768px) {
     body {
-      padding: 10px 10px 180px 10px; /* Extra bottom padding for touch controls */
+      padding: 10px;
       justify-content: flex-start;
+      overflow: hidden; /* Prevent page scrolling */
+      position: fixed; /* Lock the body */
+      width: 100%;
+      height: 100vh;
     }
 
     .game-container {
       margin-top: 0;
       width: 100%;
+      overflow: hidden; /* Prevent container scrolling */
     }
 
     .header {
@@ -434,31 +439,34 @@
       min-height: 36px;
     }
 
-    /* Canvas - priority element */
+    /* Canvas - priority element with touch feedback */
     canvas {
       max-width: 100%;
       width: 100% !important;
       height: auto !important;
       aspect-ratio: 4/3;
+      touch-action: none; /* Prevent default touch behaviors */
+      -webkit-user-select: none;
+      user-select: none;
     }
 
-    /* Touch controls - fixed at bottom for easy access */
+    /* Add instruction overlay for mobile users */
+    .game-container::before {
+      content: "👆 SWIPE TO CONTROL • TAP TO START";
+      display: block;
+      text-align: center;
+      font-size: 11px;
+      color: var(--terminal-cyan);
+      margin-bottom: 8px;
+      padding: 6px;
+      background: rgba(0, 17, 34, 0.8);
+      border: 1px solid var(--terminal-cyan);
+      border-radius: 4px;
+    }
+
+    /* Touch controls - HIDDEN on mobile, using canvas gestures instead */
     .touch-controls {
-      display: flex;
-      flex-wrap: nowrap;
-      gap: 10px;
-      justify-content: center;
-      position: fixed;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.95);
-      padding: 10px;
-      border-radius: 12px;
-      border: 1px solid var(--terminal-green);
-      box-shadow: 0 0 20px rgba(85, 255, 85, 0.3);
-      z-index: 100;
-      max-width: 95vw;
+      display: none; /* Buttons don't work reliably, use canvas swipe gestures */
     }
 
     .touch-dpad {
@@ -486,6 +494,15 @@
   @media (max-width: 480px) {
     body {
       padding: 8px;
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100vh;
+    }
+
+    .game-container::before {
+      font-size: 10px;
+      padding: 5px;
     }
 
     .header {
@@ -517,21 +534,10 @@
       min-height: 32px;
     }
 
-    .touch-dpad {
-      width: 120px;
-      height: 120px;
-      gap: 3px;
-    }
-
-    .touch-btn {
-      font-size: 16px;
-      min-height: 35px;
-    }
-
-    .touch-action {
-      font-size: 14px;
-      min-width: 40px;
-      min-height: 40px;
+    canvas {
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
     }
   }
 </style>
@@ -1011,8 +1017,17 @@
 
   // Event listeners
   document.addEventListener("keydown", handleKeydown);
-  elements.canvas.addEventListener("touchstart", handleTouchStart, {passive: true});
-  elements.canvas.addEventListener("touchmove", handleTouchMove, {passive: true});
+
+  // Canvas touch events - PREVENT DEFAULT to stop page scrolling
+  elements.canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // Prevent scrolling
+    handleTouchStart(e);
+  }, {passive: false});
+
+  elements.canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault(); // Prevent scrolling
+    handleTouchMove(e);
+  }, {passive: false});
 
   elements.btnStart.addEventListener("click", startGame);
   elements.btnPause.addEventListener("click", pauseToggle);
