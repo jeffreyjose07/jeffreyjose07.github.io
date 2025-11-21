@@ -448,12 +448,12 @@
     @media (max-width: 768px) {
       body {
         /* Create safe-space so fixed mobile controls don't overlap content */
-        padding-bottom: 180px;
+        padding-bottom: 220px;
       }
       .container {
         flex-direction: column;
         gap: 10px;
-        padding: 10px;
+        padding: 10px 10px 20px 10px;
         height: auto;
         min-height: 100vh;
       }
@@ -480,6 +480,7 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px;
+        margin-bottom: 20px;
       }
 
       .title-panel {
@@ -1388,9 +1389,9 @@
       // Rotation
       document.getElementById('mobileRotate').addEventListener('click', () => {
         if (current && gameStarted && !gameOver && !paused) {
-          const rotatedPiece = rotatePiece(current);
-          if (isValidMove(rotatedPiece, 0, 0)) {
-            current.shape = rotatedPiece.shape;
+          const rotated = rotate(current.shape, true);
+          if (isValidMove(current, 0, 0, rotated)) {
+            current.shape = rotated;
           }
         }
       });
