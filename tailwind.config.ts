@@ -70,6 +70,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Google Material Design colors
+				google: {
+					blue: '#4285F4',
+					red: '#EA4335',
+					yellow: '#FBBC04',
+					green: '#34A853'
 				}
 			},
 			backgroundImage: {
@@ -78,8 +85,15 @@ export default {
 				'gradient-accent': 'var(--gradient-accent)'
 			},
 			boxShadow: {
-				'elegant': 'var(--shadow-elegant)',
-				'glow': 'var(--shadow-glow)'
+				// Material Design elevation system
+				'material-1': 'var(--shadow-1)',
+				'material-2': 'var(--shadow-2)',
+				'material-4': 'var(--shadow-4)',
+				'material-6': 'var(--shadow-6)',
+				'material-8': 'var(--shadow-8)',
+				// Legacy shadows
+				'elegant': 'var(--shadow-4)',
+				'glow': '0 0 40px hsl(var(--primary) / 0.3)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
