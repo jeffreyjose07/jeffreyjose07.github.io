@@ -10,6 +10,24 @@ export interface Project {
 
 export const projects: Project[] = [
     {
+        title: "TruthMeter AI - AI Pair Programming Metrics Extension",
+        description: "A VS Code extension that measures the ACTUAL impact of AI coding assistants on developer productivity based on peer-reviewed research, not vanity metrics. Works with any AI assistant (GitHub Copilot, Cursor, Windsurf Cascade, etc.) and tracks what actually matters: code quality, true productivity gains, and economic ROI.",
+        image: "/truthmeter-ai-icon.png",
+        liveUrl: "https://marketplace.visualstudio.com/items?itemName=jeffreyjose.truthmeter-ai",
+        githubUrl: "https://github.com/jeffreyjose07/truthmeterai",
+        technologies: ["TypeScript", "VS Code Extension API", "Node.js", "Git Analysis", "Webpack", "Mocha Testing"],
+        highlights: [
+            "Research-backed metrics from METR 2025, GitClear 2024, and GitHub studies",
+            "Tracks code churn, duplication, complexity, and actual vs perceived productivity",
+            "Privacy-first design - all data stored locally, no cloud sync",
+            "145+ passing tests with 80%+ code coverage",
+            "Real-time dashboard with comprehensive metrics visualization",
+            "Economic ROI calculator including hidden costs and technical debt",
+            "SPACE Framework integration (Satisfaction, Performance, Activity, Efficiency)",
+            "Works with all AI coding assistants - GitHub Copilot, Cursor, Cascade, etc."
+        ]
+    },
+    {
         title: "Scalable Chat Platform",
         description: "A production-ready real-time chat application built with Spring Boot 3.2 and React 18. Features multi-database architecture, WebSocket messaging, and horizontal scaling design supporting 1000+ concurrent users.",
         image: "/scalable-chat-platform.png",
