@@ -12,7 +12,7 @@ export const projects: Project[] = [
     {
         title: "TruthMeter AI - AI Pair Programming Metrics Extension",
         description: "A VS Code extension that measures the ACTUAL impact of AI coding assistants on developer productivity based on peer-reviewed research, not vanity metrics. Works with any AI assistant (GitHub Copilot, Cursor, Windsurf Cascade, etc.) and tracks what actually matters: code quality, true productivity gains, and economic ROI.",
-        image: "/truthmeter-ai-icon.png",
+        image: "/truthmeter-ai-screenshot.png",
         liveUrl: "https://marketplace.visualstudio.com/items?itemName=jeffreyjose.truthmeter-ai",
         githubUrl: "https://github.com/jeffreyjose07/truthmeterai",
         technologies: ["TypeScript", "VS Code Extension API", "Node.js", "Git Analysis", "Webpack", "Mocha Testing"],
