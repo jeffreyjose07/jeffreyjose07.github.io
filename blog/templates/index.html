@@ -8,509 +8,272 @@
     <meta name="description" content="{{description}}" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/blog/feed.xml" />
+
+    {{styles}}
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            background-color: #000000;
-            color: #c9c9c9;
-            line-height: 1.4;
-            padding: 20px;
-            font-size: 15px;
-            text-rendering: optimizeLegibility;
+            padding-top: 100px;
         }
 
-        @media (min-width: 768px) {
-            body {
-                padding: 40px 20px;
-                font-size: 16px;
-            }
-        }
-
-        .main-layout {
-            display: grid;
-            grid-template-columns: 120px 1fr 120px;
-            max-width: 940px;
-            margin: 0 auto;
-            gap: 20px;
-            align-items: start;
-        }
-
-        .container {
-            max-width: 700px;
-        }
-
-        .sidebar {
-            position: sticky;
-            top: 20px;
-            height: 80vh;
-            overflow: hidden;
-            opacity: 0.15;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 10px;
-            line-height: 1.1;
-            color: #55ff55;
-            white-space: pre;
-            user-select: none;
-            pointer-events: none;
-        }
-
-        .sidebar.left {
-            text-align: right;
-        }
-
-        .sidebar.right {
-            text-align: left;
-        }
-
-        @media (max-width: 1200px) {
-            .main-layout {
-                grid-template-columns: 80px 1fr 80px;
-                gap: 15px;
-            }
-
-            .sidebar {
-                font-size: 9px;
-            }
-        }
-
-        @media (max-width: 1024px) {
-            .main-layout {
-                grid-template-columns: 1fr;
-                max-width: 700px;
-            }
-
-            .sidebar {
-                display: none;
-            }
-        }
-
-        h1 {
-            font-size: 16px;
-            font-weight: normal;
-            margin-bottom: 25px;
-            text-transform: lowercase;
-            color: #55ff55;
-            letter-spacing: 0.5px;
-        }
-
-        @media (min-width: 768px) {
-            h1 {
-                font-size: 18px;
-            }
-        }
-
-        .episode-list {
-            list-style: none;
-        }
-
-        .episode-list li {
-            margin: 6px 0;
-            line-height: 1.3;
-        }
-
-        .episode-list a {
-            color: #c9c9c9;
-            text-decoration: none;
-            display: block;
-            padding: 1px 0;
-            transition: all 0.15s ease;
-        }
-
-        .episode-list a:hover {
-            color: #ffffff;
-        }
-
-        .episode-number {
-            color: #5588ff;
-            font-weight: normal;
-        }
-
-        .episode-title {
-            color: #c9c9c9;
-        }
-
-        .back-link {
-            margin-bottom: 18px;
-        }
-
-        .back-link a {
-            color: #888888;
-            text-decoration: none;
-            font-size: 12px;
-            letter-spacing: 0.3px;
-        }
-
-        @media (min-width: 768px) {
-            .back-link a {
-                font-size: 13px;
-            }
-        }
-
-        .back-link a:hover {
-            color: #aaaaaa;
-        }
-
-        .back-link a:before {
-            content: '← ';
-            color: #666666;
-        }
-
-        .date {
-            color: #ff8855;
-            font-size: 12px;
-            margin-left: 8px;
-            font-weight: normal;
-        }
-
-        @media (min-width: 768px) {
-            .date {
-                font-size: 13px;
-            }
-        }
-
-        .description {
-            color: #777777;
-            font-size: 13px;
-            margin-top: 15px;
-            margin-bottom: 25px;
-            line-height: 1.4;
-            font-style: italic;
-        }
-
-        @media (min-width: 768px) {
-            .description {
-                font-size: 14px;
-            }
-        }
-
-        .stats {
-            margin-top: 30px;
-            padding-top: 15px;
-            border-top: 1px solid #222222;
-            font-size: 11px;
-            color: #555555;
-        }
-
-        @media (min-width: 768px) {
-            .stats {
-                font-size: 12px;
-            }
-        }
-
-        .episode-list a:hover .episode-number {
-            color: #77aaff;
-        }
-
-        .episode-list a:hover .episode-title {
-            color: #ffffff;
-        }
-
-        .episode-list a:hover .date {
-            color: #ffaa77;
-        }
-
-        /* Tag filters */
-        .tag-filters {
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #333333;
-            border-radius: 4px;
-            background-color: #111111;
-            max-height: 85px;
-            /* Collapsed height - enough for title + 1 row */
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
+        .blog-header {
+            text-align: center;
+            margin-bottom: 4rem;
             position: relative;
         }
 
-        .tag-filters.expanded {
-            max-height: 500px;
-            /* Arbitrary large height */
+        .blog-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .tag-filters h3 {
-            font-size: 11px;
-            color: #666666;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .blog-description {
+            color: var(--muted-foreground);
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        @media (min-width: 768px) {
-            .tag-filters h3 {
-                font-size: 12px;
-            }
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .post-item {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .post-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .post-item:hover::before {
+            opacity: 1;
+        }
+
+        .post-item a {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            text-decoration: none;
+            z-index: 2;
+        }
+
+        .post-meta-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+        }
+
+        .episode-number {
+            font-family: var(--font-mono);
+            color: var(--primary);
+            background: rgba(124, 58, 237, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .post-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--foreground);
+            transition: color 0.2s;
+        }
+
+        .post-item:hover .post-title {
+            color: var(--primary-glow);
+        }
+
+        .post-description {
+            color: var(--muted-foreground);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: auto;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .post-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .tag-pill {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--muted-foreground);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+        }
+
+        .post-item:hover .tag-pill {
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--primary-glow);
+            border-color: rgba(124, 58, 237, 0.2);
+        }
+
+        /* Tag Filters */
+        .tag-filters-container {
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .tag-filter {
-            background: none;
-            border: 1px solid #333333;
-            color: #c9c9c9;
-            padding: 4px 8px;
-            margin: 2px 4px 2px 0;
-            font-family: inherit;
-            font-size: 10px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--muted-foreground);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
             cursor: pointer;
-            border-radius: 2px;
-            transition: all 0.2s ease;
-        }
-
-        @media (min-width: 768px) {
-            .tag-filter {
-                font-size: 11px;
-                padding: 5px 10px;
-            }
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            transition: all 0.2s;
         }
 
         .tag-filter:hover,
         .tag-filter.active {
-            border-color: currentColor;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .tag-filter.success {
-            color: #55ff55;
-        }
-
-        .tag-filter.structure {
-            color: #5588ff;
-        }
-
-        .tag-filter.process {
-            color: #ffff55;
-        }
-
-        .tag-filter.attention {
-            color: #ff8855;
-        }
-
-        .tag-filter.meta {
-            color: #ff55ff;
-        }
-
-        .tag-filter.connection {
-            color: #55ffff;
-        }
-
-        .tag-filter.neutral {
-            color: #c9c9c9;
-        }
-
-        /* Show all button */
-        .show-all {
-            background: none;
-            border: 1px solid #555555;
-            color: #aaaaaa;
-            padding: 4px 8px;
-            margin: 2px 4px 2px 0;
-            font-family: inherit;
-            font-size: 10px;
-            cursor: pointer;
-            border-radius: 2px;
-            transition: all 0.2s ease;
-        }
-
-        @media (min-width: 768px) {
-            .show-all {
-                font-size: 11px;
-                padding: 5px 10px;
-            }
-        }
-
-        .show-all:hover,
-        .show-all.active {
-            border-color: #55ff55;
-            color: #55ff55;
-            background-color: rgba(85, 255, 85, 0.1);
-        }
-
-        .tag-toggle {
-            background: none;
-            border: none;
-            color: #55ff55;
-            font-family: inherit;
-            font-size: 10px;
-            cursor: pointer;
-            padding: 5px;
-            margin-left: 10px;
-            text-decoration: underline;
-            display: inline-block;
-        }
-
-        .tag-toggle:hover {
-            color: #ffffff;
-        }
-
-
-        /* Hidden posts during filtering */
-        .post-item.hidden {
-            display: none;
-        }
-
-        /* Terminal-like cursor effect for title */
-        h1:after {
-            content: '_';
-            color: #55ff55;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-
-            0%,
-            50% {
-                opacity: 1;
-            }
-
-            51%,
-            100% {
-                opacity: 0;
-            }
-        }
-
-        /* Mobile improvements */
-        @media (max-width: 767px) {
-            .container {
-                padding: 0 10px;
-            }
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
         }
 
         /* Pagination */
         .pagination {
             display: flex;
             justify-content: center;
-            margin-top: 30px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 4rem;
         }
 
         .pagination-link {
-            background-color: #1a1a1a;
-            border: 1px solid #333333;
-            color: #c9c9c9;
-            padding: 8px 12px;
-            margin: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--muted-foreground);
             text-decoration: none;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-            font-size: 14px;
+            transition: all 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .pagination-link:hover {
-            background-color: #2a2a2a;
-            border-color: #55ff55;
-            color: #55ff55;
+        .pagination-link:hover,
+        .pagination-link.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
         .pagination-link.active {
-            background-color: #55ff55;
-            border-color: #55ff55;
-            color: #000000;
             font-weight: bold;
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
         }
 
-        @media (max-width: 767px) {
-            .pagination-link {
-                padding: 6px 10px;
-                font-size: 12px;
-            }
+        /* Stats Footer */
+        .stats-footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--muted-foreground);
+            font-size: 0.875rem;
         }
 
-        /* Social Links */
-        .social-links {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-            padding: 10px 0;
-            border-bottom: 1px solid #222222;
+        .stats-footer a {
+            color: var(--foreground);
+            text-decoration: underline;
+            text-decoration-color: var(--muted-foreground);
+            text-underline-offset: 4px;
         }
 
-        .social-links a {
-            color: #888888;
-            text-decoration: none;
-            font-size: 11px;
-            text-transform: lowercase;
-            letter-spacing: 0.5px;
-            transition: color 0.2s ease;
-        }
-
-        .social-links a:hover {
-            color: #55ff55;
-        }
-
-        .social-links .divider {
-            color: #333333;
-            font-size: 10px;
-        }
-
-        @media (min-width: 768px) {
-            .social-links a {
-                font-size: 12px;
-            }
+        .stats-footer a:hover {
+            color: var(--primary);
+            text-decoration-color: var(--primary);
         }
     </style>
 </head>
 
-<body>
-
-
-    <!-- Intro Audio -->
-    <audio id="introAudio" preload="auto">
-        <source src="/blog/audio/intro.mp3" type="audio/mpeg">
-        <source src="/blog/audio/intro.ogg" type="audio/ogg">
-    </audio>
-
-    <!-- Audio Play Button - Hidden by default, shown if autoplay fails -->
-    <div id="audioPlayPrompt"
-        style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; background: #000000; border: 2px solid #55ff55; padding: 20px; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; color: #55ff55; text-align: center; font-size: 14px; cursor: pointer;">
-        <div style="margin-bottom: 10px;">🎵 AUDIO BLOCKED BY BROWSER</div>
-        <div style="margin-bottom: 15px; color: #c9c9c9; font-size: 12px;">Click to enable intro music</div>
-        <div style="color: #55ff55; text-decoration: underline;">[PRESS ENTER TO PLAY]</div>
-    </div>
-
+<body class="bg-mesh">
     {{siteHeader}}
-    <div class="main-layout">
-        <div class="sidebar left" id="leftSidebar"></div>
-        <div class="container">
 
-            <h1>{{title}}</h1>
+    <main class="container animate-fade-in-up">
+        <header class="blog-header">
+            <h1 class="blog-title">{{title}}</h1>
+            <p class="blog-description">{{description}}</p>
+        </header>
 
-            <div class="description">
-                {{description}}
-            </div>
-
-            <div class="tag-filters" id="tagFilters">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="margin-bottom: 0;">filter by tag</h3>
-                    <button id="tagToggle" class="tag-toggle" onclick="toggleTags()">show more</button>
-                </div>
-                {{tagFilters}}
-            </div>
-
-            <ul class="episode-list">
-                {{posts}}
-            </ul>
-
-            {{pagination}}
-
-            <div class="stats">
-                total posts: {{totalPosts}} · <a href="/blog/archive.html"
-                    style="color: #888888; text-decoration: none;">archive</a> · <a href="/blog/feed.xml"
-                    style="color: #888888; text-decoration: none;">rss feed</a>
-            </div>
+        <div class="tag-filters-container" id="tagFilters">
+            <button class="tag-filter active" data-tag="all">All Posts</button>
+            {{tagFilters}}
         </div>
-        <div class="sidebar right" id="rightSidebar"></div>
-    </div>
+
+        <div class="posts-grid" id="postsGrid">
+            {{posts}}
+        </div>
+
+        {{pagination}}
+
+        <footer class="stats-footer">
+            <p>
+                Total posts: {{totalPosts}} ·
+                <a href="/blog/archive.html">Archive</a> ·
+                <a href="/blog/feed.xml">RSS Feed</a>
+            </p>
+        </footer>
+    </main>
 
     <script>
         const POSTS_PER_PAGE = 10;
         const allPostsData = {{ allPostsData }}; // Embedded from Node.js script
+
+        // Mouse move effect for cards
+        document.getElementById('postsGrid').onmousemove = e => {
+            for (const card of document.getElementsByClassName("post-item")) {
+                const rect = card.getBoundingClientRect(),
+                    x = e.clientX - rect.left,
+                    y = e.clientY - rect.top;
+
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
+            }
+        };
+
         // Utility function to format date
         function formatDate(dateString) {
             const date = new Date(dateString);
@@ -526,11 +289,10 @@
 
         // Function to render posts and pagination
         function renderPostsAndPagination(postsToDisplay, currentPage = 1) {
-            const episodeList = document.querySelector('.episode-list');
+            const postsGrid = document.getElementById('postsGrid');
             const paginationContainer = document.querySelector('.pagination');
-            const statsElement = document.querySelector('.stats');
 
-            episodeList.innerHTML = ''; // Clear current posts
+            postsGrid.innerHTML = ''; // Clear current posts
             paginationContainer.innerHTML = ''; // Clear current pagination
 
             const totalPages = Math.ceil(postsToDisplay.length / POSTS_PER_PAGE);
@@ -540,15 +302,27 @@
 
             // Render posts
             paginatedPosts.forEach(post => {
-                const li = document.createElement('li');
-                li.classList.add('post-item');
-                li.dataset.tags = post.tags.join(' ');
-                li.innerHTML = `
+                const div = document.createElement('div');
+                div.classList.add('post-item', 'glass-card');
+                div.dataset.tags = post.tags.join(' ');
+
+                const episodeNum = post.episodeNumber.toString().padStart(3, '0');
+                const tagsHtml = post.tags.map(tag => `<span class="tag-pill">${tag}</span>`).join('');
+
+                div.innerHTML = `
                     <a href="/blog/${post.slug}">
-                        <span class="episode-number">${post.episodeNumber.toString().padStart(3, '0')}</span><span class="episode-title">: ${post.title}</span><span class="date">${formatDate(post.date)}</span>
+                        <div class="post-meta-top">
+                            <span class="episode-number">#${episodeNum}</span>
+                            <span class="date">${formatDate(post.date)}</span>
+                        </div>
+                        <h3 class="post-title">${post.title}</h3>
+                        <p class="post-description">${post.description}</p>
+                        <div class="post-tags">
+                            ${tagsHtml}
+                        </div>
                     </a>
                 `;
-                episodeList.appendChild(li);
+                postsGrid.appendChild(div);
             });
 
             // Render pagination controls
@@ -557,7 +331,7 @@
                     const prevLink = document.createElement('a');
                     prevLink.href = '#';
                     prevLink.classList.add('pagination-link');
-                    prevLink.innerHTML = '&laquo; Previous';
+                    prevLink.innerHTML = '&laquo;';
                     prevLink.addEventListener('click', (e) => {
                         e.preventDefault();
                         renderPostsAndPagination(postsToDisplay, currentPage - 1);
@@ -586,7 +360,7 @@
                     const nextLink = document.createElement('a');
                     nextLink.href = '#';
                     nextLink.classList.add('pagination-link');
-                    nextLink.innerHTML = 'Next &raquo;';
+                    nextLink.innerHTML = '&raquo;';
                     nextLink.addEventListener('click', (e) => {
                         e.preventDefault();
                         renderPostsAndPagination(postsToDisplay, currentPage + 1);
@@ -595,29 +369,13 @@
                     paginationContainer.appendChild(nextLink);
                 }
             }
-
-            // Update stats
-            const activeFilter = document.querySelector('.tag-filter.active');
-            if (!activeFilter) {
-                statsElement.innerHTML = `total posts: ${postsToDisplay.length} · <a href="/blog/archive.html" style="color: #888888; text-decoration: none;">archive</a> · <a href="/blog/feed.xml" style="color: #888888; text-decoration: none;">rss feed</a>`;
-            } else {
-                statsElement.innerHTML = `showing ${postsToDisplay.length} posts tagged with "${activeFilter.dataset.tag}" · <a href="/blog/archive.html" style="color: #888888; text-decoration: none;">archive</a> · <a href="/blog/feed.xml" style="color: #888888; text-decoration: none;">rss feed</a>`;
-            }
         }
-
 
         // Tag filtering functionality
         document.addEventListener('DOMContentLoaded', function () {
             const filterButtons = document.querySelectorAll('.tag-filter');
 
-
-
-            // Initial render of all posts
-            renderPostsAndPagination(allPostsData);
-
-
             // Check for tag in URL hash on page load
-            // Auto-expand if a specific tag is selected (optional, but good UX)
             function checkUrlHash() {
                 const hash = window.location.hash;
                 if (hash.startsWith('#tag-')) {
@@ -627,14 +385,6 @@
                         filterButtons.forEach(btn => btn.classList.remove('active'));
                         tagButton.classList.add('active');
                         filterPosts(tag);
-                        history.replaceState(null, null, '/blog');
-                    }
-
-                    // Expand if tag is not 'all'
-                    if (tag !== 'all') {
-                        isExpanded = true;
-                        tagFilters.classList.add('expanded');
-                        tagToggle.textContent = 'show less';
                     }
                 }
             }
@@ -655,536 +405,16 @@
                     this.classList.add('active');
                     const tag = this.dataset.tag;
                     filterPosts(tag);
+
+                    if (tag !== 'all') {
+                        history.replaceState(null, null, `/blog#tag-${tag}`);
+                    } else {
+                        history.replaceState(null, null, '/blog');
+                    }
                 });
             });
 
             checkUrlHash();
-        });
-
-        // Tag Toggle Functionality (Global function for inline onclick)
-        function toggleTags() {
-            const tagFilters = document.getElementById('tagFilters');
-            const tagToggle = document.getElementById('tagToggle');
-
-            if (tagFilters.classList.contains('expanded')) {
-                tagFilters.classList.remove('expanded');
-                tagToggle.textContent = 'show more';
-            } else {
-                tagFilters.classList.add('expanded');
-                tagToggle.textContent = 'show less';
-            }
-        }
-        window.toggleTags = toggleTags;
-
-        // Auto-expand if a specific tag is selected
-        document.addEventListener('DOMContentLoaded', function () {
-            const hash = window.location.hash;
-            if (hash.startsWith('#tag-')) {
-                const tag = hash.substring(5);
-                if (tag !== 'all') {
-                    const tagFilters = document.getElementById('tagFilters');
-                    const tagToggle = document.getElementById('tagToggle');
-                    if (tagFilters && tagToggle) {
-                        tagFilters.classList.add('expanded');
-                        tagToggle.textContent = 'show less';
-                    }
-                }
-            }
-        });
-
-        // 90s BBS-Style Pattern Animator
-        class RetroPatternAnimator {
-            constructor(elementId, options = {}) {
-                this.element = document.getElementById(elementId);
-                if (!this.element) return;
-
-                this.patternType = options.patternType || 'wave';
-                this.speed = options.speed || 150;
-                this.width = options.width || 12;
-                this.height = options.height || 60;
-                this.direction = options.direction || 'down';
-                this.frameIndex = 0;
-                this.pattern = [];
-                this.isAnimating = false;
-
-                // 90s BBS character sets for different patterns
-                this.charSets = {
-                    blocks: "█▓▒░",
-                    geometric: "▲▼◄►◆◇○●□■",
-                    waves: "/\\/_-~≈",
-                    retro: "┌┐└┘│─┼┤├┬┴",
-                    matrix: "01アカサタ_-=+*",
-                    oldschool: "X*+=-._:;'\"^"
-                };
-
-                this.init();
-            }
-
-            init() {
-                this.generatePattern();
-                this.render();
-                this.startAnimation();
-
-                // Performance optimization
-                document.addEventListener('visibilitychange', () => {
-                    if (document.hidden) {
-                        this.stopAnimation();
-                    } else {
-                        this.startAnimation();
-                    }
-                });
-            }
-
-            generateWavePattern(frame) {
-                const pattern = [];
-                const chars = "/\\_-~";
-
-                for (let y = 0; y < this.height; y++) {
-                    let row = '';
-                    for (let x = 0; x < this.width; x++) {
-                        const wave = Math.sin((y + frame * 0.1) * 0.3) * 2;
-                        const charIndex = Math.floor((wave + 2) % chars.length);
-
-                        if (x === Math.floor(this.width / 2 + wave)) {
-                            row += chars[charIndex];
-                        } else if (Math.abs(x - (this.width / 2 + wave)) < 1.5) {
-                            row += chars[(charIndex + 1) % chars.length];
-                        } else {
-                            row += ' ';
-                        }
-                    }
-                    pattern.push(row);
-                }
-                return pattern;
-            }
-
-            generateBlockPattern(frame) {
-                const pattern = [];
-                const blocks = "█▓▒░";
-
-                for (let y = 0; y < this.height; y++) {
-                    let row = '';
-                    for (let x = 0; x < this.width; x++) {
-                        const intensity = Math.sin((y + frame * 0.05) * 0.2) * Math.cos((x + frame * 0.03) * 0.4);
-                        const blockIndex = Math.floor((intensity + 1) * 2) % blocks.length;
-
-                        if (Math.random() < 0.7) {
-                            row += blocks[blockIndex];
-                        } else {
-                            row += ' ';
-                        }
-                    }
-                    pattern.push(row);
-                }
-                return pattern;
-            }
-
-            generateGeometricPattern(frame) {
-                const pattern = [];
-                const shapes = "▲▼◆◇○●";
-
-                for (let y = 0; y < this.height; y++) {
-                    let row = '';
-                    for (let x = 0; x < this.width; x++) {
-                        const cycle = (y + frame) % 8;
-                        const shapeIndex = Math.floor(cycle / 2) % shapes.length;
-
-                        if ((x + y + frame) % 4 === 0) {
-                            row += shapes[shapeIndex];
-                        } else if ((x + y + frame) % 6 === 0) {
-                            row += shapes[(shapeIndex + 1) % shapes.length];
-                        } else {
-                            row += ' ';
-                        }
-                    }
-                    pattern.push(row);
-                }
-                return pattern;
-            }
-
-            generateRetroBoxPattern(frame) {
-                const pattern = [];
-                const boxes = "┌┐└┘│─┼╬";
-
-                for (let y = 0; y < this.height; y++) {
-                    let row = '';
-                    for (let x = 0; x < this.width; x++) {
-                        const boxCycle = (x + y + frame) % 12;
-
-                        if (boxCycle < 2) {
-                            row += boxes[0]; // ┌
-                        } else if (boxCycle < 4) {
-                            row += boxes[1]; // ┐
-                        } else if (boxCycle < 6) {
-                            row += boxes[4]; // │
-                        } else if (boxCycle < 8) {
-                            row += boxes[5]; // ─
-                        } else {
-                            row += ' ';
-                        }
-                    }
-                    pattern.push(row);
-                }
-                return pattern;
-            }
-
-            generateBinaryRainPattern(frame) {
-                const pattern = [];
-                const binary = "01";
-
-                for (let y = 0; y < this.height; y++) {
-                    let row = '';
-                    for (let x = 0; x < this.width; x++) {
-                        const rain = (frame + x * 3 + y) % 15;
-
-                        if (rain < 2) {
-                            row += binary[Math.floor(Math.random() * 2)];
-                        } else if (rain < 4) {
-                            row += binary[1 - Math.floor(Math.random() * 2)];
-                        } else {
-                            row += ' ';
-                        }
-                    }
-                    pattern.push(row);
-                }
-                return pattern;
-            }
-
-            generatePattern() {
-                switch (this.patternType) {
-                    case 'wave':
-                        this.pattern = this.generateWavePattern(this.frameIndex);
-                        break;
-                    case 'blocks':
-                        this.pattern = this.generateBlockPattern(this.frameIndex);
-                        break;
-                    case 'geometric':
-                        this.pattern = this.generateGeometricPattern(this.frameIndex);
-                        break;
-                    case 'retro':
-                        this.pattern = this.generateRetroBoxPattern(this.frameIndex);
-                        break;
-                    case 'binary':
-                        this.pattern = this.generateBinaryRainPattern(this.frameIndex);
-                        break;
-                    default:
-                        this.pattern = this.generateWavePattern(this.frameIndex);
-                }
-            }
-
-            animate() {
-                if (!this.isAnimating) return;
-
-                this.frameIndex++;
-                this.generatePattern();
-                this.render();
-
-                this.animationId = setTimeout(() => this.animate(), this.speed);
-            }
-
-            render() {
-                this.element.textContent = this.pattern.join('\n');
-            }
-
-            startAnimation() {
-                if (!this.isAnimating) {
-                    this.isAnimating = true;
-                    this.animate();
-                }
-            }
-
-            stopAnimation() {
-                this.isAnimating = false;
-                if (this.animationId) {
-                    clearTimeout(this.animationId);
-                }
-            }
-        }
-
-        // 90s Digital Rain Effect (Optimized)
-        class DigitalRain {
-            constructor(elementId, options = {}) {
-                this.element = document.getElementById(elementId);
-                if (!this.element) return;
-
-                this.width = options.width || 12;
-                this.height = options.height || 60;
-                this.speed = options.speed || 120;
-                this.style = options.style || 'cyber';
-                this.columns = [];
-                this.frameIndex = 0;
-                this.isAnimating = false;
-
-                // Different character sets for various 90s styles
-                this.styles = {
-                    cyber: "01アカサタナ_-=+*",
-                    hacker: "01234567890ABCDEF",
-                    ascii: "!@#$%^&*()_+-=[]{}|;:,.<>?",
-                    retro: "█▓▒░▄▀■□▪▫"
-                };
-
-                this.chars = this.styles[this.style] || this.styles.cyber;
-                this.initColumns();
-                this.startAnimation();
-
-                // Performance optimization
-                document.addEventListener('visibilitychange', () => {
-                    if (document.hidden) {
-                        this.stopAnimation();
-                    } else {
-                        this.startAnimation();
-                    }
-                });
-            }
-
-            initColumns() {
-                for (let i = 0; i < this.width; i++) {
-                    this.columns[i] = {
-                        y: Math.floor(Math.random() * this.height),
-                        speed: Math.random() * 2 + 0.5,
-                        length: Math.floor(Math.random() * 10) + 5,
-                        chars: []
-                    };
-
-                    // Pre-generate characters for this column
-                    for (let j = 0; j < this.columns[i].length; j++) {
-                        this.columns[i].chars[j] = this.chars[Math.floor(Math.random() * this.chars.length)];
-                    }
-                }
-            }
-
-            animate() {
-                if (!this.isAnimating) return;
-
-                const pattern = Array(this.height).fill().map(() => ' '.repeat(this.width).split(''));
-
-                // Update each column
-                this.columns.forEach((column, x) => {
-                    column.y += column.speed * 0.5;
-
-                    // Reset column when it goes off screen
-                    if (column.y > this.height + column.length) {
-                        column.y = -column.length;
-                        column.speed = Math.random() * 2 + 0.5;
-                        column.length = Math.floor(Math.random() * 10) + 5;
-                    }
-
-                    // Draw column trail
-                    for (let i = 0; i < column.length; i++) {
-                        const y = Math.floor(column.y - i);
-                        if (y >= 0 && y < this.height) {
-                            // Randomly update character occasionally
-                            if (Math.random() < 0.05) {
-                                column.chars[i] = this.chars[Math.floor(Math.random() * this.chars.length)];
-                            }
-                            pattern[y][x] = column.chars[i];
-                        }
-                    }
-                });
-
-                // Render optimized output
-                this.element.textContent = pattern.map(row => row.join('')).join('\n');
-                this.frameIndex++;
-
-                this.animationId = setTimeout(() => this.animate(), this.speed);
-            }
-
-            startAnimation() {
-                if (!this.isAnimating) {
-                    this.isAnimating = true;
-                    this.animate();
-                }
-            }
-
-            stopAnimation() {
-                this.isAnimating = false;
-                if (this.animationId) {
-                    clearTimeout(this.animationId);
-                }
-            }
-        }
-
-        // Initialize 90s-style visualizers when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check if we're on a wide enough screen for the full retro experience
-            if (window.innerWidth > 1024) {
-                // Left sidebar - rotating through different 90s BBS patterns
-                const leftPatterns = ['wave', 'geometric', 'retro', 'blocks'];
-                let leftPatternIndex = 0;
-
-                function initLeftSidebar() {
-                    new RetroPatternAnimator('leftSidebar', {
-                        patternType: leftPatterns[leftPatternIndex],
-                        speed: 180,
-                        width: 12,
-                        height: 60
-                    });
-                }
-
-                initLeftSidebar();
-
-                // Change left pattern every 30 seconds for variety
-                setInterval(() => {
-                    leftPatternIndex = (leftPatternIndex + 1) % leftPatterns.length;
-                    document.getElementById('leftSidebar').innerHTML = '';
-                    initLeftSidebar();
-                }, 30000);
-
-                // Right sidebar - optimized digital rain with 90s cyber aesthetic
-                new DigitalRain('rightSidebar', {
-                    width: 12,
-                    height: 60,
-                    speed: 140,
-                    style: 'cyber'
-                });
-
-                // Switch right sidebar style every 45 seconds
-                const rightStyles = ['cyber', 'hacker', 'retro'];
-                let rightStyleIndex = 0;
-
-                setInterval(() => {
-                    rightStyleIndex = (rightStyleIndex + 1) % rightStyles.length;
-                    document.getElementById('rightSidebar').innerHTML = '';
-                    new DigitalRain('rightSidebar', {
-                        width: 12,
-                        height: 60,
-                        speed: 140,
-                        style: rightStyles[rightStyleIndex]
-                    });
-                }, 45000);
-            }
-
-            // Performance: Only reload if switching from mobile to desktop
-            let wasWideScreen = window.innerWidth > 1024;
-            window.addEventListener('resize', () => {
-                const isWideScreen = window.innerWidth > 1024;
-                if (isWideScreen !== wasWideScreen) {
-                    wasWideScreen = isWideScreen;
-                    setTimeout(() => location.reload(), 100);
-                }
-            });
-
-            // Add some extra 90s flair - random title glitch effect
-            const title = document.querySelector('h1');
-            if (title) {
-                const originalText = title.textContent;
-                const glitchChars = "!@#$%^&*()_+-=[]{}|;:,.<>?";
-
-                setInterval(() => {
-                    if (Math.random() < 0.02) { // 2% chance per second
-                        let glitched = '';
-                        for (let i = 0; i < originalText.length; i++) {
-                            if (Math.random() < 0.1 && originalText[i] !== ' ') {
-                                glitched += glitchChars[Math.floor(Math.random() * glitchChars.length)];
-                            } else {
-                                glitched += originalText[i];
-                            }
-                        }
-                        title.textContent = glitched;
-
-                        // Restore original text after brief glitch
-                        setTimeout(() => {
-                            title.textContent = originalText;
-                        }, 100);
-                    }
-                }, 1000);
-            }
-
-
-
-            // Intro Audio Functionality with Cross-Browser Support
-            function playIntroAudio() {
-                const introAudio = document.getElementById('introAudio');
-                const audioPlayPrompt = document.getElementById('audioPlayPrompt');
-                const hasPlayedBefore = sessionStorage.getItem('blogIntroPlayed');
-
-                if (!hasPlayedBefore && introAudio) {
-                    introAudio.volume = 0.3; // Set volume to 30%
-
-                    // Try to play the audio automatically
-                    const playPromise = introAudio.play();
-
-                    if (playPromise !== undefined) {
-                        playPromise
-                            .then(() => {
-                                console.log('🎵 Intro music playing (autoplay successful)');
-                                sessionStorage.setItem('blogIntroPlayed', 'true');
-                                setupAudioTimeout(introAudio);
-                            })
-                            .catch((error) => {
-                                console.log('Audio autoplay blocked by browser, showing user prompt');
-                                showAudioPrompt(introAudio, audioPlayPrompt);
-                            });
-                    } else {
-                        // Fallback for older browsers
-                        showAudioPrompt(introAudio, audioPlayPrompt);
-                    }
-                }
-            }
-
-            function setupAudioTimeout(introAudio) {
-                // Stop audio after 10 seconds (failsafe)
-                setTimeout(() => {
-                    if (introAudio) {
-                        introAudio.pause();
-                        introAudio.currentTime = 0;
-                    }
-                }, 10500); // 10.5 seconds to be safe
-            }
-
-            function showAudioPrompt(introAudio, audioPlayPrompt) {
-                // Show the terminal-style audio prompt
-                audioPlayPrompt.style.display = 'block';
-
-                // Handle click/enter to play
-                function playAudioWithInteraction() {
-                    introAudio.play()
-                        .then(() => {
-                            console.log('🎵 Intro music playing (user interaction)');
-                            sessionStorage.setItem('blogIntroPlayed', 'true');
-                            audioPlayPrompt.style.display = 'none';
-                            setupAudioTimeout(introAudio);
-                        })
-                        .catch((error) => {
-                            console.log('Audio play failed even with user interaction:', error);
-                            audioPlayPrompt.style.display = 'none';
-                        });
-                }
-
-                // Click handler
-                audioPlayPrompt.addEventListener('click', playAudioWithInteraction);
-
-                // Keyboard handler (Enter key)
-                function handleKeyPress(event) {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        playAudioWithInteraction();
-                        document.removeEventListener('keydown', handleKeyPress);
-                    } else if (event.key === 'Escape') {
-                        // Allow user to dismiss without playing
-                        audioPlayPrompt.style.display = 'none';
-                        sessionStorage.setItem('blogIntroPlayed', 'true');
-                        document.removeEventListener('keydown', handleKeyPress);
-                    }
-                }
-
-                document.addEventListener('keydown', handleKeyPress);
-
-                // Auto-dismiss after 10 seconds if no interaction
-                setTimeout(() => {
-                    if (audioPlayPrompt.style.display !== 'none') {
-                        audioPlayPrompt.style.display = 'none';
-                        sessionStorage.setItem('blogIntroPlayed', 'true');
-                        document.removeEventListener('keydown', handleKeyPress);
-                    }
-                }, 10000);
-            }
-
-            // Initialize on page load
-
-
-            // Play intro audio after a brief delay to allow page elements to load
-            setTimeout(playIntroAudio, 800);
         });
     </script>
 

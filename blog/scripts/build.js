@@ -213,6 +213,8 @@ function loadTemplate(templateName) {
 
 // Load site header template
 const siteHeader = loadTemplate('header');
+// Load shared styles
+const styles = loadTemplate('styles');
 
 // Process a single blog post
 function processPost(filename, episodeNumber, allPosts = []) {
@@ -273,7 +275,8 @@ function processPost(filename, episodeNumber, allPosts = []) {
         .replace(/{{inlineStyles}}/g, inlineStyles)
         .replace(/{{inlineStyles}}/g, inlineStyles)
         .replace(/{{inlineScripts}}/g, inlineScripts)
-        .replace(/{{siteHeader}}/g, siteHeader);
+        .replace(/{{siteHeader}}/g, siteHeader)
+        .replace(/{{styles}}/g, styles);
 
     // Create output directory
     const outputDir = path.join(OUTPUT_DIR, slug);
@@ -303,7 +306,7 @@ function generatePostNavigation(prevPost, nextPost) {
 
     if (prevPost) {
         navHtml += `
-            <div class="nav-previous">
+            <div class="nav-previous glass-card">
                 <a href="/blog/${prevPost.slug}">
                     <span class="nav-label">← previous</span>
                     <span class="nav-title">${prevPost.title}</span>
@@ -313,7 +316,7 @@ function generatePostNavigation(prevPost, nextPost) {
 
     if (nextPost) {
         navHtml += `
-            <div class="nav-next">
+            <div class="nav-next glass-card">
                 <a href="/blog/${nextPost.slug}">
                     <span class="nav-label">next →</span>
                     <span class="nav-title">${nextPost.title}</span>
@@ -347,11 +350,19 @@ function generateIndex(posts) {
         const postsHtml = pagePosts.map(post => {
             const episodeNum = post.episodeNumber.toString().padStart(3, '0');
             const tagsAttr = post.tags.join(' ');
-            return `            <li class="post-item" data-tags="${tagsAttr}">
+            return `            <div class="post-item glass-card" data-tags="${tagsAttr}">
                 <a href="/blog/${post.slug}">
-                    <span class="episode-number">${episodeNum}</span><span class="episode-title">: ${post.title}</span><span class="date">${formatDate(post.date)}</span>
+                    <div class="post-meta-top">
+                        <span class="episode-number">#${episodeNum}</span>
+                        <span class="date">${formatDate(post.date)}</span>
+                    </div>
+                    <h3 class="post-title">${post.title}</h3>
+                    <p class="post-description">${post.description}</p>
+                    <div class="post-tags">
+                        ${post.tags.map(tag => `<span class="tag-pill">${tag}</span>`).join('')}
+                    </div>
                 </a>
-            </li>`;
+            </div>`;
         }).join('\n');
 
         let paginationHtml = '<div class="pagination">';
@@ -381,7 +392,8 @@ function generateIndex(posts) {
             .replace(/{{emailUrl}}/g, config.social.email)
             .replace(/{{emailUrl}}/g, config.social.email)
             .replace(/{{resumeUrl}}/g, config.resumeUrl)
-            .replace(/{{siteHeader}}/g, siteHeader);
+            .replace(/{{siteHeader}}/g, siteHeader)
+            .replace(/{{styles}}/g, styles);
 
         const outputFileName = i === 0 ? 'index.html' : `page${i + 1}.html`;
         fs.writeFileSync(path.join(OUTPUT_DIR, outputFileName), html);
@@ -548,15 +560,19 @@ function generateArchive(posts) {
 
         const postsHtml = yearPosts.map(post => {
             const episodeNum = post.episodeNumber.toString().padStart(3, '0');
-            return `            <li>
-                <a href="/blog/${post.slug}">
-                    <span class="post-number">${episodeNum}</span><span class="post-title">: ${post.title}</span><span class="post-date">${formatDate(post.date)}</span>
+            return `            <li class="glass-card" style="margin-bottom: 10px; padding: 10px 15px;">
+                <a href="/blog/${post.slug}" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span class="post-number" style="color: var(--primary); margin-right: 10px;">#${episodeNum}</span>
+                        <span class="post-title">${post.title}</span>
+                    </div>
+                    <span class="post-date" style="font-size: 0.9em; color: var(--muted-foreground);">${formatDate(post.date)}</span>
                 </a>
             </li>`;
         }).join('\n');
 
         return `        <div class="year-section">
-            <h2 class="year-title">${year}</h2>
+            <h2 class="year-title text-gradient-premium">${year}</h2>
             <ul class="post-list">
 ${postsHtml}
             </ul>
@@ -565,14 +581,15 @@ ${postsHtml}
 
     // Populate template
     const html = template
-        .replace(/{{yearSections}}/g, yearSectionsHtml)
+        .replace(/{{archiveContent}}/g, yearSectionsHtml)
         .replace(/{{totalPosts}}/g, posts.length)
         .replace(/{{githubUrl}}/g, config.social.github)
         .replace(/{{linkedinUrl}}/g, config.social.linkedin)
         .replace(/{{twitterUrl}}/g, config.social.twitter)
         .replace(/{{emailUrl}}/g, config.social.email)
         .replace(/{{resumeUrl}}/g, config.resumeUrl)
-        .replace(/{{siteHeader}}/g, siteHeader);
+        .replace(/{{siteHeader}}/g, siteHeader)
+        .replace(/{{styles}}/g, styles);
 
     // Write archive file
     fs.writeFileSync(path.join(OUTPUT_DIR, 'archive.html'), html);
