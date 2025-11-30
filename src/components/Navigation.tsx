@@ -105,13 +105,13 @@ const Navigation = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="ml-2 rounded-full hover:bg-white/10"
+                className="ml-2 rounded-full hover:bg-transparent hover:text-primary transition-colors duration-300"
                 aria-label="Toggle theme"
               >
                 {theme === "dark" ? (
-                  <Sun size={18} className="text-yellow-400" />
+                  <Sun size={20} className="text-yellow-400 hover:text-yellow-300 transition-colors" />
                 ) : (
-                  <Moon size={18} className="text-indigo-400" />
+                  <Moon size={20} className="text-slate-700 hover:text-slate-900 transition-colors" />
                 )}
               </Button>
             )}
