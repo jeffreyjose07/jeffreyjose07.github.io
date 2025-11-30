@@ -1,6 +1,6 @@
 ---
 title: "Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics"
-date: "2025-01-21"
+date: "2025-11-28"
 tags: ["css", "mobile", "ux", "gamedev", "terminal-aesthetic"]
 description: "Deep dive into fixing mobile UI issues and enhancing dropdown styling for terminal-themed games"
 readingTime: 8

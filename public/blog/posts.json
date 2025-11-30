@@ -1,5 +1,22 @@
 [
   {
+    "url": "/blog/refining-navigation-and-branding-a-journey-to-cons",
+    "title": "Refining Navigation and Branding: A Journey to Consistency",
+    "episode": "023",
+    "date": "2025-11-30",
+    "tags": [
+      "design",
+      "branding",
+      "ux",
+      "frontend",
+      "css"
+    ],
+    "description": "How I unified the navigation experience across my portfolio, blog, and games, and refined the 'JJ' logo for better visibility.",
+    "readingTime": 5,
+    "wordCount": 800,
+    "slug": "refining-navigation-and-branding-a-journey-to-cons"
+  },
+  {
     "url": "/blog/optimizing-blog-interactivity-and-ux",
     "title": "Optimizing Blog Interactivity and UX",
     "episode": "022",
@@ -19,7 +36,7 @@
     "url": "/blog/building-truthmeter-ai-measuring-the-real-impact-o",
     "title": "Building TruthMeter AI: Measuring the Real Impact of AI Coding Assistants",
     "episode": "021",
-    "date": "2025-01-28",
+    "date": "2025-11-28",
     "tags": [
       "typescript",
       "vscode",
@@ -37,7 +54,7 @@
     "url": "/blog/enhancing-game-ui-mobile-responsiveness-and-termin",
     "title": "Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics",
     "episode": "020",
-    "date": "2025-01-21",
+    "date": "2025-11-28",
     "tags": [
       "css",
       "mobile",

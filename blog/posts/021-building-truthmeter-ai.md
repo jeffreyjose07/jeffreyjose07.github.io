@@ -1,6 +1,6 @@
 ---
 title: "Building TruthMeter AI: Measuring the Real Impact of AI Coding Assistants"
-date: "2025-01-28"
+date: "2025-11-28"
 tags: ["typescript", "vscode", "ai", "metrics", "testing", "developer-tools"]
 description: "The complete journey of building a VS Code extension that measures actual AI assistant productivity using peer-reviewed research - from initial concept to 145+ tests and production release"
 readingTime: 20
