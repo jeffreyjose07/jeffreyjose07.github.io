@@ -475,64 +475,6 @@
             }
         }
 
-        /* Text Materialization Loading */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #000000;
-            z-index: 9999;
-            opacity: 1;
-            transition: opacity 0.8s ease;
-            pointer-events: none;
-        }
-
-        .loading-overlay.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* CSS Fallback: Force fade out after 4 seconds if JS fails */
-        @keyframes forceFadeOut {
-            0% {
-                opacity: 1;
-            }
-
-            80% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0;
-                pointer-events: none;
-                visibility: hidden;
-            }
-        }
-
-        .loading-overlay {
-            animation: forceFadeOut 1s ease 3s forwards;
-        }
-
-        /* Text elements start randomly positioned and animate to final position */
-        .materializing {
-            animation: materialize 1.2s ease-out forwards;
-            opacity: 0;
-        }
-
-        @keyframes materialize {
-            0% {
-                opacity: 0;
-                transform: translate(var(--random-x, 0), var(--random-y, 0)) scale(0.8);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translate(0, 0) scale(1);
-            }
-        }
-
         /* Inline styles injected from frontmatter */
             {
                 {
@@ -543,8 +485,7 @@
 </head>
 
 <body>
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay"></div>
+
 
     <style>
     /* Header Styles matching Portfolio */
@@ -979,51 +920,9 @@
             document.querySelector('.reading-progress').style.width = scrolled + '%';
         });
 
-        // Text materialization effect
-        function initializeMaterializationEffect() {
-            const elementsToMaterialize = [
-                '.breadcrumb',
-                '.back-link',
-                '.social-links',
-                '.post-header',
-                '.post-content > *',
-                '.post-footer',
-                '.post-navigation'
-            ];
-
-            elementsToMaterialize.forEach((selector, index) => {
-                const elements = document.querySelectorAll(selector);
-                elements.forEach((element, elementIndex) => {
-                    // Generate random starting position
-                    const randomX = (Math.random() - 0.5) * 200; // -100 to 100px
-                    const randomY = (Math.random() - 0.5) * 100; // -50 to 50px
-
-                    // Set CSS custom properties for random position
-                    element.style.setProperty('--random-x', `${randomX}px`);
-                    element.style.setProperty('--random-y', `${randomY}px`);
-
-                    // Add materializing class
-                    element.classList.add('materializing');
-
-                    // Calculate staggered delay
-                    const delay = (index * 0.1) + (elementIndex * 0.05);
-                    element.style.animationDelay = `${delay}s`;
-                });
-            });
-
-            // Hide loading overlay after animations complete
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            setTimeout(() => {
-                loadingOverlay.classList.add('fade-out');
-                setTimeout(() => {
-                    loadingOverlay.style.display = 'none';
-                }, 800);
-            }, 400); // Start fade after initial delay
-        }
-
         // Initialize materialization effect on page load
         document.addEventListener('DOMContentLoaded', () => {
-            initializeMaterializationEffect();
+
             loadViewCount();
         });
 
