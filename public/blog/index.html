@@ -444,6 +444,28 @@
 
         .loading-overlay.fade-out {
             opacity: 0;
+            pointer-events: none;
+        }
+
+        /* CSS Fallback: Force fade out after 4 seconds if JS fails */
+        @keyframes forceFadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                pointer-events: none;
+                visibility: hidden;
+            }
+        }
+
+        .loading-overlay {
+            animation: forceFadeOut 1s ease 3s forwards;
         }
 
         /* Text elements start randomly positioned and animate to final position */
