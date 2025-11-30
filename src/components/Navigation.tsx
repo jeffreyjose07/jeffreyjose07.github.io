@@ -52,7 +52,10 @@ const Navigation = () => {
     // Handle hash links
     if (href.startsWith("/#")) {
       const hash = href.substring(1); // remove leading /
-      if (window.location.pathname === "/" || window.location.pathname === "/index.html") {
+      // Check if we are on the home page (root or index.html)
+      const isHomePage = window.location.pathname === "/" || window.location.pathname === "/index.html";
+
+      if (isHomePage) {
         // We are on home page, scroll to element
         const element = document.querySelector(hash);
         if (element) {
