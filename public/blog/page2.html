@@ -8,561 +8,482 @@
     <meta name="description" content="learning things, building things, breaking things, writing about it. technical projects, personal struggles, life stuff, random observations - just documenting whatever I'm working through." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/blog/feed.xml" />
+
+    <!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+<style>
+    :root {
+        /* Premium Dark Theme Variables */
+        --background: #09090b;
+        --foreground: #f8fafc;
+
+        --primary: #7c3aed;
+        --primary-foreground: #f8fafc;
+        --primary-glow: #a78bfa;
+
+        --secondary: #1e1e24;
+        --secondary-foreground: #f8fafc;
+
+        --muted: #1e1e24;
+        --muted-foreground: #94a3b8;
+
+        --accent: #1e1e24;
+        --accent-foreground: #f8fafc;
+
+        --border: #27272a;
+        --input: #27272a;
+
+        --font-sans: 'Inter', sans-serif;
+        --font-heading: 'Outfit', sans-serif;
+
+        --gradient-hero: linear-gradient(135deg, #09090b, #1e1b4b);
+        --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+        --gradient-accent: linear-gradient(135deg, #7c3aed, #c084fc);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: var(--font-sans);
+        background-color: var(--background);
+        color: var(--foreground);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    /* Utilities */
+    .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .glass {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+        border-color: rgba(124, 58, 237, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .text-gradient-premium {
+        background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .bg-mesh {
+        background-color: var(--background);
+        background-image:
+            radial-gradient(at 40% 20%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
+            radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+            radial-gradient(at 0% 50%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--background);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #3f3f46;
+        border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #52525b;
+    }
+</style>
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            background-color: #000000;
-            color: #c9c9c9;
-            line-height: 1.4;
-            padding: 20px;
-            font-size: 15px;
-            text-rendering: optimizeLegibility;
+            padding-top: 100px;
         }
 
-        @media (min-width: 768px) {
-            body {
-                padding: 40px 20px;
-                font-size: 16px;
-            }
-        }
-
-        .main-layout {
-            display: grid;
-            grid-template-columns: 120px 1fr 120px;
-            max-width: 940px;
-            margin: 0 auto;
-            gap: 20px;
-            align-items: start;
-        }
-
-        .container {
-            max-width: 700px;
-        }
-
-        .sidebar {
-            position: sticky;
-            top: 20px;
-            height: 80vh;
-            overflow: hidden;
-            opacity: 0.15;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 10px;
-            line-height: 1.1;
-            color: #55ff55;
-            white-space: pre;
-            user-select: none;
-            pointer-events: none;
-        }
-
-        .sidebar.left {
-            text-align: right;
-        }
-
-        .sidebar.right {
-            text-align: left;
-        }
-
-        @media (max-width: 1200px) {
-            .main-layout {
-                grid-template-columns: 80px 1fr 80px;
-                gap: 15px;
-            }
-
-            .sidebar {
-                font-size: 9px;
-            }
-        }
-
-        @media (max-width: 1024px) {
-            .main-layout {
-                grid-template-columns: 1fr;
-                max-width: 700px;
-            }
-
-            .sidebar {
-                display: none;
-            }
-        }
-
-        h1 {
-            font-size: 16px;
-            font-weight: normal;
-            margin-bottom: 25px;
-            text-transform: lowercase;
-            color: #55ff55;
-            letter-spacing: 0.5px;
-        }
-
-        @media (min-width: 768px) {
-            h1 {
-                font-size: 18px;
-            }
-        }
-
-        .episode-list {
-            list-style: none;
-        }
-
-        .episode-list li {
-            margin: 6px 0;
-            line-height: 1.3;
-        }
-
-        .episode-list a {
-            color: #c9c9c9;
-            text-decoration: none;
-            display: block;
-            padding: 1px 0;
-            transition: all 0.15s ease;
-        }
-
-        .episode-list a:hover {
-            color: #ffffff;
-        }
-
-        .episode-number {
-            color: #5588ff;
-            font-weight: normal;
-        }
-
-        .episode-title {
-            color: #c9c9c9;
-        }
-
-        .back-link {
-            margin-bottom: 18px;
-        }
-
-        .back-link a {
-            color: #888888;
-            text-decoration: none;
-            font-size: 12px;
-            letter-spacing: 0.3px;
-        }
-
-        @media (min-width: 768px) {
-            .back-link a {
-                font-size: 13px;
-            }
-        }
-
-        .back-link a:hover {
-            color: #aaaaaa;
-        }
-
-        .back-link a:before {
-            content: '← ';
-            color: #666666;
-        }
-
-        .date {
-            color: #ff8855;
-            font-size: 12px;
-            margin-left: 8px;
-            font-weight: normal;
-        }
-
-        @media (min-width: 768px) {
-            .date {
-                font-size: 13px;
-            }
-        }
-
-        .description {
-            color: #777777;
-            font-size: 13px;
-            margin-top: 15px;
-            margin-bottom: 25px;
-            line-height: 1.4;
-            font-style: italic;
-        }
-
-        @media (min-width: 768px) {
-            .description {
-                font-size: 14px;
-            }
-        }
-
-        .stats {
-            margin-top: 30px;
-            padding-top: 15px;
-            border-top: 1px solid #222222;
-            font-size: 11px;
-            color: #555555;
-        }
-
-        @media (min-width: 768px) {
-            .stats {
-                font-size: 12px;
-            }
-        }
-
-        .episode-list a:hover .episode-number {
-            color: #77aaff;
-        }
-
-        .episode-list a:hover .episode-title {
-            color: #ffffff;
-        }
-
-        .episode-list a:hover .date {
-            color: #ffaa77;
-        }
-
-        /* Tag filters */
-        .tag-filters {
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #333333;
-            border-radius: 4px;
-            background-color: #111111;
-            max-height: 85px;
-            /* Collapsed height - enough for title + 1 row */
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
+        .blog-header {
+            text-align: center;
+            margin-bottom: 4rem;
             position: relative;
         }
 
-        .tag-filters.expanded {
-            max-height: 500px;
-            /* Arbitrary large height */
+        .blog-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .tag-filters h3 {
-            font-size: 11px;
-            color: #666666;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .blog-description {
+            color: var(--muted-foreground);
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        @media (min-width: 768px) {
-            .tag-filters h3 {
-                font-size: 12px;
-            }
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .post-item {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .post-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .post-item:hover::before {
+            opacity: 1;
+        }
+
+        .post-item a {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            text-decoration: none;
+            z-index: 2;
+        }
+
+        .post-meta-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+        }
+
+        .episode-number {
+            font-family: var(--font-mono);
+            color: var(--primary);
+            background: rgba(124, 58, 237, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .post-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--foreground);
+            transition: color 0.2s;
+        }
+
+        .post-item:hover .post-title {
+            color: var(--primary-glow);
+        }
+
+        .post-description {
+            color: var(--muted-foreground);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: auto;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .post-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .tag-pill {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--muted-foreground);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+        }
+
+        .post-item:hover .tag-pill {
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--primary-glow);
+            border-color: rgba(124, 58, 237, 0.2);
+        }
+
+        /* Tag Filters */
+        .tag-filters-container {
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .tag-filter {
-            background: none;
-            border: 1px solid #333333;
-            color: #c9c9c9;
-            padding: 4px 8px;
-            margin: 2px 4px 2px 0;
-            font-family: inherit;
-            font-size: 10px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--muted-foreground);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
             cursor: pointer;
-            border-radius: 2px;
-            transition: all 0.2s ease;
-        }
-
-        @media (min-width: 768px) {
-            .tag-filter {
-                font-size: 11px;
-                padding: 5px 10px;
-            }
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            transition: all 0.2s;
         }
 
         .tag-filter:hover,
         .tag-filter.active {
-            border-color: currentColor;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .tag-filter.success {
-            color: #55ff55;
-        }
-
-        .tag-filter.structure {
-            color: #5588ff;
-        }
-
-        .tag-filter.process {
-            color: #ffff55;
-        }
-
-        .tag-filter.attention {
-            color: #ff8855;
-        }
-
-        .tag-filter.meta {
-            color: #ff55ff;
-        }
-
-        .tag-filter.connection {
-            color: #55ffff;
-        }
-
-        .tag-filter.neutral {
-            color: #c9c9c9;
-        }
-
-        /* Show all button */
-        .show-all {
-            background: none;
-            border: 1px solid #555555;
-            color: #aaaaaa;
-            padding: 4px 8px;
-            margin: 2px 4px 2px 0;
-            font-family: inherit;
-            font-size: 10px;
-            cursor: pointer;
-            border-radius: 2px;
-            transition: all 0.2s ease;
-        }
-
-        @media (min-width: 768px) {
-            .show-all {
-                font-size: 11px;
-                padding: 5px 10px;
-            }
-        }
-
-        .show-all:hover,
-        .show-all.active {
-            border-color: #55ff55;
-            color: #55ff55;
-            background-color: rgba(85, 255, 85, 0.1);
-        }
-
-        .tag-toggle {
-            background: none;
-            border: none;
-            color: #55ff55;
-            font-family: inherit;
-            font-size: 10px;
-            cursor: pointer;
-            padding: 5px;
-            margin-left: 10px;
-            text-decoration: underline;
-            display: inline-block;
-        }
-
-        .tag-toggle:hover {
-            color: #ffffff;
-        }
-
-
-        /* Hidden posts during filtering */
-        .post-item.hidden {
-            display: none;
-        }
-
-        /* Terminal-like cursor effect for title */
-        h1:after {
-            content: '_';
-            color: #55ff55;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-
-            0%,
-            50% {
-                opacity: 1;
-            }
-
-            51%,
-            100% {
-                opacity: 0;
-            }
-        }
-
-        /* Mobile improvements */
-        @media (max-width: 767px) {
-            .container {
-                padding: 0 10px;
-            }
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
         }
 
         /* Pagination */
         .pagination {
             display: flex;
             justify-content: center;
-            margin-top: 30px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 4rem;
         }
 
         .pagination-link {
-            background-color: #1a1a1a;
-            border: 1px solid #333333;
-            color: #c9c9c9;
-            padding: 8px 12px;
-            margin: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--muted-foreground);
             text-decoration: none;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-            font-size: 14px;
+            transition: all 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .pagination-link:hover {
-            background-color: #2a2a2a;
-            border-color: #55ff55;
-            color: #55ff55;
+        .pagination-link:hover,
+        .pagination-link.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
         .pagination-link.active {
-            background-color: #55ff55;
-            border-color: #55ff55;
-            color: #000000;
             font-weight: bold;
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
         }
 
-        @media (max-width: 767px) {
-            .pagination-link {
-                padding: 6px 10px;
-                font-size: 12px;
-            }
+        /* Stats Footer */
+        .stats-footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--muted-foreground);
+            font-size: 0.875rem;
         }
 
-        /* Social Links */
-        .social-links {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-            padding: 10px 0;
-            border-bottom: 1px solid #222222;
+        .stats-footer a {
+            color: var(--foreground);
+            text-decoration: underline;
+            text-decoration-color: var(--muted-foreground);
+            text-underline-offset: 4px;
         }
 
-        .social-links a {
-            color: #888888;
-            text-decoration: none;
-            font-size: 11px;
-            text-transform: lowercase;
-            letter-spacing: 0.5px;
-            transition: color 0.2s ease;
-        }
-
-        .social-links a:hover {
-            color: #55ff55;
-        }
-
-        .social-links .divider {
-            color: #333333;
-            font-size: 10px;
-        }
-
-        @media (min-width: 768px) {
-            .social-links a {
-                font-size: 12px;
-            }
+        .stats-footer a:hover {
+            color: var(--primary);
+            text-decoration-color: var(--primary);
         }
     </style>
 </head>
 
-<body>
-
-
-    <!-- Intro Audio -->
-    <audio id="introAudio" preload="auto">
-        <source src="/blog/audio/intro.mp3" type="audio/mpeg">
-        <source src="/blog/audio/intro.ogg" type="audio/ogg">
-    </audio>
-
-    <!-- Audio Play Button - Hidden by default, shown if autoplay fails -->
-    <div id="audioPlayPrompt"
-        style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; background: #000000; border: 2px solid #55ff55; padding: 20px; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; color: #55ff55; text-align: center; font-size: 14px; cursor: pointer;">
-        <div style="margin-bottom: 10px;">🎵 AUDIO BLOCKED BY BROWSER</div>
-        <div style="margin-bottom: 15px; color: #c9c9c9; font-size: 12px;">Click to enable intro music</div>
-        <div style="color: #55ff55; text-decoration: underline;">[PRESS ENTER TO PLAY]</div>
-    </div>
-
+<body class="bg-mesh">
     <style>
-    /* Header Styles matching Portfolio */
+    /* Floating Glass Pill Header */
     .site-header {
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 64px;
-        background-color: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        top: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 1000px;
         z-index: 1000;
-        display: flex;
-        align-items: center;
-        padding: 0 20px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        transition: all 0.3s ease;
     }
 
-    .header-container {
-        max-width: 1200px;
-        width: 100%;
-        margin: 0 auto;
+    .header-pill {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1.5rem;
+        background: rgba(9, 9, 11, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 9999px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
 
     .site-logo {
-        font-size: 20px;
+        font-family: var(--font-heading);
         font-weight: 700;
-        color: #ffffff;
+        font-size: 1.25rem;
+        color: var(--foreground);
         text-decoration: none;
-        transition: color 0.2s;
-    }
-
-    .site-logo:hover {
-        color: #4285F4;
-        /* Google Blue */
+        background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
     .site-nav {
         display: flex;
-        gap: 24px;
+        gap: 2rem;
     }
 
     .nav-link {
-        color: #e5e7eb;
-        /* gray-200 */
-        text-decoration: none;
-        font-size: 14px;
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
         font-weight: 500;
-        transition: color 0.2s;
+        color: var(--muted-foreground);
+        text-decoration: none;
+        transition: color 0.2s ease;
         position: relative;
     }
 
     .nav-link:hover {
-        color: #4285F4;
+        color: var(--primary-glow);
     }
 
     .nav-link.active {
-        color: #4285F4;
+        color: var(--foreground);
     }
 
-    /* Mobile Menu Toggle */
+    .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--primary);
+        border-radius: 2px;
+        box-shadow: 0 0 8px var(--primary);
+    }
+
+    /* Mobile Menu */
     .mobile-menu-toggle {
         display: none;
         background: none;
         border: none;
-        color: white;
+        color: var(--foreground);
         cursor: pointer;
+        padding: 0.5rem;
     }
 
     @media (max-width: 768px) {
         .site-nav {
             display: none;
-            /* Hidden by default on mobile */
             position: absolute;
-            top: 64px;
+            top: 100%;
             left: 0;
             right: 0;
-            background-color: rgba(0, 0, 0, 0.95);
+            margin-top: 1rem;
             flex-direction: column;
-            padding: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(9, 9, 11, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1rem;
+            gap: 1rem;
+            align-items: center;
         }
 
         .site-nav.open {
             display: flex;
+            animation: slideDown 0.3s ease-out forwards;
         }
 
         .mobile-menu-toggle {
@@ -570,10 +491,37 @@
         }
     }
 
-    /* Adjust main content to not be hidden behind fixed header */
-    body {
-        padding-top: 84px !important;
-        /* 64px header + 20px padding */
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Search Button */
+    .search-trigger {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--muted-foreground);
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+    }
+
+    .search-trigger:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--foreground);
+        border-color: rgba(255, 255, 255, 0.2);
     }
 
     /* Search Modal */
@@ -585,109 +533,121 @@
         right: 0;
         bottom: 0;
         background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(4px);
+        backdrop-filter: blur(8px);
         z-index: 2000;
         align-items: flex-start;
         justify-content: center;
         padding-top: 100px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
 
     .search-modal-overlay.open {
         display: flex;
+        opacity: 1;
     }
 
     .search-modal {
-        background: #111827;
-        border: 1px solid #374151;
-        border-radius: 12px;
-        width: 100%;
+        background: #09090b;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 1rem;
+        width: 90%;
         max-width: 600px;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         overflow: hidden;
+        transform: scale(0.95);
+        transition: transform 0.3s ease;
+    }
+
+    .search-modal-overlay.open .search-modal {
+        transform: scale(1);
     }
 
     .search-input-container {
-        padding: 16px;
-        border-bottom: 1px solid #374151;
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         display: flex;
         align-items: center;
     }
 
     .search-icon {
-        color: #9ca3af;
-        margin-right: 12px;
+        color: var(--muted-foreground);
+        margin-right: 1rem;
     }
 
     .search-input {
         background: transparent;
         border: none;
-        color: white;
-        font-size: 18px;
+        color: var(--foreground);
+        font-size: 1.125rem;
         width: 100%;
         outline: none;
+        font-family: var(--font-sans);
     }
 
     .search-results {
         max-height: 400px;
         overflow-y: auto;
-        padding: 8px;
+        padding: 0.5rem;
     }
 
     .search-result-item {
         display: block;
-        padding: 12px 16px;
+        padding: 1rem;
         text-decoration: none;
-        color: #e5e7eb;
-        border-radius: 8px;
-        transition: background-color 0.2s;
+        color: var(--muted-foreground);
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+        margin-bottom: 0.25rem;
     }
 
     .search-result-item:hover {
-        background-color: #1f2937;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--foreground);
     }
 
     .search-result-title {
         font-weight: 600;
-        font-size: 16px;
-        color: #4285F4;
-        margin-bottom: 4px;
+        font-size: 1rem;
+        color: var(--primary-glow);
+        margin-bottom: 0.25rem;
     }
 
     .search-result-excerpt {
-        font-size: 14px;
-        color: #9ca3af;
+        font-size: 0.875rem;
+        color: var(--muted-foreground);
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-
-    .search-shortcut {
-        font-size: 12px;
-        color: #6b7280;
-        border: 1px solid #374151;
-        border-radius: 4px;
-        padding: 2px 6px;
-        margin-left: auto;
-    }
 </style>
 
 <header class="site-header">
-    <div class="header-container">
+    <div class="header-pill">
         <a href="/" class="site-logo">Jeffrey Jose</a>
 
-        <div style="display: flex; align-items: center; gap: 16px;">
-            <button class="search-trigger" onclick="openSearch()"
-                style="background: none; border: none; color: #9ca3af; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; transition: background 0.2s;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        <nav class="site-nav">
+            <a href="/#hero" class="nav-link">Home</a>
+            <a href="/#projects" class="nav-link">Projects</a>
+            <a href="/#skills" class="nav-link">Skills</a>
+            <a href="/#experience" class="nav-link">Experience</a>
+            <a href="/#education" class="nav-link">Education</a>
+            <a href="/#contact" class="nav-link">Contact</a>
+            <a href="/blog" class="nav-link active">Blog</a>
+            <a href="/analytics.html" class="nav-link">Analytics</a>
+        </nav>
+
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <button class="search-trigger" onclick="openSearch()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
+                <span style="display: none; @media (min-width: 768px) { display: inline; }">Search</span>
                 <span
-                    style="font-size: 14px; display: none; @media (min-width: 768px) { display: inline; }">Search</span>
-                <span class="search-shortcut"
-                    style="display: none; @media (min-width: 768px) { display: inline; }">⌘K</span>
+                    style="font-size: 0.75rem; opacity: 0.6; margin-left: 0.5rem; display: none; @media (min-width: 768px) { display: inline; }">⌘K</span>
             </button>
 
             <button class="mobile-menu-toggle" aria-label="Toggle menu"
@@ -700,17 +660,6 @@
                 </svg>
             </button>
         </div>
-
-        <nav class="site-nav">
-            <a href="/#hero" class="nav-link">Home</a>
-            <a href="/#projects" class="nav-link">Projects</a>
-            <a href="/#skills" class="nav-link">Skills</a>
-            <a href="/#experience" class="nav-link">Experience</a>
-            <a href="/#education" class="nav-link">Education</a>
-            <a href="/#contact" class="nav-link">Contact</a>
-            <a href="/blog" class="nav-link active">Blog</a>
-            <a href="/analytics.html" class="nav-link">Analytics</a>
-        </nav>
     </div>
 </header>
 
@@ -781,7 +730,7 @@
 
         document.getElementById('searchResults').innerHTML = results.length > 0
             ? resultsHtml
-            : '<div style="padding: 16px; color: #9ca3af; text-align: center;">No results found</div>';
+            : '<div style="padding: 1rem; color: var(--muted-foreground); text-align: center;">No results found</div>';
     }
 
     document.getElementById('searchInput').addEventListener('input', (e) => {
@@ -800,22 +749,16 @@
         }
     });
 </script>
-    <div class="main-layout">
-        <div class="sidebar left" id="leftSidebar"></div>
-        <div class="container">
 
-            <h1>blog</h1>
+    <main class="container animate-fade-in-up">
+        <header class="blog-header">
+            <h1 class="blog-title">blog</h1>
+            <p class="blog-description">learning things, building things, breaking things, writing about it. technical projects, personal struggles, life stuff, random observations - just documenting whatever I'm working through.</p>
+        </header>
 
-            <div class="description">
-                learning things, building things, breaking things, writing about it. technical projects, personal struggles, life stuff, random observations - just documenting whatever I'm working through.
-            </div>
-
-            <div class="tag-filters" id="tagFilters">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="margin-bottom: 0;">filter by tag</h3>
-                    <button id="tagToggle" class="tag-toggle" onclick="toggleTags()">show more</button>
-                </div>
-                            <button class="tag-filter neutral" data-tag="personal">personal</button>
+        <div class="tag-filters-container" id="tagFilters">
+            <button class="tag-filter active" data-tag="all">All Posts</button>
+                        <button class="tag-filter neutral" data-tag="personal">personal</button>
             <button class="tag-filter attention" data-tag="tutorials">tutorials</button>
             <button class="tag-filter process" data-tag="frontend">frontend</button>
             <button class="tag-filter meta" data-tag="meta">meta</button>
@@ -878,75 +821,168 @@
             <button class="tag-filter neutral" data-tag="metrics">metrics</button>
             <button class="tag-filter neutral" data-tag="testing">testing</button>
             <button class="tag-filter neutral" data-tag="developer-tools">developer-tools</button>
-            </div>
+        </div>
 
-            <ul class="episode-list">
-                            <li class="post-item" data-tags="analytics privacy web-development goatcounter github-pages">
+        <div class="posts-grid" id="postsGrid">
+                        <div class="post-item glass-card" data-tags="analytics privacy web-development goatcounter github-pages">
                 <a href="/blog/implementing-privacy-first-analytics-from-research">
-                    <span class="episode-number">012</span><span class="episode-title">: Implementing Privacy-First Analytics: From Research to GoatCounter</span><span class="date">13 Jan 2025</span>
+                    <div class="post-meta-top">
+                        <span class="episode-number">#012</span>
+                        <span class="date">13 Jan 2025</span>
+                    </div>
+                    <h3 class="post-title">Implementing Privacy-First Analytics: From Research to GoatCounter</h3>
+                    <p class="post-description">A comprehensive guide to implementing privacy-friendly analytics across portfolio and blog - from researching solutions to deploying GoatCounter with future API integration plans.</p>
+                    <div class="post-tags">
+                        <span class="tag-pill">analytics</span><span class="tag-pill">privacy</span><span class="tag-pill">web-development</span><span class="tag-pill">goatcounter</span><span class="tag-pill">github-pages</span>
+                    </div>
                 </a>
-            </li>
-            <li class="post-item" data-tags="github-actions automation debugging devops ci-cd">
+            </div>
+            <div class="post-item glass-card" data-tags="github-actions automation debugging devops ci-cd">
                 <a href="/blog/debugging-cross-repository-workflows">
-                    <span class="episode-number">011</span><span class="episode-title">: Debugging Cross-Repository GitHub Actions: A Void Blocks Tale</span><span class="date">11 Aug 2025</span>
+                    <div class="post-meta-top">
+                        <span class="episode-number">#011</span>
+                        <span class="date">11 Aug 2025</span>
+                    </div>
+                    <h3 class="post-title">Debugging Cross-Repository GitHub Actions: A Void Blocks Tale</h3>
+                    <p class="post-description">A deep dive into the complex world of cross-repository workflows, race conditions, and permission errors I encountered while deploying my Void Blocks game.</p>
+                    <div class="post-tags">
+                        <span class="tag-pill">github-actions</span><span class="tag-pill">automation</span><span class="tag-pill">debugging</span><span class="tag-pill">devops</span><span class="tag-pill">ci-cd</span>
+                    </div>
                 </a>
-            </li>
-            <li class="post-item" data-tags="gamedev vanilla-js tetris cyberpunk single-file github-actions">
+            </div>
+            <div class="post-item glass-card" data-tags="gamedev vanilla-js tetris cyberpunk single-file github-actions">
                 <a href="/blog/building-void-blocks-a-cyberpunk-tetris-game">
-                    <span class="episode-number">010</span><span class="episode-title">: Building Void Blocks: A Cyberpunk Tetris Game</span><span class="date">26 Jan 2025</span>
+                    <div class="post-meta-top">
+                        <span class="episode-number">#010</span>
+                        <span class="date">26 Jan 2025</span>
+                    </div>
+                    <h3 class="post-title">Building Void Blocks: A Cyberpunk Tetris Game</h3>
+                    <p class="post-description">creating a cyberpunk-inspired tetris variant, from littlejs to vanilla javascript, with automated deployment and terminal aesthetics</p>
+                    <div class="post-tags">
+                        <span class="tag-pill">gamedev</span><span class="tag-pill">vanilla-js</span><span class="tag-pill">tetris</span><span class="tag-pill">cyberpunk</span><span class="tag-pill">single-file</span><span class="tag-pill">github-actions</span>
+                    </div>
                 </a>
-            </li>
-            <li class="post-item" data-tags="deployment render spring-boot react github-actions">
+            </div>
+            <div class="post-item glass-card" data-tags="deployment render spring-boot react github-actions">
                 <a href="/blog/deploying-a-chat-platform-to-render">
-                    <span class="episode-number">009</span><span class="episode-title">: Deploying a Chat Platform to Render</span><span class="date">25 Jan 2025</span>
+                    <div class="post-meta-top">
+                        <span class="episode-number">#009</span>
+                        <span class="date">25 Jan 2025</span>
+                    </div>
+                    <h3 class="post-title">Deploying a Chat Platform to Render</h3>
+                    <p class="post-description">deploying a production-ready chat platform with spring boot, react, and multiple databases to render</p>
+                    <div class="post-tags">
+                        <span class="tag-pill">deployment</span><span class="tag-pill">render</span><span class="tag-pill">spring-boot</span><span class="tag-pill">react</span><span class="tag-pill">github-actions</span>
+                    </div>
                 </a>
-            </li>
-            <li class="post-item" data-tags="ai-tools meta tutorials learning">
+            </div>
+            <div class="post-item glass-card" data-tags="ai-tools meta tutorials learning">
                 <a href="/blog/ai-as-learning-catalyst-how-to-gain-skills-without">
-                    <span class="episode-number">008</span><span class="episode-title">: AI as Learning Catalyst: How to Gain Skills Without Losing Competence</span><span class="date">25 Jan 2025</span>
+                    <div class="post-meta-top">
+                        <span class="episode-number">#008</span>
+                        <span class="date">25 Jan 2025</span>
+                    </div>
+                    <h3 class="post-title">AI as Learning Catalyst: How to Gain Skills Without Losing Competence</h3>
+                    <p class="post-description">how artificial intelligence can democratize skill acquisition without creating cognitive dependency - if you use it strategically</p>
+                    <div class="post-tags">
+                        <span class="tag-pill">ai-tools</span><span class="tag-pill">meta</span><span class="tag-pill">tutorials</span><span class="tag-pill">learning</span>
+                    </div>
                 </a>
-            </li>
-            <li class="post-item" data-tags="meta bugfixes engineering changelog">
+            </div>
+            <div class="post-item glass-card" data-tags="meta bugfixes engineering changelog">
                 <a href="/blog/bugfixes-and-lessons-learned">
-                    <span class="episode-number">007</span><span class="episode-title">: Lessons from the Bugs: How We Improved the Portfolio and Blog</span><span class="date">25 Jul 2025</span>
+                    <div class="post-meta-top">
+                        <span class="episode-number">#007</span>
+                        <span class="date">25 Jul 2025</span>
+                    </div>
+                    <h3 class="post-title">Lessons from the Bugs: How We Improved the Portfolio and Blog</h3>
+                    <p class="post-description">A retrospective on bugs encountered while building this portfolio/blog, and how each was fixed.</p>
+                    <div class="post-tags">
+                        <span class="tag-pill">meta</span><span class="tag-pill">bugfixes</span><span class="tag-pill">engineering</span><span class="tag-pill">changelog</span>
+                    </div>
                 </a>
-            </li>
-            <li class="post-item" data-tags="frontend tutorials meta">
+            </div>
+            <div class="post-item glass-card" data-tags="frontend tutorials meta">
                 <a href="/blog/ascii-visualizers">
-                    <span class="episode-number">006</span><span class="episode-title">: Adding Text-Based Visualizers to the Blog Homepage</span><span class="date">24 Jan 2025</span>
+                    <div class="post-meta-top">
+                        <span class="episode-number">#006</span>
+                        <span class="date">24 Jan 2025</span>
+                    </div>
+                    <h3 class="post-title">Adding Text-Based Visualizers to the Blog Homepage</h3>
+                    <p class="post-description">How I reverse-engineered and implemented animated ASCII art visualizers inspired by musicforprogramming.net for my blog's sidebar</p>
+                    <div class="post-tags">
+                        <span class="tag-pill">frontend</span><span class="tag-pill">tutorials</span><span class="tag-pill">meta</span>
+                    </div>
                 </a>
-            </li>
-            <li class="post-item" data-tags="ai-tools meta">
+            </div>
+            <div class="post-item glass-card" data-tags="ai-tools meta">
                 <a href="/blog/ai-assisted-writing">
-                    <span class="episode-number">005</span><span class="episode-title">: How I Write Blogs with Claude - A Transparent Process</span><span class="date">24 Jan 2025</span>
+                    <div class="post-meta-top">
+                        <span class="episode-number">#005</span>
+                        <span class="date">24 Jan 2025</span>
+                    </div>
+                    <h3 class="post-title">How I Write Blogs with Claude - A Transparent Process</h3>
+                    <p class="post-description">A detailed walkthrough of how I use Claude to create blog posts, from initial prompts to final output</p>
+                    <div class="post-tags">
+                        <span class="tag-pill">ai-tools</span><span class="tag-pill">meta</span>
+                    </div>
                 </a>
-            </li>
-            <li class="post-item" data-tags="automation meta">
+            </div>
+            <div class="post-item glass-card" data-tags="automation meta">
                 <a href="/blog/automated-blog-system">
-                    <span class="episode-number">004</span><span class="episode-title">: Automating the Void - Building a Frictionless Blog System</span><span class="date">24 Jan 2025</span>
+                    <div class="post-meta-top">
+                        <span class="episode-number">#004</span>
+                        <span class="date">24 Jan 2025</span>
+                    </div>
+                    <h3 class="post-title">Automating the Void - Building a Frictionless Blog System</h3>
+                    <p class="post-description">How I Solved the Pain of Manual Blog Creation by Building an Automated System That Preserves the Terminal Aesthetic While Eliminating Friction</p>
+                    <div class="post-tags">
+                        <span class="tag-pill">automation</span><span class="tag-pill">meta</span>
+                    </div>
                 </a>
-            </li>
-            <li class="post-item" data-tags="backend system-design ai-tools">
+            </div>
+            <div class="post-item glass-card" data-tags="backend system-design ai-tools">
                 <a href="/blog/scalable-chat-platform">
-                    <span class="episode-number">003</span><span class="episode-title">: Building a Scalable Chat Platform with Claude Code</span><span class="date">24 Jan 2025</span>
+                    <div class="post-meta-top">
+                        <span class="episode-number">#003</span>
+                        <span class="date">24 Jan 2025</span>
+                    </div>
+                    <h3 class="post-title">Building a Scalable Chat Platform with Claude Code</h3>
+                    <p class="post-description">How I Built a Real-Time Chat Platform Using Spring Boot, React, and Claude Code as My Pair Programming Partner</p>
+                    <div class="post-tags">
+                        <span class="tag-pill">backend</span><span class="tag-pill">system-design</span><span class="tag-pill">ai-tools</span>
+                    </div>
                 </a>
-            </li>
-            </ul>
-
-            <div class="pagination"><a href="/blog/page2.html" class="pagination-link">&laquo; Previous</a><a href="/blog/index.html" class="pagination-link ">1</a><a href="/blog/page2.html" class="pagination-link active">2</a><a href="/blog/page3.html" class="pagination-link ">3</a><a href="/blog/page3.html" class="pagination-link">Next &raquo;</a></div>
-
-            <div class="stats">
-                total posts: 23 · <a href="/blog/archive.html"
-                    style="color: #888888; text-decoration: none;">archive</a> · <a href="/blog/feed.xml"
-                    style="color: #888888; text-decoration: none;">rss feed</a>
             </div>
         </div>
-        <div class="sidebar right" id="rightSidebar"></div>
-    </div>
+
+        <div class="pagination"><a href="/blog/page2.html" class="pagination-link">&laquo; Previous</a><a href="/blog/index.html" class="pagination-link ">1</a><a href="/blog/page2.html" class="pagination-link active">2</a><a href="/blog/page3.html" class="pagination-link ">3</a><a href="/blog/page3.html" class="pagination-link">Next &raquo;</a></div>
+
+        <footer class="stats-footer">
+            <p>
+                Total posts: 23 ·
+                <a href="/blog/archive.html">Archive</a> ·
+                <a href="/blog/feed.xml">RSS Feed</a>
+            </p>
+        </footer>
+    </main>
 
     <script>
         const POSTS_PER_PAGE = 10;
         const allPostsData = [{"episodeNumber":22,"title":"Optimizing Blog Interactivity and UX","slug":"optimizing-blog-interactivity-and-ux","date":"2025-11-30","description":"A deep dive into recent improvements: fixing the blank screen issue, implementing collapsible tag filters, and debugging critical interactivity bugs.","tags":["web-development","debugging","ux","javascript"],"readingTime":3,"wordCount":497},{"episodeNumber":21,"title":"Building TruthMeter AI: Measuring the Real Impact of AI Coding Assistants","slug":"building-truthmeter-ai-measuring-the-real-impact-o","date":"2025-01-28","description":"The complete journey of building a VS Code extension that measures actual AI assistant productivity using peer-reviewed research - from initial concept to 145+ tests and production release","tags":["typescript","vscode","ai","metrics","testing","developer-tools"],"readingTime":20,"wordCount":4500},{"episodeNumber":20,"title":"Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics","slug":"enhancing-game-ui-mobile-responsiveness-and-termin","date":"2025-01-21","description":"Deep dive into fixing mobile UI issues and enhancing dropdown styling for terminal-themed games","tags":["css","mobile","ux","gamedev","terminal-aesthetic"],"readingTime":8,"wordCount":1800},{"episodeNumber":19,"title":"Building a Secure Password Reset Flow","slug":"building-a-secure-password-reset-flow","date":"2025-11-20","description":"A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service.","tags":["Spring Boot","React","Security","Brevo"],"readingTime":5,"wordCount":800},{"episodeNumber":18,"title":"Adding Interactive Scripts to Blog Posts","slug":"adding-interactive-scripts-to-blog-posts","date":"2025-01-26","description":"how we extended the blog system to support inline JavaScript and CSS for interactive visualizations - with live demos","tags":["meta","engineering","frontend","tutorials"],"readingTime":8,"wordCount":1650},{"episodeNumber":17,"title":"Solving Adjacent Increasing Subarrays: From Naive to Optimal","slug":"solving-adjacent-increasing-subarrays-from-naive-t","date":"2025-01-26","description":"A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization","tags":["algorithms","optimization","leetcode","data-structures","problem-solving"],"readingTime":10,"wordCount":2000},{"episodeNumber":16,"title":"Adding Custom Domain: jeffreyjose07.is-a.dev","slug":"adding-custom-domain-jeffreyjose07is-adev","date":"2025-01-24","description":"How I configured a custom domain for my portfolio and blog, moving from jeffreyjose07.github.io to jeffreyjose07.is-a.dev","tags":["domain","github-pages","deployment","infrastructure"],"readingTime":4,"wordCount":800},{"episodeNumber":15,"title":"Building a Secure Snake Game with Terminal Aesthetic","slug":"building-a-secure-snake-game-with-terminal-aesthet","date":"2025-09-02","description":"How we built a security-hardened Snake game with terminal aesthetic styling and integrated it into the portfolio","tags":["game-development","javascript","security","terminal-ui","web-development"],"readingTime":8,"wordCount":1600},{"episodeNumber":14,"title":"From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey","slug":"from-neon-to-supabase-to-aiven-a-postgresql-migrat","date":"2025-08-28","description":"A technical journey through multiple PostgreSQL providers due to Neon's 50-hour weekly limit, failed Supabase migration, and successful Aiven implementation","tags":["postgresql","database","migration","cloud","devops","aiven","neon","supabase"],"readingTime":8,"wordCount":1800},{"episodeNumber":13,"title":"Migrating from Render to Neon PostgreSQL: Lessons from a Zero-Downtime Database Migration","slug":"migrating-from-render-to-neon-postgresql-lessons-f","date":"2025-01-18","description":"A detailed walkthrough of migrating a production chat platform from Render PostgreSQL to Neon, including challenges faced, solutions implemented, and performance improvements achieved.","tags":["database","migration","postgresql","neon","render","spring-boot","devops","scaling"],"readingTime":7,"wordCount":1379},{"episodeNumber":12,"title":"Implementing Privacy-First Analytics: From Research to GoatCounter","slug":"implementing-privacy-first-analytics-from-research","date":"2025-01-13","description":"A comprehensive guide to implementing privacy-friendly analytics across portfolio and blog - from researching solutions to deploying GoatCounter with future API integration plans.","tags":["analytics","privacy","web-development","goatcounter","github-pages"],"readingTime":6,"wordCount":1266},{"episodeNumber":11,"title":"Debugging Cross-Repository GitHub Actions: A Void Blocks Tale","slug":"debugging-cross-repository-workflows","date":"2025-08-11","description":"A deep dive into the complex world of cross-repository workflows, race conditions, and permission errors I encountered while deploying my Void Blocks game.","tags":["github-actions","automation","debugging","devops","ci-cd"],"readingTime":4,"wordCount":796},{"episodeNumber":10,"title":"Building Void Blocks: A Cyberpunk Tetris Game","slug":"building-void-blocks-a-cyberpunk-tetris-game","date":"2025-01-26","description":"creating a cyberpunk-inspired tetris variant, from littlejs to vanilla javascript, with automated deployment and terminal aesthetics","tags":["gamedev","vanilla-js","tetris","cyberpunk","single-file","github-actions"],"readingTime":13,"wordCount":2505},{"episodeNumber":9,"title":"Deploying a Chat Platform to Render","slug":"deploying-a-chat-platform-to-render","date":"2025-01-25","description":"deploying a production-ready chat platform with spring boot, react, and multiple databases to render","tags":["deployment","render","spring-boot","react","github-actions"],"readingTime":6,"wordCount":1600},{"episodeNumber":8,"title":"AI as Learning Catalyst: How to Gain Skills Without Losing Competence","slug":"ai-as-learning-catalyst-how-to-gain-skills-without","date":"2025-01-25","description":"how artificial intelligence can democratize skill acquisition without creating cognitive dependency - if you use it strategically","tags":["ai-tools","meta","tutorials","learning"],"readingTime":13,"wordCount":2540},{"episodeNumber":7,"title":"Lessons from the Bugs: How We Improved the Portfolio and Blog","slug":"bugfixes-and-lessons-learned","date":"2025-07-25","description":"A retrospective on bugs encountered while building this portfolio/blog, and how each was fixed.","tags":["meta","bugfixes","engineering","changelog"],"readingTime":6,"wordCount":1200},{"episodeNumber":6,"title":"Adding Text-Based Visualizers to the Blog Homepage","slug":"ascii-visualizers","date":"2025-01-24","description":"How I reverse-engineered and implemented animated ASCII art visualizers inspired by musicforprogramming.net for my blog's sidebar","tags":["frontend","tutorials","meta"],"readingTime":6,"wordCount":1116},{"episodeNumber":5,"title":"How I Write Blogs with Claude - A Transparent Process","slug":"ai-assisted-writing","date":"2025-01-24","description":"A detailed walkthrough of how I use Claude to create blog posts, from initial prompts to final output","tags":["ai-tools","meta"],"readingTime":5,"wordCount":1077},{"episodeNumber":4,"title":"Automating the Void - Building a Frictionless Blog System","slug":"automated-blog-system","date":"2025-01-24","description":"How I Solved the Pain of Manual Blog Creation by Building an Automated System That Preserves the Terminal Aesthetic While Eliminating Friction","tags":["automation","meta"],"readingTime":5,"wordCount":889},{"episodeNumber":3,"title":"Building a Scalable Chat Platform with Claude Code","slug":"scalable-chat-platform","date":"2025-01-24","description":"How I Built a Real-Time Chat Platform Using Spring Boot, React, and Claude Code as My Pair Programming Partner","tags":["backend","system-design","ai-tools"],"readingTime":3,"wordCount":700},{"episodeNumber":2,"title":"Creating This Portfolio Website and Blog","slug":"creating-this-portfolio-website-and-blog","date":"2025-01-24","description":"How I built my portfolio website and blog using React, TypeScript, and Vite","tags":["frontend","meta"],"readingTime":2,"wordCount":500},{"episodeNumber":1,"title":"Brainwash Yourself for Success","slug":"brainwash-yourself-for-success","date":"2017-04-22","description":"how i overcame procrastination and transformed my study habits for GATE preparation - a journey from last-minute cramming to systematic learning","tags":["personal","tutorials"],"readingTime":5,"wordCount":801},{"episodeNumber":0,"title":"The Revelations of a BTech Student","slug":"revelations-of-a-btech-student","date":"2017-04-20","description":"my journey from failing semester exams to achieving GATE rank 170 - lessons learned about learning, persistence, and finding your own path","tags":["personal"],"readingTime":6,"wordCount":1131}]; // Embedded from Node.js script
+
+        // Mouse move effect for cards
+        document.getElementById('postsGrid').onmousemove = e => {
+            for (const card of document.getElementsByClassName("post-item")) {
+                const rect = card.getBoundingClientRect(),
+                    x = e.clientX - rect.left,
+                    y = e.clientY - rect.top;
+
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
+            }
+        };
+
         // Utility function to format date
         function formatDate(dateString) {
             const date = new Date(dateString);
@@ -962,11 +998,10 @@
 
         // Function to render posts and pagination
         function renderPostsAndPagination(postsToDisplay, currentPage = 1) {
-            const episodeList = document.querySelector('.episode-list');
+            const postsGrid = document.getElementById('postsGrid');
             const paginationContainer = document.querySelector('.pagination');
-            const statsElement = document.querySelector('.stats');
 
-            episodeList.innerHTML = ''; // Clear current posts
+            postsGrid.innerHTML = ''; // Clear current posts
             paginationContainer.innerHTML = ''; // Clear current pagination
 
             const totalPages = Math.ceil(postsToDisplay.length / POSTS_PER_PAGE);
@@ -976,15 +1011,27 @@
 
             // Render posts
             paginatedPosts.forEach(post => {
-                const li = document.createElement('li');
-                li.classList.add('post-item');
-                li.dataset.tags = post.tags.join(' ');
-                li.innerHTML = `
+                const div = document.createElement('div');
+                div.classList.add('post-item', 'glass-card');
+                div.dataset.tags = post.tags.join(' ');
+
+                const episodeNum = post.episodeNumber.toString().padStart(3, '0');
+                const tagsHtml = post.tags.map(tag => `<span class="tag-pill">${tag}</span>`).join('');
+
+                div.innerHTML = `
                     <a href="/blog/${post.slug}">
-                        <span class="episode-number">${post.episodeNumber.toString().padStart(3, '0')}</span><span class="episode-title">: ${post.title}</span><span class="date">${formatDate(post.date)}</span>
+                        <div class="post-meta-top">
+                            <span class="episode-number">#${episodeNum}</span>
+                            <span class="date">${formatDate(post.date)}</span>
+                        </div>
+                        <h3 class="post-title">${post.title}</h3>
+                        <p class="post-description">${post.description}</p>
+                        <div class="post-tags">
+                            ${tagsHtml}
+                        </div>
                     </a>
                 `;
-                episodeList.appendChild(li);
+                postsGrid.appendChild(div);
             });
 
             // Render pagination controls
@@ -993,7 +1040,7 @@
                     const prevLink = document.createElement('a');
                     prevLink.href = '#';
                     prevLink.classList.add('pagination-link');
-                    prevLink.innerHTML = '&laquo; Previous';
+                    prevLink.innerHTML = '&laquo;';
                     prevLink.addEventListener('click', (e) => {
                         e.preventDefault();
                         renderPostsAndPagination(postsToDisplay, currentPage - 1);
@@ -1022,7 +1069,7 @@
                     const nextLink = document.createElement('a');
                     nextLink.href = '#';
                     nextLink.classList.add('pagination-link');
-                    nextLink.innerHTML = 'Next &raquo;';
+                    nextLink.innerHTML = '&raquo;';
                     nextLink.addEventListener('click', (e) => {
                         e.preventDefault();
                         renderPostsAndPagination(postsToDisplay, currentPage + 1);
@@ -1031,29 +1078,13 @@
                     paginationContainer.appendChild(nextLink);
                 }
             }
-
-            // Update stats
-            const activeFilter = document.querySelector('.tag-filter.active');
-            if (!activeFilter) {
-                statsElement.innerHTML = `total posts: ${postsToDisplay.length} · <a href="/blog/archive.html" style="color: #888888; text-decoration: none;">archive</a> · <a href="/blog/feed.xml" style="color: #888888; text-decoration: none;">rss feed</a>`;
-            } else {
-                statsElement.innerHTML = `showing ${postsToDisplay.length} posts tagged with "${activeFilter.dataset.tag}" · <a href="/blog/archive.html" style="color: #888888; text-decoration: none;">archive</a> · <a href="/blog/feed.xml" style="color: #888888; text-decoration: none;">rss feed</a>`;
-            }
         }
-
 
         // Tag filtering functionality
         document.addEventListener('DOMContentLoaded', function () {
             const filterButtons = document.querySelectorAll('.tag-filter');
 
-
-
-            // Initial render of all posts
-            renderPostsAndPagination(allPostsData);
-
-
             // Check for tag in URL hash on page load
-            // Auto-expand if a specific tag is selected (optional, but good UX)
             function checkUrlHash() {
                 const hash = window.location.hash;
                 if (hash.startsWith('#tag-')) {
@@ -1063,14 +1094,6 @@
                         filterButtons.forEach(btn => btn.classList.remove('active'));
                         tagButton.classList.add('active');
                         filterPosts(tag);
-                        history.replaceState(null, null, '/blog');
-                    }
-
-                    // Expand if tag is not 'all'
-                    if (tag !== 'all') {
-                        isExpanded = true;
-                        tagFilters.classList.add('expanded');
-                        tagToggle.textContent = 'show less';
                     }
                 }
             }
@@ -1091,536 +1114,16 @@
                     this.classList.add('active');
                     const tag = this.dataset.tag;
                     filterPosts(tag);
+
+                    if (tag !== 'all') {
+                        history.replaceState(null, null, `/blog#tag-${tag}`);
+                    } else {
+                        history.replaceState(null, null, '/blog');
+                    }
                 });
             });
 
             checkUrlHash();
-        });
-
-        // Tag Toggle Functionality (Global function for inline onclick)
-        function toggleTags() {
-            const tagFilters = document.getElementById('tagFilters');
-            const tagToggle = document.getElementById('tagToggle');
-
-            if (tagFilters.classList.contains('expanded')) {
-                tagFilters.classList.remove('expanded');
-                tagToggle.textContent = 'show more';
-            } else {
-                tagFilters.classList.add('expanded');
-                tagToggle.textContent = 'show less';
-            }
-        }
-        window.toggleTags = toggleTags;
-
-        // Auto-expand if a specific tag is selected
-        document.addEventListener('DOMContentLoaded', function () {
-            const hash = window.location.hash;
-            if (hash.startsWith('#tag-')) {
-                const tag = hash.substring(5);
-                if (tag !== 'all') {
-                    const tagFilters = document.getElementById('tagFilters');
-                    const tagToggle = document.getElementById('tagToggle');
-                    if (tagFilters && tagToggle) {
-                        tagFilters.classList.add('expanded');
-                        tagToggle.textContent = 'show less';
-                    }
-                }
-            }
-        });
-
-        // 90s BBS-Style Pattern Animator
-        class RetroPatternAnimator {
-            constructor(elementId, options = {}) {
-                this.element = document.getElementById(elementId);
-                if (!this.element) return;
-
-                this.patternType = options.patternType || 'wave';
-                this.speed = options.speed || 150;
-                this.width = options.width || 12;
-                this.height = options.height || 60;
-                this.direction = options.direction || 'down';
-                this.frameIndex = 0;
-                this.pattern = [];
-                this.isAnimating = false;
-
-                // 90s BBS character sets for different patterns
-                this.charSets = {
-                    blocks: "█▓▒░",
-                    geometric: "▲▼◄►◆◇○●□■",
-                    waves: "/\\/_-~≈",
-                    retro: "┌┐└┘│─┼┤├┬┴",
-                    matrix: "01アカサタ_-=+*",
-                    oldschool: "X*+=-._:;'\"^"
-                };
-
-                this.init();
-            }
-
-            init() {
-                this.generatePattern();
-                this.render();
-                this.startAnimation();
-
-                // Performance optimization
-                document.addEventListener('visibilitychange', () => {
-                    if (document.hidden) {
-                        this.stopAnimation();
-                    } else {
-                        this.startAnimation();
-                    }
-                });
-            }
-
-            generateWavePattern(frame) {
-                const pattern = [];
-                const chars = "/\\_-~";
-
-                for (let y = 0; y < this.height; y++) {
-                    let row = '';
-                    for (let x = 0; x < this.width; x++) {
-                        const wave = Math.sin((y + frame * 0.1) * 0.3) * 2;
-                        const charIndex = Math.floor((wave + 2) % chars.length);
-
-                        if (x === Math.floor(this.width / 2 + wave)) {
-                            row += chars[charIndex];
-                        } else if (Math.abs(x - (this.width / 2 + wave)) < 1.5) {
-                            row += chars[(charIndex + 1) % chars.length];
-                        } else {
-                            row += ' ';
-                        }
-                    }
-                    pattern.push(row);
-                }
-                return pattern;
-            }
-
-            generateBlockPattern(frame) {
-                const pattern = [];
-                const blocks = "█▓▒░";
-
-                for (let y = 0; y < this.height; y++) {
-                    let row = '';
-                    for (let x = 0; x < this.width; x++) {
-                        const intensity = Math.sin((y + frame * 0.05) * 0.2) * Math.cos((x + frame * 0.03) * 0.4);
-                        const blockIndex = Math.floor((intensity + 1) * 2) % blocks.length;
-
-                        if (Math.random() < 0.7) {
-                            row += blocks[blockIndex];
-                        } else {
-                            row += ' ';
-                        }
-                    }
-                    pattern.push(row);
-                }
-                return pattern;
-            }
-
-            generateGeometricPattern(frame) {
-                const pattern = [];
-                const shapes = "▲▼◆◇○●";
-
-                for (let y = 0; y < this.height; y++) {
-                    let row = '';
-                    for (let x = 0; x < this.width; x++) {
-                        const cycle = (y + frame) % 8;
-                        const shapeIndex = Math.floor(cycle / 2) % shapes.length;
-
-                        if ((x + y + frame) % 4 === 0) {
-                            row += shapes[shapeIndex];
-                        } else if ((x + y + frame) % 6 === 0) {
-                            row += shapes[(shapeIndex + 1) % shapes.length];
-                        } else {
-                            row += ' ';
-                        }
-                    }
-                    pattern.push(row);
-                }
-                return pattern;
-            }
-
-            generateRetroBoxPattern(frame) {
-                const pattern = [];
-                const boxes = "┌┐└┘│─┼╬";
-
-                for (let y = 0; y < this.height; y++) {
-                    let row = '';
-                    for (let x = 0; x < this.width; x++) {
-                        const boxCycle = (x + y + frame) % 12;
-
-                        if (boxCycle < 2) {
-                            row += boxes[0]; // ┌
-                        } else if (boxCycle < 4) {
-                            row += boxes[1]; // ┐
-                        } else if (boxCycle < 6) {
-                            row += boxes[4]; // │
-                        } else if (boxCycle < 8) {
-                            row += boxes[5]; // ─
-                        } else {
-                            row += ' ';
-                        }
-                    }
-                    pattern.push(row);
-                }
-                return pattern;
-            }
-
-            generateBinaryRainPattern(frame) {
-                const pattern = [];
-                const binary = "01";
-
-                for (let y = 0; y < this.height; y++) {
-                    let row = '';
-                    for (let x = 0; x < this.width; x++) {
-                        const rain = (frame + x * 3 + y) % 15;
-
-                        if (rain < 2) {
-                            row += binary[Math.floor(Math.random() * 2)];
-                        } else if (rain < 4) {
-                            row += binary[1 - Math.floor(Math.random() * 2)];
-                        } else {
-                            row += ' ';
-                        }
-                    }
-                    pattern.push(row);
-                }
-                return pattern;
-            }
-
-            generatePattern() {
-                switch (this.patternType) {
-                    case 'wave':
-                        this.pattern = this.generateWavePattern(this.frameIndex);
-                        break;
-                    case 'blocks':
-                        this.pattern = this.generateBlockPattern(this.frameIndex);
-                        break;
-                    case 'geometric':
-                        this.pattern = this.generateGeometricPattern(this.frameIndex);
-                        break;
-                    case 'retro':
-                        this.pattern = this.generateRetroBoxPattern(this.frameIndex);
-                        break;
-                    case 'binary':
-                        this.pattern = this.generateBinaryRainPattern(this.frameIndex);
-                        break;
-                    default:
-                        this.pattern = this.generateWavePattern(this.frameIndex);
-                }
-            }
-
-            animate() {
-                if (!this.isAnimating) return;
-
-                this.frameIndex++;
-                this.generatePattern();
-                this.render();
-
-                this.animationId = setTimeout(() => this.animate(), this.speed);
-            }
-
-            render() {
-                this.element.textContent = this.pattern.join('\n');
-            }
-
-            startAnimation() {
-                if (!this.isAnimating) {
-                    this.isAnimating = true;
-                    this.animate();
-                }
-            }
-
-            stopAnimation() {
-                this.isAnimating = false;
-                if (this.animationId) {
-                    clearTimeout(this.animationId);
-                }
-            }
-        }
-
-        // 90s Digital Rain Effect (Optimized)
-        class DigitalRain {
-            constructor(elementId, options = {}) {
-                this.element = document.getElementById(elementId);
-                if (!this.element) return;
-
-                this.width = options.width || 12;
-                this.height = options.height || 60;
-                this.speed = options.speed || 120;
-                this.style = options.style || 'cyber';
-                this.columns = [];
-                this.frameIndex = 0;
-                this.isAnimating = false;
-
-                // Different character sets for various 90s styles
-                this.styles = {
-                    cyber: "01アカサタナ_-=+*",
-                    hacker: "01234567890ABCDEF",
-                    ascii: "!@#$%^&*()_+-=[]{}|;:,.<>?",
-                    retro: "█▓▒░▄▀■□▪▫"
-                };
-
-                this.chars = this.styles[this.style] || this.styles.cyber;
-                this.initColumns();
-                this.startAnimation();
-
-                // Performance optimization
-                document.addEventListener('visibilitychange', () => {
-                    if (document.hidden) {
-                        this.stopAnimation();
-                    } else {
-                        this.startAnimation();
-                    }
-                });
-            }
-
-            initColumns() {
-                for (let i = 0; i < this.width; i++) {
-                    this.columns[i] = {
-                        y: Math.floor(Math.random() * this.height),
-                        speed: Math.random() * 2 + 0.5,
-                        length: Math.floor(Math.random() * 10) + 5,
-                        chars: []
-                    };
-
-                    // Pre-generate characters for this column
-                    for (let j = 0; j < this.columns[i].length; j++) {
-                        this.columns[i].chars[j] = this.chars[Math.floor(Math.random() * this.chars.length)];
-                    }
-                }
-            }
-
-            animate() {
-                if (!this.isAnimating) return;
-
-                const pattern = Array(this.height).fill().map(() => ' '.repeat(this.width).split(''));
-
-                // Update each column
-                this.columns.forEach((column, x) => {
-                    column.y += column.speed * 0.5;
-
-                    // Reset column when it goes off screen
-                    if (column.y > this.height + column.length) {
-                        column.y = -column.length;
-                        column.speed = Math.random() * 2 + 0.5;
-                        column.length = Math.floor(Math.random() * 10) + 5;
-                    }
-
-                    // Draw column trail
-                    for (let i = 0; i < column.length; i++) {
-                        const y = Math.floor(column.y - i);
-                        if (y >= 0 && y < this.height) {
-                            // Randomly update character occasionally
-                            if (Math.random() < 0.05) {
-                                column.chars[i] = this.chars[Math.floor(Math.random() * this.chars.length)];
-                            }
-                            pattern[y][x] = column.chars[i];
-                        }
-                    }
-                });
-
-                // Render optimized output
-                this.element.textContent = pattern.map(row => row.join('')).join('\n');
-                this.frameIndex++;
-
-                this.animationId = setTimeout(() => this.animate(), this.speed);
-            }
-
-            startAnimation() {
-                if (!this.isAnimating) {
-                    this.isAnimating = true;
-                    this.animate();
-                }
-            }
-
-            stopAnimation() {
-                this.isAnimating = false;
-                if (this.animationId) {
-                    clearTimeout(this.animationId);
-                }
-            }
-        }
-
-        // Initialize 90s-style visualizers when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check if we're on a wide enough screen for the full retro experience
-            if (window.innerWidth > 1024) {
-                // Left sidebar - rotating through different 90s BBS patterns
-                const leftPatterns = ['wave', 'geometric', 'retro', 'blocks'];
-                let leftPatternIndex = 0;
-
-                function initLeftSidebar() {
-                    new RetroPatternAnimator('leftSidebar', {
-                        patternType: leftPatterns[leftPatternIndex],
-                        speed: 180,
-                        width: 12,
-                        height: 60
-                    });
-                }
-
-                initLeftSidebar();
-
-                // Change left pattern every 30 seconds for variety
-                setInterval(() => {
-                    leftPatternIndex = (leftPatternIndex + 1) % leftPatterns.length;
-                    document.getElementById('leftSidebar').innerHTML = '';
-                    initLeftSidebar();
-                }, 30000);
-
-                // Right sidebar - optimized digital rain with 90s cyber aesthetic
-                new DigitalRain('rightSidebar', {
-                    width: 12,
-                    height: 60,
-                    speed: 140,
-                    style: 'cyber'
-                });
-
-                // Switch right sidebar style every 45 seconds
-                const rightStyles = ['cyber', 'hacker', 'retro'];
-                let rightStyleIndex = 0;
-
-                setInterval(() => {
-                    rightStyleIndex = (rightStyleIndex + 1) % rightStyles.length;
-                    document.getElementById('rightSidebar').innerHTML = '';
-                    new DigitalRain('rightSidebar', {
-                        width: 12,
-                        height: 60,
-                        speed: 140,
-                        style: rightStyles[rightStyleIndex]
-                    });
-                }, 45000);
-            }
-
-            // Performance: Only reload if switching from mobile to desktop
-            let wasWideScreen = window.innerWidth > 1024;
-            window.addEventListener('resize', () => {
-                const isWideScreen = window.innerWidth > 1024;
-                if (isWideScreen !== wasWideScreen) {
-                    wasWideScreen = isWideScreen;
-                    setTimeout(() => location.reload(), 100);
-                }
-            });
-
-            // Add some extra 90s flair - random title glitch effect
-            const title = document.querySelector('h1');
-            if (title) {
-                const originalText = title.textContent;
-                const glitchChars = "!@#$%^&*()_+-=[]{}|;:,.<>?";
-
-                setInterval(() => {
-                    if (Math.random() < 0.02) { // 2% chance per second
-                        let glitched = '';
-                        for (let i = 0; i < originalText.length; i++) {
-                            if (Math.random() < 0.1 && originalText[i] !== ' ') {
-                                glitched += glitchChars[Math.floor(Math.random() * glitchChars.length)];
-                            } else {
-                                glitched += originalText[i];
-                            }
-                        }
-                        title.textContent = glitched;
-
-                        // Restore original text after brief glitch
-                        setTimeout(() => {
-                            title.textContent = originalText;
-                        }, 100);
-                    }
-                }, 1000);
-            }
-
-
-
-            // Intro Audio Functionality with Cross-Browser Support
-            function playIntroAudio() {
-                const introAudio = document.getElementById('introAudio');
-                const audioPlayPrompt = document.getElementById('audioPlayPrompt');
-                const hasPlayedBefore = sessionStorage.getItem('blogIntroPlayed');
-
-                if (!hasPlayedBefore && introAudio) {
-                    introAudio.volume = 0.3; // Set volume to 30%
-
-                    // Try to play the audio automatically
-                    const playPromise = introAudio.play();
-
-                    if (playPromise !== undefined) {
-                        playPromise
-                            .then(() => {
-                                console.log('🎵 Intro music playing (autoplay successful)');
-                                sessionStorage.setItem('blogIntroPlayed', 'true');
-                                setupAudioTimeout(introAudio);
-                            })
-                            .catch((error) => {
-                                console.log('Audio autoplay blocked by browser, showing user prompt');
-                                showAudioPrompt(introAudio, audioPlayPrompt);
-                            });
-                    } else {
-                        // Fallback for older browsers
-                        showAudioPrompt(introAudio, audioPlayPrompt);
-                    }
-                }
-            }
-
-            function setupAudioTimeout(introAudio) {
-                // Stop audio after 10 seconds (failsafe)
-                setTimeout(() => {
-                    if (introAudio) {
-                        introAudio.pause();
-                        introAudio.currentTime = 0;
-                    }
-                }, 10500); // 10.5 seconds to be safe
-            }
-
-            function showAudioPrompt(introAudio, audioPlayPrompt) {
-                // Show the terminal-style audio prompt
-                audioPlayPrompt.style.display = 'block';
-
-                // Handle click/enter to play
-                function playAudioWithInteraction() {
-                    introAudio.play()
-                        .then(() => {
-                            console.log('🎵 Intro music playing (user interaction)');
-                            sessionStorage.setItem('blogIntroPlayed', 'true');
-                            audioPlayPrompt.style.display = 'none';
-                            setupAudioTimeout(introAudio);
-                        })
-                        .catch((error) => {
-                            console.log('Audio play failed even with user interaction:', error);
-                            audioPlayPrompt.style.display = 'none';
-                        });
-                }
-
-                // Click handler
-                audioPlayPrompt.addEventListener('click', playAudioWithInteraction);
-
-                // Keyboard handler (Enter key)
-                function handleKeyPress(event) {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        playAudioWithInteraction();
-                        document.removeEventListener('keydown', handleKeyPress);
-                    } else if (event.key === 'Escape') {
-                        // Allow user to dismiss without playing
-                        audioPlayPrompt.style.display = 'none';
-                        sessionStorage.setItem('blogIntroPlayed', 'true');
-                        document.removeEventListener('keydown', handleKeyPress);
-                    }
-                }
-
-                document.addEventListener('keydown', handleKeyPress);
-
-                // Auto-dismiss after 10 seconds if no interaction
-                setTimeout(() => {
-                    if (audioPlayPrompt.style.display !== 'none') {
-                        audioPlayPrompt.style.display = 'none';
-                        sessionStorage.setItem('blogIntroPlayed', 'true');
-                        document.removeEventListener('keydown', handleKeyPress);
-                    }
-                }, 10000);
-            }
-
-            // Initialize on page load
-
-
-            // Play intro audio after a brief delay to allow page elements to load
-            setTimeout(playIntroAudio, 800);
         });
     </script>
 
