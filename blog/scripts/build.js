@@ -374,7 +374,7 @@ function generateIndex(posts) {
             .replace(/{{posts}}/g, postsHtml)
             .replace(/{{totalPosts}}/g, posts.length)
             .replace(/{{pagination}}/g, paginationHtml) // Add pagination placeholder
-            .replace(/{{allPostsData}}/g, JSON.stringify(sortedPosts)) // Embed all posts data for client-side filtering
+            .replace(/{{\s*allPostsData\s*}}/g, JSON.stringify(sortedPosts)) // Embed all posts data for client-side filtering
             .replace(/{{githubUrl}}/g, config.social.github)
             .replace(/{{linkedinUrl}}/g, config.social.linkedin)
             .replace(/{{twitterUrl}}/g, config.social.twitter)
