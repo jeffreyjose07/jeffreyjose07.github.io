@@ -4,24 +4,19 @@
       <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
     </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="2" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
   </defs>
   
-  <!-- Background Circle (Optional, for favicon visibility on dark/light) -->
-  <!-- <circle cx="50" cy="50" r="48" fill="#09090b" stroke="url(#premiumGradient)" stroke-width="2" /> -->
-
-  <!-- Stylized JJ Monogram -->
-  <g filter="url(#glow)">
+  <!-- Background for contrast (optional, usually transparent) -->
+  
+  <!-- Stylized JJ Monogram - Bolder and Larger -->
+  <g>
     <!-- First J -->
-    <path d="M35 25 V65 A15 15 0 0 1 20 80 H15" stroke="url(#premiumGradient)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M38 15 V70 A15 15 0 0 1 23 85 H10" stroke="url(#premiumGradient)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" />
     
-    <!-- Second J (Interlocked/Offset) -->
-    <path d="M65 25 V65 A15 15 0 0 1 50 80 H45" stroke="url(#premiumGradient)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Second J -->
+    <path d="M72 15 V70 A15 15 0 0 1 57 85 H44" stroke="url(#premiumGradient)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" />
     
-    <!-- Dot accent -->
-    <circle cx="80" cy="30" r="6" fill="url(#premiumGradient)" />
+    <!-- Dot accent - Moved and sized for balance -->
+    <circle cx="82" cy="25" r="8" fill="url(#premiumGradient)" />
   </g>
 </svg>

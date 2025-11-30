@@ -13,28 +13,24 @@ const Logo = ({ className = "w-8 h-8" }: { className?: string }) => {
                     <stop offset="0%" stopColor="#7c3aed" stopOpacity="1" />
                     <stop offset="100%" stopColor="#4f46e5" stopOpacity="1" />
                 </linearGradient>
-                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="2" result="blur" />
-                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
             </defs>
 
-            <g filter="url(#glow)">
+            <g>
                 <path
-                    d="M35 25 V65 A15 15 0 0 1 20 80 H15"
+                    d="M38 15 V70 A15 15 0 0 1 23 85 H10"
                     stroke="url(#premiumGradient)"
-                    strokeWidth="12"
+                    strokeWidth="20"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 />
                 <path
-                    d="M65 25 V65 A15 15 0 0 1 50 80 H45"
+                    d="M72 15 V70 A15 15 0 0 1 57 85 H44"
                     stroke="url(#premiumGradient)"
-                    strokeWidth="12"
+                    strokeWidth="20"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 />
-                <circle cx="80" cy="30" r="6" fill="url(#premiumGradient)" />
+                <circle cx="82" cy="25" r="8" fill="url(#premiumGradient)" />
             </g>
         </svg>
     );
