@@ -6,17 +6,15 @@
     </linearGradient>
   </defs>
   
-  <!-- Background for contrast (optional, usually transparent) -->
-  
-  <!-- Stylized JJ Monogram - Bolder and Larger -->
+  <!-- Stylized JJ Monogram -->
   <g>
-    <!-- First J -->
-    <path d="M38 15 V70 A15 15 0 0 1 23 85 H10" stroke="url(#premiumGradient)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Left J (Higher start, curves right) -->
+    <path d="M30 10 V65 A15 15 0 0 1 15 80 H10" stroke="url(#premiumGradient)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
     
-    <!-- Second J -->
-    <path d="M72 15 V70 A15 15 0 0 1 57 85 H44" stroke="url(#premiumGradient)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Right J (Lower start, curves right, nested) -->
+    <path d="M70 10 V65 A15 15 0 0 1 55 80 H50" stroke="url(#premiumGradient)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" />
     
-    <!-- Dot accent - Moved and sized for balance -->
-    <circle cx="82" cy="25" r="8" fill="url(#premiumGradient)" />
+    <!-- Dot on the right (as requested) -->
+    <circle cx="85" cy="25" r="10" fill="url(#premiumGradient)" />
   </g>
 </svg>

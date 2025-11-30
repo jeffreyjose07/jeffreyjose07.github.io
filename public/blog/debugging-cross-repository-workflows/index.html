@@ -438,29 +438,32 @@
     <div class="reading-progress"></div>
 
     <style>
-    /* Floating Glass Pill Header */
+    /* Top Bar Header */
     .site-header {
         position: fixed;
-        top: 1.5rem;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 90%;
-        max-width: 1000px;
+        top: 0;
+        left: 0;
+        width: 100%;
         z-index: 1000;
         transition: all 0.3s ease;
+        background: transparent;
+        border-bottom: 1px solid transparent;
     }
 
-    .header-pill {
+    .site-header.scrolled {
+        background: rgba(9, 9, 11, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 1rem 1.5rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.75rem 1.5rem;
-        background: rgba(9, 9, 11, 0.7);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 9999px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
 
     .site-logo {
@@ -469,10 +472,18 @@
         font-size: 1.25rem;
         color: var(--foreground);
         text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .text-gradient-premium {
         background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+        color: transparent;
+        display: inline-block;
     }
 
     .site-nav {
@@ -498,18 +509,6 @@
         color: var(--foreground);
     }
 
-    .nav-link.active::after {
-        content: '';
-        position: absolute;
-        bottom: -4px;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background: var(--primary);
-        border-radius: 2px;
-        box-shadow: 0 0 8px var(--primary);
-    }
-
     /* Mobile Menu */
     .mobile-menu-toggle {
         display: none;
@@ -527,13 +526,11 @@
             top: 100%;
             left: 0;
             right: 0;
-            margin-top: 1rem;
             flex-direction: column;
             background: rgba(9, 9, 11, 0.95);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 1rem;
             gap: 1rem;
             align-items: center;
@@ -681,9 +678,13 @@
     }
 </style>
 
-<header class="site-header">
-    <div class="header-pill">
-        <a href="/" class="site-logo">Jeffrey Jose</a>
+<header class="site-header" id="siteHeader">
+    <div class="header-inner">
+        <a href="/" class="site-logo">
+            <img src="/logo.svg" alt="JJ" width="32" height="32">
+            <span>Jeffrey<span style="color: var(--primary)">.</span><span
+                    class="text-gradient-premium">Jose</span></span>
+        </a>
 
         <nav class="site-nav">
             <a href="/#hero" class="nav-link">Home</a>
@@ -739,6 +740,16 @@
 </div>
 
 <script>
+    // Header Scroll Effect
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('siteHeader');
+        if (window.scrollY > 20) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+
     let searchIndex = [];
     let isSearchOpen = false;
 

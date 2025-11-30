@@ -17,20 +17,20 @@ const Logo = ({ className = "w-8 h-8" }: { className?: string }) => {
 
             <g>
                 <path
-                    d="M38 15 V70 A15 15 0 0 1 23 85 H10"
+                    d="M30 10 V65 A15 15 0 0 1 15 80 H10"
                     stroke="url(#premiumGradient)"
-                    strokeWidth="20"
+                    strokeWidth="22"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 />
                 <path
-                    d="M72 15 V70 A15 15 0 0 1 57 85 H44"
+                    d="M70 10 V65 A15 15 0 0 1 55 80 H50"
                     stroke="url(#premiumGradient)"
-                    strokeWidth="20"
+                    strokeWidth="22"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 />
-                <circle cx="82" cy="25" r="8" fill="url(#premiumGradient)" />
+                <circle cx="85" cy="25" r="10" fill="url(#premiumGradient)" />
             </g>
         </svg>
     );

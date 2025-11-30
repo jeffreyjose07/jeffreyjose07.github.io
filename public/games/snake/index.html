@@ -323,6 +323,83 @@
       justify-content: center;
     }
 
+    /* Header */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      transition: all 0.3s ease;
+      background: transparent;
+      border-bottom: 1px solid transparent;
+      padding: 0;
+      max-width: none;
+      transform: none;
+    }
+
+    .site-header.scrolled {
+      background: rgba(9, 9, 11, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .site-logo {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.5rem;
+      text-decoration: none;
+      color: var(--foreground);
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .text-gradient-premium {
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      display: inline-block;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .nav-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+      font-size: 0.95rem;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--foreground);
+    }
+
+    .nav-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
     .touch-dpad {
       display: grid;
       grid-template-rows: 1fr 1fr 1fr;
@@ -414,9 +491,8 @@
         height: 100vh;
       }
 
-      .site-header {
+      .site-nav {
         display: none;
-        /* Hide main nav on mobile game view to save space */
       }
 
       .game-container {
@@ -455,30 +531,44 @@
 </head>
 
 <body>
-  <header class="site-header">
-    <a href="/" class="site-logo" style="display: flex; align-items: center; gap: 8px;">
-      <img src="/logo.svg" alt="JJ" width="32" height="32">
-      <span>Jeffrey<span style="color: var(--primary)">.</span><span class="text-gradient-premium">Jose</span></span>
-    </a>
-
-    <nav class="nav-pill">
-      <a href="/" class="nav-link">Portfolio</a>
-      <div class="nav-divider"></div>
-      <a href="/blog/" class="nav-link">Blog</a>
-      <a href="/games/snake/" class="nav-link active">Snake</a>
-    </nav>
-
-    <div style="width: 120px; display: flex; justify-content: flex-end;">
-      <!-- Placeholder for balance or just empty to balance flex -->
-      <a href="/" class="nav-link" style="font-size: 1.2rem;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-          class="lucide lucide-moon">
-          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-        </svg>
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner">
+      <a href="/" class="site-logo">
+        <img src="/logo.svg" alt="JJ" width="32" height="32">
+        <span>Jeffrey<span style="color: var(--primary)">.</span><span class="text-gradient-premium">Jose</span></span>
       </a>
+
+      <nav class="site-nav">
+        <a href="/" class="nav-link">Portfolio</a>
+        <div class="nav-divider"></div>
+        <a href="/blog/" class="nav-link">Blog</a>
+        <a href="/games/snake/" class="nav-link active">Snake</a>
+      </nav>
+
+      <div style="width: 120px; display: flex; justify-content: flex-end;">
+        <!-- Placeholder for balance or just empty to balance flex -->
+        <a href="/" class="nav-link" style="font-size: 1.2rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-moon">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+        </a>
+      </div>
     </div>
   </header>
+
+  <script>
+    // Header Scroll Effect
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('siteHeader');
+      if (window.scrollY > 20) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+  </script>
 
   <div class="game-header">
     <h1>Snake Game</h1>
