@@ -490,7 +490,6 @@
                     <h3 style="margin-bottom: 0;">filter by tag</h3>
                     <button id="tagToggle" class="tag-toggle" onclick="toggleTags()">show more</button>
                 </div>
-                <button class="show-all active" data-tag="all">show all</button>
                 {{tagFilters}}
             </div>
 
@@ -598,10 +597,10 @@
             }
 
             // Update stats
-            const activeFilter = document.querySelector('.tag-filter.active, .show-all.active');
-            if (activeFilter && activeFilter.dataset.tag === 'all') {
+            const activeFilter = document.querySelector('.tag-filter.active');
+            if (!activeFilter) {
                 statsElement.innerHTML = `total posts: ${postsToDisplay.length} · <a href="/blog/archive.html" style="color: #888888; text-decoration: none;">archive</a> · <a href="/blog/feed.xml" style="color: #888888; text-decoration: none;">rss feed</a>`;
-            } else if (activeFilter) {
+            } else {
                 statsElement.innerHTML = `showing ${postsToDisplay.length} posts tagged with "${activeFilter.dataset.tag}" · <a href="/blog/archive.html" style="color: #888888; text-decoration: none;">archive</a> · <a href="/blog/feed.xml" style="color: #888888; text-decoration: none;">rss feed</a>`;
             }
         }
@@ -609,8 +608,7 @@
 
         // Tag filtering functionality
         document.addEventListener('DOMContentLoaded', function () {
-            const filterButtons = document.querySelectorAll('.tag-filter, .show-all');
-            const showAllButton = document.querySelector('.show-all');
+            const filterButtons = document.querySelectorAll('.tag-filter');
 
 
 
