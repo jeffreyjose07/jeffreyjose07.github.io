@@ -832,7 +832,7 @@
       </a>
 
       <nav class="site-nav">
-        <a href="/" class="nav-link">Portfolio</a>
+
         <div class="nav-divider"></div>
         <a href="/blog/" class="nav-link">Blog</a>
         <a href="/games/void-blocks/" class="nav-link active">Void Blocks</a>
@@ -840,13 +840,14 @@
 
       <div style="width: 120px; display: flex; justify-content: flex-end;">
         <!-- Placeholder for balance or just empty to balance flex -->
-        <a href="/" class="nav-link" style="font-size: 1.2rem;">
+        <button id="themeToggle" class="nav-link"
+          style="background: none; border: none; cursor: pointer; color: inherit;">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
             class="lucide lucide-moon">
             <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
           </svg>
-        </a>
+        </button>
       </div>
     </div>
   </header>
@@ -859,6 +860,31 @@
         header.classList.add('scrolled');
       } else {
         header.classList.remove('scrolled');
+      }
+    });
+
+    // Hide header if in iframe
+    if (window.self !== window.top) {
+      document.getElementById('siteHeader').style.display = 'none';
+      document.body.style.paddingTop = '20px'; // Reduce padding since header is gone
+    }
+
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    let isDark = true;
+    themeToggle.addEventListener('click', () => {
+      isDark = !isDark;
+      const root = document.documentElement;
+      if (isDark) {
+        root.style.setProperty('--background', '#09090b');
+        root.style.setProperty('--foreground', '#f8fafc');
+        root.style.setProperty('--game-grid', '#18181b');
+        themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg>';
+      } else {
+        root.style.setProperty('--background', '#ffffff');
+        root.style.setProperty('--foreground', '#0f172a');
+        root.style.setProperty('--game-grid', '#e2e8f0');
+        themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41-1.41"/><path d="m19.07 4.93-1.41-1.41"/></svg>';
       }
     });
   </script>
