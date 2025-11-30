@@ -30,7 +30,7 @@ const Navigation = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 20);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -57,12 +57,14 @@ const Navigation = () => {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-      ? "bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-sm border-b border-gray-200/20 dark:border-gray-700/20"
-      : "bg-white/10 dark:bg-gray-900/10 backdrop-blur-sm"
-      }`}>
-      <div className="container mx-auto px-6">
-        <div className="flex items-center justify-between h-16 md:h-20">
+    <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 px-4">
+      <nav className={`
+        transition-all duration-500 ease-in-out
+        ${isScrolled
+          ? "w-full max-w-5xl rounded-full glass shadow-lg py-2 px-6"
+          : "w-full max-w-7xl rounded-none bg-transparent py-4 px-6"}
+      `}>
+        <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex-shrink-0">
             <a
@@ -71,84 +73,66 @@ const Navigation = () => {
                 e.preventDefault();
                 handleNavClick("#hero");
               }}
-              className={`text-2xl font-bold transition-colors duration-300 ${isScrolled
-                ? "text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
-                : "text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
-                }`}
+              className="text-xl font-heading font-bold tracking-tight hover:text-primary transition-colors duration-300"
             >
-              Jeffrey Jose
+              Jeffrey<span className="text-primary">.</span>Jose
             </a>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-center space-x-8">
-              {navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavClick(item.href, (item as any).external);
-                  }}
-                  className={`px-3 py-2 text-sm font-medium transition-all duration-300 relative group ${isScrolled
-                    ? "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
-                    : "text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
-                    }`}
-                >
-                  {item.label}
-                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${isScrolled
-                    ? "bg-blue-600 dark:bg-blue-400"
-                    : "bg-blue-600 dark:bg-blue-400"
-                    }`}></span>
-                </a>
-              ))}
+          <div className="hidden md:flex items-center space-x-1">
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(item.href, (item as any).external);
+                }}
+                className="px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 hover:bg-white/10 hover:text-primary relative group"
+              >
+                {item.label}
+              </a>
+            ))}
 
-              <GamesDropdown isScrolled={isScrolled} gameItems={gameItems} />
-
-              {/* Desktop Theme Toggle - integrated into nav */}
-              {mounted && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  className="h-10 w-10 p-0"
-                  aria-label="Toggle theme"
-                >
-                  {theme === "dark" ? (
-                    <Sun size={18} />
-                  ) : (
-                    <Moon size={18} />
-                  )}
-                </Button>
-              )}
+            <div className="ml-2">
+              <GamesDropdown isScrolled={true} gameItems={gameItems} />
             </div>
+
+            {/* Desktop Theme Toggle */}
+            {mounted && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="ml-2 rounded-full hover:bg-white/10"
+                aria-label="Toggle theme"
+              >
+                {theme === "dark" ? (
+                  <Sun size={18} className="text-yellow-400" />
+                ) : (
+                  <Moon size={18} className="text-indigo-400" />
+                )}
+              </Button>
+            )}
           </div>
 
-          {/* Mobile controls - Theme toggle and menu button */}
+          {/* Mobile controls */}
           <div className="md:hidden flex items-center space-x-2">
-            {/* Theme toggle for mobile */}
             <Button
-              variant="outline"
-              size="sm"
+              variant="ghost"
+              size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="h-10 w-10 p-0"
-              aria-label="Toggle theme"
+              className="rounded-full hover:bg-white/10"
             >
-              {mounted && theme === "dark" ? (
-                <Sun size={20} />
-              ) : (
-                <Moon size={20} />
-              )}
+              {mounted && theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
             </Button>
 
-            {/* Hamburger menu button */}
             <Button
-              variant="outline"
-              size="sm"
+              variant="ghost"
+              size="icon"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="h-12 w-12 p-0"
-              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              className="rounded-full hover:bg-white/10"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </Button>
@@ -158,13 +142,13 @@ const Navigation = () => {
         <MobileMenu
           isOpen={isMobileMenuOpen}
           onClose={() => setIsMobileMenuOpen(false)}
-          isScrolled={isScrolled}
+          isScrolled={true}
           navItems={navItems}
           gameItems={gameItems}
           onNavClick={handleNavClick}
         />
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 };
 
