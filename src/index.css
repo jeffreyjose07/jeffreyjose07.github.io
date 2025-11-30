@@ -167,6 +167,8 @@ html {
     -webkit-text-fill-color: transparent;
     color: transparent;
     display: inline-block;
+    padding-bottom: 0.2em;
+    margin-bottom: -0.2em;
   }
 
   /* Dark mode override for gradient text */
