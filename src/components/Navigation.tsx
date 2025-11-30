@@ -14,12 +14,12 @@ const Navigation = () => {
   const [mounted, setMounted] = useState(false);
 
   const navItems = [
-    { label: "Home", href: "#hero" },
-    { label: "Projects", href: "#projects" },
-    { label: "Skills", href: "#skills" },
-    { label: "Experience", href: "#experience" },
-    { label: "Education", href: "#education" },
-    { label: "Contact", href: "#contact" },
+    { label: "Home", href: "/#hero" },
+    { label: "Projects", href: "/#projects" },
+    { label: "Skills", href: "/#skills" },
+    { label: "Experience", href: "/#experience" },
+    { label: "Education", href: "/#education" },
+    { label: "Contact", href: "/#contact" },
     { label: "Blog", href: "/blog", external: true },
     { label: "Analytics", href: "/analytics.html", external: true }
   ];
@@ -48,12 +48,28 @@ const Navigation = () => {
       window.location.href = href;
       return;
     }
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
+
+    // Handle hash links
+    if (href.startsWith("/#")) {
+      const hash = href.substring(1); // remove leading /
+      if (window.location.pathname === "/" || window.location.pathname === "/index.html") {
+        // We are on home page, scroll to element
+        const element = document.querySelector(hash);
+        if (element) {
+          element.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+          // Update URL without reload
+          window.history.pushState(null, "", href);
+        }
+      } else {
+        // We are on another page, navigate to home with hash
+        window.location.href = href;
+      }
+    } else {
+      // Regular link
+      window.location.href = href;
     }
   };
 
@@ -68,10 +84,10 @@ const Navigation = () => {
         {/* Logo */}
         <div className="flex-shrink-0">
           <a
-            href="#hero"
+            href="/#hero"
             onClick={(e) => {
               e.preventDefault();
-              handleNavClick("#hero");
+              handleNavClick("/#hero");
             }}
             className="flex items-center gap-2 group"
           >
