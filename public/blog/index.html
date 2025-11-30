@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -72,7 +73,7 @@
                 grid-template-columns: 80px 1fr 80px;
                 gap: 15px;
             }
-            
+
             .sidebar {
                 font-size: 9px;
             }
@@ -83,7 +84,7 @@
                 grid-template-columns: 1fr;
                 max-width: 700px;
             }
-            
+
             .sidebar {
                 display: none;
             }
@@ -263,13 +264,33 @@
             background-color: rgba(255, 255, 255, 0.1);
         }
 
-        .tag-filter.success { color: #55ff55; }
-        .tag-filter.structure { color: #5588ff; }
-        .tag-filter.process { color: #ffff55; }
-        .tag-filter.attention { color: #ff8855; }
-        .tag-filter.meta { color: #ff55ff; }
-        .tag-filter.connection { color: #55ffff; }
-        .tag-filter.neutral { color: #c9c9c9; }
+        .tag-filter.success {
+            color: #55ff55;
+        }
+
+        .tag-filter.structure {
+            color: #5588ff;
+        }
+
+        .tag-filter.process {
+            color: #ffff55;
+        }
+
+        .tag-filter.attention {
+            color: #ff8855;
+        }
+
+        .tag-filter.meta {
+            color: #ff55ff;
+        }
+
+        .tag-filter.connection {
+            color: #55ffff;
+        }
+
+        .tag-filter.neutral {
+            color: #c9c9c9;
+        }
 
         /* Show all button */
         .show-all {
@@ -313,8 +334,16 @@
         }
 
         @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0;
+            }
         }
 
         /* Mobile improvements */
@@ -428,6 +457,7 @@
                 opacity: 0;
                 transform: translate(var(--random-x, 0), var(--random-y, 0)) scale(0.8);
             }
+
             100% {
                 opacity: 1;
                 transform: translate(0, 0) scale(1);
@@ -435,70 +465,418 @@
         }
 
         /* Stagger the animations */
-        .materializing:nth-child(1) { animation-delay: 0.1s; }
-        .materializing:nth-child(2) { animation-delay: 0.2s; }
-        .materializing:nth-child(3) { animation-delay: 0.3s; }
-        .materializing:nth-child(4) { animation-delay: 0.4s; }
-        .materializing:nth-child(5) { animation-delay: 0.5s; }
-        .materializing:nth-child(6) { animation-delay: 0.6s; }
-        .materializing:nth-child(7) { animation-delay: 0.7s; }
-        .materializing:nth-child(8) { animation-delay: 0.8s; }
-        .materializing:nth-child(9) { animation-delay: 0.9s; }
-        .materializing:nth-child(10) { animation-delay: 1.0s; }
+        .materializing:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .materializing:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .materializing:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .materializing:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .materializing:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .materializing:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        .materializing:nth-child(7) {
+            animation-delay: 0.7s;
+        }
+
+        .materializing:nth-child(8) {
+            animation-delay: 0.8s;
+        }
+
+        .materializing:nth-child(9) {
+            animation-delay: 0.9s;
+        }
+
+        .materializing:nth-child(10) {
+            animation-delay: 1.0s;
+        }
 
         /* Additional staggered delays for more elements */
-        .episode-list li:nth-child(n+11) .materializing { animation-delay: 1.1s; }
-        .episode-list li:nth-child(n+12) .materializing { animation-delay: 1.2s; }
+        .episode-list li:nth-child(n+11) .materializing {
+            animation-delay: 1.1s;
+        }
+
+        .episode-list li:nth-child(n+12) .materializing {
+            animation-delay: 1.2s;
+        }
     </style>
 </head>
+
 <body>
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay"></div>
-    
+
     <!-- Intro Audio -->
     <audio id="introAudio" preload="auto">
         <source src="/blog/audio/intro.mp3" type="audio/mpeg">
         <source src="/blog/audio/intro.ogg" type="audio/ogg">
     </audio>
-    
+
     <!-- Audio Play Button - Hidden by default, shown if autoplay fails -->
-    <div id="audioPlayPrompt" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; background: #000000; border: 2px solid #55ff55; padding: 20px; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; color: #55ff55; text-align: center; font-size: 14px; cursor: pointer;">
+    <div id="audioPlayPrompt"
+        style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; background: #000000; border: 2px solid #55ff55; padding: 20px; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; color: #55ff55; text-align: center; font-size: 14px; cursor: pointer;">
         <div style="margin-bottom: 10px;">🎵 AUDIO BLOCKED BY BROWSER</div>
         <div style="margin-bottom: 15px; color: #c9c9c9; font-size: 12px;">Click to enable intro music</div>
         <div style="color: #55ff55; text-decoration: underline;">[PRESS ENTER TO PLAY]</div>
     </div>
 
     <div class="main-layout">
+        <style>
+    /* Header Styles matching Portfolio */
+    .site-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background-color: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .header-container {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .site-logo {
+        font-size: 20px;
+        font-weight: 700;
+        color: #ffffff;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .site-logo:hover {
+        color: #4285F4;
+        /* Google Blue */
+    }
+
+    .site-nav {
+        display: flex;
+        gap: 24px;
+    }
+
+    .nav-link {
+        color: #e5e7eb;
+        /* gray-200 */
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.2s;
+        position: relative;
+    }
+
+    .nav-link:hover {
+        color: #4285F4;
+    }
+
+    .nav-link.active {
+        color: #4285F4;
+    }
+
+    /* Mobile Menu Toggle */
+    .mobile-menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+        .site-nav {
+            display: none;
+            /* Hidden by default on mobile */
+            position: absolute;
+            top: 64px;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.95);
+            flex-direction: column;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .site-nav.open {
+            display: flex;
+        }
+
+        .mobile-menu-toggle {
+            display: block;
+        }
+    }
+
+    /* Adjust main content to not be hidden behind fixed header */
+    body {
+        padding-top: 84px !important;
+        /* 64px header + 20px padding */
+    }
+
+    }
+    }
+
+    /* Search Modal */
+    .search-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(4px);
+        z-index: 2000;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 100px;
+    }
+
+    .search-modal-overlay.open {
+        display: flex;
+    }
+
+    .search-modal {
+        background: #111827;
+        border: 1px solid #374151;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+
+    .search-input-container {
+        padding: 16px;
+        border-bottom: 1px solid #374151;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-icon {
+        color: #9ca3af;
+        margin-right: 12px;
+    }
+
+    .search-input {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 18px;
+        width: 100%;
+        outline: none;
+    }
+
+    .search-results {
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 8px;
+    }
+
+    .search-result-item {
+        display: block;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #e5e7eb;
+        border-radius: 8px;
+        transition: background-color 0.2s;
+    }
+
+    .search-result-item:hover {
+        background-color: #1f2937;
+    }
+
+    .search-result-title {
+        font-weight: 600;
+        font-size: 16px;
+        color: #4285F4;
+        margin-bottom: 4px;
+    }
+
+    .search-result-excerpt {
+        font-size: 14px;
+        color: #9ca3af;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .search-shortcut {
+        font-size: 12px;
+        color: #6b7280;
+        border: 1px solid #374151;
+        border-radius: 4px;
+        padding: 2px 6px;
+        margin-left: auto;
+    }
+</style>
+
+<header class="site-header">
+    <div class="header-container">
+        <a href="/" class="site-logo">Jeffrey Jose</a>
+
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <button class="search-trigger" onclick="openSearch()"
+                style="background: none; border: none; color: #9ca3af; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; transition: background 0.2s;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span
+                    style="font-size: 14px; display: none; @media (min-width: 768px) { display: inline; }">Search</span>
+                <span class="search-shortcut"
+                    style="display: none; @media (min-width: 768px) { display: inline; }">⌘K</span>
+            </button>
+
+            <button class="mobile-menu-toggle" aria-label="Toggle menu"
+                onclick="document.querySelector('.site-nav').classList.toggle('open')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="site-nav">
+            <a href="/#hero" class="nav-link">Home</a>
+            <a href="/#projects" class="nav-link">Projects</a>
+            <a href="/#skills" class="nav-link">Skills</a>
+            <a href="/#experience" class="nav-link">Experience</a>
+            <a href="/#education" class="nav-link">Education</a>
+            <a href="/#contact" class="nav-link">Contact</a>
+            <a href="/blog" class="nav-link active">Blog</a>
+            <a href="/analytics.html" class="nav-link">Analytics</a>
+        </nav>
+    </div>
+</header>
+
+<!-- Search Modal HTML -->
+<div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()">
+    <div class="search-modal">
+        <div class="search-input-container">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" class="search-input" placeholder="Search posts..." id="searchInput" autocomplete="off">
+        </div>
+        <div class="search-results" id="searchResults">
+            <!-- Results will be injected here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    let searchIndex = [];
+    let isSearchOpen = false;
+
+    async function loadSearchIndex() {
+        if (searchIndex.length > 0) return;
+        try {
+            const response = await fetch('/blog/search.json');
+            searchIndex = await response.json();
+        } catch (e) {
+            console.error('Failed to load search index', e);
+        }
+    }
+
+    function openSearch() {
+        document.getElementById('searchModal').classList.add('open');
+        document.getElementById('searchInput').focus();
+        isSearchOpen = true;
+        loadSearchIndex();
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSearch() {
+        document.getElementById('searchModal').classList.remove('open');
+        isSearchOpen = false;
+        document.body.style.overflow = '';
+    }
+
+    function performSearch(query) {
+        if (!query) {
+            document.getElementById('searchResults').innerHTML = '';
+            return;
+        }
+
+        const results = searchIndex.filter(post => {
+            const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
+            const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
+            const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
+            return titleMatch || descMatch || tagMatch;
+        }).slice(0, 5); // Limit to 5 results
+
+        const resultsHtml = results.map(post => `
+            <a href="/blog/${post.slug}" class="search-result-item" onclick="closeSearch()">
+                <div class="search-result-title">${post.title}</div>
+                <div class="search-result-excerpt">${post.description || ''}</div>
+            </a>
+        `).join('');
+
+        document.getElementById('searchResults').innerHTML = results.length > 0
+            ? resultsHtml
+            : '<div style="padding: 16px; color: #9ca3af; text-align: center;">No results found</div>';
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        performSearch(e.target.value);
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            if (isSearchOpen) closeSearch();
+            else openSearch();
+        }
+        if (e.key === 'Escape' && isSearchOpen) {
+            closeSearch();
+        }
+    });
+</script>
         <div class="sidebar left" id="leftSidebar"></div>
         <div class="container">
-        <div class="back-link">
-            <a href="/">back to portfolio</a>
-        </div>
-        
-        <div class="social-links">
-            <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener">github</a>
-            <span class="divider">·</span>
-            <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener">linkedin</a>
-            <span class="divider">·</span>
-            <a href="/analytics.html">analytics</a>
-            <span class="divider">·</span>
-            <a href="https://x.com/josejeffrey07" target="_blank" rel="noopener">twitter</a>
-            <span class="divider">·</span>
-            <a href="mailto:jeffrey.jose07@gmail.com">email</a>
-            <span class="divider">·</span>
-            <a href="/resume.pdf" target="_blank">resume</a>
-        </div>
-        
-        <h1>blog</h1>
-        
-        <div class="description">
-            learning things, building things, breaking things, writing about it. technical projects, personal struggles, life stuff, random observations - just documenting whatever I'm working through.
-        </div>
-        
-        <div class="tag-filters">
-            <h3>filter by tag</h3>
-            <button class="show-all active" data-tag="all">show all</button>
-                        <button class="tag-filter neutral" data-tag="personal">personal</button>
+
+            <h1>blog</h1>
+
+            <div class="description">
+                learning things, building things, breaking things, writing about it. technical projects, personal struggles, life stuff, random observations - just documenting whatever I'm working through.
+            </div>
+
+            <div class="tag-filters">
+                <h3>filter by tag</h3>
+                <button class="show-all active" data-tag="all">show all</button>
+                            <button class="tag-filter neutral" data-tag="personal">personal</button>
             <button class="tag-filter attention" data-tag="tutorials">tutorials</button>
             <button class="tag-filter process" data-tag="frontend">frontend</button>
             <button class="tag-filter meta" data-tag="meta">meta</button>
@@ -561,10 +939,10 @@
             <button class="tag-filter neutral" data-tag="metrics">metrics</button>
             <button class="tag-filter neutral" data-tag="testing">testing</button>
             <button class="tag-filter neutral" data-tag="developer-tools">developer-tools</button>
-        </div>
-        
-        <ul class="episode-list">
-                        <li class="post-item" data-tags="typescript vscode ai metrics testing developer-tools">
+            </div>
+
+            <ul class="episode-list">
+                            <li class="post-item" data-tags="typescript vscode ai metrics testing developer-tools">
                 <a href="/blog/building-truthmeter-ai-measuring-the-real-impact-o">
                     <span class="episode-number">021</span><span class="episode-title">: Building TruthMeter AI: Measuring the Real Impact of AI Coding Assistants</span><span class="date">28 Jan 2025</span>
                 </a>
@@ -614,20 +992,22 @@
                     <span class="episode-number">012</span><span class="episode-title">: Implementing Privacy-First Analytics: From Research to GoatCounter</span><span class="date">13 Jan 2025</span>
                 </a>
             </li>
-        </ul>
-        
-        <div class="pagination"><a href="/blog/index.html" class="pagination-link active">1</a><a href="/blog/page2.html" class="pagination-link ">2</a><a href="/blog/page3.html" class="pagination-link ">3</a><a href="/blog/page2.html" class="pagination-link">Next &raquo;</a></div>
-        
-        <div class="stats">
-            total posts: 22 · <a href="/blog/archive.html" style="color: #888888; text-decoration: none;">archive</a> · <a href="/blog/feed.xml" style="color: #888888; text-decoration: none;">rss feed</a>
-        </div>
+            </ul>
+
+            <div class="pagination"><a href="/blog/index.html" class="pagination-link active">1</a><a href="/blog/page2.html" class="pagination-link ">2</a><a href="/blog/page3.html" class="pagination-link ">3</a><a href="/blog/page2.html" class="pagination-link">Next &raquo;</a></div>
+
+            <div class="stats">
+                total posts: 22 · <a href="/blog/archive.html"
+                    style="color: #888888; text-decoration: none;">archive</a> · <a href="/blog/feed.xml"
+                    style="color: #888888; text-decoration: none;">rss feed</a>
+            </div>
         </div>
         <div class="sidebar right" id="rightSidebar"></div>
     </div>
-    
+
     <script>
         const POSTS_PER_PAGE = 10;
-        const allPostsData = [{"episodeNumber":21,"title":"Building TruthMeter AI: Measuring the Real Impact of AI Coding Assistants","slug":"building-truthmeter-ai-measuring-the-real-impact-o","date":"2025-01-28","description":"The complete journey of building a VS Code extension that measures actual AI assistant productivity using peer-reviewed research - from initial concept to 145+ tests and production release","tags":["typescript","vscode","ai","metrics","testing","developer-tools"],"readingTime":20,"wordCount":4500},{"episodeNumber":20,"title":"Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics","slug":"enhancing-game-ui-mobile-responsiveness-and-termin","date":"2025-01-21","description":"Deep dive into fixing mobile UI issues and enhancing dropdown styling for terminal-themed games","tags":["css","mobile","ux","gamedev","terminal-aesthetic"],"readingTime":8,"wordCount":1800},{"episodeNumber":19,"title":"Building a Secure Password Reset Flow","slug":"building-a-secure-password-reset-flow","date":"2025-11-20","description":"A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service.","tags":["Spring Boot","React","Security","Brevo"],"readingTime":5,"wordCount":800},{"episodeNumber":18,"title":"Adding Interactive Scripts to Blog Posts","slug":"adding-interactive-scripts-to-blog-posts","date":"2025-01-26","description":"how we extended the blog system to support inline JavaScript and CSS for interactive visualizations - with live demos","tags":["meta","engineering","frontend","tutorials"],"readingTime":8,"wordCount":1650},{"episodeNumber":17,"title":"Solving Adjacent Increasing Subarrays: From Naive to Optimal","slug":"solving-adjacent-increasing-subarrays-from-naive-t","date":"2025-01-26","description":"A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization","tags":["algorithms","optimization","leetcode","data-structures","problem-solving"],"readingTime":10,"wordCount":2000},{"episodeNumber":16,"title":"Adding Custom Domain: jeffreyjose07.is-a.dev","slug":"adding-custom-domain-jeffreyjose07is-adev","date":"2025-01-24","description":"How I configured a custom domain for my portfolio and blog, moving from jeffreyjose07.github.io to jeffreyjose07.is-a.dev","tags":["domain","github-pages","deployment","infrastructure"],"readingTime":4,"wordCount":800},{"episodeNumber":15,"title":"Building a Secure Snake Game with Terminal Aesthetic","slug":"building-a-secure-snake-game-with-terminal-aesthet","date":"2025-09-02","description":"How we built a security-hardened Snake game with terminal aesthetic styling and integrated it into the portfolio","tags":["game-development","javascript","security","terminal-ui","web-development"],"readingTime":8,"wordCount":1600},{"episodeNumber":14,"title":"From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey","slug":"from-neon-to-supabase-to-aiven-a-postgresql-migrat","date":"2025-08-28","description":"A technical journey through multiple PostgreSQL providers due to Neon's 50-hour weekly limit, failed Supabase migration, and successful Aiven implementation","tags":["postgresql","database","migration","cloud","devops","aiven","neon","supabase"],"readingTime":8,"wordCount":1800},{"episodeNumber":13,"title":"Migrating from Render to Neon PostgreSQL: Lessons from a Zero-Downtime Database Migration","slug":"migrating-from-render-to-neon-postgresql-lessons-f","date":"2025-01-18","description":"A detailed walkthrough of migrating a production chat platform from Render PostgreSQL to Neon, including challenges faced, solutions implemented, and performance improvements achieved.","tags":["database","migration","postgresql","neon","render","spring-boot","devops","scaling"],"readingTime":7,"wordCount":1379},{"episodeNumber":12,"title":"Implementing Privacy-First Analytics: From Research to GoatCounter","slug":"implementing-privacy-first-analytics-from-research","date":"2025-01-13","description":"A comprehensive guide to implementing privacy-friendly analytics across portfolio and blog - from researching solutions to deploying GoatCounter with future API integration plans.","tags":["analytics","privacy","web-development","goatcounter","github-pages"],"readingTime":6,"wordCount":1266},{"episodeNumber":11,"title":"Debugging Cross-Repository GitHub Actions: A Void Blocks Tale","slug":"debugging-cross-repository-workflows","date":"2025-08-11","description":"A deep dive into the complex world of cross-repository workflows, race conditions, and permission errors I encountered while deploying my Void Blocks game.","tags":["github-actions","automation","debugging","devops","ci-cd"],"readingTime":4,"wordCount":796},{"episodeNumber":10,"title":"Building Void Blocks: A Cyberpunk Tetris Game","slug":"building-void-blocks-a-cyberpunk-tetris-game","date":"2025-01-26","description":"creating a cyberpunk-inspired tetris variant, from littlejs to vanilla javascript, with automated deployment and terminal aesthetics","tags":["gamedev","vanilla-js","tetris","cyberpunk","single-file","github-actions"],"readingTime":13,"wordCount":2505},{"episodeNumber":9,"title":"Deploying a Chat Platform to Render","slug":"deploying-a-chat-platform-to-render","date":"2025-01-25","description":"deploying a production-ready chat platform with spring boot, react, and multiple databases to render","tags":["deployment","render","spring-boot","react","github-actions"],"readingTime":6,"wordCount":1600},{"episodeNumber":8,"title":"AI as Learning Catalyst: How to Gain Skills Without Losing Competence","slug":"ai-as-learning-catalyst-how-to-gain-skills-without","date":"2025-01-25","description":"how artificial intelligence can democratize skill acquisition without creating cognitive dependency - if you use it strategically","tags":["ai-tools","meta","tutorials","learning"],"readingTime":13,"wordCount":2540},{"episodeNumber":7,"title":"Lessons from the Bugs: How We Improved the Portfolio and Blog","slug":"bugfixes-and-lessons-learned","date":"2025-07-25","description":"A retrospective on bugs encountered while building this portfolio/blog, and how each was fixed.","tags":["meta","bugfixes","engineering","changelog"],"readingTime":6,"wordCount":1200},{"episodeNumber":6,"title":"Adding Text-Based Visualizers to the Blog Homepage","slug":"ascii-visualizers","date":"2025-01-24","description":"How I reverse-engineered and implemented animated ASCII art visualizers inspired by musicforprogramming.net for my blog's sidebar","tags":["frontend","tutorials","meta"],"readingTime":6,"wordCount":1116},{"episodeNumber":5,"title":"How I Write Blogs with Claude - A Transparent Process","slug":"ai-assisted-writing","date":"2025-01-24","description":"A detailed walkthrough of how I use Claude to create blog posts, from initial prompts to final output","tags":["ai-tools","meta"],"readingTime":5,"wordCount":1077},{"episodeNumber":4,"title":"Automating the Void - Building a Frictionless Blog System","slug":"automated-blog-system","date":"2025-01-24","description":"How I Solved the Pain of Manual Blog Creation by Building an Automated System That Preserves the Terminal Aesthetic While Eliminating Friction","tags":["automation","meta"],"readingTime":5,"wordCount":889},{"episodeNumber":3,"title":"Building a Scalable Chat Platform with Claude Code","slug":"scalable-chat-platform","date":"2025-01-24","description":"How I Built a Real-Time Chat Platform Using Spring Boot, React, and Claude Code as My Pair Programming Partner","tags":["backend","system-design","ai-tools"],"readingTime":3,"wordCount":700},{"episodeNumber":2,"title":"Creating This Portfolio Website and Blog","slug":"creating-this-portfolio-website-and-blog","date":"2025-01-24","description":"How I built my portfolio website and blog using React, TypeScript, and Vite","tags":["frontend","meta"],"readingTime":2,"wordCount":500},{"episodeNumber":1,"title":"Brainwash Yourself for Success","slug":"brainwash-yourself-for-success","date":"2017-04-22","description":"how i overcame procrastination and transformed my study habits for GATE preparation - a journey from last-minute cramming to systematic learning","tags":["personal","tutorials"],"readingTime":5,"wordCount":801},{"episodeNumber":0,"title":"The Revelations of a BTech Student","slug":"revelations-of-a-btech-student","date":"2017-04-20","description":"my journey from failing semester exams to achieving GATE rank 170 - lessons learned about learning, persistence, and finding your own path","tags":["personal"],"readingTime":6,"wordCount":1131}]; // Embedded from Node.js script
+        const allPostsData = {{ allPostsData }}; // Embedded from Node.js script
         // Utility function to format date
         function formatDate(dateString) {
             const date = new Date(dateString);
@@ -724,7 +1104,7 @@
 
 
         // Tag filtering functionality
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const filterButtons = document.querySelectorAll('.tag-filter, .show-all');
             const showAllButton = document.querySelector('.show-all');
 
@@ -758,7 +1138,7 @@
             }
 
             filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     filterButtons.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
                     const tag = this.dataset.tag;
@@ -774,7 +1154,7 @@
             constructor(elementId, options = {}) {
                 this.element = document.getElementById(elementId);
                 if (!this.element) return;
-                
+
                 this.patternType = options.patternType || 'wave';
                 this.speed = options.speed || 150;
                 this.width = options.width || 12;
@@ -783,7 +1163,7 @@
                 this.frameIndex = 0;
                 this.pattern = [];
                 this.isAnimating = false;
-                
+
                 // 90s BBS character sets for different patterns
                 this.charSets = {
                     blocks: "█▓▒░",
@@ -793,15 +1173,15 @@
                     matrix: "01アカサタ_-=+*",
                     oldschool: "X*+=-._:;'\"^"
                 };
-                
+
                 this.init();
             }
-            
+
             init() {
                 this.generatePattern();
                 this.render();
                 this.startAnimation();
-                
+
                 // Performance optimization
                 document.addEventListener('visibilitychange', () => {
                     if (document.hidden) {
@@ -811,17 +1191,17 @@
                     }
                 });
             }
-            
+
             generateWavePattern(frame) {
                 const pattern = [];
                 const chars = "/\\_-~";
-                
+
                 for (let y = 0; y < this.height; y++) {
                     let row = '';
                     for (let x = 0; x < this.width; x++) {
                         const wave = Math.sin((y + frame * 0.1) * 0.3) * 2;
                         const charIndex = Math.floor((wave + 2) % chars.length);
-                        
+
                         if (x === Math.floor(this.width / 2 + wave)) {
                             row += chars[charIndex];
                         } else if (Math.abs(x - (this.width / 2 + wave)) < 1.5) {
@@ -834,17 +1214,17 @@
                 }
                 return pattern;
             }
-            
+
             generateBlockPattern(frame) {
                 const pattern = [];
                 const blocks = "█▓▒░";
-                
+
                 for (let y = 0; y < this.height; y++) {
                     let row = '';
                     for (let x = 0; x < this.width; x++) {
                         const intensity = Math.sin((y + frame * 0.05) * 0.2) * Math.cos((x + frame * 0.03) * 0.4);
                         const blockIndex = Math.floor((intensity + 1) * 2) % blocks.length;
-                        
+
                         if (Math.random() < 0.7) {
                             row += blocks[blockIndex];
                         } else {
@@ -855,17 +1235,17 @@
                 }
                 return pattern;
             }
-            
+
             generateGeometricPattern(frame) {
                 const pattern = [];
                 const shapes = "▲▼◆◇○●";
-                
+
                 for (let y = 0; y < this.height; y++) {
                     let row = '';
                     for (let x = 0; x < this.width; x++) {
                         const cycle = (y + frame) % 8;
                         const shapeIndex = Math.floor(cycle / 2) % shapes.length;
-                        
+
                         if ((x + y + frame) % 4 === 0) {
                             row += shapes[shapeIndex];
                         } else if ((x + y + frame) % 6 === 0) {
@@ -878,16 +1258,16 @@
                 }
                 return pattern;
             }
-            
+
             generateRetroBoxPattern(frame) {
                 const pattern = [];
                 const boxes = "┌┐└┘│─┼╬";
-                
+
                 for (let y = 0; y < this.height; y++) {
                     let row = '';
                     for (let x = 0; x < this.width; x++) {
                         const boxCycle = (x + y + frame) % 12;
-                        
+
                         if (boxCycle < 2) {
                             row += boxes[0]; // ┌
                         } else if (boxCycle < 4) {
@@ -904,16 +1284,16 @@
                 }
                 return pattern;
             }
-            
+
             generateBinaryRainPattern(frame) {
                 const pattern = [];
                 const binary = "01";
-                
+
                 for (let y = 0; y < this.height; y++) {
                     let row = '';
                     for (let x = 0; x < this.width; x++) {
                         const rain = (frame + x * 3 + y) % 15;
-                        
+
                         if (rain < 2) {
                             row += binary[Math.floor(Math.random() * 2)];
                         } else if (rain < 4) {
@@ -926,7 +1306,7 @@
                 }
                 return pattern;
             }
-            
+
             generatePattern() {
                 switch (this.patternType) {
                     case 'wave':
@@ -948,28 +1328,28 @@
                         this.pattern = this.generateWavePattern(this.frameIndex);
                 }
             }
-            
+
             animate() {
                 if (!this.isAnimating) return;
-                
+
                 this.frameIndex++;
                 this.generatePattern();
                 this.render();
-                
+
                 this.animationId = setTimeout(() => this.animate(), this.speed);
             }
-            
+
             render() {
                 this.element.textContent = this.pattern.join('\n');
             }
-            
+
             startAnimation() {
                 if (!this.isAnimating) {
                     this.isAnimating = true;
                     this.animate();
                 }
             }
-            
+
             stopAnimation() {
                 this.isAnimating = false;
                 if (this.animationId) {
@@ -983,7 +1363,7 @@
             constructor(elementId, options = {}) {
                 this.element = document.getElementById(elementId);
                 if (!this.element) return;
-                
+
                 this.width = options.width || 12;
                 this.height = options.height || 60;
                 this.speed = options.speed || 120;
@@ -991,7 +1371,7 @@
                 this.columns = [];
                 this.frameIndex = 0;
                 this.isAnimating = false;
-                
+
                 // Different character sets for various 90s styles
                 this.styles = {
                     cyber: "01アカサタナ_-=+*",
@@ -999,11 +1379,11 @@
                     ascii: "!@#$%^&*()_+-=[]{}|;:,.<>?",
                     retro: "█▓▒░▄▀■□▪▫"
                 };
-                
+
                 this.chars = this.styles[this.style] || this.styles.cyber;
                 this.initColumns();
                 this.startAnimation();
-                
+
                 // Performance optimization
                 document.addEventListener('visibilitychange', () => {
                     if (document.hidden) {
@@ -1013,7 +1393,7 @@
                     }
                 });
             }
-            
+
             initColumns() {
                 for (let i = 0; i < this.width; i++) {
                     this.columns[i] = {
@@ -1022,30 +1402,30 @@
                         length: Math.floor(Math.random() * 10) + 5,
                         chars: []
                     };
-                    
+
                     // Pre-generate characters for this column
                     for (let j = 0; j < this.columns[i].length; j++) {
                         this.columns[i].chars[j] = this.chars[Math.floor(Math.random() * this.chars.length)];
                     }
                 }
             }
-            
+
             animate() {
                 if (!this.isAnimating) return;
-                
+
                 const pattern = Array(this.height).fill().map(() => ' '.repeat(this.width).split(''));
-                
+
                 // Update each column
                 this.columns.forEach((column, x) => {
                     column.y += column.speed * 0.5;
-                    
+
                     // Reset column when it goes off screen
                     if (column.y > this.height + column.length) {
                         column.y = -column.length;
                         column.speed = Math.random() * 2 + 0.5;
                         column.length = Math.floor(Math.random() * 10) + 5;
                     }
-                    
+
                     // Draw column trail
                     for (let i = 0; i < column.length; i++) {
                         const y = Math.floor(column.y - i);
@@ -1058,21 +1438,21 @@
                         }
                     }
                 });
-                
+
                 // Render optimized output
                 this.element.textContent = pattern.map(row => row.join('')).join('\n');
                 this.frameIndex++;
-                
+
                 this.animationId = setTimeout(() => this.animate(), this.speed);
             }
-            
+
             startAnimation() {
                 if (!this.isAnimating) {
                     this.isAnimating = true;
                     this.animate();
                 }
             }
-            
+
             stopAnimation() {
                 this.isAnimating = false;
                 if (this.animationId) {
@@ -1088,7 +1468,7 @@
                 // Left sidebar - rotating through different 90s BBS patterns
                 const leftPatterns = ['wave', 'geometric', 'retro', 'blocks'];
                 let leftPatternIndex = 0;
-                
+
                 function initLeftSidebar() {
                     new RetroPatternAnimator('leftSidebar', {
                         patternType: leftPatterns[leftPatternIndex],
@@ -1097,16 +1477,16 @@
                         height: 60
                     });
                 }
-                
+
                 initLeftSidebar();
-                
+
                 // Change left pattern every 30 seconds for variety
                 setInterval(() => {
                     leftPatternIndex = (leftPatternIndex + 1) % leftPatterns.length;
                     document.getElementById('leftSidebar').innerHTML = '';
                     initLeftSidebar();
                 }, 30000);
-                
+
                 // Right sidebar - optimized digital rain with 90s cyber aesthetic
                 new DigitalRain('rightSidebar', {
                     width: 12,
@@ -1114,11 +1494,11 @@
                     speed: 140,
                     style: 'cyber'
                 });
-                
+
                 // Switch right sidebar style every 45 seconds
                 const rightStyles = ['cyber', 'hacker', 'retro'];
                 let rightStyleIndex = 0;
-                
+
                 setInterval(() => {
                     rightStyleIndex = (rightStyleIndex + 1) % rightStyles.length;
                     document.getElementById('rightSidebar').innerHTML = '';
@@ -1130,7 +1510,7 @@
                     });
                 }, 45000);
             }
-            
+
             // Performance: Only reload if switching from mobile to desktop
             let wasWideScreen = window.innerWidth > 1024;
             window.addEventListener('resize', () => {
@@ -1140,13 +1520,13 @@
                     setTimeout(() => location.reload(), 100);
                 }
             });
-            
+
             // Add some extra 90s flair - random title glitch effect
             const title = document.querySelector('h1');
             if (title) {
                 const originalText = title.textContent;
                 const glitchChars = "!@#$%^&*()_+-=[]{}|;:,.<>?";
-                
+
                 setInterval(() => {
                     if (Math.random() < 0.02) { // 2% chance per second
                         let glitched = '';
@@ -1158,7 +1538,7 @@
                             }
                         }
                         title.textContent = glitched;
-                        
+
                         // Restore original text after brief glitch
                         setTimeout(() => {
                             title.textContent = originalText;
@@ -1166,39 +1546,39 @@
                     }
                 }, 1000);
             }
-            
+
             // Text materialization effect
             function initializeMaterializationEffect() {
                 const elementsToMaterialize = [
                     '.back-link',
-                    '.social-links', 
+                    '.social-links',
                     'h1',
                     '.description',
                     '.tag-filters',
                     '.episode-list li',
                     '.stats'
                 ];
-                
+
                 elementsToMaterialize.forEach((selector, index) => {
                     const elements = document.querySelectorAll(selector);
                     elements.forEach((element, elementIndex) => {
                         // Generate random starting position
                         const randomX = (Math.random() - 0.5) * 200; // -100 to 100px
                         const randomY = (Math.random() - 0.5) * 100; // -50 to 50px
-                        
+
                         // Set CSS custom properties for random position
                         element.style.setProperty('--random-x', `${randomX}px`);
                         element.style.setProperty('--random-y', `${randomY}px`);
-                        
+
                         // Add materializing class
                         element.classList.add('materializing');
-                        
+
                         // Calculate staggered delay
                         const delay = (index * 0.1) + (elementIndex * 0.05);
                         element.style.animationDelay = `${delay}s`;
                     });
                 });
-                
+
                 // Hide loading overlay after animations complete
                 const loadingOverlay = document.getElementById('loadingOverlay');
                 setTimeout(() => {
@@ -1208,19 +1588,19 @@
                     }, 800);
                 }, 400); // Start fade after initial delay
             }
-            
+
             // Intro Audio Functionality with Cross-Browser Support
             function playIntroAudio() {
                 const introAudio = document.getElementById('introAudio');
                 const audioPlayPrompt = document.getElementById('audioPlayPrompt');
                 const hasPlayedBefore = sessionStorage.getItem('blogIntroPlayed');
-                
+
                 if (!hasPlayedBefore && introAudio) {
                     introAudio.volume = 0.3; // Set volume to 30%
-                    
+
                     // Try to play the audio automatically
                     const playPromise = introAudio.play();
-                    
+
                     if (playPromise !== undefined) {
                         playPromise
                             .then(() => {
@@ -1238,7 +1618,7 @@
                     }
                 }
             }
-            
+
             function setupAudioTimeout(introAudio) {
                 // Stop audio after 10 seconds (failsafe)
                 setTimeout(() => {
@@ -1248,11 +1628,11 @@
                     }
                 }, 10500); // 10.5 seconds to be safe
             }
-            
+
             function showAudioPrompt(introAudio, audioPlayPrompt) {
                 // Show the terminal-style audio prompt
                 audioPlayPrompt.style.display = 'block';
-                
+
                 // Handle click/enter to play
                 function playAudioWithInteraction() {
                     introAudio.play()
@@ -1267,10 +1647,10 @@
                             audioPlayPrompt.style.display = 'none';
                         });
                 }
-                
+
                 // Click handler
                 audioPlayPrompt.addEventListener('click', playAudioWithInteraction);
-                
+
                 // Keyboard handler (Enter key)
                 function handleKeyPress(event) {
                     if (event.key === 'Enter' || event.key === ' ') {
@@ -1284,9 +1664,9 @@
                         document.removeEventListener('keydown', handleKeyPress);
                     }
                 }
-                
+
                 document.addEventListener('keydown', handleKeyPress);
-                
+
                 // Auto-dismiss after 10 seconds if no interaction
                 setTimeout(() => {
                     if (audioPlayPrompt.style.display !== 'none') {
@@ -1296,16 +1676,17 @@
                     }
                 }, 10000);
             }
-            
+
             // Initialize on page load
             initializeMaterializationEffect();
-            
+
             // Play intro audio after a brief delay to allow page elements to load
             setTimeout(playIntroAudio, 800);
         });
     </script>
-    
+
     <!-- GoatCounter Analytics -->
     <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
+
 </html>

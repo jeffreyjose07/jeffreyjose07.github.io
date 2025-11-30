@@ -35,7 +35,7 @@ class SemanticColorizer {
 
     buildPatterns() {
         const patterns = new Map();
-        
+
         Object.entries(this.config.semanticCategories).forEach(([category, data]) => {
             data.patterns.forEach(pattern => {
                 // Create case-insensitive regex for each pattern
@@ -43,7 +43,7 @@ class SemanticColorizer {
                 patterns.set(regex, category);
             });
         });
-        
+
         return patterns;
     }
 
@@ -82,7 +82,7 @@ class SemanticColorizer {
 
         // First pass: collect all matches with their positions
         const matches = [];
-        
+
         // Check technical phrases first (longer patterns have priority)
         Object.entries(this.technicalPhrases).forEach(([phrase, category]) => {
             const regex = new RegExp(`\\b${phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
@@ -104,11 +104,11 @@ class SemanticColorizer {
             regex.lastIndex = 0; // Reset regex state
             while ((match = regex.exec(text)) !== null) {
                 // Check if this overlaps with any higher priority match
-                const overlaps = matches.some(m => 
+                const overlaps = matches.some(m =>
                     (match.index >= m.start && match.index < m.end) ||
                     (match.index + match[0].length > m.start && match.index + match[0].length <= m.end)
                 );
-                
+
                 if (!overlaps) {
                     matches.push({
                         start: match.index,
@@ -144,7 +144,7 @@ const renderer = new marked.Renderer();
 
 // Override text rendering to apply semantic color coding
 const originalText = renderer.text;
-renderer.text = function(text) {
+renderer.text = function (text) {
     return colorizer.colorizeText(text);
 };
 
@@ -165,7 +165,7 @@ function createCleanSlug(title, customSlug) {
     if (customSlug) {
         return customSlug.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-');
     }
-    
+
     // Generate clean slug from title
     return title
         .toLowerCase()
@@ -187,11 +187,11 @@ function formatDate(dateString) {
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
-    
+
     const day = date.getDate();
     const month = months[date.getMonth()];
     const year = date.getFullYear();
-    
+
     return `${day} ${month} ${year}`;
 }
 
@@ -211,22 +211,25 @@ function loadTemplate(templateName) {
     return fs.readFileSync(templatePath, 'utf8');
 }
 
+// Load site header template
+const siteHeader = loadTemplate('header');
+
 // Process a single blog post
 function processPost(filename, episodeNumber, allPosts = []) {
     const filePath = path.join(POSTS_DIR, filename);
     const fileContent = fs.readFileSync(filePath, 'utf8');
-    
+
     // Parse frontmatter and content
     const { data: frontmatter, content } = matter(fileContent);
-    
+
     // Generate HTML content
     const htmlContent = marked(content);
-    
+
     // Calculate metadata
     const wordCount = frontmatter.wordCount || countWords(content);
     const readingTime = frontmatter.readingTime || estimateReadingTime(content);
-    
-    
+
+
     // Format tags with colors and make them clickable
     const tagsFormatted = frontmatter.tags
         ? frontmatter.tags.map(tag => {
@@ -234,17 +237,17 @@ function processPost(filename, episodeNumber, allPosts = []) {
             return `<a href="/blog#tag-${tag}" class="tag ${tagColorCategory}" data-tag="${tag}">${tag}</a>`;
         }).join(', ')
         : '';
-    
+
     // Create post slug
     const slug = createCleanSlug(frontmatter.title, frontmatter.slug);
-    
+
     // Generate navigation links
     const currentIndex = allPosts.findIndex(post => post.episodeNumber === episodeNumber);
     const prevPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
     const nextPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
-    
+
     const navigationHtml = generatePostNavigation(prevPost, nextPost);
-    
+
     // Process inline styles and scripts from frontmatter
     const inlineStyles = frontmatter.inlineStyles || '';
     const inlineScripts = frontmatter.inlineScripts || '';
@@ -268,18 +271,20 @@ function processPost(filename, episodeNumber, allPosts = []) {
         .replace(/{{emailUrl}}/g, config.social.email)
         .replace(/{{resumeUrl}}/g, config.resumeUrl)
         .replace(/{{inlineStyles}}/g, inlineStyles)
-        .replace(/{{inlineScripts}}/g, inlineScripts);
-    
+        .replace(/{{inlineStyles}}/g, inlineStyles)
+        .replace(/{{inlineScripts}}/g, inlineScripts)
+        .replace(/{{siteHeader}}/g, siteHeader);
+
     // Create output directory
     const outputDir = path.join(OUTPUT_DIR, slug);
-    
+
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
     }
-    
+
     // Write HTML file
     fs.writeFileSync(path.join(outputDir, 'index.html'), html);
-    
+
     return {
         episodeNumber,
         title: frontmatter.title,
@@ -295,7 +300,7 @@ function processPost(filename, episodeNumber, allPosts = []) {
 // Generate navigation HTML for posts
 function generatePostNavigation(prevPost, nextPost) {
     let navHtml = '<nav class="post-navigation">';
-    
+
     if (prevPost) {
         navHtml += `
             <div class="nav-previous">
@@ -305,7 +310,7 @@ function generatePostNavigation(prevPost, nextPost) {
                 </a>
             </div>`;
     }
-    
+
     if (nextPost) {
         navHtml += `
             <div class="nav-next">
@@ -315,7 +320,7 @@ function generatePostNavigation(prevPost, nextPost) {
                 </a>
             </div>`;
     }
-    
+
     navHtml += '</nav>';
     return navHtml;
 }
@@ -374,7 +379,9 @@ function generateIndex(posts) {
             .replace(/{{linkedinUrl}}/g, config.social.linkedin)
             .replace(/{{twitterUrl}}/g, config.social.twitter)
             .replace(/{{emailUrl}}/g, config.social.email)
-            .replace(/{{resumeUrl}}/g, config.resumeUrl);
+            .replace(/{{emailUrl}}/g, config.social.email)
+            .replace(/{{resumeUrl}}/g, config.resumeUrl)
+            .replace(/{{siteHeader}}/g, siteHeader);
 
         const outputFileName = i === 0 ? 'index.html' : `page${i + 1}.html`;
         fs.writeFileSync(path.join(OUTPUT_DIR, outputFileName), html);
@@ -385,7 +392,7 @@ function generateIndex(posts) {
 function generateRSSfeed(posts) {
     const sortedPosts = posts.sort((a, b) => new Date(b.date) - new Date(a.date));
     const latestPosts = sortedPosts.slice(0, 10); // Only include latest 10 posts
-    
+
     const rssItems = latestPosts.map(post => {
         // Try to get the full HTML content for each post
         let htmlContent = '';
@@ -452,7 +459,7 @@ ${rssItems}
 function generateSitemap(posts) {
     const baseUrl = 'https://jeffreyjose07.is-a.dev';
     const currentDate = new Date().toISOString().split('T')[0];
-    
+
     // Static pages
     const staticPages = [
         { url: `${baseUrl}/`, priority: '1.0', changefreq: 'monthly' },
@@ -460,7 +467,7 @@ function generateSitemap(posts) {
         { url: `${baseUrl}/blog/archive.html`, priority: '0.8', changefreq: 'weekly' },
         { url: `${baseUrl}/blog/feed.xml`, priority: '0.7', changefreq: 'daily' }
     ];
-    
+
     // Blog posts
     const postUrls = posts.map(post => ({
         url: `${baseUrl}/blog/${post.slug}`,
@@ -468,9 +475,9 @@ function generateSitemap(posts) {
         priority: '0.8',
         changefreq: 'monthly'
     }));
-    
+
     const allUrls = [...staticPages, ...postUrls];
-    
+
     const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${allUrls.map(page => `  <url>
@@ -486,7 +493,7 @@ ${allUrls.map(page => `  <url>
 
 // Generate posts.json for analytics consumption
 function generatePostsJson(posts) {
-    
+
     // Create a clean data structure for analytics
     const postsData = posts.map(post => ({
         url: `/blog/${post.slug}`,
@@ -499,18 +506,29 @@ function generatePostsJson(posts) {
         wordCount: post.wordCount || 1000,
         slug: post.slug
     }));
-    
+
     // Sort by episode number (newest first)
     postsData.sort((a, b) => parseInt(b.episode) - parseInt(a.episode));
-    
+
     const postsJson = JSON.stringify(postsData, null, 2);
     fs.writeFileSync(path.join(OUTPUT_DIR, 'posts.json'), postsJson);
+
+    // Generate search index for client-side search
+    const searchIndex = posts.map(post => ({
+        title: post.title,
+        slug: post.slug,
+        description: post.description,
+        tags: post.tags,
+        date: post.date,
+        content: "" // We don't include full content to keep index small, can be added if needed
+    }));
+    fs.writeFileSync(path.join(OUTPUT_DIR, 'search.json'), JSON.stringify(searchIndex));
 }
 
 // Generate archive page
 function generateArchive(posts) {
     const template = loadTemplate('archive');
-    
+
     // Group posts by year
     const postsByYear = {};
     posts.forEach(post => {
@@ -520,14 +538,14 @@ function generateArchive(posts) {
         }
         postsByYear[year].push(post);
     });
-    
+
     // Sort years in descending order
     const years = Object.keys(postsByYear).sort((a, b) => b - a);
-    
+
     // Generate year sections
     const yearSectionsHtml = years.map(year => {
         const yearPosts = postsByYear[year].sort((a, b) => new Date(b.date) - new Date(a.date));
-        
+
         const postsHtml = yearPosts.map(post => {
             const episodeNum = post.episodeNumber.toString().padStart(3, '0');
             return `            <li>
@@ -536,7 +554,7 @@ function generateArchive(posts) {
                 </a>
             </li>`;
         }).join('\n');
-        
+
         return `        <div class="year-section">
             <h2 class="year-title">${year}</h2>
             <ul class="post-list">
@@ -544,7 +562,7 @@ ${postsHtml}
             </ul>
         </div>`;
     }).join('\n');
-    
+
     // Populate template
     const html = template
         .replace(/{{yearSections}}/g, yearSectionsHtml)
@@ -553,8 +571,9 @@ ${postsHtml}
         .replace(/{{linkedinUrl}}/g, config.social.linkedin)
         .replace(/{{twitterUrl}}/g, config.social.twitter)
         .replace(/{{emailUrl}}/g, config.social.email)
-        .replace(/{{resumeUrl}}/g, config.resumeUrl);
-    
+        .replace(/{{resumeUrl}}/g, config.resumeUrl)
+        .replace(/{{siteHeader}}/g, siteHeader);
+
     // Write archive file
     fs.writeFileSync(path.join(OUTPUT_DIR, 'archive.html'), html);
 }
@@ -562,17 +581,17 @@ ${postsHtml}
 // Main build function
 function build() {
     console.log('🚀 Building blog with advanced semantic coloring...');
-    
+
     // Get all markdown files (excluding template)
     const files = fs.readdirSync(POSTS_DIR)
         .filter(file => file.endsWith('.md') && !file.startsWith('_'))
         .sort(); // Sort to ensure consistent episode numbering
-    
+
     if (files.length === 0) {
         console.log('📝 No blog posts found to build.');
         return;
     }
-    
+
     // First pass: create post metadata for navigation
     const posts = [];
     files.forEach((file, index) => {
@@ -580,7 +599,7 @@ function build() {
         const filePath = path.join(POSTS_DIR, file);
         const fileContent = fs.readFileSync(filePath, 'utf8');
         const { data: frontmatter } = matter(fileContent);
-        
+
         posts.push({
             episodeNumber,
             title: frontmatter.title,
@@ -590,12 +609,12 @@ function build() {
             tags: frontmatter.tags || []
         });
     });
-    
+
     // Second pass: process each post with navigation context
     files.forEach((file, index) => {
         const episodeNumber = index;
         console.log(`📄 Processing ${file} as episode ${episodeNumber.toString().padStart(3, '0')}...`);
-        
+
         try {
             const processedPost = processPost(file, episodeNumber, posts);
             // Update the posts array with the complete processed data
@@ -605,12 +624,12 @@ function build() {
             console.error(`❌ Error processing ${file}:`, error.message);
         }
     });
-    
+
     // Generate index page
     console.log('📝 Generating blog index with tag filtering...');
     generateIndex(posts);
     console.log('✅ Generated blog index.html with tag filters');
-    
+
     // Only generate RSS feed during CI (GitHub Actions or CI env variable)
     if (process.env.GITHUB_ACTIONS === 'true' || process.env.CI === 'true') {
         console.log('📡 Generating RSS feed (CI detected)...');
@@ -619,22 +638,22 @@ function build() {
     } else {
         console.log('ℹ️ Skipping RSS feed generation (not running in CI).');
     }
-    
+
     // Generate archive page
     console.log('📚 Generating archive page...');
     generateArchive(posts);
     console.log('✅ Generated archive.html');
-    
+
     // Generate sitemap
     console.log('🗺️ Generating sitemap...');
     generateSitemap(posts);
     console.log('✅ Generated sitemap.xml');
-    
+
     // Generate posts.json for analytics
     console.log('📊 Generating posts.json for analytics...');
     generatePostsJson(posts);
     console.log('✅ Generated posts.json');
-    
+
     console.log(`🎉 Blog build complete! Generated ${posts.length} posts with navigation, RSS feed, archive, sitemap, posts.json, and semantic highlighting.`);
 }
 

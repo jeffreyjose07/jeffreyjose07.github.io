@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
     <meta charset="UTF-8">
@@ -76,7 +77,7 @@
             color: #888888;
             text-decoration: none;
             font-size: 11px;
-            
+
             letter-spacing: 0.5px;
             transition: color 0.2s ease;
         }
@@ -125,6 +126,7 @@
                 opacity: 0;
                 transform: translate(var(--random-x, 0), var(--random-y, 0)) scale(0.8);
             }
+
             100% {
                 opacity: 1;
                 transform: translate(0, 0) scale(1);
@@ -135,7 +137,7 @@
             font-size: 16px;
             font-weight: normal;
             margin-bottom: 25px;
-            
+
             color: #55ff55;
             letter-spacing: 0.5px;
         }
@@ -155,7 +157,7 @@
             font-weight: normal;
             margin-bottom: 15px;
             color: #5588ff;
-            
+
             border-bottom: 1px solid #333333;
             padding-bottom: 5px;
         }
@@ -236,36 +238,24 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay"></div>
 
+    {{siteHeader}}
+
     <div class="container">
-        <div class="back-link">
-            <a href="/blog">back to blog</a>
-        </div>
-        
-        <div class="social-links">
-            <a href="{{githubUrl}}" target="_blank" rel="noopener">github</a>
-            <span class="divider">·</span>
-            <a href="{{linkedinUrl}}" target="_blank" rel="noopener">linkedin</a>
-            <span class="divider">·</span>
-            <a href="{{twitterUrl}}" target="_blank" rel="noopener">twitter</a>
-            <span class="divider">·</span>
-            <a href="{{emailUrl}}">email</a>
-            <span class="divider">·</span>
-            <a href="{{resumeUrl}}" target="_blank">resume</a>
-        </div>
-        
+
         <h1>archive</h1>
-        
+
         {{yearSections}}
-        
+
         <div class="stats">
             total posts: {{totalPosts}}
         </div>
     </div>
-    
+
     <script>
         // Text materialization effect
         function initializeMaterializationEffect() {
@@ -276,27 +266,27 @@
                 '.year-section',
                 '.stats'
             ];
-            
+
             elementsToMaterialize.forEach((selector, index) => {
                 const elements = document.querySelectorAll(selector);
                 elements.forEach((element, elementIndex) => {
                     // Generate random starting position
                     const randomX = (Math.random() - 0.5) * 200; // -100 to 100px
                     const randomY = (Math.random() - 0.5) * 100; // -50 to 50px
-                    
+
                     // Set CSS custom properties for random position
                     element.style.setProperty('--random-x', `${randomX}px`);
                     element.style.setProperty('--random-y', `${randomY}px`);
-                    
+
                     // Add materializing class
                     element.classList.add('materializing');
-                    
+
                     // Calculate staggered delay
                     const delay = (index * 0.1) + (elementIndex * 0.05);
                     element.style.animationDelay = `${delay}s`;
                 });
             });
-            
+
             // Hide loading overlay after animations complete
             const loadingOverlay = document.getElementById('loadingOverlay');
             setTimeout(() => {
@@ -306,46 +296,54 @@
                 }, 800);
             }, 400); // Start fade after initial delay
         }
-        
+
         // Initialize materialization effect on page load
         document.addEventListener('DOMContentLoaded', () => {
             initializeMaterializationEffect();
         });
     </script>
-    <footer class="rss-footer" style="text-align:center; margin:2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;">
-      <a href="/blog/feed.xml" class="rss-button" target="_blank" rel="noopener">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 8 8" style="margin-right:6px; vertical-align:middle;">
-          <path d="M1 0v1c3.32 0 6 2.68 6 6h1c0-3.86-3.14-7-7-7zm0 2v1c2.21 0 4 1.79 4 4h1c0-2.76-2.24-5-5-5zm.5 2c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5z" fill="currentColor"/>
-        </svg>
-        <span>Subscribe via RSS</span>
-      </a>
+    <footer class="rss-footer"
+        style="text-align:center; margin:2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;">
+        <a href="/blog/feed.xml" class="rss-button" target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 8 8"
+                style="margin-right:6px; vertical-align:middle;">
+                <path
+                    d="M1 0v1c3.32 0 6 2.68 6 6h1c0-3.86-3.14-7-7-7zm0 2v1c2.21 0 4 1.79 4 4h1c0-2.76-2.24-5-5-5zm.5 2c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5z"
+                    fill="currentColor" />
+            </svg>
+            <span>Subscribe via RSS</span>
+        </a>
     </footer>
     <style>
-      .rss-button {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.6em 1.2em;
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #4a5568;
-        background: #f7fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 0.375rem;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      }
-      .rss-button:hover {
-        background: #edf2f7;
-        border-color: #cbd5e0;
-        transform: translateY(-1px);
-      }
-      .rss-button:active {
-        transform: translateY(0);
-      }
-      .rss-button svg {
-        color: #f6ad55;
-      }
+        .rss-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.6em 1.2em;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #4a5568;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .rss-button:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+            transform: translateY(-1px);
+        }
+
+        .rss-button:active {
+            transform: translateY(0);
+        }
+
+        .rss-button svg {
+            color: #f6ad55;
+        }
     </style>
 </body>
+
 </html>

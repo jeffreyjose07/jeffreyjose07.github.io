@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Automating the Void - Building a Frictionless Blog System - Jeffrey Jose</title>
     <meta name="description" content="How I Solved the Pain of Manual Blog Creation by Building an Automated System That Preserves the Terminal Aesthetic While Eliminating Friction" />
-    
+
     <!-- SEO Meta Tags -->
     <meta property="og:title" content="Automating the Void - Building a Frictionless Blog System">
     <meta property="og:description" content="How I Solved the Pain of Manual Blog Creation by Building an Automated System That Preserves the Terminal Aesthetic While Eliminating Friction">
@@ -81,7 +82,7 @@
             font-size: 16px;
             font-weight: normal;
             margin-bottom: 10px;
-                        color: #55ff55;
+            color: #55ff55;
             letter-spacing: 0.3px;
             line-height: 1.3;
         }
@@ -123,7 +124,7 @@
             font-weight: normal;
             margin: 30px 0 15px 0;
             color: #5588ff;
-                        letter-spacing: 0.2px;
+            letter-spacing: 0.2px;
         }
 
         @media (min-width: 768px) {
@@ -137,7 +138,7 @@
             font-weight: normal;
             margin: 25px 0 12px 0;
             color: #ff55ff;
-                    }
+        }
 
         @media (min-width: 768px) {
             .post-content h3 {
@@ -145,7 +146,8 @@
             }
         }
 
-        .post-content ul, .post-content ol {
+        .post-content ul,
+        .post-content ol {
             margin: 15px 0;
             padding-left: 20px;
         }
@@ -290,20 +292,40 @@
             border-bottom: 1px solid transparent;
             transition: all 0.2s ease;
         }
-        
+
         .post-footer .tag:hover {
             text-decoration: none;
             border-bottom-color: currentColor;
         }
-        
+
         /* Tag color classes */
-        .tag.success { color: #55ff55; }
-        .tag.structure { color: #5588ff; }
-        .tag.process { color: #ffff55; }
-        .tag.attention { color: #ff8855; }
-        .tag.meta { color: #ff55ff; }
-        .tag.connection { color: #55ffff; }
-        .tag.neutral { color: #c9c9c9; }
+        .tag.success {
+            color: #55ff55;
+        }
+
+        .tag.structure {
+            color: #5588ff;
+        }
+
+        .tag.process {
+            color: #ffff55;
+        }
+
+        .tag.attention {
+            color: #ff8855;
+        }
+
+        .tag.meta {
+            color: #ff55ff;
+        }
+
+        .tag.connection {
+            color: #55ffff;
+        }
+
+        .tag.neutral {
+            color: #c9c9c9;
+        }
 
         /* Image styling */
         .post-content img {
@@ -320,7 +342,7 @@
             .container {
                 padding: 0 10px;
             }
-            
+
             .post-content pre {
                 margin-left: -10px;
                 margin-right: -10px;
@@ -343,21 +365,24 @@
             gap: 20px;
         }
 
-        .nav-previous, .nav-next {
+        .nav-previous,
+        .nav-next {
             padding: 15px;
             border: 1px solid #333333;
             border-radius: 4px;
             background-color: #111111;
         }
 
-        .nav-previous a, .nav-next a {
+        .nav-previous a,
+        .nav-next a {
             display: block;
             color: #c9c9c9;
             text-decoration: none;
             transition: all 0.2s ease;
         }
 
-        .nav-previous a:hover, .nav-next a:hover {
+        .nav-previous a:hover,
+        .nav-next a:hover {
             color: #ffffff;
         }
 
@@ -381,7 +406,8 @@
             line-height: 1.3;
         }
 
-        .nav-previous a:hover .nav-title, .nav-next a:hover .nav-title {
+        .nav-previous a:hover .nav-title,
+        .nav-next a:hover .nav-title {
             color: #ffffff;
         }
 
@@ -390,7 +416,7 @@
                 grid-template-columns: 1fr;
                 gap: 15px;
             }
-            
+
             .nav-next {
                 text-align: left;
             }
@@ -430,7 +456,7 @@
             color: #888888;
             text-decoration: none;
             font-size: 11px;
-                        letter-spacing: 0.5px;
+            letter-spacing: 0.5px;
             transition: color 0.2s ease;
         }
 
@@ -478,6 +504,7 @@
                 opacity: 0;
                 transform: translate(var(--random-x, 0), var(--random-y, 0)) scale(0.8);
             }
+
             100% {
                 opacity: 1;
                 transform: translate(0, 0) scale(1);
@@ -485,41 +512,355 @@
         }
 
         /* Inline styles injected from frontmatter */
-        
+            {
+                {
+                inlineStyles
+            }
+        }
     </style>
 </head>
+
 <body>
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay"></div>
 
+    <style>
+    /* Header Styles matching Portfolio */
+    .site-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background-color: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .header-container {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .site-logo {
+        font-size: 20px;
+        font-weight: 700;
+        color: #ffffff;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .site-logo:hover {
+        color: #4285F4;
+        /* Google Blue */
+    }
+
+    .site-nav {
+        display: flex;
+        gap: 24px;
+    }
+
+    .nav-link {
+        color: #e5e7eb;
+        /* gray-200 */
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.2s;
+        position: relative;
+    }
+
+    .nav-link:hover {
+        color: #4285F4;
+    }
+
+    .nav-link.active {
+        color: #4285F4;
+    }
+
+    /* Mobile Menu Toggle */
+    .mobile-menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+        .site-nav {
+            display: none;
+            /* Hidden by default on mobile */
+            position: absolute;
+            top: 64px;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.95);
+            flex-direction: column;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .site-nav.open {
+            display: flex;
+        }
+
+        .mobile-menu-toggle {
+            display: block;
+        }
+    }
+
+    /* Adjust main content to not be hidden behind fixed header */
+    body {
+        padding-top: 84px !important;
+        /* 64px header + 20px padding */
+    }
+
+    }
+    }
+
+    /* Search Modal */
+    .search-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(4px);
+        z-index: 2000;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 100px;
+    }
+
+    .search-modal-overlay.open {
+        display: flex;
+    }
+
+    .search-modal {
+        background: #111827;
+        border: 1px solid #374151;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+
+    .search-input-container {
+        padding: 16px;
+        border-bottom: 1px solid #374151;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-icon {
+        color: #9ca3af;
+        margin-right: 12px;
+    }
+
+    .search-input {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 18px;
+        width: 100%;
+        outline: none;
+    }
+
+    .search-results {
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 8px;
+    }
+
+    .search-result-item {
+        display: block;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #e5e7eb;
+        border-radius: 8px;
+        transition: background-color 0.2s;
+    }
+
+    .search-result-item:hover {
+        background-color: #1f2937;
+    }
+
+    .search-result-title {
+        font-weight: 600;
+        font-size: 16px;
+        color: #4285F4;
+        margin-bottom: 4px;
+    }
+
+    .search-result-excerpt {
+        font-size: 14px;
+        color: #9ca3af;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .search-shortcut {
+        font-size: 12px;
+        color: #6b7280;
+        border: 1px solid #374151;
+        border-radius: 4px;
+        padding: 2px 6px;
+        margin-left: auto;
+    }
+</style>
+
+<header class="site-header">
+    <div class="header-container">
+        <a href="/" class="site-logo">Jeffrey Jose</a>
+
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <button class="search-trigger" onclick="openSearch()"
+                style="background: none; border: none; color: #9ca3af; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; transition: background 0.2s;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span
+                    style="font-size: 14px; display: none; @media (min-width: 768px) { display: inline; }">Search</span>
+                <span class="search-shortcut"
+                    style="display: none; @media (min-width: 768px) { display: inline; }">⌘K</span>
+            </button>
+
+            <button class="mobile-menu-toggle" aria-label="Toggle menu"
+                onclick="document.querySelector('.site-nav').classList.toggle('open')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="site-nav">
+            <a href="/#hero" class="nav-link">Home</a>
+            <a href="/#projects" class="nav-link">Projects</a>
+            <a href="/#skills" class="nav-link">Skills</a>
+            <a href="/#experience" class="nav-link">Experience</a>
+            <a href="/#education" class="nav-link">Education</a>
+            <a href="/#contact" class="nav-link">Contact</a>
+            <a href="/blog" class="nav-link active">Blog</a>
+            <a href="/analytics.html" class="nav-link">Analytics</a>
+        </nav>
+    </div>
+</header>
+
+<!-- Search Modal HTML -->
+<div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()">
+    <div class="search-modal">
+        <div class="search-input-container">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" class="search-input" placeholder="Search posts..." id="searchInput" autocomplete="off">
+        </div>
+        <div class="search-results" id="searchResults">
+            <!-- Results will be injected here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    let searchIndex = [];
+    let isSearchOpen = false;
+
+    async function loadSearchIndex() {
+        if (searchIndex.length > 0) return;
+        try {
+            const response = await fetch('/blog/search.json');
+            searchIndex = await response.json();
+        } catch (e) {
+            console.error('Failed to load search index', e);
+        }
+    }
+
+    function openSearch() {
+        document.getElementById('searchModal').classList.add('open');
+        document.getElementById('searchInput').focus();
+        isSearchOpen = true;
+        loadSearchIndex();
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSearch() {
+        document.getElementById('searchModal').classList.remove('open');
+        isSearchOpen = false;
+        document.body.style.overflow = '';
+    }
+
+    function performSearch(query) {
+        if (!query) {
+            document.getElementById('searchResults').innerHTML = '';
+            return;
+        }
+
+        const results = searchIndex.filter(post => {
+            const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
+            const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
+            const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
+            return titleMatch || descMatch || tagMatch;
+        }).slice(0, 5); // Limit to 5 results
+
+        const resultsHtml = results.map(post => `
+            <a href="/blog/${post.slug}" class="search-result-item" onclick="closeSearch()">
+                <div class="search-result-title">${post.title}</div>
+                <div class="search-result-excerpt">${post.description || ''}</div>
+            </a>
+        `).join('');
+
+        document.getElementById('searchResults').innerHTML = results.length > 0
+            ? resultsHtml
+            : '<div style="padding: 16px; color: #9ca3af; text-align: center;">No results found</div>';
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        performSearch(e.target.value);
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            if (isSearchOpen) closeSearch();
+            else openSearch();
+        }
+        if (e.key === 'Escape' && isSearchOpen) {
+            closeSearch();
+        }
+    });
+</script>
+
     <div class="container">
-        <div class="breadcrumb">
-            <a href="/">home</a><span>></span><a href="/blog">blog</a><span>></span><span>Automating the Void - Building a Frictionless Blog System</span>
-        </div>
-        
-        <div class="back-link">
-            <a href="/blog">back to blog</a>
-        </div>
-        
-        <div class="social-links">
-            <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener">github</a>
-            <span class="divider">·</span>
-            <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener">linkedin</a>
-            <span class="divider">·</span>
-            <a href="/analytics.html">analytics</a>
-            <span class="divider">·</span>
-            <a href="https://x.com/josejeffrey07" target="_blank" rel="noopener">twitter</a>
-            <span class="divider">·</span>
-            <a href="mailto:jeffrey.jose07@gmail.com">email</a>
-            <span class="divider">·</span>
-            <a href="/resume.pdf" target="_blank">resume</a>
-        </div>
-        
+
         <header class="post-header">
             <h1 class="post-title">004: Automating the Void - Building a Frictionless Blog System</h1>
             <div class="post-meta">24 Jan 2025</div>
         </header>
-        
+
         <article class="post-content">
             <p>There&#39;s a peculiar anxiety that comes with wanting to write but facing the weight of implementation. Every time I wanted to create a blog post, I had to copy 300+ lines of <span class="process">HTML</span>, manually update styling, remember the exact color codes, and then edit the blog index. The barrier between thought and expression had become a wall.</p>
 <h2>the problem statement</h2>
@@ -630,13 +971,14 @@ renderer.text = function(text) {
 <p>Another small victory against <span class="meta">entropy</span>, one automated <span class="success">deployment</span> at a time.</p>
 
         </article>
-        
+
         <footer class="post-footer">
             <div>
-                words: ~889 · reading time: ~5 min · <span id="view-count">👀 views loading...</span> · tags: <a href="/blog#tag-automation" class="tag success" data-tag="automation">automation</a>, <a href="/blog#tag-meta" class="tag meta" data-tag="meta">meta</a>
+                words: ~889 · reading time: ~5 min · <span id="view-count">👀 views
+                    loading...</span> · tags: <a href="/blog#tag-automation" class="tag success" data-tag="automation">automation</a>, <a href="/blog#tag-meta" class="tag meta" data-tag="meta">meta</a>
             </div>
         </footer>
-        
+
         <nav class="post-navigation">
             <div class="nav-previous">
                 <a href="/blog/scalable-chat-platform">
@@ -651,15 +993,15 @@ renderer.text = function(text) {
                 </a>
             </div></nav>
     </div>
-    
+
     <div class="reading-progress"></div>
-    
+
     <script>
         // Prevent scroll restoration but don't interfere with navigation
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
-        
+
         // Only scroll to top on actual page refresh (not navigation)
         window.addEventListener('load', () => {
             // Check if this is a refresh vs navigation
@@ -667,13 +1009,13 @@ renderer.text = function(text) {
                 (performance.navigation && performance.navigation.type === performance.navigation.TYPE_RELOAD) ||
                 (performance.getEntriesByType('navigation')[0] && performance.getEntriesByType('navigation')[0].type === 'reload')
             );
-            
+
             // Always start at top for new page loads
             setTimeout(() => {
                 window.scrollTo(0, 0);
             }, 0);
         });
-        
+
         // Simple reading progress indicator
         window.addEventListener('scroll', () => {
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
@@ -693,27 +1035,27 @@ renderer.text = function(text) {
                 '.post-footer',
                 '.post-navigation'
             ];
-            
+
             elementsToMaterialize.forEach((selector, index) => {
                 const elements = document.querySelectorAll(selector);
                 elements.forEach((element, elementIndex) => {
                     // Generate random starting position
                     const randomX = (Math.random() - 0.5) * 200; // -100 to 100px
                     const randomY = (Math.random() - 0.5) * 100; // -50 to 50px
-                    
+
                     // Set CSS custom properties for random position
                     element.style.setProperty('--random-x', `${randomX}px`);
                     element.style.setProperty('--random-y', `${randomY}px`);
-                    
+
                     // Add materializing class
                     element.classList.add('materializing');
-                    
+
                     // Calculate staggered delay
                     const delay = (index * 0.1) + (elementIndex * 0.05);
                     element.style.animationDelay = `${delay}s`;
                 });
             });
-            
+
             // Hide loading overlay after animations complete
             const loadingOverlay = document.getElementById('loadingOverlay');
             setTimeout(() => {
@@ -723,18 +1065,18 @@ renderer.text = function(text) {
                 }, 800);
             }, 400); // Start fade after initial delay
         }
-        
+
         // Initialize materialization effect on page load
         document.addEventListener('DOMContentLoaded', () => {
             initializeMaterializationEffect();
             loadViewCount();
         });
-        
+
         // Load view count from GoatCounter
         function loadViewCount() {
             const path = window.location.pathname;
             const viewCountElement = document.getElementById('view-count');
-            
+
             fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
                 .then(response => response.json())
                 .then(data => {
@@ -750,45 +1092,53 @@ renderer.text = function(text) {
         }
 
         /* Inline scripts injected from frontmatter */
-        
+        { { inlineScripts } }
     </script>
-    <footer class="rss-footer" style="text-align:center; margin:2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;">
-      <a href="/blog/feed.xml" class="rss-button" target="_blank" rel="noopener">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 8 8" style="margin-right:6px; vertical-align:middle;">
-          <path d="M1 0v1c3.32 0 6 2.68 6 6h1c0-3.86-3.14-7-7-7zm0 2v1c2.21 0 4 1.79 4 4h1c0-2.76-2.24-5-5-5zm.5 2c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5z" fill="currentColor"/>
-        </svg>
-        <span>Subscribe via RSS</span>
-      </a>
+    <footer class="rss-footer"
+        style="text-align:center; margin:2rem 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;">
+        <a href="/blog/feed.xml" class="rss-button" target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 8 8"
+                style="margin-right:6px; vertical-align:middle;">
+                <path
+                    d="M1 0v1c3.32 0 6 2.68 6 6h1c0-3.86-3.14-7-7-7zm0 2v1c2.21 0 4 1.79 4 4h1c0-2.76-2.24-5-5-5zm.5 2c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5z"
+                    fill="currentColor" />
+            </svg>
+            <span>Subscribe via RSS</span>
+        </a>
     </footer>
     <style>
-      .rss-button {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.6em 1.2em;
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #4a5568;
-        background: #f7fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 0.375rem;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      }
-      .rss-button:hover {
-        background: #edf2f7;
-        border-color: #cbd5e0;
-        transform: translateY(-1px);
-      }
-      .rss-button:active {
-        transform: translateY(0);
-      }
-      .rss-button svg {
-        color: #f6ad55;
-      }
+        .rss-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.6em 1.2em;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #4a5568;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .rss-button:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+            transform: translateY(-1px);
+        }
+
+        .rss-button:active {
+            transform: translateY(0);
+        }
+
+        .rss-button svg {
+            color: #f6ad55;
+        }
     </style>
-    
+
     <!-- GoatCounter Analytics -->
     <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
+
 </html>
