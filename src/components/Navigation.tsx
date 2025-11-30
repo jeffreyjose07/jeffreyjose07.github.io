@@ -89,7 +89,7 @@ const Navigation = () => {
                   e.preventDefault();
                   handleNavClick(item.href, (item as any).external);
                 }}
-                className="px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 hover:bg-white/10 hover:text-primary relative group"
+                className="px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 hover:bg-accent hover:text-primary relative group"
               >
                 {item.label}
               </a>

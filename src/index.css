@@ -5,7 +5,8 @@
 /* Smooth scrolling for anchor navigation */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem; /* Account for fixed navigation */
+  scroll-padding-top: 5rem;
+  /* Account for fixed navigation */
 }
 
 /* Enhanced responsive breakpoints */
@@ -19,31 +20,79 @@ html {
 
 @layer base {
   :root {
-    /* Premium Dark Theme - Default */
-    --background: 240 10% 3.9%; /* #09090b - Deep Zinc */
-    --foreground: 0 0% 98%;
+    /* Light Theme - Default */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
 
     /* Card system */
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    /* Primary - Electric Violet */
+    --primary: 263.4 70% 50.4%;
+    --primary-foreground: 210 40% 98%;
+    --primary-glow: 263.4 70% 65%;
+
+    /* Secondary - Cool Gray */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    /* Muted colors */
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    /* Accent - Indigo */
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 263.4 70% 50.4%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    --gradient-card: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.01));
+    --gradient-accent: linear-gradient(135deg, hsl(263.4 70% 50.4%), hsl(280 65% 60%));
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Premium Dark Theme */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
 
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    /* Primary - Electric Violet */
-    --primary: 263.4 70% 50.4%; /* #7c3aed */
+    --primary: 263.4 70% 50.4%;
     --primary-foreground: 210 40% 98%;
     --primary-glow: 263.4 70% 65%;
 
-    /* Secondary - Cool Gray */
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
 
-    /* Muted colors */
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
 
-    /* Accent - Indigo */
     --accent: 240 3.7% 15.9%;
     --accent-foreground: 0 0% 98%;
 
@@ -54,12 +103,9 @@ html {
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
 
-    /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(240 10% 3.9%), hsl(263.4 70% 10%));
-    --gradient-card: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
     --gradient-accent: linear-gradient(135deg, hsl(263.4 70% 50.4%), hsl(280 65% 60%));
-
-    --radius: 0.75rem;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -69,30 +115,6 @@ html {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  /* Force Dark Mode styles even without .dark class if preferred, 
-     but keeping .dark block for compatibility if toggling is added later */
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
   }
 }
 
@@ -125,8 +147,13 @@ html {
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-muted-foreground;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-heading font-bold tracking-tight;
   }
 }
@@ -140,10 +167,23 @@ html {
     background-clip: text;
   }
 
-  .glass {
-    @apply bg-white/5 backdrop-blur-lg border border-white/10;
+  /* Dark mode override for gradient text */
+  .dark .text-gradient-premium {
+    background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
   }
-  
+
+  /* Light mode gradient text */
+  :root:not(.dark) .text-gradient-premium {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass {
+    @apply bg-white/70 dark:bg-white/5 backdrop-blur-lg border border-black/5 dark:border-white/10;
+  }
+
   .glass-card {
     @apply bg-card/50 backdrop-blur-md border border-white/5 hover:border-primary/30 transition-all duration-300;
   }
@@ -151,7 +191,7 @@ html {
   .glow-border {
     position: relative;
   }
-  
+
   .glow-border::after {
     content: '';
     position: absolute;
@@ -162,7 +202,7 @@ html {
     opacity: 0;
     transition: opacity 0.3s ease;
   }
-  
+
   .glow-border:hover::after {
     opacity: 1;
   }
@@ -171,7 +211,7 @@ html {
   .center-content {
     @apply flex items-center justify-center;
   }
-  
+
   .section-padding {
     @apply py-20 px-4 md:px-8;
   }
