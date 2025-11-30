@@ -1,5 +1,21 @@
 [
   {
+    "url": "/blog/optimizing-blog-interactivity-and-ux",
+    "title": "Optimizing Blog Interactivity and UX",
+    "episode": "022",
+    "date": "2025-11-30",
+    "tags": [
+      "web-development",
+      "debugging",
+      "ux",
+      "javascript"
+    ],
+    "description": "A deep dive into recent improvements: fixing the blank screen issue, implementing collapsible tag filters, and debugging critical interactivity bugs.",
+    "readingTime": 3,
+    "wordCount": 497,
+    "slug": "optimizing-blog-interactivity-and-ux"
+  },
+  {
     "url": "/blog/building-truthmeter-ai-measuring-the-real-impact-o",
     "title": "Building TruthMeter AI: Measuring the Real Impact of AI Coding Assistants",
     "episode": "021",
