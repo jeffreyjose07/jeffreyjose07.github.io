@@ -2,6 +2,7 @@ export interface Project {
     title: string;
     description: string;
     image: string;
+    videoUrl?: string;
     liveUrl?: string;
     githubUrl?: string;
     technologies: string[];

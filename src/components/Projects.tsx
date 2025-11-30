@@ -34,27 +34,62 @@ const Projects = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-violet-50/50 dark:from-blue-950/20 dark:to-violet-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
                 <div className="grid lg:grid-cols-2 gap-8 p-8">
-                  {/* Project Image */}
+                  {/* Project Image/Video */}
                   <div className="relative group/image">
                     <div className="aspect-video rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 group-hover:border-blue-300 dark:group-hover:border-blue-500 transition-all duration-500 mobile-image-container">
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full object-cover md:object-contain lg:object-cover group-hover/image:scale-105 transition-transform duration-700 cursor-pointer bg-white/5 mobile-image-fit"
-                        onClick={() => project.liveUrl && window.open(project.liveUrl, '_blank')}
-                        loading="lazy"
-                        onError={(e) => {
-                          e.currentTarget.style.objectFit = 'contain';
-                          e.currentTarget.style.padding = '1rem';
-                        }}
-                      />
-                      {/* Overlay with link icon */}
-                      <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/10 transition-all duration-300 flex items-center justify-center cursor-pointer"
-                        onClick={() => project.liveUrl && window.open(project.liveUrl, '_blank')}>
-                        <div className="opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 bg-white dark:bg-gray-800 rounded-full p-3 shadow-lg">
-                          <ExternalLink className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                      {project.videoUrl ? (
+                        <div
+                          className="w-full h-full relative"
+                          onMouseEnter={(e) => {
+                            const video = e.currentTarget.querySelector('video');
+                            if (video) video.play().catch(() => { });
+                          }}
+                          onMouseLeave={(e) => {
+                            const video = e.currentTarget.querySelector('video');
+                            if (video) {
+                              video.pause();
+                              video.currentTime = 0;
+                            }
+                          }}
+                        >
+                          <video
+                            src={project.videoUrl}
+                            muted
+                            loop
+                            playsInline
+                            className="w-full h-full object-cover md:object-contain lg:object-cover absolute inset-0 opacity-0 group-hover/image:opacity-100 transition-opacity duration-500"
+                            poster={project.image}
+                          />
+                          <img
+                            src={project.image}
+                            alt={project.title}
+                            className="w-full h-full object-cover md:object-contain lg:object-cover group-hover/image:opacity-0 transition-opacity duration-500"
+                            loading="lazy"
+                          />
                         </div>
-                      </div>
+                      ) : (
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="w-full h-full object-cover md:object-contain lg:object-cover group-hover/image:scale-105 transition-transform duration-700 cursor-pointer bg-white/5 mobile-image-fit"
+                          onClick={() => project.liveUrl && window.open(project.liveUrl, '_blank')}
+                          loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.style.objectFit = 'contain';
+                            e.currentTarget.style.padding = '1rem';
+                          }}
+                        />
+                      )}
+
+                      {/* Overlay with link icon - Only show if no video or if video is not playing (handled by opacity) */}
+                      {!project.videoUrl && (
+                        <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/10 transition-all duration-300 flex items-center justify-center cursor-pointer"
+                          onClick={() => project.liveUrl && window.open(project.liveUrl, '_blank')}>
+                          <div className="opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 bg-white dark:bg-gray-800 rounded-full p-3 shadow-lg">
+                            <ExternalLink className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
