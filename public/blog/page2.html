@@ -222,6 +222,16 @@
             border: 1px solid #333333;
             border-radius: 4px;
             background-color: #111111;
+            max-height: 85px;
+            /* Collapsed height - enough for title + 1 row */
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            position: relative;
+        }
+
+        .tag-filters.expanded {
+            max-height: 500px;
+            /* Arbitrary large height */
         }
 
         .tag-filters h3 {
@@ -318,6 +328,23 @@
             border-color: #55ff55;
             color: #55ff55;
             background-color: rgba(85, 255, 85, 0.1);
+        }
+
+        .tag-toggle {
+            background: none;
+            border: none;
+            color: #55ff55;
+            font-family: inherit;
+            font-size: 10px;
+            cursor: pointer;
+            padding: 5px;
+            margin-left: 10px;
+            text-decoration: underline;
+            display: inline-block;
+        }
+
+        .tag-toggle:hover {
+            color: #ffffff;
         }
 
 
@@ -783,8 +810,11 @@
                 learning things, building things, breaking things, writing about it. technical projects, personal struggles, life stuff, random observations - just documenting whatever I'm working through.
             </div>
 
-            <div class="tag-filters">
-                <h3>filter by tag</h3>
+            <div class="tag-filters" id="tagFilters">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin-bottom: 0;">filter by tag</h3>
+                    <button id="tagToggle" class="tag-toggle" onclick="toggleTags()">show more</button>
+                </div>
                 <button class="show-all active" data-tag="all">show all</button>
                             <button class="tag-filter neutral" data-tag="personal">personal</button>
             <button class="tag-filter attention" data-tag="tutorials">tutorials</button>
@@ -1018,11 +1048,14 @@
             const filterButtons = document.querySelectorAll('.tag-filter, .show-all');
             const showAllButton = document.querySelector('.show-all');
 
+
+
             // Initial render of all posts
             renderPostsAndPagination(allPostsData);
 
 
             // Check for tag in URL hash on page load
+            // Auto-expand if a specific tag is selected (optional, but good UX)
             function checkUrlHash() {
                 const hash = window.location.hash;
                 if (hash.startsWith('#tag-')) {
@@ -1033,6 +1066,13 @@
                         tagButton.classList.add('active');
                         filterPosts(tag);
                         history.replaceState(null, null, '/blog');
+                    }
+
+                    // Expand if tag is not 'all'
+                    if (tag !== 'all') {
+                        isExpanded = true;
+                        tagFilters.classList.add('expanded');
+                        tagToggle.textContent = 'show less';
                     }
                 }
             }
@@ -1057,6 +1097,37 @@
             });
 
             checkUrlHash();
+        });
+
+        // Tag Toggle Functionality (Global function for inline onclick)
+        function toggleTags() {
+            const tagFilters = document.getElementById('tagFilters');
+            const tagToggle = document.getElementById('tagToggle');
+
+            if (tagFilters.classList.contains('expanded')) {
+                tagFilters.classList.remove('expanded');
+                tagToggle.textContent = 'show more';
+            } else {
+                tagFilters.classList.add('expanded');
+                tagToggle.textContent = 'show less';
+            }
+        }
+        window.toggleTags = toggleTags;
+
+        // Auto-expand if a specific tag is selected
+        document.addEventListener('DOMContentLoaded', function () {
+            const hash = window.location.hash;
+            if (hash.startsWith('#tag-')) {
+                const tag = hash.substring(5);
+                if (tag !== 'all') {
+                    const tagFilters = document.getElementById('tagFilters');
+                    const tagToggle = document.getElementById('tagToggle');
+                    if (tagFilters && tagToggle) {
+                        tagFilters.classList.add('expanded');
+                        tagToggle.textContent = 'show less';
+                    }
+                }
+            }
         });
 
         // 90s BBS-Style Pattern Animator
