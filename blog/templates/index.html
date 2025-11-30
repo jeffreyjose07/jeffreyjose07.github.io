@@ -49,9 +49,35 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-            padding: 2rem;
+            padding: 0;
+            /* Removed padding to allow image to bleed */
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .post-thumbnail {
+            height: 180px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .thumbnail-icon {
+            font-size: 3rem;
+            opacity: 0.5;
+        }
+
+        .post-content-wrapper {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .post-item::before {
@@ -149,6 +175,31 @@
             justify-content: center;
             flex-wrap: wrap;
             gap: 0.5rem;
+            max-height: 90px;
+            /* Show roughly 2 rows */
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            position: relative;
+        }
+
+        .tag-filters-container.expanded {
+            max-height: 1000px;
+        }
+
+        .tag-toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: block;
+            margin: 0 auto 3rem auto;
+            font-family: var(--font-sans);
+        }
+
+        .tag-toggle-btn:hover {
+            text-decoration: underline;
         }
 
         .tag-filter {
@@ -242,6 +293,7 @@
             <button class="tag-filter active" data-tag="all">All Posts</button>
             {{tagFilters}}
         </div>
+        <button id="tagToggleBtn" class="tag-toggle-btn">Show more tags</button>
 
         <div class="posts-grid" id="postsGrid">
             {{posts}}
@@ -309,16 +361,30 @@
                 const episodeNum = post.episodeNumber.toString().padStart(3, '0');
                 const tagsHtml = post.tags.map(tag => `<span class="tag-pill">${tag}</span>`).join('');
 
+                let thumbnailHtml = '';
+                if (post.thumbnail) {
+                    const thumbSrc = post.thumbnail.startsWith('http') ? post.thumbnail : `/blog/${post.thumbnail}`;
+                    thumbnailHtml = `<div class="post-thumbnail" style="background-image: url('${thumbSrc}')"></div>`;
+                } else {
+                    const hue = (post.episodeNumber * 137.508) % 360;
+                    thumbnailHtml = `<div class="post-thumbnail" style="background: linear-gradient(135deg, hsl(${hue}, 60%, 20%), hsl(${hue + 40}, 60%, 10%))">
+                        <div class="thumbnail-icon">📝</div>
+                    </div>`;
+                }
+
                 div.innerHTML = `
                     <a href="/blog/${post.slug}">
-                        <div class="post-meta-top">
-                            <span class="episode-number">#${episodeNum}</span>
-                            <span class="date">${formatDate(post.date)}</span>
-                        </div>
-                        <h3 class="post-title">${post.title}</h3>
-                        <p class="post-description">${post.description}</p>
-                        <div class="post-tags">
-                            ${tagsHtml}
+                        ${thumbnailHtml}
+                        <div class="post-content-wrapper">
+                            <div class="post-meta-top">
+                                <span class="episode-number">#${episodeNum}</span>
+                                <span class="date">${formatDate(post.date)}</span>
+                            </div>
+                            <h3 class="post-title">${post.title}</h3>
+                            <p class="post-description">${post.description}</p>
+                            <div class="post-tags">
+                                ${tagsHtml}
+                            </div>
                         </div>
                     </a>
                 `;
@@ -415,6 +481,26 @@
             });
 
             checkUrlHash();
+
+            // Tag toggle functionality
+            const tagContainer = document.getElementById('tagFilters');
+            const tagToggleBtn = document.getElementById('tagToggleBtn');
+
+            // Check if we need to show the button
+            if (tagContainer.scrollHeight > 100) {
+                tagToggleBtn.style.display = 'block';
+            } else {
+                tagToggleBtn.style.display = 'none';
+            }
+
+            tagToggleBtn.addEventListener('click', () => {
+                tagContainer.classList.toggle('expanded');
+                if (tagContainer.classList.contains('expanded')) {
+                    tagToggleBtn.textContent = 'Show less tags';
+                } else {
+                    tagToggleBtn.textContent = 'Show more tags';
+                }
+            });
         });
     </script>
 

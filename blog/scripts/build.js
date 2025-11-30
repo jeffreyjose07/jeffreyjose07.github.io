@@ -223,6 +223,7 @@ function processPost(filename, episodeNumber, allPosts = []) {
 
     // Parse frontmatter and content
     const { data: frontmatter, content } = matter(fileContent);
+    const thumbnail = frontmatter.thumbnail || frontmatter.image || '';
 
     // Generate HTML content
     const htmlContent = marked(content);
@@ -261,7 +262,7 @@ function processPost(filename, episodeNumber, allPosts = []) {
         .replace(/{{episodeNumber}}/g, episodeNumber.toString().padStart(3, '0'))
         .replace(/{{date}}/g, formatDate(frontmatter.date))
         .replace(/{{description}}/g, frontmatter.description || '')
-        .replace(/{{content}}/g, htmlContent)
+        .replace(/{{content}}/g, () => htmlContent)
         .replace(/{{wordCount}}/g, wordCount)
         .replace(/{{readingTime}}/g, readingTime)
         .replace(/{{tagsFormatted}}/g, tagsFormatted)
@@ -272,9 +273,8 @@ function processPost(filename, episodeNumber, allPosts = []) {
         .replace(/{{twitterUrl}}/g, config.social.twitter)
         .replace(/{{emailUrl}}/g, config.social.email)
         .replace(/{{resumeUrl}}/g, config.resumeUrl)
-        .replace(/{{inlineStyles}}/g, inlineStyles)
-        .replace(/{{inlineStyles}}/g, inlineStyles)
-        .replace(/{{inlineScripts}}/g, inlineScripts)
+        .replace(/{{inlineStyles}}/g, () => inlineStyles)
+        .replace(/{{inlineScripts}}/g, () => inlineScripts)
         .replace(/{{siteHeader}}/g, siteHeader)
         .replace(/{{styles}}/g, styles);
 
@@ -296,7 +296,8 @@ function processPost(filename, episodeNumber, allPosts = []) {
         description: frontmatter.description,
         tags: frontmatter.tags || [],
         readingTime,
-        wordCount
+        wordCount,
+        thumbnail
     };
 }
 
@@ -350,16 +351,32 @@ function generateIndex(posts) {
         const postsHtml = pagePosts.map(post => {
             const episodeNum = post.episodeNumber.toString().padStart(3, '0');
             const tagsAttr = post.tags.join(' ');
+
+            let thumbnailHtml = '';
+            if (post.thumbnail) {
+                const thumbSrc = post.thumbnail.startsWith('http') ? post.thumbnail : `/blog/${post.thumbnail}`;
+                thumbnailHtml = `<div class="post-thumbnail" style="background-image: url('${thumbSrc}')"></div>`;
+            } else {
+                // Generate a deterministic gradient based on episode number
+                const hue = (post.episodeNumber * 137.508) % 360;
+                thumbnailHtml = `<div class="post-thumbnail" style="background: linear-gradient(135deg, hsl(${hue}, 60%, 20%), hsl(${hue + 40}, 60%, 10%))">
+                    <div class="thumbnail-icon">📝</div>
+                </div>`;
+            }
+
             return `            <div class="post-item glass-card" data-tags="${tagsAttr}">
                 <a href="/blog/${post.slug}">
-                    <div class="post-meta-top">
-                        <span class="episode-number">#${episodeNum}</span>
-                        <span class="date">${formatDate(post.date)}</span>
-                    </div>
-                    <h3 class="post-title">${post.title}</h3>
-                    <p class="post-description">${post.description}</p>
-                    <div class="post-tags">
-                        ${post.tags.map(tag => `<span class="tag-pill">${tag}</span>`).join('')}
+                    ${thumbnailHtml}
+                    <div class="post-content-wrapper">
+                        <div class="post-meta-top">
+                            <span class="episode-number">#${episodeNum}</span>
+                            <span class="date">${formatDate(post.date)}</span>
+                        </div>
+                        <h3 class="post-title">${post.title}</h3>
+                        <p class="post-description">${post.description}</p>
+                        <div class="post-tags">
+                            ${post.tags.map(tag => `<span class="tag-pill">${tag}</span>`).join('')}
+                        </div>
                     </div>
                 </a>
             </div>`;

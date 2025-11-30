@@ -1,507 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics - Jeffrey Jose</title>
-    <meta name="description" content="Live analytics dashboard for jeffreyjose07.is-a.dev - view traffic stats, popular posts, and visitor insights. Privacy-friendly GoatCounter analytics with real-time data.">
-    <meta name="keywords" content="Jeffrey Jose Analytics, Website Analytics, GoatCounter, Privacy Analytics, Web Traffic, Blog Analytics, Portfolio Analytics, Real-time Analytics Dashboard">
-    <meta name="robots" content="index, follow">
-    <meta name="author" content="Jeffrey Jose">
-    <link rel="canonical" href="https://jeffreyjose07.is-a.dev/analytics.html">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="Analytics Dashboard - Jeffrey Jose">
-    <meta property="og:description" content="Live website analytics dashboard with privacy-friendly GoatCounter. View real-time traffic stats, popular content, and visitor insights.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://jeffreyjose07.is-a.dev/analytics.html">
-    <meta property="og:image" content="https://jeffreyjose07.is-a.dev/scalable-chat-platform.png">
-    <meta property="og:site_name" content="Jeffrey Jose Portfolio">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Analytics Dashboard - Jeffrey Jose">
-    <meta name="twitter:description" content="Live privacy-friendly analytics dashboard showing website traffic and popular content.">
-    <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/scalable-chat-platform.png">
-    <meta name="twitter:creator" content="@jeffreyjose07">
-    
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    
+    <meta name="description"
+        content="Live analytics dashboard for jeffreyjose07.is-a.dev - view traffic stats, popular posts, and visitor insights. Privacy-friendly GoatCounter analytics with real-time data.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
     <style>
         :root {
-            --bg: #000000;
-            --terminal: #55ff55;
-            --data: #55ffff;
-            --warning: #ffaa55;
-            --text: #c9c9c9;
-            --border: #333333;
+            /* Premium Dark Theme Variables */
+            --background: #09090b;
+            --foreground: #f8fafc;
+            --primary: #7c3aed;
+            --primary-foreground: #f8fafc;
+            --primary-glow: #a78bfa;
+            --secondary: #1e1e24;
+            --muted: #1e1e24;
+            --muted-foreground: #94a3b8;
+            --border: #27272a;
+            --font-sans: 'Inter', sans-serif;
+            --font-heading: 'Outfit', sans-serif;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: Monaco, Menlo, 'Ubuntu Mono', monospace;
-            background: var(--bg);
-            color: var(--text);
+            font-family: var(--font-sans);
+            background-color: var(--background);
+            color: var(--foreground);
             line-height: 1.6;
             min-height: 100vh;
+            background-image:
+                radial-gradient(at 40% 20%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 20px;
-        }
-        
-        .title {
-            color: var(--data);
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px currentColor;
-            letter-spacing: 2px;
-        }
-        
-        .subtitle {
-            color: var(--terminal);
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        .nav-links {
-            margin-top: 15px;
+
+        /* Header */
+        .site-header {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 1rem;
+            z-index: 50;
         }
-        
-        .nav-links a {
-            color: var(--warning);
-            text-decoration: none;
-            padding: 5px 10px;
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            transition: all 0.3s ease;
-            font-size: 12px;
-        }
-        
-        .nav-links a:hover {
-            color: var(--data);
-            border-color: var(--data);
-            box-shadow: 0 0 10px rgba(85, 255, 255, 0.3);
-        }
-        
-        .analytics-frame {
-            border: 2px solid var(--terminal);
-            border-radius: 8px;
-            background: rgba(0, 17, 34, 0.3);
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(85, 255, 85, 0.2);
-        }
-        
-        .frame-header {
-            background: rgba(85, 255, 85, 0.1);
-            padding: 10px 15px;
-            border-bottom: 1px solid var(--terminal);
-            font-size: 12px;
-            color: var(--terminal);
+
+        .nav-pill {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 0.75rem 2rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.3);
         }
-        
+
+        .nav-link {
+            color: var(--muted-foreground);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--foreground);
+            text-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+        }
+
+        .nav-divider {
+            width: 1px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Content */
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title h1 {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: var(--muted-foreground);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .info-panel {
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .info-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .analytics-frame {
+            height: 800px;
+            position: relative;
+        }
+
+        .frame-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--muted-foreground);
+        }
+
         .status-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: var(--terminal);
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
             animation: pulse 2s infinite;
         }
-        
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
         }
-        
+
         .dashboard-iframe {
             width: 100%;
-            height: 800px;
-            min-height: 600px;
+            height: calc(100% - 50px);
             border: none;
             background: #fff;
+            /* GoatCounter is light theme by default, maybe filter it? */
+            filter: invert(1) hue-rotate(180deg);
+            /* Dark mode hack for iframe */
         }
-        
-        .terminal-panel {
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid var(--terminal);
-            border-radius: 4px;
-            padding: 15px;
-            margin: 20px 0;
-            font-family: Monaco, monospace;
-            font-size: 13px;
-        }
-        
-        .terminal-header {
-            color: var(--terminal);
-            margin-bottom: 10px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid rgba(85, 255, 85, 0.3);
-        }
-        
-        .terminal-content {
-            color: var(--text);
-            line-height: 1.4;
-        }
-        
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .stat-card {
-            background: rgba(0, 17, 34, 0.6);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 15px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            color: var(--terminal);
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            color: var(--text);
-            font-size: 12px;
-            opacity: 0.8;
-        }
-        
-        .ascii-chart {
-            font-family: Monaco, monospace;
-            font-size: 12px;
-            line-height: 1.2;
-            color: var(--terminal);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-            white-space: pre;
-        }
-        
-        .popular-posts {
-            background: rgba(0, 17, 34, 0.6);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        
-        .popular-posts h3 {
-            color: var(--data);
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-        
-        .post-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .post-item:last-child {
-            border-bottom: none;
-        }
-        
-        .post-title {
-            color: var(--text);
-            text-decoration: none;
-            flex: 1;
-            margin-right: 10px;
-        }
-        
-        .post-title:hover {
-            color: var(--data);
-        }
-        
-        .post-views {
-            color: var(--terminal);
-            font-size: 12px;
-            min-width: 60px;
-            text-align: right;
-        }
-        
-        .achievement-badge {
-            display: inline-block;
-            background: rgba(85, 255, 85, 0.1);
-            border: 1px solid var(--terminal);
-            border-radius: 3px;
-            padding: 4px 8px;
-            margin: 2px;
-            font-size: 11px;
-            color: var(--terminal);
-        }
-        
-        .command-interface {
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid var(--terminal);
-            border-radius: 4px;
-            padding: 15px;
-            margin: 20px 0;
-            font-family: Monaco, monospace;
-        }
-        
-        .command-prompt {
-            color: var(--terminal);
-        }
-        
-        .command-output {
-            color: var(--text);
-            margin: 10px 0;
-            padding-left: 20px;
-        }
-        
-        .loading-spinner {
-            color: var(--terminal);
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .info-panel {
-            background: rgba(0, 17, 34, 0.5);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 20px;
-            font-size: 13px;
-        }
-        
-        .info-title {
-            color: var(--data);
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        
+
         .loading-message {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: var(--terminal);
-            font-size: 14px;
             text-align: center;
-            z-index: 10;
-        }
-        
-        .frame-container {
-            position: relative;
-            min-height: 900px;
-        }
-
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .title {
-                font-size: 20px;
-            }
-            
-            .dashboard-iframe {
-                height: 700px;
-            }
-            
-            .frame-container {
-                min-height: 750px;
-            }
-            
-            .nav-links {
-                gap: 10px;
-            }
+            color: var(--muted-foreground);
+            z-index: -1;
         }
 
         .footer {
-            margin-top: 40px;
-            padding: 30px 0;
-            border-top: 1px solid var(--border);
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        .footer-content {
+            margin-top: 4rem;
+            padding: 2rem 0;
             text-align: center;
-            color: var(--text);
-            font-size: 13px;
-            opacity: 0.8;
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .footer-links {
-            margin: 15px 0;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: var(--terminal);
+        .footer a {
+            color: var(--foreground);
             text-decoration: none;
-            font-size: 12px;
-            transition: color 0.3s ease;
+            transition: color 0.2s;
         }
 
-        .footer-links a:hover {
-            color: var(--data);
-        }
-
-        .footer-tech {
-            margin-top: 10px;
-            font-size: 11px;
-            color: var(--border);
-        }
-
-        @media (max-width: 768px) {
-            .footer-links {
-                gap: 15px;
-            }
+        .footer a:hover {
+            color: var(--primary);
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <div class="header">
-            <div class="title">ANALYTICS DASHBOARD</div>
-            <div class="subtitle">Live traffic insights • Privacy-friendly • No tracking</div>
-            <div class="nav-links">
-                <a href="/">← Portfolio</a>
-                <a href="/blog/">Blog</a>
-                <a href="/analytics-privacy.html">Privacy Policy</a>
-                <a href="https://jeffreyjose.goatcounter.com" target="_blank">Raw Dashboard ↗</a>
+        <header class="site-header">
+            <nav class="nav-pill">
+                <a href="/" class="nav-link">Portfolio</a>
+                <div class="nav-divider"></div>
+                <a href="/blog/" class="nav-link">Blog</a>
+                <a href="/analytics.html" class="nav-link active">Analytics</a>
+            </nav>
+        </header>
+
+        <div class="page-title">
+            <h1>Analytics Dashboard</h1>
+            <p>Live traffic insights • Privacy-friendly • No tracking</p>
+        </div>
+
+        <div class="glass-card info-panel">
+            <div class="info-icon">📊</div>
+            <div>
+                <h3 style="font-family: var(--font-heading); margin-bottom: 0.25rem;">Privacy-First Analytics</h3>
+                <p style="font-size: 0.9rem; color: var(--muted-foreground);">
+                    Powered by <strong>GoatCounter</strong>. No personal data collected, no cookies, no consent banners
+                    needed.
+                </p>
             </div>
         </div>
-        
 
-
-        <div class="info-panel">
-            <div class="info-title">📊 Analytics Information</div>
-            <p>This dashboard shows real-time visitor statistics powered by <strong>GoatCounter</strong> - a privacy-first analytics platform. No personal data is collected, no cookies are used, and no tracking consent is required.</p>
-        </div>
-        
-        <div class="analytics-frame">
+        <div class="glass-card analytics-frame">
             <div class="frame-header">
                 <div class="status-dot"></div>
-                <span>Live Analytics • jeffreyjose.goatcounter.com</span>
+                <span>Live Data • jeffreyjose.goatcounter.com</span>
+                <div style="flex: 1;"></div>
+                <a href="https://jeffreyjose.goatcounter.com" target="_blank"
+                    style="color: var(--primary); text-decoration: none; font-size: 0.8rem;">Open Raw Dashboard ↗</a>
             </div>
-            <div class="frame-container">
-                <div class="loading-message" id="loadingMsg">
-                    Loading analytics dashboard...<br>
-                    <small style="opacity: 0.7;">If this takes too long, try the <a href="https://jeffreyjose.goatcounter.com" target="_blank" style="color: var(--data);">direct link</a></small>
-                </div>
-                <iframe 
-                    id="analyticsFrame"
-                    class="dashboard-iframe" 
-                    src="https://jeffreyjose.goatcounter.com/"
-                    title="GoatCounter Analytics Dashboard"
-                    loading="lazy"
-                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups">
-                </iframe>
+
+            <div class="loading-message" id="loadingMsg">
+                Loading analytics dashboard...
             </div>
+
+            <iframe id="analyticsFrame" class="dashboard-iframe" src="https://jeffreyjose.goatcounter.com/"
+                title="GoatCounter Analytics Dashboard" loading="lazy"
+                sandbox="allow-same-origin allow-scripts allow-forms allow-popups">
+            </iframe>
         </div>
 
         <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-links">
-                    <a href="/">Portfolio</a>
-                    <a href="/blog/">Blog</a>
-                    <a href="/analytics.html">Analytics</a>
-                    <a href="https://github.com/jeffreyjose07" target="_blank">GitHub</a>
-                    <a href="https://linkedin.com/in/jeffrey-jose-07-k/" target="_blank">LinkedIn</a>
-                    <a href="mailto:jeffreyjose.k@gmail.com">Contact</a>
-                </div>
-                <div>
-                    © 2025 Jeffrey Jose • Code craftsman • Tech explorer • Minimalist
-                </div>
-                <div class="footer-tech">
-                    Privacy-first analytics • Terminal aesthetic • Built with passion
-                </div>
-            </div>
+            <p>© 2025 Jeffrey Jose • Built with <span style="color: var(--primary);">♥</span> and privacy in mind.</p>
         </footer>
     </div>
-    
+
     <script>
-        // Enhanced iframe loading handler with error detection
         const iframe = document.getElementById('analyticsFrame');
         const loadingMsg = document.getElementById('loadingMsg');
-        
-        // Handle successful load
-        iframe.addEventListener('load', function() {
+
+        iframe.addEventListener('load', function () {
             loadingMsg.style.display = 'none';
         });
-        
-        // Handle iframe errors (CSP blocking, etc.)
-        iframe.addEventListener('error', function() {
-            loadingMsg.innerHTML = `
-                <div style="color: var(--warning); margin-bottom: 15px;">
-                    ⚠️ Dashboard embedding blocked by security policy
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <a href="https://jeffreyjose.goatcounter.com" target="_blank" 
-                       style="color: var(--data); text-decoration: none; padding: 10px 20px; border: 1px solid var(--data); border-radius: 4px; display: inline-block;">
-                        Open Dashboard in New Tab ↗
-                    </a>
-                </div>
-                <div style="font-size: 12px; opacity: 0.7;">
-                    This is likely due to Content Security Policy restrictions.<br>
-                    The dashboard is accessible directly at the link above.
-                </div>
-            `;
-        });
-        
-        // Fallback timeout to show alternative access
-        setTimeout(() => {
-            if (loadingMsg.style.display !== 'none') {
-                loadingMsg.innerHTML = `
-                    <div style="color: var(--warning); margin-bottom: 15px;">
-                        ⏱️ Loading is taking longer than expected
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <a href="https://jeffreyjose.goatcounter.com" target="_blank" 
-                           style="color: var(--data); text-decoration: none; padding: 10px 20px; border: 1px solid var(--data); border-radius: 4px; display: inline-block;">
-                            Open Dashboard in New Tab ↗
-                        </a>
-                    </div>
-                    <div style="font-size: 12px; opacity: 0.7;">
-                        If the iframe doesn't load, use the direct link above.
-                    </div>
-                `;
-            }
-        }, 8000);
     </script>
-    
+
     <!-- GoatCounter Analytics -->
     <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
+
 </html>

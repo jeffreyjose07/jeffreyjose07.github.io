@@ -31,8 +31,38 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://jeffreyjose07.is-a.dev/blog/building-truthmeter-ai-measuring-the-real-impact-o</loc>
+    <lastmod>2025-01-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jeffreyjose07.is-a.dev/blog/enhancing-game-ui-mobile-responsiveness-and-termin</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://jeffreyjose07.is-a.dev/blog/building-a-secure-password-reset-flow</loc>
     <lastmod>2025-11-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jeffreyjose07.is-a.dev/blog/adding-interactive-scripts-to-blog-posts</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jeffreyjose07.is-a.dev/blog/solving-adjacent-increasing-subarrays-from-naive-t</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jeffreyjose07.is-a.dev/blog/adding-custom-domain-jeffreyjose07is-adev</loc>
+    <lastmod>2025-01-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -49,32 +79,20 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://jeffreyjose07.is-a.dev/blog/migrating-from-render-to-neon-postgresql-lessons-f</loc>
+    <lastmod>2025-01-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jeffreyjose07.is-a.dev/blog/implementing-privacy-first-analytics-from-research</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://jeffreyjose07.is-a.dev/blog/debugging-cross-repository-workflows</loc>
     <lastmod>2025-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://jeffreyjose07.is-a.dev/blog/bugfixes-and-lessons-learned</loc>
-    <lastmod>2025-07-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://jeffreyjose07.is-a.dev/blog/building-truthmeter-ai-measuring-the-real-impact-o</loc>
-    <lastmod>2025-01-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://jeffreyjose07.is-a.dev/blog/adding-interactive-scripts-to-blog-posts</loc>
-    <lastmod>2025-01-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://jeffreyjose07.is-a.dev/blog/solving-adjacent-increasing-subarrays-from-naive-t</loc>
-    <lastmod>2025-01-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -97,8 +115,8 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://jeffreyjose07.is-a.dev/blog/adding-custom-domain-jeffreyjose07is-adev</loc>
-    <lastmod>2025-01-24</lastmod>
+    <loc>https://jeffreyjose07.is-a.dev/blog/bugfixes-and-lessons-learned</loc>
+    <lastmod>2025-07-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -129,24 +147,6 @@
   <url>
     <loc>https://jeffreyjose07.is-a.dev/blog/creating-this-portfolio-website-and-blog</loc>
     <lastmod>2025-01-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://jeffreyjose07.is-a.dev/blog/enhancing-game-ui-mobile-responsiveness-and-termin</loc>
-    <lastmod>2025-01-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://jeffreyjose07.is-a.dev/blog/migrating-from-render-to-neon-postgresql-lessons-f</loc>
-    <lastmod>2025-01-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://jeffreyjose07.is-a.dev/blog/implementing-privacy-first-analytics-from-research</loc>
-    <lastmod>2025-01-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
