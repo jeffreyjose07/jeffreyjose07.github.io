@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import GamesDropdown from "./navigation/GamesDropdown";
 import MobileMenu from "./navigation/MobileMenu";
 import { games } from "@/data/games";
+import Logo from "./Logo";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -73,9 +74,12 @@ const Navigation = () => {
                 e.preventDefault();
                 handleNavClick("#hero");
               }}
-              className="text-xl font-heading font-bold tracking-tight hover:text-primary transition-colors duration-300"
+              className="flex items-center gap-2 group"
             >
-              Jeffrey<span className="text-primary">.</span>Jose
+              <Logo className="w-8 h-8 group-hover:scale-110 transition-transform duration-300" />
+              <span className="text-xl font-heading font-bold tracking-tight group-hover:text-primary transition-colors duration-300">
+                Jeffrey<span className="text-primary">.</span>Jose
+              </span>
             </a>
           </div>
 
