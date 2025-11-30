@@ -1028,7 +1028,100 @@ inlineScripts: |
         }
 
         /* Inline scripts injected from frontmatter */
-        { { inlineScripts } }
+        // Demo 1: Terminal greeting
+function greetUser() {
+    const nameInput = document.getElementById('nameInput');
+    const output = document.getElementById('terminalOutput');
+    const name = nameInput.value.trim() || 'anonymous';
+    output.innerHTML = `> hello, ${name}!<br>> welcome to the interactive blog system<br>> type: help`;
+}
+document.addEventListener('DOMContentLoaded', () => {
+    const nameInput = document.getElementById('nameInput');
+    if (nameInput) {
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') greetUser();
+        });
+    }
+});
+// Demo 2: Color picker
+function changeColor(color) {
+    const swatch = document.getElementById('colorSwatch');
+    const colors = {
+        green: '#55ff55',
+        yellow: '#ffff55',
+        cyan: '#55ffff',
+        magenta: '#ff55ff'
+    };
+    swatch.style.backgroundColor = colors[color];
+    swatch.style.borderColor = colors[color];
+    swatch.style.boxShadow = `0 0 20px ${colors[color]}40`;
+}
+// Demo 3: Click counter
+let clickCount = 0;
+function incrementCounter() {
+    clickCount++;
+    updateCounter();
+}
+function decrementCounter() {
+    if (clickCount > 0) clickCount--;
+    updateCounter();
+}
+function resetCounter() {
+    clickCount = 0;
+    updateCounter();
+}
+function updateCounter() {
+    const display = document.getElementById('counterDisplay');
+    if (display) {
+        display.textContent = clickCount;
+        if (clickCount > 10) {
+            display.style.color = '#ffff55';
+        } else if (clickCount > 20) {
+            display.style.color = '#ff8855';
+        } else {
+            display.style.color = '#55ff55';
+        }
+    }
+}
+// Demo 4: Matrix rain
+let matrixInterval = null;
+function startMatrix() {
+    const canvas = document.getElementById('matrixCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth;
+    canvas.height = 150;
+    const columns = Math.floor(canvas.width / 20);
+    const drops = Array(columns).fill(0);
+    if (matrixInterval) clearInterval(matrixInterval);
+    matrixInterval = setInterval(() => {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#55ff55';
+        ctx.font = '15px monospace';
+        for (let i = 0; i < drops.length; i++) {
+            const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+            ctx.fillText(text, i * 20, drops[i] * 20);
+            if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }, 50);
+}
+function stopMatrix() {
+    if (matrixInterval) {
+        clearInterval(matrixInterval);
+        matrixInterval = null;
+        const canvas = document.getElementById('matrixCanvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+}
+
     </script>
 
     <!-- GoatCounter Analytics -->
