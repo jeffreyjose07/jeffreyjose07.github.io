@@ -4,6 +4,7 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import GamesDropdown from "./navigation/GamesDropdown";
 import MobileMenu from "./navigation/MobileMenu";
+import { games } from "@/data/games";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -22,10 +23,10 @@ const Navigation = () => {
     { label: "Analytics", href: "/analytics.html", external: true }
   ];
 
-  const gameItems = [
-    { label: "Snake", href: "/play/snake" },
-    { label: "Void Blocks", href: "/play/void-blocks" }
-  ];
+  const gameItems = games.map(game => ({
+    label: game.title,
+    href: `/play/${game.id}`
+  }));
 
   useEffect(() => {
     const handleScroll = () => {
