@@ -101,6 +101,7 @@
       text-decoration: none;
       color: var(--foreground);
       letter-spacing: -0.02em;
+      justify-self: start;
     }
 
     .text-gradient-premium {
@@ -156,6 +157,7 @@
       margin-bottom: 5px;
       background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
@@ -369,9 +371,9 @@
       max-width: 1400px;
       margin: 0 auto;
       padding: 1rem 2rem;
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      justify-content: space-between;
     }
 
     .site-logo {
@@ -399,6 +401,7 @@
       display: flex;
       align-items: center;
       gap: 2rem;
+      justify-self: center;
     }
 
     .nav-link {
@@ -570,7 +573,7 @@
         <a href="/games/snake/" class="nav-link active">Snake</a>
       </nav>
 
-      <div style="width: 120px; display: flex; justify-content: flex-end;">
+      <div style="display: flex; justify-content: flex-end; justify-self: end;">
         <button id="themeToggle" class="nav-link"
           style="background: none; border: none; cursor: pointer; color: inherit;">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
