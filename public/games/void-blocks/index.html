@@ -28,14 +28,18 @@
       --muted-foreground: #64748b;
       --border: #e2e8f0;
 
-      --bg: #09090b;
-      --panel: rgba(255, 255, 255, 0.03);
+      /* Premium Game Colors - Light Mode */
+      --game-bg: #ffffff;
+      --game-panel: rgba(255, 255, 255, 0.5);
+      --game-border: #e2e8f0;
+      --game-text: #0f172a;
+      --game-accent: #7c3aed;
+
       --terminal: #7c3aed;
-      --data: #a78bfa;
-      --virus: #f472b6;
-      --warning: #fbbf24;
-      --special: #38bdf8;
-      --text: #f8fafc;
+      --data: #8b5cf6;
+      --virus: #db2777;
+      --warning: #f59e0b;
+      --special: #0ea5e9;
 
       --font-sans: 'Inter', sans-serif;
       --font-heading: 'Outfit', sans-serif;
@@ -45,13 +49,26 @@
     html.dark {
       --background: #09090b;
       --foreground: #f8fafc;
-      --primary: #7c3aed;
-      --primary-foreground: #f8fafc;
+      --primary: #a78bfa;
+      --primary-foreground: #09090b;
       --primary-glow: #a78bfa;
       --secondary: #1e1e24;
       --muted: #1e1e24;
       --muted-foreground: #94a3b8;
       --border: #27272a;
+
+      /* Premium Game Colors - Dark Mode (Cyberpunk/Neon) */
+      --game-bg: #09090b;
+      --game-panel: rgba(24, 24, 27, 0.6);
+      --game-border: #27272a;
+      --game-text: #f8fafc;
+      --game-accent: #a78bfa;
+
+      --terminal: #8b5cf6;
+      --data: #a78bfa;
+      --virus: #f472b6;
+      --warning: #fbbf24;
+      --special: #38bdf8;
     }
 
     html,
@@ -164,10 +181,11 @@
     }
 
     canvas {
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.5);
+      background: var(--game-bg);
+      border: 2px solid var(--game-border);
+      border-radius: 16px;
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.15);
+      transition: box-shadow 0.3s ease;
     }
 
     .panels {
@@ -178,12 +196,13 @@
     }
 
     .panel {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+      background: var(--game-panel);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--game-border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
     .panel-title {
@@ -231,10 +250,11 @@
     }
 
     .score-value {
-      color: var(--primary);
-      font-size: 18px;
-      font-weight: bold;
+      color: var(--game-accent);
+      font-size: 24px;
+      font-weight: 800;
       font-family: var(--font-heading);
+      text-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
     }
 
     .status-indicator {
@@ -1353,567 +1373,530 @@
           // Bonus for data fragments
           if (dataFragmentsCleared > 0) {
             points *= (1 + dataFragmentsCleared * 0.5);
-          }
+            let isPaused = false;
+            let isGameOver = false;
+            let isGameActive = false;
+            let animationId = null;
 
-          score += Math.floor(points);
-          lines += linesCleared;
+            let piece = null;
+            let nextPiece = null;
 
-          // Reduce corruption when clearing virus blocks
-          if (virusBlocksCleared > 0) {
-            corruption = Math.max(0, corruption - virusBlocksCleared * 3);
-          }
+            // Initialize High Score
+            highScoreEl.textContent = highScore;
 
-          // Level progression
-          const newLevel = Math.floor(lines / 10) + 1;
-          if (newLevel > level) {
-            level = newLevel;
-            dropInterval = Math.max(100, 1000 - (level - 1) * 50);
-          }
+            // Piece Class
+            class Piece {
+              constructor(shape = null, colorType = null) {
+                this.shape = shape || SHAPES[Math.floor(Math.random() * SHAPES.length)];
+                this.colorType = colorType || this.getRandomColorType();
+                this.x = Math.floor(COLS / 2) - Math.floor(this.shape[0].length / 2);
+                this.y = 0;
+              }
 
-          updateUI();
-        }
-      }
+              getRandomColorType() {
+                const rand = Math.random();
+                if (rand < 0.6) return 'terminal'; // 60% standard
+                if (rand < 0.8) return 'data';     // 20% data
+                if (rand < 0.9) return 'warning';  // 10% warning
+                if (rand < 0.95) return 'virus';   // 5% virus
+                return 'special';                  // 5% special
+              }
+            }
 
-      function spreadVirus() {
-        const newVirusBoard = virusBoard.map(row => [...row]);
-        let spreadOccurred = false;
+            // Drawing Functions
+            function drawBlock(ctx, x, y, colorType, size = BLOCK_SIZE) {
+              const colors = getColors();
+              const color = colors[colorType] || colors.terminal;
 
-        for (let y = 0; y < ROWS; y++) {
-          for (let x = 0; x < COLS; x++) {
-            if (virusBoard[y][x]) {
-              // Spread to adjacent cells
-              const directions = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+              ctx.fillStyle = color;
+              ctx.fillRect(x * size, y * size, size, size);
 
-              for (let [dx, dy] of directions) {
-                const nx = x + dx;
-                const ny = y + dy;
+              // Inner bevel effect
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+              ctx.fillRect(x * size, y * size, size, 4);
+              ctx.fillRect(x * size, y * size, 4, size);
 
-                if (nx >= 0 && nx < COLS && ny >= 0 && ny < ROWS &&
-                  board[ny][nx] !== 0 && !virusBoard[ny][nx] &&
-                  Math.random() < 0.3) {
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+              ctx.fillRect(x * size + size - 4, y * size, 4, size);
+              ctx.fillRect(x * size, y * size + size - 4, size, 4);
 
-                  newVirusBoard[ny][nx] = 1;
-                  board[ny][nx] = COLORS.VIRUS;
-                  corruption = Math.min(100, corruption + 2);
-                  spreadOccurred = true;
+              // Border
+              ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+              ctx.strokeRect(x * size, y * size, size, size);
+            }
+
+            function drawBoard() {
+              const colors = getColors();
+
+              // Clear canvas
+              ctx.fillStyle = colors.bg;
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+              // Draw grid (subtle)
+              ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+              ctx.lineWidth = 1;
+              for (let i = 0; i <= COLS; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * BLOCK_SIZE, 0);
+                ctx.lineTo(i * BLOCK_SIZE, canvas.height);
+                ctx.stroke();
+              }
+              for (let i = 0; i <= ROWS; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, i * BLOCK_SIZE);
+                ctx.lineTo(canvas.width, i * BLOCK_SIZE);
+                ctx.stroke();
+              }
+
+              // Draw board blocks
+              board.forEach((row, y) => {
+                row.forEach((value, x) => {
+                  if (value) {
+                    drawBlock(ctx, x, y, value);
+                  }
+                });
+              });
+
+              // Draw current piece
+              if (piece) {
+                piece.shape.forEach((row, y) => {
+                  row.forEach((value, x) => {
+                    if (value) {
+                      drawBlock(ctx, piece.x + x, piece.y + y, piece.colorType);
+                    }
+                  });
+                });
+              }
+            }
+
+            function drawNextPiece() {
+              const colors = getColors();
+              nextCtx.fillStyle = colors.bg;
+              nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
+
+              if (nextPiece) {
+                const offsetX = (nextCanvas.width - nextPiece.shape[0].length * 20) / 2;
+                const offsetY = (nextCanvas.height - nextPiece.shape.length * 20) / 2;
+
+                nextPiece.shape.forEach((row, y) => {
+                  row.forEach((value, x) => {
+                    if (value) {
+                      drawBlock(nextCtx, x + offsetX / 20, y + offsetY / 20, nextPiece.colorType, 20);
+                    }
+                  });
+                });
+              }
+            }
+
+            // Game Logic
+            function collide(arena, player) {
+              const [m, o] = [player.shape, player];
+              for (let y = 0; y < m.length; ++y) {
+                for (let x = 0; x < m[y].length; ++x) {
+                  if (m[y][x] !== 0 &&
+                    (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
+                    return true;
+                  }
+                }
+              }
+              return false;
+            }
+
+            function merge(arena, player) {
+              player.shape.forEach((row, y) => {
+                row.forEach((value, x) => {
+                  if (value) {
+                    arena[y + player.y][x + player.x] = player.colorType;
+                  }
+                });
+              });
+            }
+
+            function rotate(matrix) {
+              for (let y = 0; y < matrix.length; ++y) {
+                for (let x = 0; x < y; ++x) {
+                  [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
+                }
+              }
+              matrix.forEach(row => row.reverse());
+            }
+
+            function playerRotate(dir) {
+              const pos = piece.x;
+              let offset = 1;
+              rotate(piece.shape);
+              while (collide(board, piece)) {
+                piece.x += offset;
+                offset = -(offset + (offset > 0 ? 1 : -1));
+                if (offset > piece.shape[0].length) {
+                  rotate(piece.shape); // Rotate back
+                  rotate(piece.shape);
+                  rotate(piece.shape);
+                  piece.x = pos;
+                  return;
                 }
               }
             }
-          }
-        }
 
-        if (spreadOccurred) {
-          virusBoard = newVirusBoard;
-        }
-      }
+            function playerReset() {
+              piece = nextPiece;
+              nextPiece = new Piece();
+              drawNextPiece();
 
-      function update(time = 0) {
-        if (!gameStarted || gameOver || paused) return;
-
-        const deltaTime = time - lastTime;
-        lastTime = time;
-
-        // Drop logic
-        dropTime += deltaTime;
-        if (dropTime > dropInterval) {
-          if (current && isValidMove(current, 0, 1)) {
-            current.y++;
-          } else if (current) {
-            placePiece(current);
-            clearLines();
-            spawnNext();
-          }
-          dropTime = 0;
-        }
-
-        // Virus spread logic
-        virusSpreadTimer += deltaTime;
-        if (virusSpreadTimer > 3000) { // Spread every 3 seconds
-          spreadVirus();
-          virusSpreadTimer = 0;
-        }
-
-        draw();
-        updateUI();
-
-        if (!gameOver) {
-          requestAnimationFrame(update);
-        }
-      }
-
-      function spawnNext() {
-        current = next || createPiece();
-        next = createPiece();
-
-        if (!isValidMove(current)) {
-          gameOver = true;
-          showGameOver();
-        }
-      }
-
-      function draw() {
-        if (!ctx || !canvas) return; // Skip drawing if canvas not initialized
-
-        // Clear canvas
-        ctx.fillStyle = COLORS.BACKGROUND;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Draw board grid
-        ctx.strokeStyle = 'rgba(85, 255, 85, 0.1)';
-        ctx.lineWidth = 1;
-
-        for (let x = 0; x <= COLS; x++) {
-          ctx.beginPath();
-          ctx.moveTo(x * BLOCK_SIZE, 0);
-          ctx.lineTo(x * BLOCK_SIZE, ROWS * BLOCK_SIZE);
-          ctx.stroke();
-        }
-
-        for (let y = 0; y <= ROWS; y++) {
-          ctx.beginPath();
-          ctx.moveTo(0, y * BLOCK_SIZE);
-          ctx.lineTo(COLS * BLOCK_SIZE, y * BLOCK_SIZE);
-          ctx.stroke();
-        }
-
-        // Draw placed blocks
-        for (let y = 0; y < ROWS; y++) {
-          for (let x = 0; x < COLS; x++) {
-            if (board[y][x]) {
-              drawBlock(x, y, board[y][x], virusBoard[y][x]);
-            }
-          }
-        }
-
-        // Draw current piece
-        if (current) {
-          for (let y = 0; y < current.shape.length; y++) {
-            for (let x = 0; x < current.shape[y].length; x++) {
-              if (current.shape[y][x]) {
-                drawBlock(current.x + x, current.y + y, current.type.color);
+              if (collide(board, piece)) {
+                gameOver();
               }
             }
-          }
-        }
 
-        // Draw next piece
-        drawNextPiece();
-      }
+            function arenaSweep() {
+              let rowCount = 0;
+              outer: for (let y = board.length - 1; y > 0; --y) {
+                for (let x = 0; x < board[y].length; ++x) {
+                  if (board[y][x] === 0) {
+                    continue outer;
+                  }
+                }
 
-      function drawBlock(x, y, color, isVirus = false) {
-        const px = x * BLOCK_SIZE;
-        const py = y * BLOCK_SIZE;
+                const row = board.splice(y, 1)[0];
+                board.unshift(row.fill(0));
+                ++y;
+                rowCount++;
+              }
 
-        ctx.fillStyle = color;
-        ctx.fillRect(px + 1, py + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2);
+              if (rowCount > 0) {
+                // Score calculation
+                // 1 line: 100 * level
+                // 2 lines: 300 * level
+                // 3 lines: 500 * level
+                // 4 lines: 800 * level
+                const lineScores = [0, 100, 300, 500, 800];
+                score += lineScores[rowCount] * level;
+                lines += rowCount;
+                level = Math.floor(lines / 10) + 1;
+                dropInterval = Math.max(100, 1000 - (level - 1) * 100);
 
-        // Add glow effect
-        ctx.shadowColor = color;
-        ctx.shadowBlur = isVirus ? 8 : 4;
-        ctx.fillRect(px + 3, py + 3, BLOCK_SIZE - 6, BLOCK_SIZE - 6);
-        ctx.shadowBlur = 0;
-
-        // Virus glitch effect
-        if (isVirus && Math.random() < 0.3) {
-          ctx.fillStyle = 'rgba(255, 85, 85, 0.8)';
-          const offset = Math.random() * 4 - 2;
-          ctx.fillRect(px + offset, py + offset, BLOCK_SIZE - 2, BLOCK_SIZE - 2);
-        }
-      }
-
-      function drawNextPiece() {
-        if (!nextCtx || !nextCanvas) return; // Skip drawing if canvas not initialized
-
-        nextCtx.fillStyle = COLORS.BACKGROUND;
-        nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
-
-        if (next) {
-          const blockSize = 15;
-          const offsetX = (nextCanvas.width - next.shape[0].length * blockSize) / 2;
-          const offsetY = (nextCanvas.height - next.shape.length * blockSize) / 2;
-
-          for (let y = 0; y < next.shape.length; y++) {
-            for (let x = 0; x < next.shape[y].length; x++) {
-              if (next.shape[y][x]) {
-                nextCtx.fillStyle = next.type.color;
-                nextCtx.fillRect(
-                  offsetX + x * blockSize,
-                  offsetY + y * blockSize,
-                  blockSize - 1,
-                  blockSize - 1
-                );
+                updateStats();
               }
             }
-          }
-        }
-      }
 
-      function updateUI() {
-        // Update score with null check
-        const scoreEl = document.getElementById('score');
-        if (scoreEl) scoreEl.textContent = score.toLocaleString();
+            function updateStats() {
+              scoreEl.textContent = score;
+              levelEl.textContent = level;
+              linesEl.textContent = lines;
 
-        const levelEl = document.getElementById('level');
-        if (levelEl) levelEl.textContent = level;
-
-        const linesEl = document.getElementById('lines');
-        if (linesEl) linesEl.textContent = lines;
-
-        // Update system status
-        const integrity = Math.max(0, 100 - corruption);
-        const integrityEl = document.getElementById('integrity');
-        if (integrityEl) integrityEl.textContent = integrity + '%';
-
-        const corruptionEl = document.getElementById('corruption');
-        if (corruptionEl) corruptionEl.textContent = Math.floor(corruption) + '%';
-
-        // Update connection status
-        const connectionEl = document.getElementById('connection');
-        if (connectionEl) {
-          if (corruption < 30) {
-            connectionEl.innerHTML = '<span class="status-indicator status-stable"></span>STABLE';
-          } else if (corruption < 70) {
-            connectionEl.innerHTML = '<span class="status-indicator status-unstable"></span>UNSTABLE';
-          } else {
-            connectionEl.innerHTML = '<span class="status-indicator status-critical"></span>CRITICAL';
-          }
-        }
-      }
-
-      function showGameOver() {
-        const finalScoreEl = document.getElementById('finalScore');
-        if (finalScoreEl) finalScoreEl.textContent = score.toLocaleString();
-
-        const gameOverScreen = document.getElementById('gameOverScreen');
-        if (gameOverScreen) {
-          gameOverScreen.classList.remove('hidden');
-        } else {
-          console.error('Game over screen not found');
-        }
-      }
-
-      function togglePause() {
-        if (!gameStarted) return; // Don't allow pause before game starts
-
-        paused = !paused;
-        const pauseScreen = document.getElementById('pausedScreen');
-
-        if (!pauseScreen) {
-          console.error('Pause screen not found');
-          paused = false; // Reset pause state if screen missing
-          return;
-        }
-
-        if (paused) {
-          pauseScreen.classList.remove('hidden');
-        } else {
-          pauseScreen.classList.add('hidden');
-          lastTime = performance.now();
-          requestAnimationFrame(update);
-        }
-      }
-
-      function startGame() {
-        if (gameStarted) {
-          console.warn('Game already started, ignoring duplicate start request');
-          return;
-        }
-
-        console.log('🚀 Starting game...');
-
-        // Initialize canvas first
-        if (!initializeCanvas()) {
-          console.error('❌ Failed to initialize canvas, cannot start game');
-          return;
-        }
-
-        gameStarted = true;
-
-        // Hide start screen with error handling
-        const startScreen = document.getElementById('startScreen');
-        if (startScreen) {
-          startScreen.classList.add('hidden');
-          console.log('✅ Start screen hidden');
-        } else {
-          console.error('❌ Start screen element not found');
-        }
-
-        // Initialize game state
-        try {
-          spawnNext();
-          updateUI();
-          lastTime = performance.now();
-          requestAnimationFrame(update);
-          console.log('✅ Game started successfully');
-        } catch (error) {
-          console.error('❌ Error starting game:', error);
-          gameStarted = false; // Reset state on error
-        }
-      }
-
-      function restart() {
-        console.log('🔄 Restarting game...');
-
-        // Ensure canvas is initialized
-        if (!canvas && !initializeCanvas()) {
-          console.error('❌ Failed to initialize canvas, cannot restart game');
-          return;
-        }
-
-        // Reset game state
-        board = createMatrix(ROWS, COLS);
-        virusBoard = createMatrix(ROWS, COLS);
-        current = null;
-        next = null;
-        score = 0;
-        level = 1;
-        lines = 0;
-        corruption = 0;
-        dropTime = 0;
-        dropInterval = 1000;
-        virusSpreadTimer = 0;
-        gameOver = false;
-        paused = false;
-        bag = [];
-        gameStarted = true;
-
-        // Hide all overlay screens with error handling
-        ['gameOverScreen', 'pausedScreen', 'startScreen'].forEach(screenId => {
-          const screen = document.getElementById(screenId);
-          if (screen) {
-            screen.classList.add('hidden');
-          } else {
-            console.warn(`⚠️ Screen element ${screenId} not found`);
-          }
-        });
-
-        // Initialize game
-        try {
-          spawnNext();
-          updateUI();
-          lastTime = performance.now();
-          requestAnimationFrame(update);
-          console.log('✅ Game restarted successfully');
-        } catch (error) {
-          console.error('❌ Error restarting game:', error);
-          gameStarted = false;
-        }
-      }
-
-      // Initialize DOM event listeners when DOM is ready
-      function initializeEventListeners() {
-        console.log('🔗 Setting up event listeners...');
-
-        // Start screen event listeners with error handling
-        const startButton = document.getElementById('startButton');
-        console.log('🔍 Start button element:', startButton);
-
-        if (startButton) {
-          console.log('📝 Adding click listener to start button...');
-          startButton.addEventListener('click', () => {
-            console.log('🖱️ Start button clicked!');
-            startGame();
-          });
-          console.log('✅ Click listener added');
-        } else {
-          console.error('❌ Start button not found in DOM');
-          return;
-        }
-
-        // Input handling
-        console.log('⌨️ Adding keyboard listener...');
-        document.addEventListener('keydown', handleKeyInput);
-        console.log('✅ Keyboard listener added');
-
-        // Mobile touch control handlers
-        console.log('📱 Adding mobile control listeners...');
-        const mobileControls = document.getElementById('mobileControls');
-        if (mobileControls) {
-          // Movement controls
-          document.getElementById('mobileLeft').addEventListener('click', () => {
-            if (current && gameStarted && !gameOver && !paused && isValidMove(current, -1, 0)) {
-              current.x--;
-            }
-          });
-
-          document.getElementById('mobileRight').addEventListener('click', () => {
-            if (current && gameStarted && !gameOver && !paused && isValidMove(current, 1, 0)) {
-              current.x++;
-            }
-          });
-
-          document.getElementById('mobileDown').addEventListener('click', () => {
-            if (current && gameStarted && !gameOver && !paused && isValidMove(current, 0, 1)) {
-              current.y++;
-              dropTime = 0;
-            }
-          });
-
-          // Hard drop
-          document.getElementById('mobileDrop').addEventListener('click', () => {
-            if (current && gameStarted && !gameOver && !paused) {
-              while (isValidMove(current, 0, 1)) {
-                current.y++;
+              if (score > highScore) {
+                highScore = score;
+                highScoreEl.textContent = highScore;
+                localStorage.setItem('void_blocks_high_score', highScore);
               }
-              dropTime = 0;
-            }
-          });
 
-          // Rotation
-          document.getElementById('mobileRotate').addEventListener('click', () => {
-            if (current && gameStarted && !gameOver && !paused) {
-              const rotated = rotate(current.shape, true);
-              if (isValidMove(current, 0, 0, rotated)) {
-                current.shape = rotated;
+              // Update status indicator
+              if (level < 5) {
+                statusIndicator.className = 'status-indicator status-stable';
+                statusText.textContent = 'SYSTEM STABLE';
+                statusText.style.color = 'var(--terminal)';
+              } else if (level < 10) {
+                statusIndicator.className = 'status-indicator status-unstable';
+                statusText.textContent = 'SYSTEM UNSTABLE';
+                statusText.style.color = 'var(--warning)';
+              } else {
+                statusIndicator.className = 'status-indicator status-critical';
+                statusText.textContent = 'CRITICAL FAILURE';
+                statusText.style.color = 'var(--virus)';
               }
             }
-          });
 
-          // Pause/Resume
-          document.getElementById('mobilePause').addEventListener('click', () => {
-            if (gameStarted && !gameOver) {
-              togglePause();
-            }
-          });
-
-          // Restart
-          document.getElementById('mobileRestart').addEventListener('click', () => {
-            if (gameStarted) {
-              restart();
-            }
-          });
-
-          console.log('✅ Mobile control listeners added');
-        }
-      }
-
-      function handleKeyInput(e) {
-        console.log(`⌨️ Key pressed: ${e.key}, gameStarted: ${gameStarted}`);
-
-        // Start screen handling
-        if (!gameStarted) {
-          if (e.key === 'Enter') {
-            console.log('✨ Enter key pressed, starting game...');
-            startGame();
-          }
-          return;
-        }
-
-        if (gameOver) {
-          if (e.key.toLowerCase() === 'r') {
-            restart();
-          }
-          return;
-        }
-
-        if (paused && e.key.toLowerCase() !== 'p' && e.key.toLowerCase() !== 'r') {
-          return;
-        }
-
-        switch (e.key) {
-          case 'ArrowLeft':
-            if (current && isValidMove(current, -1, 0)) {
-              current.x--;
-            }
-            break;
-
-          case 'ArrowRight':
-            if (current && isValidMove(current, 1, 0)) {
-              current.x++;
-            }
-            break;
-
-          case 'ArrowDown':
-            if (current && isValidMove(current, 0, 1)) {
-              current.y++;
-              dropTime = 0;
-            }
-            break;
-
-          case ' ': // Hard drop
-            if (current) {
-              while (isValidMove(current, 0, 1)) {
-                current.y++;
+            function playerDrop() {
+              piece.y++;
+              if (collide(board, piece)) {
+                piece.y--;
+                merge(board, piece);
+                playerReset();
+                arenaSweep();
               }
-              placePiece(current);
-              clearLines();
+              dropCounter = 0;
+            }
+
+            function playerMove(dir) {
+              piece.x += dir;
+              if (collide(board, piece)) {
+                piece.x -= dir;
+              }
+            }
+
+            function update(time = 0) {
+              if (isPaused || isGameOver || !isGameActive) return;
+
+              const deltaTime = time - lastTime;
+              lastTime = time;
+
+              dropCounter += deltaTime;
+              if (dropCounter > dropInterval) {
+                playerDrop();
+              }
+
+              drawBoard();
+              animationId = requestAnimationFrame(update);
+            }
+
+            function startGame() {
+              return;
+            }
+
+            // Reset game state
+            board = createMatrix(ROWS, COLS);
+            virusBoard = createMatrix(ROWS, COLS);
+            current = null;
+            next = null;
+            score = 0;
+            level = 1;
+            lines = 0;
+            corruption = 0;
+            dropTime = 0;
+            dropInterval = 1000;
+            virusSpreadTimer = 0;
+            gameOver = false;
+            paused = false;
+            bag = [];
+            gameStarted = true;
+
+            // Hide all overlay screens with error handling
+            ['gameOverScreen', 'pausedScreen', 'startScreen'].forEach(screenId => {
+              const screen = document.getElementById(screenId);
+              if (screen) {
+                screen.classList.add('hidden');
+              } else {
+                console.warn(`⚠️ Screen element ${screenId} not found`);
+              }
+            });
+
+            // Initialize game
+            try {
               spawnNext();
-              dropTime = 0;
+              updateUI();
+              lastTime = performance.now();
+              requestAnimationFrame(update);
+              console.log('✅ Game restarted successfully');
+            } catch (error) {
+              console.error('❌ Error restarting game:', error);
+              gameStarted = false;
             }
-            e.preventDefault();
-            break;
+          }
 
-          case 'ArrowUp':
-          case 'z':
-          case 'Z':
-            if (current) {
-              const rotated = rotate(current.shape, false);
-              if (isValidMove(current, 0, 0, rotated)) {
-                current.shape = rotated;
+          // Initialize DOM event listeners when DOM is ready
+          function initializeEventListeners() {
+            console.log('🔗 Setting up event listeners...');
+
+            // Start screen event listeners with error handling
+            const startButton = document.getElementById('startButton');
+            console.log('🔍 Start button element:', startButton);
+
+            if (startButton) {
+              console.log('📝 Adding click listener to start button...');
+              startButton.addEventListener('click', () => {
+                console.log('🖱️ Start button clicked!');
+                startGame();
+              });
+              console.log('✅ Click listener added');
+            } else {
+              console.error('❌ Start button not found in DOM');
+              return;
+            }
+
+            // Input handling
+            console.log('⌨️ Adding keyboard listener...');
+            document.addEventListener('keydown', handleKeyInput);
+            console.log('✅ Keyboard listener added');
+
+            // Mobile touch control handlers
+            console.log('📱 Adding mobile control listeners...');
+            const mobileControls = document.getElementById('mobileControls');
+            if (mobileControls) {
+              // Movement controls
+              document.getElementById('mobileLeft').addEventListener('click', () => {
+                if (current && gameStarted && !gameOver && !paused && isValidMove(current, -1, 0)) {
+                  current.x--;
+                }
+              });
+
+              document.getElementById('mobileRight').addEventListener('click', () => {
+                if (current && gameStarted && !gameOver && !paused && isValidMove(current, 1, 0)) {
+                  current.x++;
+                }
+              });
+
+              document.getElementById('mobileDown').addEventListener('click', () => {
+                if (current && gameStarted && !gameOver && !paused && isValidMove(current, 0, 1)) {
+                  current.y++;
+                  dropTime = 0;
+                }
+              });
+
+              // Hard drop
+              document.getElementById('mobileDrop').addEventListener('click', () => {
+                if (current && gameStarted && !gameOver && !paused) {
+                  while (isValidMove(current, 0, 1)) {
+                    current.y++;
+                  }
+                  dropTime = 0;
+                }
+              });
+
+              // Rotation
+              document.getElementById('mobileRotate').addEventListener('click', () => {
+                if (current && gameStarted && !gameOver && !paused) {
+                  const rotated = rotate(current.shape, true);
+                  if (isValidMove(current, 0, 0, rotated)) {
+                    current.shape = rotated;
+                  }
+                }
+              });
+
+              // Pause/Resume
+              document.getElementById('mobilePause').addEventListener('click', () => {
+                if (gameStarted && !gameOver) {
+                  togglePause();
+                }
+              });
+
+              // Restart
+              document.getElementById('mobileRestart').addEventListener('click', () => {
+                if (gameStarted) {
+                  restart();
+                }
+              });
+
+              console.log('✅ Mobile control listeners added');
+            }
+          }
+
+          function handleKeyInput(e) {
+            console.log(`⌨️ Key pressed: ${e.key}, gameStarted: ${gameStarted}`);
+
+            // Start screen handling
+            if (!gameStarted) {
+              if (e.key === 'Enter') {
+                console.log('✨ Enter key pressed, starting game...');
+                startGame();
               }
+              return;
             }
-            break;
 
-          case 'x':
-          case 'X':
-            if (current) {
-              const rotated = rotate(current.shape, true);
-              if (isValidMove(current, 0, 0, rotated)) {
-                current.shape = rotated;
+            if (gameOver) {
+              if (e.key.toLowerCase() === 'r') {
+                restart();
               }
+              return;
             }
-            break;
 
-          case 'p':
-          case 'P':
-            togglePause();
-            break;
+            if (paused && e.key.toLowerCase() !== 'p' && e.key.toLowerCase() !== 'r') {
+              return;
+            }
 
-          case 'r':
-          case 'R':
-            restart();
-            break;
-        }
+            switch (e.key) {
+              case 'ArrowLeft':
+                if (current && isValidMove(current, -1, 0)) {
+                  current.x--;
+                }
+                break;
 
-        if (e.key === 'ArrowDown' || e.key === ' ') {
-          e.preventDefault();
-        }
-      }
+              case 'ArrowRight':
+                if (current && isValidMove(current, 1, 0)) {
+                  current.x++;
+                }
+                break;
 
-      // Initialize game when DOM is fully loaded
-      function initializeGame() {
-        console.log('🚀 Starting game initialization...');
+              case 'ArrowDown':
+                if (current && isValidMove(current, 0, 1)) {
+                  current.y++;
+                  dropTime = 0;
+                }
+                break;
 
-        // Ensure start screen is visible
-        const startScreen = document.getElementById('startScreen');
-        console.log('🔍 Start screen element:', startScreen);
+              case ' ': // Hard drop
+                if (current) {
+                  while (isValidMove(current, 0, 1)) {
+                    current.y++;
+                  }
+                  placePiece(current);
+                  clearLines();
+                  spawnNext();
+                  dropTime = 0;
+                }
+                e.preventDefault();
+                break;
 
-        if (startScreen) {
-          startScreen.classList.remove('hidden');
-          console.log('✅ Start screen made visible');
-        } else {
-          console.error('❌ Start screen not found!');
-          return; // Exit early if critical element missing
-        }
+              case 'ArrowUp':
+              case 'z':
+              case 'Z':
+                if (current) {
+                  const rotated = rotate(current.shape, false);
+                  if (isValidMove(current, 0, 0, rotated)) {
+                    current.shape = rotated;
+                  }
+                }
+                break;
 
-        // Initialize event listeners
-        console.log('🎯 Initializing event listeners...');
-        initializeEventListeners();
+              case 'x':
+              case 'X':
+                if (current) {
+                  const rotated = rotate(current.shape, true);
+                  if (isValidMove(current, 0, 0, rotated)) {
+                    current.shape = rotated;
+                  }
+                }
+                break;
 
-        // Initialize UI
-        console.log('🖥️ Initializing UI...');
-        updateUI();
+              case 'p':
+              case 'P':
+                togglePause();
+                break;
 
-        console.log('✅ Game initialized successfully');
-      }
+              case 'r':
+              case 'R':
+                restart();
+                break;
+            }
 
-      // Wait for DOM to be ready
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeGame);
-      } else {
-        initializeGame();
-      }
-    })();
+            if (e.key === 'ArrowDown' || e.key === ' ') {
+              e.preventDefault();
+            }
+          }
+
+          // Initialize game when DOM is fully loaded
+          function initializeGame() {
+            console.log('🚀 Starting game initialization...');
+
+            // Ensure start screen is visible
+            const startScreen = document.getElementById('startScreen');
+            console.log('🔍 Start screen element:', startScreen);
+
+            if (startScreen) {
+              startScreen.classList.remove('hidden');
+              console.log('✅ Start screen made visible');
+            } else {
+              console.error('❌ Start screen not found!');
+              return; // Exit early if critical element missing
+            }
+
+            // Initialize event listeners
+            console.log('🎯 Initializing event listeners...');
+            initializeEventListeners();
+
+            // Initialize UI
+            console.log('🖥️ Initializing UI...');
+            updateUI();
+
+            console.log('✅ Game initialized successfully');
+          }
+
+          // Wait for DOM to be ready
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeGame);
+          } else {
+            initializeGame();
+          }
+        }) ();
   </script>
 
   <!-- GoatCounter Analytics -->
