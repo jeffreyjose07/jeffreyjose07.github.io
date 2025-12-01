@@ -18,20 +18,40 @@
     rel="stylesheet">
   <style>
     :root {
+      /* Default Light Theme Variables */
+      --background: #ffffff;
+      --foreground: #0f172a;
       --primary: #7c3aed;
+      --primary-foreground: #f8fafc;
       --primary-glow: #a78bfa;
-      --secondary: #1e1e24;
+      --secondary: #f1f5f9;
+      --muted: #f1f5f9;
+      --muted-foreground: #64748b;
+      --border: #e2e8f0;
+
+      --game-snake: #7c3aed;
+      --game-food: #f472b6;
+      --game-grid: #e2e8f0;
+
+      --font-sans: 'Inter', sans-serif;
+      --font-heading: 'Outfit', sans-serif;
+    }
+
+    /* Dark Theme Override */
+    html.dark {
       --background: #09090b;
       --foreground: #f8fafc;
-      --muted: #94a3b8;
+      --primary: #7c3aed;
+      --primary-foreground: #f8fafc;
+      --primary-glow: #a78bfa;
+      --secondary: #1e1e24;
+      --muted: #1e1e24;
+      --muted-foreground: #94a3b8;
       --border: #27272a;
 
       --game-snake: #7c3aed;
       --game-food: #f472b6;
       --game-grid: #18181b;
-
-      --font-sans: 'Inter', sans-serif;
-      --font-heading: 'Outfit', sans-serif;
     }
 
     * {
@@ -106,16 +126,16 @@
     }
 
     .nav-link {
-      color: rgba(255, 255, 255, 0.7);
+      color: var(--muted-foreground);
       text-decoration: none;
       font-size: 0.9rem;
       font-weight: 500;
       transition: all 0.2s ease;
     }
 
-    .nav-link:hover {
-      color: #fff;
-      text-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--foreground);
     }
 
     .nav-divider {
@@ -568,13 +588,8 @@
       }
     });
 
-    // Hide header if in iframe
-    if (window.self !== window.top) {
-      document.getElementById('siteHeader').style.display = 'none';
-      document.body.style.paddingTop = '20px'; // Reduce padding since header is gone
-    }
-
-
+    // Force Dark Mode for Games
+    document.documentElement.classList.add('dark');
   </script>
 
   <div class="game-header">
