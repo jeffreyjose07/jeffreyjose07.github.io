@@ -437,6 +437,15 @@
         display: none;
       }
     }
+
+    /* Embedded Mode (Iframe) */
+    body.embedded .site-header {
+      display: none !important;
+    }
+
+    body.embedded {
+      padding-top: 20px;
+    }
   </style>
 </head>
 
@@ -513,6 +522,11 @@
       localStorage.setItem('theme', currentTheme);
       updateThemeUI(currentTheme);
     });
+
+    // Check if embedded in iframe
+    if (window.self !== window.top) {
+      document.body.classList.add('embedded');
+    }
   </script>
 
   <div class="game-header">
@@ -602,14 +616,17 @@
       const START_LEN = 4;
 
       // Terminal colors - Updated to use CSS variables
+      // Terminal colors - Updated to use CSS variables with fallbacks
       const getColors = () => {
         const style = getComputedStyle(document.documentElement);
         return {
-          snakeHead: style.getPropertyValue('--game-snake-head').trim(),
-          snakeBody: style.getPropertyValue('--game-snake').trim(),
-          food: style.getPropertyValue('--game-food').trim(),
-          grid: style.getPropertyValue('--game-grid').trim(),
-          bg: style.getPropertyValue('--game-bg').trim()
+          snakeHead: style.getPropertyValue('--game-snake-head').trim() || '#6d28d9',
+          snakeBody: style.getPropertyValue('--game-snake').trim() || '#7c3aed',
+          food: style.getPropertyValue('--game-food').trim() || '#db2777',
+          grid: style.getPropertyValue('--game-grid').trim() || '#e2e8f0',
+          bg: style.getPropertyValue('--game-bg').trim() || '#ffffff',
+          danger: '#ef4444',
+          snakeBody2: style.getPropertyValue('--game-accent').trim() || '#8b5cf6'
         };
       };
 
@@ -817,20 +834,20 @@
         // Draw snake
         gameState.snake.forEach((segment, index) => {
           if (index === 0) {
-            const color = gameState.status === 'gameover' ? COLORS.danger : COLORS.snakeHead;
+            const color = gameState.status === 'gameover' ? colors.danger : colors.snakeHead;
             drawCell(segment.x, segment.y, color);
 
             // Draw eye
             if (gameState.status !== 'gameover') {
               const eyeX = segment.x * CELL + (gameState.dir.x >= 0 ? CELL - 6 : 6);
               const eyeY = segment.y * CELL + (gameState.dir.y >= 0 ? CELL - 6 : 6);
-              ctx.fillStyle = "#000000";
+              ctx.fillStyle = "#ffffff";
               ctx.beginPath();
               ctx.arc(eyeX, eyeY, 2, 0, Math.PI * 2);
               ctx.fill();
             }
           } else {
-            const color = index % 2 ? COLORS.snakeBody : COLORS.snakeBody2;
+            const color = index % 2 ? colors.snakeBody : colors.snakeBody2;
             drawCell(segment.x, segment.y, color);
           }
         });
