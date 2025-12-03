@@ -5,6 +5,7 @@ import path from 'path';
 import { marked } from 'marked';
 import matter from 'gray-matter';
 import { fileURLToPath } from 'url';
+import { generateThumbnails } from '../../scripts/thumbnail-generator/generate.js';
 
 // ES module equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -15,6 +16,7 @@ const CONFIG_PATH = path.join(__dirname, '../config.json');
 const POSTS_DIR = path.join(__dirname, '../posts');
 const TEMPLATES_DIR = path.join(__dirname, '../templates');
 const OUTPUT_DIR = path.join(__dirname, '../../public/blog');
+const THUMBNAILS_DIR = path.join(__dirname, '../../public/assets/thumbnails');
 
 // Load configuration
 const config = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
@@ -223,7 +225,12 @@ function processPost(filename, episodeNumber, allPosts = []) {
 
     // Parse frontmatter and content
     const { data: frontmatter, content } = matter(fileContent);
-    const thumbnail = frontmatter.thumbnail || frontmatter.image || '';
+    
+    // Create post slug
+    const slug = createCleanSlug(frontmatter.title, frontmatter.slug);
+
+    // Determine thumbnail (default to generated terminal thumbnail)
+    const thumbnail = frontmatter.thumbnail || frontmatter.image || `/assets/thumbnails/${slug}.png`;
 
     // Generate HTML content
     const htmlContent = marked(content);
@@ -240,9 +247,6 @@ function processPost(filename, episodeNumber, allPosts = []) {
             return `<a href="/blog#tag-${tag}" class="tag ${tagColorCategory}" data-tag="${tag}">${tag}</a>`;
         }).join(', ')
         : '';
-
-    // Create post slug
-    const slug = createCleanSlug(frontmatter.title, frontmatter.slug);
 
     // Generate navigation links
     const currentIndex = allPosts.findIndex(post => post.episodeNumber === episodeNumber);
@@ -268,6 +272,7 @@ function processPost(filename, episodeNumber, allPosts = []) {
         .replace(/{{tagsFormatted}}/g, tagsFormatted)
         .replace(/{{navigation}}/g, navigationHtml)
         .replace(/{{slug}}/g, slug)
+        .replace(/{{thumbnail}}/g, thumbnail)
         .replace(/{{githubUrl}}/g, config.social.github)
         .replace(/{{linkedinUrl}}/g, config.social.linkedin)
         .replace(/{{twitterUrl}}/g, config.social.twitter)
@@ -354,7 +359,7 @@ function generateIndex(posts) {
 
             let thumbnailHtml = '';
             if (post.thumbnail) {
-                const thumbSrc = post.thumbnail.startsWith('http') ? post.thumbnail : `/blog/${post.thumbnail}`;
+                const thumbSrc = post.thumbnail.startsWith('http') || post.thumbnail.startsWith('/') ? post.thumbnail : `/blog/${post.thumbnail}`;
                 thumbnailHtml = `<div class="post-thumbnail" style="background-image: url('${thumbSrc}')"></div>`;
             } else {
                 // Generate a deterministic gradient based on episode number
@@ -613,7 +618,7 @@ ${postsHtml}
 }
 
 // Main build function
-function build() {
+async function build() {
     console.log('🚀 Building blog with advanced semantic coloring...');
 
     // Get all markdown files (excluding template)
@@ -643,6 +648,25 @@ function build() {
             tags: frontmatter.tags || []
         });
     });
+
+    // Generate thumbnails
+    if (process.env.SKIP_THUMBNAILS !== 'true') {
+        console.log('🖼️ Generating terminal thumbnails...');
+        
+        // Ensure thumbnails directory exists
+        if (!fs.existsSync(THUMBNAILS_DIR)) {
+            fs.mkdirSync(THUMBNAILS_DIR, { recursive: true });
+        }
+
+        const thumbnailPosts = posts.map(post => ({
+            title: post.title,
+            tags: post.tags,
+            description: post.description,
+            outputPath: path.join(THUMBNAILS_DIR, `${post.slug}.png`)
+        }));
+        
+        await generateThumbnails(thumbnailPosts);
+    }
 
     // Second pass: process each post with navigation context
     files.forEach((file, index) => {
