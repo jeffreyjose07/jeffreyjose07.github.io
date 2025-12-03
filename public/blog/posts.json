@@ -1,5 +1,21 @@
 [
   {
+    "url": "/blog/automating-terminal-style-thumbnails",
+    "title": "Automating Terminal-Style Thumbnails",
+    "episode": "024",
+    "date": "2025-12-03",
+    "tags": [
+      "automation",
+      "design",
+      "javascript",
+      "nodejs"
+    ],
+    "description": "How I built a custom thumbnail generator using Puppeteer to create consistent, terminal-themed open graph images for every blog post.",
+    "readingTime": 3,
+    "wordCount": 550,
+    "slug": "automating-terminal-style-thumbnails"
+  },
+  {
     "url": "/blog/refining-navigation-and-branding-a-journey-to-cons",
     "title": "Refining Navigation and Branding: A Journey to Consistency",
     "episode": "023",

@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automating Terminal-Style Thumbnails - Jeffrey Jose</title>
+    <meta name="description" content="How I built a custom thumbnail generator using Puppeteer to create consistent, terminal-themed open graph images for every blog post." />
+
+    <!-- SEO Meta Tags -->
+    <meta property="og:title" content="Automating Terminal-Style Thumbnails">
+    <meta property="og:description" content="How I built a custom thumbnail generator using Puppeteer to create consistent, terminal-themed open graph images for every blog post.">
+    <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/automating-terminal-style-thumbnails">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/automating-terminal-style-thumbnails.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Automating Terminal-Style Thumbnails">
+    <meta name="twitter:description" content="How I built a custom thumbnail generator using Puppeteer to create consistent, terminal-themed open graph images for every blog post.">
+    <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/automating-terminal-style-thumbnails.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
+
+    <!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+<style>
+    :root {
+        /* Premium Dark Theme Variables */
+        --background: #09090b;
+        --foreground: #f8fafc;
+
+        --primary: #7c3aed;
+        --primary-foreground: #f8fafc;
+        --primary-glow: #a78bfa;
+
+        --secondary: #1e1e24;
+        --secondary-foreground: #f8fafc;
+
+        --muted: #1e1e24;
+        --muted-foreground: #94a3b8;
+
+        --accent: #1e1e24;
+        --accent-foreground: #f8fafc;
+
+        --border: #27272a;
+        --input: #27272a;
+
+        --font-sans: 'Inter', sans-serif;
+        --font-heading: 'Outfit', sans-serif;
+
+        --gradient-hero: linear-gradient(135deg, #09090b, #1e1b4b);
+        --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+        --gradient-accent: linear-gradient(135deg, #7c3aed, #c084fc);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: var(--font-sans);
+        background-color: var(--background);
+        color: var(--foreground);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    /* Utilities */
+    .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .glass {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+        border-color: rgba(124, 58, 237, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .text-gradient-premium {
+        background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .bg-mesh {
+        background-color: var(--background);
+        background-image:
+            radial-gradient(at 40% 20%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
+            radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+            radial-gradient(at 0% 50%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--background);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #3f3f46;
+        border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #52525b;
+    }
+</style>
+
+    <style>
+        body {
+            padding-top: 100px;
+        }
+
+        .post-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(9, 9, 11, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .post-header {
+            margin-bottom: 3rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 2rem;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+        }
+
+        .episode-badge {
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+        }
+
+        .post-title {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .post-content {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: #d1d5db;
+        }
+
+        .post-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .post-content h2 {
+            font-size: 1.75rem;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--foreground);
+        }
+
+        .post-content h3 {
+            font-size: 1.5rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--foreground);
+        }
+
+        .post-content ul,
+        .post-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .post-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .post-content a {
+            color: var(--primary-glow);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+            transition: all 0.2s;
+        }
+
+        .post-content a:hover {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid var(--primary);
+            padding-left: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: var(--muted-foreground);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .post-content code {
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2em 0.4em;
+            border-radius: 0.25rem;
+            color: #e2e8f0;
+        }
+
+        .post-content pre {
+            background: #111827;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+            color: #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .post-footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--muted-foreground);
+            font-size: 0.875rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .post-tags-footer {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag-pill {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--muted-foreground);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .tag-pill:hover {
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--primary-glow);
+            border-color: rgba(124, 58, 237, 0.2);
+        }
+
+        /* Reading progress */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-glow));
+            z-index: 2000;
+            transition: width 0.1s ease;
+        }
+
+        /* Navigation */
+        .post-navigation {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .nav-previous,
+        .nav-next {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-previous a,
+        .nav-next a {
+            text-decoration: none;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--muted-foreground);
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-title {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            color: var(--foreground);
+            font-size: 1.125rem;
+            transition: color 0.2s;
+        }
+
+        .nav-previous:hover .nav-title,
+        .nav-next:hover .nav-title {
+            color: var(--primary-glow);
+        }
+
+        .nav-next {
+            text-align: right;
+        }
+
+        @media (max-width: 768px) {
+            .post-title {
+                font-size: 2rem;
+            }
+
+            .post-navigation {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-next {
+                text-align: left;
+            }
+
+            .post-container {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Inline styles injected from frontmatter */
+            {
+                {
+                inlineStyles
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-mesh">
+    <div class="reading-progress"></div>
+
+    <style>
+    /* Top Bar Header */
+    .site-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        background: transparent;
+        border-bottom: 1px solid transparent;
+    }
+
+    .site-header.scrolled {
+        background: rgba(9, 9, 11, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .site-logo {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--foreground);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .text-gradient-premium {
+        background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+        display: inline-block;
+    }
+
+    .site-nav {
+        display: flex;
+        gap: 2rem;
+    }
+
+    .nav-link {
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--muted-foreground);
+        text-decoration: none;
+        transition: color 0.2s ease;
+        position: relative;
+    }
+
+    .nav-link:hover {
+        color: var(--primary-glow);
+    }
+
+    .nav-link.active {
+        color: var(--foreground);
+    }
+
+    /* Mobile Menu */
+    .mobile-menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--foreground);
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .site-nav {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            flex-direction: column;
+            background: rgba(9, 9, 11, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .site-nav.open {
+            display: flex;
+            animation: slideDown 0.3s ease-out forwards;
+        }
+
+        .mobile-menu-toggle {
+            display: block;
+        }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Search Button */
+    .search-trigger {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--muted-foreground);
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+    }
+
+    .search-trigger:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--foreground);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Search Modal */
+    .search-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(8px);
+        z-index: 2000;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 100px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .search-modal-overlay.open {
+        display: flex;
+        opacity: 1;
+    }
+
+    .search-modal {
+        background: #09090b;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 1rem;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        transform: scale(0.95);
+        transition: transform 0.3s ease;
+    }
+
+    .search-modal-overlay.open .search-modal {
+        transform: scale(1);
+    }
+
+    .search-input-container {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+    }
+
+    .search-icon {
+        color: var(--muted-foreground);
+        margin-right: 1rem;
+    }
+
+    .search-input {
+        background: transparent;
+        border: none;
+        color: var(--foreground);
+        font-size: 1.125rem;
+        width: 100%;
+        outline: none;
+        font-family: var(--font-sans);
+    }
+
+    .search-results {
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 0.5rem;
+    }
+
+    .search-result-item {
+        display: block;
+        padding: 1rem;
+        text-decoration: none;
+        color: var(--muted-foreground);
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+        margin-bottom: 0.25rem;
+    }
+
+    .search-result-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--foreground);
+    }
+
+    .search-result-title {
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--primary-glow);
+        margin-bottom: 0.25rem;
+    }
+
+    .search-result-excerpt {
+        font-size: 0.875rem;
+        color: var(--muted-foreground);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+
+<header class="site-header" id="siteHeader">
+    <div class="header-inner">
+        <a href="/" class="site-logo">
+            <img src="/logo.svg" alt="JJ" width="32" height="32">
+            <span>Jeffrey<span style="color: var(--primary)">.</span><span
+                    class="text-gradient-premium">Jose</span></span>
+        </a>
+
+        <nav class="site-nav">
+            <a href="/#hero" class="nav-link">Home</a>
+            <a href="/#projects" class="nav-link">Projects</a>
+            <a href="/#skills" class="nav-link">Skills</a>
+            <a href="/#experience" class="nav-link">Experience</a>
+            <a href="/#education" class="nav-link">Education</a>
+            <a href="/#contact" class="nav-link">Contact</a>
+            <a href="/blog" class="nav-link active">Blog</a>
+            <a href="/analytics.html" class="nav-link">Analytics</a>
+        </nav>
+
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <button class="search-trigger" onclick="openSearch()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span style="display: none; @media (min-width: 768px) { display: inline; }">Search</span>
+                <span
+                    style="font-size: 0.75rem; opacity: 0.6; margin-left: 0.5rem; display: none; @media (min-width: 768px) { display: inline; }">⌘K</span>
+            </button>
+
+            <button class="mobile-menu-toggle" aria-label="Toggle menu"
+                onclick="document.querySelector('.site-nav').classList.toggle('open')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Search Modal HTML -->
+<div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()">
+    <div class="search-modal">
+        <div class="search-input-container">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" class="search-input" placeholder="Search posts..." id="searchInput" autocomplete="off">
+        </div>
+        <div class="search-results" id="searchResults">
+            <!-- Results will be injected here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // Header Scroll Effect
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('siteHeader');
+        if (window.scrollY > 20) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+
+    let searchIndex = [];
+    let isSearchOpen = false;
+
+    async function loadSearchIndex() {
+        if (searchIndex.length > 0) return;
+        try {
+            const response = await fetch('/blog/search.json');
+            searchIndex = await response.json();
+        } catch (e) {
+            console.error('Failed to load search index', e);
+        }
+    }
+
+    function openSearch() {
+        document.getElementById('searchModal').classList.add('open');
+        document.getElementById('searchInput').focus();
+        isSearchOpen = true;
+        loadSearchIndex();
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSearch() {
+        document.getElementById('searchModal').classList.remove('open');
+        isSearchOpen = false;
+        document.body.style.overflow = '';
+    }
+
+    function performSearch(query) {
+        if (!query) {
+            document.getElementById('searchResults').innerHTML = '';
+            return;
+        }
+
+        const results = searchIndex.filter(post => {
+            const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
+            const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
+            const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
+            return titleMatch || descMatch || tagMatch;
+        }).slice(0, 5); // Limit to 5 results
+
+        const resultsHtml = results.map(post => `
+            <a href="/blog/${post.slug}" class="search-result-item" onclick="closeSearch()">
+                <div class="search-result-title">${post.title}</div>
+                <div class="search-result-excerpt">${post.description || ''}</div>
+            </a>
+        `).join('');
+
+        document.getElementById('searchResults').innerHTML = results.length > 0
+            ? resultsHtml
+            : '<div style="padding: 1rem; color: var(--muted-foreground); text-align: center;">No results found</div>';
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        performSearch(e.target.value);
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            if (isSearchOpen) closeSearch();
+            else openSearch();
+        }
+        if (e.key === 'Escape' && isSearchOpen) {
+            closeSearch();
+        }
+    });
+</script>
+
+    <main class="container animate-fade-in-up">
+        <article class="post-container">
+            <header class="post-header">
+                <div class="post-meta">
+                    <span class="episode-badge">#024</span>
+                    <span>3 Dec 2025</span>
+                    <span>·</span>
+                    <span>3 min read</span>
+                </div>
+                <h1 class="post-title">Automating Terminal-Style Thumbnails</h1>
+            </header>
+
+            <div class="post-content">
+                <p>I recently decided to give my blog a visual refresh. While I loved the content, the thumbnails were a mix of generic gradients and random screenshots. I wanted something that felt cohesive, technical, and aligned with the &quot;<span class="meta">terminal</span>/cyberpunk&quot; <span class="meta">aesthetic</span> of my portfolio.</p>
+<p>Instead of manually designing a cover image for every new post in Figma or Canva, I did what any engineer would do: I wrote a <span class="process">script</span> to do it for me.</p>
+<h2>The Goal</h2>
+<p>I wanted thumbnails that looked like a <span class="meta">terminal</span> window executing a command related to the post. For example:</p>
+<ul>
+<li>A backend post might show a <code>curl</code> request.</li>
+<li>A personal post might show a <code>cat journal.md</code> command.</li>
+<li>A <span class="structure">database</span> post might show a <code>psql</code> query.</li>
+</ul>
+<p>The result needed to be a high-quality PNG that could be used as an Open Graph image (for Twitter/LinkedIn cards) and as the header image on the blog itself.</p>
+<h2>The Tech Stack</h2>
+<ul>
+<li><strong>Node.js</strong>: The runtime for the <span class="process">script</span>.</li>
+<li><strong>Puppeteer</strong>: A headless Chrome Node.js <span class="connection">API</span>. This is the secret sauce. It allows me to render <span class="process">HTML</span>/<span class="process">CSS</span> exactly as a browser would and take a screenshot.</li>
+<li><strong><span class="process">HTML</span>/<span class="process">CSS</span></strong>: To design the &quot;<span class="meta">terminal</span> window&quot; layout.</li>
+</ul>
+<h2>The Implementation</h2>
+<h3>1. The Template</h3>
+<p>First, I created an <span class="process">HTML</span> template (<code>template.html</code>) that defines the look of the <span class="meta">terminal</span>. It uses Flexbox to center a &quot;window&quot; div, and <span class="process">CSS</span> to style the window controls (the red, yellow, and green dots) and the dark background.</p>
+<p>I used Google Fonts to load <strong>JetBrains Mono</strong> for the <span class="meta">terminal</span> text and <strong>Outfit</strong> for the window title, ensuring typography matches the <span class="connection">rest</span> of my site.</p>
+<pre><code class="language-html">&lt;div class=&quot;terminal-window&quot;&gt;
+    &lt;div class=&quot;window-header&quot;&gt;
+        &lt;div class=&quot;window-controls&quot;&gt;
+            &lt;!-- Mac-style dots --&gt;
+            &lt;div class=&quot;control-dot red&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;control-dot yellow&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;control-dot green&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;window-title&quot;&gt;~/blog/posts/{{windowTitle}}&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;terminal-content&quot;&gt;
+        {{terminalContent}}
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<h3>2. The Generator <span class="process">Script</span></h3>
+<p>The <span class="process">script</span> (<code>generate.js</code>) reads my blog&#39;s configuration and post <span class="meta">metadata</span>. It then launches a headless browser instance using Puppeteer.</p>
+<p>For each post, it:</p>
+<ol>
+<li>Determines the &quot;primary <span class="meta">tag</span>&quot; (e.g., <code>backend</code>, <code>personal</code>, <code>frontend</code>).</li>
+<li>Selects a corresponding &quot;command <span class="meta">pattern</span>&quot; based on that <span class="meta">tag</span>.</li>
+<li>Injects the post title and the generated command into the <span class="process">HTML</span> template.</li>
+<li>Takes a screenshot of the rendered page.</li>
+<li>Saves the image to <code>public/assets/thumbnails/</code>.</li>
+</ol>
+<p>Here&#39;s a snippet of the <span class="process">logic</span> that maps tags to <span class="meta">terminal</span> commands:</p>
+<pre><code class="language-javascript">switch (primaryCategory) {
+    case &#39;backend&#39;:
+        commandHtml = `curl -X POST /api/v1/deploy`;
+        outputHtml = `{&quot;status&quot;: &quot;success&quot;, &quot;message&quot;: &quot;Deployment initiated...&quot;}`;
+        break;
+    case &#39;personal&#39;:
+        commandHtml = `cat ~/journal/${slug}.md`;
+        outputHtml = `Reflecting on: &quot;${description}&quot;`;
+        break;
+    // ... other categories
+}
+</code></pre>
+<h3>3. <span class="process">Build</span> <span class="connection">Integration</span></h3>
+<p>The best part is that this is now part of my <span class="process">build</span> <span class="connection">pipeline</span>. Whenever I <span class="process">run</span> <code>npm run build:blog</code>, the <span class="process">script</span> checks if a thumbnail exists for each post. If it&#39;s missing, it automatically generates a fresh one in milliseconds.</p>
+<p>This means I never have to worry about assets again. I just write the <span class="process">markdown</span>, <span class="meta">tag</span> it appropriately, and the <span class="structure">system</span> generates a beautiful, custom thumbnail that perfectly matches the content.</p>
+<h2>The Result</h2>
+<p>You&#39;re looking at it right now! The thumbnail for this post was generated by the very <span class="structure">system</span> it describes. It&#39;s a meta-example of automation serving creativity.</p>
+<p>By treating design assets as <span class="process">code</span>, I&#39;ve ensured 100% consistency across the blog while removing manual toil from my writing process.</p>
+
+            </div>
+
+            <footer class="post-footer">
+                <div class="post-tags-footer">
+                    <a href="/blog#tag-automation" class="tag success" data-tag="automation">automation</a>, <a href="/blog#tag-design" class="tag neutral" data-tag="design">design</a>, <a href="/blog#tag-javascript" class="tag process" data-tag="javascript">javascript</a>, <a href="/blog#tag-nodejs" class="tag neutral" data-tag="nodejs">nodejs</a>
+                </div>
+                <div id="view-count" style="font-family: var(--font-mono); font-size: 0.75rem;">
+                    👀 views loading...
+                </div>
+            </footer>
+        </article>
+
+        <nav class="post-navigation">
+            <div class="nav-previous glass-card">
+                <a href="/blog/refining-navigation-and-branding-a-journey-to-cons">
+                    <span class="nav-label">← previous</span>
+                    <span class="nav-title">Refining Navigation and Branding: A Journey to Consistency</span>
+                </a>
+            </div></nav>
+
+        <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;">
+            <a href="/blog/feed.xml" class="glass"
+                style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 0.5rem; color: #f59e0b;">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg>
+                Subscribe via RSS
+            </a>
+        </div>
+    </main>
+
+    <script>
+        // Prevent scroll restoration but don't interfere with navigation
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
+        // Only scroll to top on actual page refresh (not navigation)
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 0);
+        });
+
+        // Reading progress indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('.reading-progress').style.width = scrolled + '%';
+        });
+
+        // Load view count from GoatCounter
+        document.addEventListener('DOMContentLoaded', () => {
+            loadViewCount();
+        });
+
+        function loadViewCount() {
+            const path = window.location.pathname;
+            const viewCountElement = document.getElementById('view-count');
+
+            fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.count || '0';
+                    viewCountElement.innerHTML = `👀 ${count} views`;
+                    viewCountElement.style.color = 'var(--primary-glow)';
+                })
+                .catch(error => {
+                    console.warn('Could not load view count:', error);
+                });
+        }
+
+        /* Inline scripts injected from frontmatter */
+        
+    </script>
+
+    <!-- GoatCounter Analytics -->
+    <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+
+</html>

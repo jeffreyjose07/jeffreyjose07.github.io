@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Thumbnail</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background-color: #09090b; /* Site Background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+        .terminal-window {
+            width: 960px; /* Slightly smaller to make room for shadow */
+            height: 480px; /* Slightly smaller to make room for shadow */
+            background-color: #0a0a0a; /* Deep Black */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 40px rgba(124, 58, 237, 0.2); /* Subtle violet glow */
+            color: #f8fafc;
+            box-sizing: border-box;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Ensure content stays within borders */
+        }
+        .window-header {
+            display: flex;
+            align-items: center;
+            padding: 8px 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+        .window-controls {
+            display: flex;
+            gap: 8px;
+        }
+        .control-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .red { background-color: #ff5f56; }
+        .yellow { background-color: #ffbd2e; }
+        .green { background-color: #27c93f; }
+        .window-title {
+            flex-grow: 1;
+            text-align: center;
+            color: #94a3b8; /* Slate-400 */
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 1; /* Align text better */
+            margin: 0 10px; /* Space around title */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .terminal-content {
+            flex-grow: 1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            padding: 15px 20px;
+            overflow-y: auto; /* Allow scrolling if content overflows */
+            -webkit-overflow-scrolling: touch;
+            line-height: 1.5;
+            color: #f8fafc; /* Command color */
+        }
+
+        /* Syntax Highlighting / Terminal Colors */
+        .color-prompt { color: #7c3aed; } /* Violet */
+        .color-success { color: #4ade80; } /* Green-400 */
+        .color-error { color: #f87171; } /* Red-400 */
+        .color-comment { color: #94a3b8; } /* Slate-400 */
+        .color-command { color: #f8fafc; } /* Slate-50 */
+
+        /* Specific content styles */
+        .prompt::before {
+            content: '$ ';
+            color: #7c3aed; /* Violet prompt */
+        }
+        .input-command {
+            color: #f8fafc; /* White for command input */
+        }
+        .output-text {
+            color: #f8fafc; /* Default output text */
+        }
+        .placeholder-line {
+            opacity: 0.5;
+        }
+        .cursor {
+            display: inline-block;
+            background-color: #f8fafc;
+            width: 8px;
+            height: 1em;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to { background-color: transparent }
+            50% { background-color: #f8fafc }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="terminal-window">
+        <div class="window-header">
+            <div class="window-controls">
+                <div class="control-dot red"></div>
+                <div class="control-dot yellow"></div>
+                <div class="control-dot green"></div>
+            </div>
+            <div class="window-title">{{windowTitle}}</div>
+        </div>
+        <div class="terminal-content">
+            {{terminalContent}}
+        </div>
+    </div>
+</body>
+</html>
