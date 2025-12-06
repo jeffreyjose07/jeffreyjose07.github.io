@@ -70,6 +70,8 @@
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+        max-width: 100vw;
     }
 
     h1,
@@ -228,6 +230,7 @@
             font-size: 1.125rem;
             line-height: 1.8;
             color: #d1d5db;
+            word-break: break-word;
         }
 
         .post-content p {
@@ -581,6 +584,24 @@
         border-color: rgba(255, 255, 255, 0.2);
     }
 
+    .search-text,
+    .search-shortcut {
+        display: none;
+    }
+
+    @media (min-width: 768px) {
+        .search-text {
+            display: inline;
+        }
+
+        .search-shortcut {
+            display: inline;
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-left: 0.5rem;
+        }
+    }
+
     /* Search Modal */
     .search-modal-overlay {
         display: none;
@@ -706,9 +727,8 @@
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <span style="display: none; @media (min-width: 768px) { display: inline; }">Search</span>
-                <span
-                    style="font-size: 0.75rem; opacity: 0.6; margin-left: 0.5rem; display: none; @media (min-width: 768px) { display: inline; }">⌘K</span>
+                <span class="search-text">Search</span>
+                <span class="search-shortcut">⌘K</span>
             </button>
 
             <button class="mobile-menu-toggle" aria-label="Toggle menu"
@@ -1133,191 +1153,7 @@ public:
         }
 
         /* Inline scripts injected from frontmatter */
-        let nums = [2, 5, 7, 8, 9, 2, 3, 4, 3, 1];
-let i = 1;
-let currentRunLength = 1;
-let previousRunLength = 0;
-let maxK = 0;
-let isPlaying = false;
-
-function loadCustomArray() {
-    const input = document.getElementById('arrayInput').value.trim();
-
-    const existingError = document.querySelector('.error-message');
-    if (existingError) existingError.remove();
-
-    if (!input) {
-        showError('please enter an array');
-        return;
-    }
-
-    const parsed = input.split(',').map(s => s.trim()).filter(s => s !== '');
-
-    if (parsed.length < 2) {
-        showError('array must have at least 2 elements');
-        return;
-    }
-
-    if (parsed.length > 10) {
-        showError('array must have at most 10 elements');
-        return;
-    }
-
-    const numbers = [];
-    for (let val of parsed) {
-        const num = parseInt(val);
-        if (isNaN(num)) {
-            showError(`"${val}" is not a valid number`);
-            return;
-        }
-        numbers.push(num);
-    }
-
-    nums = numbers;
-    reset();
-
-    const inputSection = document.querySelector('.input-section');
-    const successMsg = document.createElement('p');
-    successMsg.className = 'error-message';
-    successMsg.style.color = '#55ff55';
-    successMsg.textContent = 'array loaded';
-    inputSection.appendChild(successMsg);
-    setTimeout(() => successMsg.remove(), 2000);
-}
-
-function showError(message) {
-    const inputSection = document.querySelector('.input-section');
-    const errorMsg = document.createElement('p');
-    errorMsg.className = 'error-message';
-    errorMsg.textContent = message;
-    inputSection.appendChild(errorMsg);
-}
-
-function initArray() {
-    const container = document.getElementById('arrayContainer');
-    container.innerHTML = '';
-    nums.forEach((num, idx) => {
-        const div = document.createElement('div');
-        div.className = 'array-item';
-        div.id = `item-${idx}`;
-        div.innerHTML = `<span class="index">${idx}</span>${num}`;
-        if (idx === 0) {
-            div.classList.add('current-run');
-        }
-        container.appendChild(div);
-    });
-}
-
-function updateDisplay() {
-    document.getElementById('position').textContent = i;
-    document.getElementById('currentRun').textContent = currentRunLength;
-    document.getElementById('previousRun').textContent = previousRunLength;
-    document.getElementById('maxK').textContent = maxK;
-
-    for (let j = 0; j < nums.length; j++) {
-        const item = document.getElementById(`item-${j}`);
-        item.classList.remove('current', 'current-run', 'previous-run');
-
-        if (j === i) {
-            item.classList.add('current');
-        } else {
-            if (j <= i && j > i - currentRunLength) {
-                item.classList.add('current-run');
-            }
-            if (previousRunLength > 0 && j < i - currentRunLength + 1 && j >= i - currentRunLength - previousRunLength + 1) {
-                item.classList.add('previous-run');
-            }
-        }
-    }
-}
-
-function step() {
-    if (i >= nums.length) {
-        showResult();
-        return;
-    }
-
-    const isIncreasing = nums[i] > nums[i - 1];
-
-    if (isIncreasing) {
-        currentRunLength++;
-        document.getElementById('explanation').innerHTML =
-            `position ${i}: ${nums[i]} > ${nums[i-1]}<br>sequence continues. current run: ${currentRunLength}`;
-    } else {
-        previousRunLength = currentRunLength;
-        currentRunLength = 1;
-        document.getElementById('explanation').innerHTML =
-            `position ${i}: ${nums[i]} ≤ ${nums[i-1]}<br>sequence breaks. previous run: ${previousRunLength}, starting new`;
-    }
-
-    const kFromTwoRuns = Math.min(previousRunLength, currentRunLength);
-    const kFromSplittingRun = Math.floor(currentRunLength / 2);
-
-    const prevMaxK = maxK;
-    maxK = Math.max(maxK, kFromTwoRuns, kFromSplittingRun);
-
-    const scenariosDiv = document.getElementById('scenarios');
-    scenariosDiv.innerHTML = `
-        <div class="scenario-box ${kFromTwoRuns === maxK && kFromTwoRuns > prevMaxK ? 'winning' : ''}">
-            <div class="scenario-title">scenario 1: bridge two runs</div>
-            <div>min(${previousRunLength}, ${currentRunLength}) = ${kFromTwoRuns}</div>
-            ${kFromTwoRuns === maxK && kFromTwoRuns > prevMaxK ? '<div class="winner-badge">✓ new maximum</div>' : ''}
-        </div>
-        <div class="scenario-box ${kFromSplittingRun === maxK && kFromSplittingRun > prevMaxK ? 'winning' : ''}">
-            <div class="scenario-title">scenario 2: split current run</div>
-            <div>${currentRunLength} / 2 = ${kFromSplittingRun}</div>
-            ${kFromSplittingRun === maxK && kFromSplittingRun > prevMaxK ? '<div class="winner-badge">✓ new maximum</div>' : ''}
-        </div>
-    `;
-
-    updateDisplay();
-    i++;
-
-    if (i >= nums.length) {
-        document.getElementById('stepBtn').disabled = true;
-        showResult();
-    }
-}
-
-function showResult() {
-    const resultBox = document.getElementById('resultBox');
-    const resultText = document.getElementById('resultText');
-    resultBox.classList.add('show');
-    resultText.innerHTML = `maximum k = ${maxK}`;
-}
-
-function reset() {
-    i = 1;
-    currentRunLength = 1;
-    previousRunLength = 0;
-    maxK = 0;
-    isPlaying = false;
-    document.getElementById('stepBtn').disabled = false;
-    document.getElementById('resultBox').classList.remove('show');
-    document.getElementById('scenarios').innerHTML = '';
-    document.getElementById('explanation').textContent = 'click next step to begin';
-    initArray();
-    updateDisplay();
-}
-
-async function autoPlay() {
-    if (isPlaying) return;
-    isPlaying = true;
-
-    while (i < nums.length && isPlaying) {
-        step();
-        await new Promise(resolve => setTimeout(resolve, 1500));
-    }
-
-    isPlaying = false;
-}
-
-// Initialize on page load
-setTimeout(() => {
-    initArray();
-    updateDisplay();
-}, 500);
-
+        { { inlineScripts } }
     </script>
 
     <!-- GoatCounter Analytics -->

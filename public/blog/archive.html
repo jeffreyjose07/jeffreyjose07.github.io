@@ -59,6 +59,8 @@
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+        max-width: 100vw;
     }
 
     h1,
@@ -439,6 +441,24 @@
         border-color: rgba(255, 255, 255, 0.2);
     }
 
+    .search-text,
+    .search-shortcut {
+        display: none;
+    }
+
+    @media (min-width: 768px) {
+        .search-text {
+            display: inline;
+        }
+
+        .search-shortcut {
+            display: inline;
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-left: 0.5rem;
+        }
+    }
+
     /* Search Modal */
     .search-modal-overlay {
         display: none;
@@ -564,9 +584,8 @@
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <span style="display: none; @media (min-width: 768px) { display: inline; }">Search</span>
-                <span
-                    style="font-size: 0.75rem; opacity: 0.6; margin-left: 0.5rem; display: none; @media (min-width: 768px) { display: inline; }">⌘K</span>
+                <span class="search-text">Search</span>
+                <span class="search-shortcut">⌘K</span>
             </button>
 
             <button class="mobile-menu-toggle" aria-label="Toggle menu"

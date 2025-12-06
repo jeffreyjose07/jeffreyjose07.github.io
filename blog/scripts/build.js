@@ -5,7 +5,7 @@ import path from 'path';
 import { marked } from 'marked';
 import matter from 'gray-matter';
 import { fileURLToPath } from 'url';
-import { generateThumbnails } from '../../scripts/thumbnail-generator/generate.js';
+// import { generateThumbnails } from '../../scripts/thumbnail-generator/generate.js';
 
 // ES module equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -225,7 +225,7 @@ function processPost(filename, episodeNumber, allPosts = []) {
 
     // Parse frontmatter and content
     const { data: frontmatter, content } = matter(fileContent);
-    
+
     // Create post slug
     const slug = createCleanSlug(frontmatter.title, frontmatter.slug);
 
@@ -652,7 +652,7 @@ async function build() {
     // Generate thumbnails
     if (process.env.SKIP_THUMBNAILS !== 'true') {
         console.log('🖼️ Generating terminal thumbnails...');
-        
+
         // Ensure thumbnails directory exists
         if (!fs.existsSync(THUMBNAILS_DIR)) {
             fs.mkdirSync(THUMBNAILS_DIR, { recursive: true });
@@ -664,7 +664,8 @@ async function build() {
             description: post.description,
             outputPath: path.join(THUMBNAILS_DIR, `${post.slug}.png`)
         }));
-        
+
+        const { generateThumbnails } = await import('../../scripts/thumbnail-generator/generate.js');
         await generateThumbnails(thumbnailPosts);
     }
 
