@@ -118,7 +118,7 @@ const Contact = () => {
                   <Mail className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-1">Email</h4>
+                  <h4 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 mb-1">Email</h4>
                   <a href="mailto:jeffreyjose.k@gmail.com" className="text-xl font-medium hover:text-primary transition-colors">
                     jeffreyjose.k@gmail.com
                   </a>
@@ -130,7 +130,7 @@ const Contact = () => {
                   <Phone className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-1">Phone</h4>
+                  <h4 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 mb-1">Phone</h4>
                   <span className="text-xl font-medium">+91 95677 61105</span>
                 </div>
               </div>
@@ -140,7 +140,7 @@ const Contact = () => {
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-1">Location</h4>
+                  <h4 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 mb-1">Location</h4>
                   <span className="text-xl font-medium">Bengaluru, India</span>
                 </div>
               </div>
@@ -148,15 +148,16 @@ const Contact = () => {
 
             <div className="flex gap-4 mt-12">
               {[
-                { icon: Linkedin, href: "https://www.linkedin.com/in/jeffrey-jose-07-k/" },
-                { icon: Github, href: "https://github.com/jeffreyjose07" },
-                { icon: Mail, href: "mailto:jeffreyjose.k@gmail.com" }
+                { icon: Linkedin, href: "https://www.linkedin.com/in/jeffrey-jose-07-k/", label: "LinkedIn" },
+                { icon: Github, href: "https://github.com/jeffreyjose07", label: "GitHub" },
+                { icon: Mail, href: "mailto:jeffreyjose.k@gmail.com", label: "Email" }
               ].map((social, index) => (
                 <a
                   key={index}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={social.label}
                   className="w-12 h-12 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-white/10 transition-all duration-300 hover:-translate-y-1"
                 >
                   <social.icon className="h-5 w-5" />

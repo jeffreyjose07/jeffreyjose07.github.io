@@ -22,7 +22,14 @@ const Hero = () => {
           <div className="relative inline-block">
             <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-full blur-xl opacity-50 animate-pulse-slow"></div>
             <Avatar className="w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-8 ring-4 ring-background shadow-2xl relative z-10">
-              <AvatarImage src={profileImage} alt="Jeffrey Jose" className="object-cover" />
+              <AvatarImage 
+                src={profileImage} 
+                alt="Jeffrey Jose" 
+                className="object-cover"
+                width={160}
+                height={160}
+                loading="eager"
+              />
               <AvatarFallback className="text-3xl sm:text-4xl font-bold bg-primary text-primary-foreground">JJ</AvatarFallback>
             </Avatar>
           </div>
@@ -88,15 +95,16 @@ const Hero = () => {
 
           <div className="flex gap-6 justify-center">
             {[
-              { icon: Linkedin, href: "https://www.linkedin.com/in/jeffrey-jose-07-k/" },
-              { icon: Github, href: "https://github.com/jeffreyjose07" },
-              { icon: Mail, href: "mailto:jeffreyjose.k@gmail.com" }
+              { icon: Linkedin, href: "https://www.linkedin.com/in/jeffrey-jose-07-k/", label: "LinkedIn" },
+              { icon: Github, href: "https://github.com/jeffreyjose07", label: "GitHub" },
+              { icon: Mail, href: "mailto:jeffreyjose.k@gmail.com", label: "Email" }
             ].map((social, index) => (
               <a
                 key={index}
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={social.label}
                 className="p-4 rounded-full glass hover:bg-white/10 text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-110"
               >
                 <social.icon className="h-6 w-6" />

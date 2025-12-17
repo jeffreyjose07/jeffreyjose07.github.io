@@ -353,14 +353,19 @@ function generateIndex(posts) {
         const pagePosts = sortedPosts.slice(i * POSTS_PER_PAGE, (i + 1) * POSTS_PER_PAGE);
         const template = loadTemplate('index');
 
-        const postsHtml = pagePosts.map(post => {
+        const postsHtml = pagePosts.map((post, index) => {
             const episodeNum = post.episodeNumber.toString().padStart(3, '0');
             const tagsAttr = post.tags.join(' ');
 
             let thumbnailHtml = '';
+            // Eager load images for the first 3 posts on the first page, lazy load others
+            const loadingAttr = (i === 0 && index < 3) ? 'eager' : 'lazy';
+            
             if (post.thumbnail) {
                 const thumbSrc = post.thumbnail.startsWith('http') || post.thumbnail.startsWith('/') ? post.thumbnail : `/blog/${post.thumbnail}`;
-                thumbnailHtml = `<div class="post-thumbnail" style="background-image: url('${thumbSrc}')"></div>`;
+                thumbnailHtml = `<div class="post-thumbnail">
+                    <img src="${thumbSrc}" alt="${post.title}" loading="${loadingAttr}" width="400" height="225">
+                </div>`;
             } else {
                 // Generate a deterministic gradient based on episode number
                 const hue = (post.episodeNumber * 137.508) % 360;
@@ -389,14 +394,16 @@ function generateIndex(posts) {
 
         let paginationHtml = '<div class="pagination">';
         if (i > 0) {
-            paginationHtml += `<a href="/blog/${i === 0 ? '' : `page${i + 1}.html`}" class="pagination-link">&laquo; Previous</a>`;
+            const prevLink = i === 1 ? '/blog/' : `/blog/page/${i}/`;
+            paginationHtml += `<a href="${prevLink}" class="pagination-link">&laquo; Previous</a>`;
         }
         for (let j = 0; j < totalPages; j++) {
-            const pageLink = j === 0 ? 'index.html' : `page${j + 1}.html`;
-            paginationHtml += `<a href="/blog/${pageLink}" class="pagination-link ${i === j ? 'active' : ''}">${j + 1}</a>`;
+            const pageLink = j === 0 ? '/blog/' : `/blog/page/${j + 1}/`;
+            paginationHtml += `<a href="${pageLink}" class="pagination-link ${i === j ? 'active' : ''}">${j + 1}</a>`;
         }
         if (i < totalPages - 1) {
-            paginationHtml += `<a href="/blog/page${i + 2}.html" class="pagination-link">Next &raquo;</a>`;
+            const nextLink = `/blog/page/${i + 2}/`;
+            paginationHtml += `<a href="${nextLink}" class="pagination-link">Next &raquo;</a>`;
         }
         paginationHtml += '</div>';
 
@@ -417,8 +424,15 @@ function generateIndex(posts) {
             .replace(/{{siteHeader}}/g, siteHeader)
             .replace(/{{styles}}/g, styles);
 
-        const outputFileName = i === 0 ? 'index.html' : `page${i + 1}.html`;
-        fs.writeFileSync(path.join(OUTPUT_DIR, outputFileName), html);
+        if (i === 0) {
+             fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), html);
+        } else {
+            const pageDir = path.join(OUTPUT_DIR, 'page', (i + 1).toString());
+            if (!fs.existsSync(pageDir)) {
+                fs.mkdirSync(pageDir, { recursive: true });
+            }
+            fs.writeFileSync(path.join(pageDir, 'index.html'), html);
+        }
     }
 }
 

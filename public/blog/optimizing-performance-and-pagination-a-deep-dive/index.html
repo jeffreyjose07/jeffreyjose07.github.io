@@ -4,19 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Automating Terminal-Style Thumbnails - Jeffrey Jose</title>
-    <meta name="description" content="How I built a custom thumbnail generator using Puppeteer to create consistent, terminal-themed open graph images for every blog post." />
+    <title>Optimizing Performance and Pagination: A Deep Dive into Web Vitals - Jeffrey Jose</title>
+    <meta name="description" content="How I refactored the blog's pagination system for better SEO, optimized image loading strategies to boost Core Web Vitals, and fixed critical accessibility issues." />
 
     <!-- SEO Meta Tags -->
-    <meta property="og:title" content="Automating Terminal-Style Thumbnails">
-    <meta property="og:description" content="How I built a custom thumbnail generator using Puppeteer to create consistent, terminal-themed open graph images for every blog post.">
-    <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/automating-terminal-style-thumbnails">
+    <meta property="og:title" content="Optimizing Performance and Pagination: A Deep Dive into Web Vitals">
+    <meta property="og:description" content="How I refactored the blog's pagination system for better SEO, optimized image loading strategies to boost Core Web Vitals, and fixed critical accessibility issues.">
+    <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/optimizing-performance-and-pagination-a-deep-dive">
     <meta property="og:type" content="article">
-    <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/automating-terminal-style-thumbnails.png">
+    <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/optimizing-performance-and-pagination-a-deep-dive.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Automating Terminal-Style Thumbnails">
-    <meta name="twitter:description" content="How I built a custom thumbnail generator using Puppeteer to create consistent, terminal-themed open graph images for every blog post.">
-    <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/automating-terminal-style-thumbnails.png">
+    <meta name="twitter:title" content="Optimizing Performance and Pagination: A Deep Dive into Web Vitals">
+    <meta name="twitter:description" content="How I refactored the blog's pagination system for better SEO, optimized image loading strategies to boost Core Web Vitals, and fixed critical accessibility issues.">
+    <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/optimizing-performance-and-pagination-a-deep-dive.png">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
 
@@ -845,85 +845,92 @@
         <article class="post-container">
             <header class="post-header">
                 <div class="post-meta">
-                    <span class="episode-badge">#024</span>
-                    <span>3 Dec 2025</span>
+                    <span class="episode-badge">#025</span>
+                    <span>17 Dec 2025</span>
                     <span>·</span>
-                    <span>3 min read</span>
+                    <span>6 min read</span>
                 </div>
-                <h1 class="post-title">Automating Terminal-Style Thumbnails</h1>
+                <h1 class="post-title">Optimizing Performance and Pagination: A Deep Dive into Web Vitals</h1>
             </header>
 
             <div class="post-content">
-                <p>I recently decided to give my blog a visual refresh. While I loved the content, the thumbnails were a mix of generic gradients and random screenshots. I wanted something that felt cohesive, technical, and aligned with the &quot;<span class="meta">terminal</span>/cyberpunk&quot; <span class="meta">aesthetic</span> of my portfolio.</p>
-<p>Instead of manually designing a cover image for every new post in Figma or Canva, I did what any engineer would do: I wrote a <span class="process">script</span> to do it for me.</p>
-<h2>The Goal</h2>
-<p>I wanted thumbnails that looked like a <span class="meta">terminal</span> window executing a command related to the post. For example:</p>
-<ul>
-<li>A backend post might show a <code>curl</code> request.</li>
-<li>A personal post might show a <code>cat journal.md</code> command.</li>
-<li>A <span class="structure">database</span> post might show a <code>psql</code> query.</li>
-</ul>
-<p>The result needed to be a high-quality PNG that could be used as an Open Graph image (for Twitter/LinkedIn cards) and as the header image on the blog itself.</p>
-<h2>The Tech Stack</h2>
-<ul>
-<li><strong>Node.js</strong>: The runtime for the <span class="process">script</span>.</li>
-<li><strong>Puppeteer</strong>: A headless Chrome Node.js <span class="connection">API</span>. This is the secret sauce. It allows me to render <span class="process">HTML</span>/<span class="process">CSS</span> exactly as a browser would and take a screenshot.</li>
-<li><strong><span class="process">HTML</span>/<span class="process">CSS</span></strong>: To design the &quot;<span class="meta">terminal</span> window&quot; layout.</li>
-</ul>
-<h2>The Implementation</h2>
-<h3>1. The Template</h3>
-<p>First, I created an <span class="process">HTML</span> template (<code>template.html</code>) that defines the look of the <span class="meta">terminal</span>. It uses Flexbox to center a &quot;window&quot; div, and <span class="process">CSS</span> to style the window controls (the red, yellow, and green dots) and the dark background.</p>
-<p>I used Google Fonts to load <strong>JetBrains Mono</strong> for the <span class="meta">terminal</span> text and <strong>Outfit</strong> for the window title, ensuring typography matches the <span class="connection">rest</span> of my site.</p>
-<pre><code class="language-html">&lt;div class=&quot;terminal-window&quot;&gt;
-    &lt;div class=&quot;window-header&quot;&gt;
-        &lt;div class=&quot;window-controls&quot;&gt;
-            &lt;!-- Mac-style dots --&gt;
-            &lt;div class=&quot;control-dot red&quot;&gt;&lt;/div&gt;
-            &lt;div class=&quot;control-dot yellow&quot;&gt;&lt;/div&gt;
-            &lt;div class=&quot;control-dot green&quot;&gt;&lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div class=&quot;window-title&quot;&gt;~/blog/posts/{{windowTitle}}&lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class=&quot;terminal-content&quot;&gt;
-        {{terminalContent}}
-    &lt;/div&gt;
-&lt;/div&gt;
-</code></pre>
-<h3>2. The Generator <span class="process">Script</span></h3>
-<p>The <span class="process">script</span> (<code>generate.js</code>) reads my blog&#39;s configuration and post <span class="meta">metadata</span>. It then launches a headless browser instance using Puppeteer.</p>
-<p>For each post, it:</p>
+                <p>As this portfolio and blog continue to grow, maintaining peak <span class="success">performance</span> and a seamless <span class="meta">user experience</span> becomes increasingly challenging. Today, I tackled several <span class="attention">technical debt</span> items that were affecting both <strong>SEO</strong> and <strong>Core Web Vitals</strong>. This post details the journey of refactoring the pagination <span class="structure">system</span>, implementing advanced image loading strategies, and resolving accessibility bottlenecks identified by Google PageSpeed Insights.</p>
+<h2>the pagination problem</h2>
+<p>Initially, the blog&#39;s pagination was simple but brittle. The <span class="process">build</span> <span class="process">script</span> generated flat <span class="process">HTML</span> files like <code>page2.html</code> and <code>page3.html</code>. While functional, this approach had significant downsides:</p>
 <ol>
-<li>Determines the &quot;primary <span class="meta">tag</span>&quot; (e.g., <code>backend</code>, <code>personal</code>, <code>frontend</code>).</li>
-<li>Selects a corresponding &quot;command <span class="meta">pattern</span>&quot; based on that <span class="meta">tag</span>.</li>
-<li>Injects the post title and the generated command into the <span class="process">HTML</span> template.</li>
-<li>Takes a screenshot of the rendered page.</li>
-<li>Saves the image to <code>public/assets/thumbnails/</code>.</li>
+<li><strong>URL <span class="structure">Structure</span></strong>: <code>jeffreyjose07.is-a.dev/blog/page2.html</code> is not clean or idiomatic. The standard convention is a directory-based <span class="structure">structure</span> like <code>/blog/page/2/</code>.</li>
+<li><strong>Scalability</strong>: Flat files clutter the root directory and make URL management cumbersome.</li>
+<li><strong>SEO</strong>: Search engines prefer structured, predictable URL hierarchies.</li>
 </ol>
-<p>Here&#39;s a snippet of the <span class="process">logic</span> that maps tags to <span class="meta">terminal</span> commands:</p>
-<pre><code class="language-javascript">switch (primaryCategory) {
-    case &#39;backend&#39;:
-        commandHtml = `curl -X POST /api/v1/deploy`;
-        outputHtml = `{&quot;status&quot;: &quot;success&quot;, &quot;message&quot;: &quot;Deployment initiated...&quot;}`;
-        break;
-    case &#39;personal&#39;:
-        commandHtml = `cat ~/journal/${slug}.md`;
-        outputHtml = `Reflecting on: &quot;${description}&quot;`;
-        break;
-    // ... other categories
+<h3>the solution: directory-based routing</h3>
+<p>I refactored the Node.js <span class="process">build</span> <span class="process">script</span> (<code>blog/scripts/build.js</code>) to generate a nested directory <span class="structure">structure</span>. Instead of writing <code>page${i}.html</code>, the <span class="process">script</span> now creates a directory for each page:</p>
+<pre><code class="language-javascript">// Old approach
+// fs.writeFileSync(path.join(OUTPUT_DIR, `page${i + 1}.html`), html);
+
+// New approach
+const pageDir = path.join(OUTPUT_DIR, &#39;page&#39;, (i + 1).toString());
+if (!fs.existsSync(pageDir)) {
+    fs.mkdirSync(pageDir, { recursive: true });
+}
+fs.writeFileSync(path.join(pageDir, &#39;index.html&#39;), html);
+</code></pre>
+<p>This simple change transforms the URL from <code>/blog/page2.html</code> to <code>/blog/page/2/</code>, which is cleaner, professional, and more SEO-friendly. I also updated the pagination links in the template to respect this new <span class="structure">structure</span>:</p>
+<pre><code class="language-html">&lt;!-- Before --&gt;
+&lt;a href=&quot;/blog/page2.html&quot;&gt;2&lt;/a&gt;
+
+&lt;!-- After --&gt;
+&lt;a href=&quot;/blog/page/2/&quot;&gt;2&lt;/a&gt;
+</code></pre>
+<h2>optimizing core web vitals</h2>
+<p>A recent PageSpeed Insights analysis revealed a mobile <span class="success">performance</span> score of <strong>91</strong>, which is good, but I aimed for perfection. The primary bottlenecks were <strong>Largest Contentful Paint (LCP)</strong> and <strong>Cumulative Layout Shift (CLS)</strong> caused by unoptimized images.</p>
+<h3>from background-image to img tags</h3>
+<p>The blog index originally displayed post thumbnails using <code>div</code> elements with <code>background-image</code>. While this makes it easy to handle different aspect ratios using <code>background-size: cover</code>, it has a major <span class="success">performance</span> drawback: browser preloaders cannot discover background images as easily as <code>&lt;img&gt;</code> tags, delaying the LCP.</p>
+<p>I refactored the template to use semantic <code>&lt;img&gt;</code> tags with modern <span class="process">CSS</span>:</p>
+<pre><code class="language-css">.post-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Replicates background-size: cover */
+    transition: transform 0.5s ease;
 }
 </code></pre>
-<h3>3. <span class="process">Build</span> <span class="connection">Integration</span></h3>
-<p>The best part is that this is now part of my <span class="process">build</span> <span class="connection">pipeline</span>. Whenever I <span class="process">run</span> <code>npm run build:blog</code>, the <span class="process">script</span> checks if a thumbnail exists for each post. If it&#39;s missing, it automatically generates a fresh one in milliseconds.</p>
-<p>This means I never have to worry about assets again. I just write the <span class="process">markdown</span>, <span class="meta">tag</span> it appropriately, and the <span class="structure">system</span> generates a beautiful, custom thumbnail that perfectly matches the content.</p>
-<h2>The Result</h2>
-<p>You&#39;re looking at it right now! The thumbnail for this post was generated by the very <span class="structure">system</span> it describes. It&#39;s a meta-example of automation serving creativity.</p>
-<p>By treating design assets as <span class="process">code</span>, I&#39;ve ensured 100% consistency across the blog while removing manual toil from my writing process.</p>
+<h3>intelligent loading strategy</h3>
+<p>To further improve LCP, I implemented a conditional loading strategy. The browser shouldn&#39;t lazy-load images that are in the initial viewport, nor should it eagerly load images that are off-screen.</p>
+<p>I updated the <span class="process">build</span> <span class="process">script</span> to apply <code>loading=&quot;eager&quot;</code> to the first 3 posts on the first page, and <code>loading=&quot;lazy&quot;</code> to everything else:</p>
+<pre><code class="language-javascript">// Eager load images for the first 3 posts on the first page, lazy load others
+const loadingAttr = (i === 0 &amp;&amp; index &lt; 3) ? &#39;eager&#39; : &#39;lazy&#39;;
+
+thumbnailHtml = `&lt;div class=&quot;post-thumbnail&quot;&gt;
+    &lt;img src=&quot;${thumbSrc}&quot; alt=&quot;${post.title}&quot; loading=&quot;${loadingAttr}&quot; width=&quot;400&quot; height=&quot;225&quot;&gt;
+&lt;/div&gt;`;
+</code></pre>
+<p>This ensures the most <span class="attention">critical</span> content loads immediately, while conserving bandwidth for the <span class="connection">rest</span>.</p>
+<h2>accessibility wins</h2>
+<p><span class="success">Performance</span> isn&#39;t just about speed; it&#39;s about usability. The audit flagged several <strong>accessibility</strong> issues that needed immediate attention:</p>
+<ol>
+<li><p><strong>Icon-Only Buttons</strong>: Social media links and the theme toggle button lacked text labels, making them invisible to screen readers. I added <code>aria-label</code> attributes to all icon-only interactions.</p>
+<pre><code class="language-jsx">&lt;a 
+  href={social.href} 
+  aria-label={social.label} // Added for accessibility
+  target=&quot;_blank&quot;
+&gt;
+  &lt;social.icon /&gt;
+&lt;/a&gt;
+</code></pre>
+</li>
+<li><p><strong>Contrast Ratios</strong>: The &quot;Email&quot;, &quot;Phone&quot;, and &quot;Location&quot; labels in the contact section used a muted color that failed contrast guidelines on dark backgrounds. I updated the text color from <code>text-muted-foreground</code> to <code>text-zinc-400</code> to ensure legibility for all users.</p>
+</li>
+<li><p><strong>Layout Stability</strong>: I added explicit <code>width</code> and <code>height</code> attributes to the main profile avatar. This allows the browser to reserve space for the image before it loads, preventing jarring layout shifts (CLS).</p>
+</li>
+</ol>
+<h2>conclusion</h2>
+<p>These changes might seem small individually, but collectively they represent a significant step forward in engineering quality. By refactoring the pagination, we now have a robust URL <span class="structure">structure</span>. By optimizing images, we&#39;ve reduced the LCP and improved the mobile experience. And by fixing accessibility issues, we&#39;ve ensured the site is inclusive for everyone.</p>
+<p>The journey of <span class="success">optimization</span> is never truly finished, but today&#39;s updates bring us much closer to that 100/100 score.</p>
 
             </div>
 
             <footer class="post-footer">
                 <div class="post-tags-footer">
-                    <a href="/blog#tag-automation" class="tag success" data-tag="automation">automation</a>, <a href="/blog#tag-design" class="tag neutral" data-tag="design">design</a>, <a href="/blog#tag-javascript" class="tag process" data-tag="javascript">javascript</a>, <a href="/blog#tag-nodejs" class="tag neutral" data-tag="nodejs">nodejs</a>
+                    <a href="/blog#tag-optimization" class="tag neutral" data-tag="optimization">optimization</a>, <a href="/blog#tag-web-development" class="tag neutral" data-tag="web-development">web-development</a>, <a href="/blog#tag-performance" class="tag neutral" data-tag="performance">performance</a>, <a href="/blog#tag-accessibility" class="tag neutral" data-tag="accessibility">accessibility</a>, <a href="/blog#tag-seo" class="tag neutral" data-tag="seo">seo</a>
                 </div>
                 <div id="view-count" style="font-family: var(--font-mono); font-size: 0.75rem;">
                     👀 views loading...
@@ -933,15 +940,9 @@
 
         <nav class="post-navigation">
             <div class="nav-previous glass-card">
-                <a href="/blog/refining-navigation-and-branding-a-journey-to-cons">
+                <a href="/blog/automating-terminal-style-thumbnails">
                     <span class="nav-label">← previous</span>
-                    <span class="nav-title">Refining Navigation and Branding: A Journey to Consistency</span>
-                </a>
-            </div>
-            <div class="nav-next glass-card">
-                <a href="/blog/optimizing-performance-and-pagination-a-deep-dive">
-                    <span class="nav-label">next →</span>
-                    <span class="nav-title">Optimizing Performance and Pagination: A Deep Dive into Web Vitals</span>
+                    <span class="nav-title">Automating Terminal-Style Thumbnails</span>
                 </a>
             </div></nav>
 
