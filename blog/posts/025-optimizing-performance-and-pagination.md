@@ -81,7 +81,7 @@ This ensures the most critical content loads immediately, while conserving bandw
 
 ### optimizing font delivery
 
-Google Fonts can often be a render-blocking resource. To address this, I switched to a non-blocking loading strategy using `rel="preload"` combined with an `onload` handler.
+In a second round of optimization, PageSpeed Insights still flagged Google Fonts as a render-blocking resource. To address this, I switched to a non-blocking loading strategy using `rel="preload"` combined with an `onload` handler.
 
 ```html
 <link rel="preload" as="style" href="..." />

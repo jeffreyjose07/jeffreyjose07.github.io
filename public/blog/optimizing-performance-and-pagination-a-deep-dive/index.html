@@ -905,7 +905,7 @@ thumbnailHtml = `&lt;div class=&quot;post-thumbnail&quot;&gt;
 </code></pre>
 <p>This ensures the most <span class="attention">critical</span> content loads immediately, while conserving bandwidth for the <span class="connection">rest</span>.</p>
 <h3>optimizing font delivery</h3>
-<p>Google Fonts can often be a render-blocking resource. To address this, I switched to a non-blocking loading strategy using <code>rel=&quot;preload&quot;</code> combined with an <code>onload</code> handler.</p>
+<p>In a second round of <span class="success">optimization</span>, PageSpeed Insights still flagged Google Fonts as a render-blocking resource. To address this, I switched to a non-blocking loading strategy using <code>rel=&quot;preload&quot;</code> combined with an <code>onload</code> handler.</p>
 <pre><code class="language-html">&lt;link rel=&quot;preload&quot; as=&quot;style&quot; href=&quot;...&quot; /&gt;
 &lt;link rel=&quot;stylesheet&quot; href=&quot;...&quot; media=&quot;print&quot; onload=&quot;this.media=&#39;all&#39;&quot; /&gt;
 &lt;noscript&gt;
