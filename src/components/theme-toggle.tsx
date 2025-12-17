@@ -19,6 +19,7 @@ export function ThemeToggle() {
         variant="outline"
         size="icon"
         className="hidden md:block fixed top-4 right-4 z-50 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-all duration-300"
+        aria-label="Toggle theme"
       >
         <Sun className="h-[1.2rem] w-[1.2rem] opacity-50" />
         <span className="sr-only">Toggle theme</span>

@@ -74,27 +74,27 @@ const Skills = () => {
           <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 border-0">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-violet-50/50 dark:from-blue-950/20 dark:to-violet-950/20 opacity-0 hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
             <CardHeader className="relative z-10 text-center">
-              <CardTitle className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Core Competencies
+              <CardTitle asChild className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                <h3>Core Competencies</h3>
               </CardTitle>
               <div className="w-16 h-1 bg-blue-600 rounded-full mx-auto"></div>
             </CardHeader>
             <CardContent className="relative z-10">
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="text-center group/comp">
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2 group-hover/comp:text-blue-600 dark:group-hover/comp:text-blue-400 transition-colors duration-300">Technical Leadership</h4>
+                  <h5 className="font-semibold text-gray-900 dark:text-white mb-2 group-hover/comp:text-blue-600 dark:group-hover/comp:text-blue-400 transition-colors duration-300">Technical Leadership</h5>
                   <p className="text-sm text-gray-600 dark:text-gray-300">System design, distributed architecture, cross-functional team collaboration, technical mentoring</p>
                 </div>
                 <div className="text-center group/comp">
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2 group-hover/comp:text-blue-600 dark:group-hover/comp:text-blue-400 transition-colors duration-300">System Architecture</h4>
+                  <h5 className="font-semibold text-gray-900 dark:text-white mb-2 group-hover/comp:text-blue-600 dark:group-hover/comp:text-blue-400 transition-colors duration-300">System Architecture</h5>
                   <p className="text-sm text-gray-600 dark:text-gray-300">Microservices design, scalable backend systems, reactive programming, event-driven architecture</p>
                 </div>
                 <div className="text-center group/comp">
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2 group-hover/comp:text-blue-600 dark:group-hover/comp:text-blue-400 transition-colors duration-300">Performance Engineering</h4>
+                  <h5 className="font-semibold text-gray-900 dark:text-white mb-2 group-hover/comp:text-blue-600 dark:group-hover/comp:text-blue-400 transition-colors duration-300">Performance Engineering</h5>
                   <p className="text-sm text-gray-600 dark:text-gray-300">Database optimization, caching strategies, load balancing, concurrent processing</p>
                 </div>
                 <div className="text-center group/comp">
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2 group-hover/comp:text-blue-600 dark:group-hover/comp:text-blue-400 transition-colors duration-300">DevOps & Reliability</h4>
+                  <h5 className="font-semibold text-gray-900 dark:text-white mb-2 group-hover/comp:text-blue-600 dark:group-hover/comp:text-blue-400 transition-colors duration-300">DevOps & Reliability</h5>
                   <p className="text-sm text-gray-600 dark:text-gray-300">CI/CD pipelines, zero-downtime deployments, monitoring, incident response, SLA management</p>
                 </div>
               </div>
@@ -113,11 +113,13 @@ const Skills = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 to-violet-50/30 dark:from-blue-950/10 dark:to-violet-950/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
                 
                 <CardHeader className="relative z-10">
-                  <CardTitle className="flex items-center gap-4 text-xl text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
-                    <div className="p-3 rounded-full bg-gray-100 dark:bg-gray-700 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-all duration-300">
-                      <category.icon className={`h-6 w-6 ${category.color} group-hover:scale-110 transition-transform duration-300`} />
-                    </div>
-                    {category.title}
+                  <CardTitle asChild className="flex items-center gap-4 text-xl text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                    <h3>
+                      <div className="p-3 rounded-full bg-gray-100 dark:bg-gray-700 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-all duration-300">
+                        <category.icon className={`h-6 w-6 ${category.color} group-hover:scale-110 transition-transform duration-300`} />
+                      </div>
+                      {category.title}
+                    </h3>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="relative z-10">
@@ -142,8 +144,8 @@ const Skills = () => {
         <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 max-w-6xl mx-auto slide-up border-0">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 to-violet-50/30 dark:from-blue-950/10 dark:to-violet-950/10 opacity-0 hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
           <CardHeader className="relative z-10 text-center">
-            <CardTitle className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Certifications
+            <CardTitle asChild className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              <h3>Certifications</h3>
             </CardTitle>
             <div className="w-20 h-1 bg-blue-600 rounded-full mx-auto"></div>
           </CardHeader>

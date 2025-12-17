@@ -29,6 +29,7 @@ const Hero = () => {
                 width={160}
                 height={160}
                 loading="eager"
+                fetchPriority="high"
               />
               <AvatarFallback className="text-3xl sm:text-4xl font-bold bg-primary text-primary-foreground">JJ</AvatarFallback>
             </Avatar>

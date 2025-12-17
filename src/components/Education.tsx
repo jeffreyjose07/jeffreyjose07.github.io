@@ -106,9 +106,9 @@ const Education = () => {
           <CardContent className="p-8 relative z-10">
             <div className="text-center space-y-6">
               <div>
-                <h3 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                <h4 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                   Key Achievements
-                </h3>
+                </h4>
                 <div className="w-20 h-1 bg-blue-600 rounded-full mx-auto"></div>
               </div>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed max-w-4xl mx-auto">

@@ -148,6 +148,7 @@ const Navigation = () => {
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="rounded-full hover:bg-white/10"
+            aria-label="Toggle theme"
           >
             {mounted && theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
           </Button>
@@ -157,6 +158,7 @@ const Navigation = () => {
             size="icon"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="rounded-full hover:bg-white/10"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </Button>

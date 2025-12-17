@@ -66,7 +66,7 @@ I refactored the template to use semantic `<img>` tags with modern CSS:
 
 To further improve LCP, I implemented a conditional loading strategy. The browser shouldn't lazy-load images that are in the initial viewport, nor should it eagerly load images that are off-screen.
 
-I updated the build script to apply `loading="eager"` to the first 3 posts on the first page, and `loading="lazy"` to everything else:
+I updated the build script to apply `loading="eager"` to the first 3 posts on the first page, and `loading="lazy"` to everything else. Additionally, for the main profile image on the homepage, I added `fetchPriority="high"` to explicitly signal its importance to the browser's resource scheduler.
 
 ```javascript
 // Eager load images for the first 3 posts on the first page, lazy load others
@@ -78,6 +78,20 @@ thumbnailHtml = `<div class="post-thumbnail">
 ```
 
 This ensures the most critical content loads immediately, while conserving bandwidth for the rest.
+
+### optimizing font delivery
+
+Google Fonts can often be a render-blocking resource. To address this, I switched to a non-blocking loading strategy using `rel="preload"` combined with an `onload` handler.
+
+```html
+<link rel="preload" as="style" href="..." />
+<link rel="stylesheet" href="..." media="print" onload="this.media='all'" />
+<noscript>
+  <link rel="stylesheet" href="..." />
+</noscript>
+```
+
+This technique allows the browser to fetch the font stylesheet asynchronously without blocking the initial paint, significantly improving the **First Contentful Paint (FCP)** metric.
 
 ## accessibility wins
 
@@ -95,9 +109,11 @@ Performance isn't just about speed; it's about usability. The audit flagged seve
     </a>
     ```
 
-2.  **Contrast Ratios**: The "Email", "Phone", and "Location" labels in the contact section used a muted color that failed contrast guidelines on dark backgrounds. I updated the text color from `text-muted-foreground` to `text-zinc-400` to ensure legibility for all users.
+2.  **Contrast Ratios**: The "Email", "Phone", and "Location" labels in the contact section used a muted color that failed contrast guidelines on dark backgrounds. I updated the text color from `text-zinc-400` to `text-white` to ensure maximum legibility for all users.
 
-3.  **Layout Stability**: I added explicit `width` and `height` attributes to the main profile avatar. This allows the browser to reserve space for the image before it loads, preventing jarring layout shifts (CLS).
+3.  **Heading Hierarchy**: I restructured the heading levels in the Skills and Education sections (changing `CardTitle` to render as `h3` and adjusting nested headings) to ensure a strictly sequential descending order, which is crucial for screen reader navigation.
+
+4.  **Layout Stability**: I added explicit `width` and `height` attributes to the main profile avatar. This allows the browser to reserve space for the image before it loads, preventing jarring layout shifts (CLS).
 
 ## conclusion
 

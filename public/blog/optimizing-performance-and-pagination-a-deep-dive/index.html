@@ -895,7 +895,7 @@ fs.writeFileSync(path.join(pageDir, &#39;index.html&#39;), html);
 </code></pre>
 <h3>intelligent loading strategy</h3>
 <p>To further improve LCP, I implemented a conditional loading strategy. The browser shouldn&#39;t lazy-load images that are in the initial viewport, nor should it eagerly load images that are off-screen.</p>
-<p>I updated the <span class="process">build</span> <span class="process">script</span> to apply <code>loading=&quot;eager&quot;</code> to the first 3 posts on the first page, and <code>loading=&quot;lazy&quot;</code> to everything else:</p>
+<p>I updated the <span class="process">build</span> <span class="process">script</span> to apply <code>loading=&quot;eager&quot;</code> to the first 3 posts on the first page, and <code>loading=&quot;lazy&quot;</code> to everything else. Additionally, for the main profile image on the homepage, I added <code>fetchPriority=&quot;high&quot;</code> to explicitly signal its importance to the browser&#39;s resource scheduler.</p>
 <pre><code class="language-javascript">// Eager load images for the first 3 posts on the first page, lazy load others
 const loadingAttr = (i === 0 &amp;&amp; index &lt; 3) ? &#39;eager&#39; : &#39;lazy&#39;;
 
@@ -904,6 +904,15 @@ thumbnailHtml = `&lt;div class=&quot;post-thumbnail&quot;&gt;
 &lt;/div&gt;`;
 </code></pre>
 <p>This ensures the most <span class="attention">critical</span> content loads immediately, while conserving bandwidth for the <span class="connection">rest</span>.</p>
+<h3>optimizing font delivery</h3>
+<p>Google Fonts can often be a render-blocking resource. To address this, I switched to a non-blocking loading strategy using <code>rel=&quot;preload&quot;</code> combined with an <code>onload</code> handler.</p>
+<pre><code class="language-html">&lt;link rel=&quot;preload&quot; as=&quot;style&quot; href=&quot;...&quot; /&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;...&quot; media=&quot;print&quot; onload=&quot;this.media=&#39;all&#39;&quot; /&gt;
+&lt;noscript&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;...&quot; /&gt;
+&lt;/noscript&gt;
+</code></pre>
+<p>This technique allows the browser to fetch the font stylesheet asynchronously without blocking the initial paint, significantly improving the <strong>First Contentful Paint (FCP)</strong> metric.</p>
 <h2>accessibility wins</h2>
 <p><span class="success">Performance</span> isn&#39;t just about speed; it&#39;s about usability. The audit flagged several <strong>accessibility</strong> issues that needed immediate attention:</p>
 <ol>
@@ -917,7 +926,9 @@ thumbnailHtml = `&lt;div class=&quot;post-thumbnail&quot;&gt;
 &lt;/a&gt;
 </code></pre>
 </li>
-<li><p><strong>Contrast Ratios</strong>: The &quot;Email&quot;, &quot;Phone&quot;, and &quot;Location&quot; labels in the contact section used a muted color that failed contrast guidelines on dark backgrounds. I updated the text color from <code>text-muted-foreground</code> to <code>text-zinc-400</code> to ensure legibility for all users.</p>
+<li><p><strong>Contrast Ratios</strong>: The &quot;Email&quot;, &quot;Phone&quot;, and &quot;Location&quot; labels in the contact section used a muted color that failed contrast guidelines on dark backgrounds. I updated the text color from <code>text-zinc-400</code> to <code>text-white</code> to ensure maximum legibility for all users.</p>
+</li>
+<li><p><strong>Heading Hierarchy</strong>: I restructured the heading levels in the Skills and Education sections (changing <code>CardTitle</code> to render as <code>h3</code> and adjusting nested headings) to ensure a strictly sequential descending order, which is crucial for screen reader navigation.</p>
 </li>
 <li><p><strong>Layout Stability</strong>: I added explicit <code>width</code> and <code>height</code> attributes to the main profile avatar. This allows the browser to reserve space for the image before it loads, preventing jarring layout shifts (CLS).</p>
 </li>
