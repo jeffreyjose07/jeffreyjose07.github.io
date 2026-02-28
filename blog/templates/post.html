@@ -147,8 +147,18 @@
             padding: 1.5rem;
             border-radius: 0.5rem;
             overflow-x: auto;
-            margin: 2rem 0;
+            margin: 2rem -2rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            width: calc(100% + 4rem);
+        }
+
+        @media (max-width: 768px) {
+            .post-content pre {
+                margin-left: -1rem;
+                margin-right: -1rem;
+                width: calc(100% + 2rem);
+                border-radius: 0;
+            }
         }
 
         .post-content pre code {
@@ -200,6 +210,63 @@
             background: rgba(124, 58, 237, 0.1);
             color: var(--primary-glow);
             border-color: rgba(124, 58, 237, 0.2);
+        }
+
+        /* Author card */
+        .author-card {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.75rem;
+        }
+
+        .author-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(124, 58, 237, 0.3);
+            flex-shrink: 0;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .author-name {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            color: var(--foreground);
+            font-size: 1rem;
+        }
+
+        .author-bio {
+            font-size: 0.85rem;
+            color: var(--muted-foreground);
+            line-height: 1.5;
+        }
+
+        .author-links {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .author-links a {
+            font-size: 0.8rem;
+            color: var(--primary-glow);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .author-links a:hover {
+            color: var(--primary);
         }
 
         /* Reading progress */
@@ -317,6 +384,19 @@
                     👀 views loading...
                 </div>
             </footer>
+
+            <div class="author-card">
+                <img src="/jeffrey-profile.jpg" alt="Jeffrey Jose" class="author-avatar" width="56" height="56" loading="lazy">
+                <div class="author-info">
+                    <span class="author-name">Jeffrey Jose</span>
+                    <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span>
+                    <div class="author-links">
+                        <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a>
+                        <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                        <a href="/">Portfolio</a>
+                    </div>
+                </div>
+            </div>
         </article>
 
         {{navigation}}

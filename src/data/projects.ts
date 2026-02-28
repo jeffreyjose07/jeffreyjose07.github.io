@@ -9,7 +9,7 @@ export interface Project {
     highlights: string[];
 }
 
-export const projects: Project[] = [
+export const featuredProjects: Project[] = [
     {
         title: "TruthMeter AI - AI Pair Programming Metrics Extension",
         description: "A VS Code extension that measures the ACTUAL impact of AI coding assistants on developer productivity based on peer-reviewed research, not vanity metrics. Works with any AI assistant (GitHub Copilot, Cursor, Windsurf Cascade, etc.) and tracks what actually matters: code quality, true productivity gains, and economic ROI.",
@@ -79,43 +79,28 @@ export const projects: Project[] = [
             "Single HTML file with zero dependencies"
         ]
     },
+];
+
+export const otherProjects: Project[] = [
     {
         title: "Detection of Forest Area in SAR Images",
-        description: "Computer vision project focused on detecting and classifying forest areas in polarimetric SAR RISAT-1 images using advanced image processing techniques and machine learning algorithms.",
+        description: "Computer vision project for detecting forest areas in polarimetric SAR RISAT-1 images using ML algorithms.",
         image: "/generic-project.png",
-        technologies: ["Python", "Computer Vision", "Machine Learning", "SAR Image Processing", "Pattern Recognition"],
-        highlights: [
-            "Implemented advanced SAR image processing algorithms",
-            "Developed classification models for forest area detection",
-            "Applied polarimetric analysis techniques",
-            "Achieved accurate forest boundary identification",
-            "Utilized RISAT-1 satellite imagery data"
-        ]
+        technologies: ["Python", "Computer Vision", "Machine Learning", "SAR Image Processing"],
+        highlights: []
     },
     {
         title: "Graph-based Document Summarization",
-        description: "Natural language processing system that generates concise summaries of word documents using graph-based approaches including text-rank and degree-centrality algorithms.",
+        description: "NLP system generating concise summaries using TextRank and degree-centrality graph algorithms.",
         image: "/generic-project.png",
-        technologies: ["Python", "NLP", "Graph Theory", "Text Processing", "Algorithm Design"],
-        highlights: [
-            "Implemented TextRank algorithm for document summarization",
-            "Applied degree-centrality based sentence ranking",
-            "Developed graph-based text representation",
-            "Automated summary generation pipeline",
-            "Evaluated summarization quality metrics"
-        ]
+        technologies: ["Python", "NLP", "Graph Theory", "Algorithm Design"],
+        highlights: []
     },
     {
         title: "Emotional Intelligence in Social Media",
-        description: "Data analytics project analyzing emotional intelligence patterns in Twitter users based on gender differences in tweets posted on sensitive topics, providing insights into social media behavior.",
+        description: "Data analytics project analyzing emotional intelligence patterns and gender differences in Twitter data.",
         image: "/generic-project.png",
-        technologies: ["Python", "Data Analytics", "Social Media Mining", "Sentiment Analysis", "Statistical Analysis"],
-        highlights: [
-            "Analyzed large-scale Twitter dataset",
-            "Implemented sentiment analysis algorithms",
-            "Studied gender-based emotional patterns",
-            "Applied statistical analysis techniques",
-            "Generated behavioral insights from social media data"
-        ]
+        technologies: ["Python", "Data Analytics", "Sentiment Analysis", "Statistical Analysis"],
+        highlights: []
     }
 ];

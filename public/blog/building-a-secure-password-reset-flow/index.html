@@ -1,1030 +1,786 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Building a Secure Password Reset Flow - Jeffrey Jose</title>
-    <meta name="description" content="A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service." />
-
-    <!-- SEO Meta Tags -->
-    <meta property="og:title" content="Building a Secure Password Reset Flow">
-    <meta property="og:description" content="A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service.">
-    <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/building-a-secure-password-reset-flow">
-    <meta property="og:type" content="article">
-    <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/building-a-secure-password-reset-flow.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Building a Secure Password Reset Flow">
-    <meta name="twitter:description" content="A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service.">
-    <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/building-a-secure-password-reset-flow.png">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
-    <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
-
-    <!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet">
-
-<style>
-    :root {
-        /* Premium Dark Theme Variables */
-        --background: #09090b;
-        --foreground: #f8fafc;
-
-        --primary: #7c3aed;
-        --primary-foreground: #f8fafc;
-        --primary-glow: #a78bfa;
-
-        --secondary: #1e1e24;
-        --secondary-foreground: #f8fafc;
-
-        --muted: #1e1e24;
-        --muted-foreground: #94a3b8;
-
-        --accent: #1e1e24;
-        --accent-foreground: #f8fafc;
-
-        --border: #27272a;
-        --input: #27272a;
-
-        --font-sans: 'Inter', sans-serif;
-        --font-heading: 'Outfit', sans-serif;
-
-        --gradient-hero: linear-gradient(135deg, #09090b, #1e1b4b);
-        --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-        --gradient-accent: linear-gradient(135deg, #7c3aed, #c084fc);
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: var(--font-sans);
-        background-color: var(--background);
-        color: var(--foreground);
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        overflow-x: hidden;
-        max-width: 100vw;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        line-height: 1.2;
-        margin-bottom: 1rem;
-    }
-
-    a {
-        color: inherit;
-        text-decoration: none;
-        transition: color 0.2s ease;
-    }
-
-    /* Utilities */
-    .container {
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 1.5rem;
-    }
-
-    .glass {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .glass-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 1rem;
-        transition: all 0.3s ease;
-    }
-
-    .glass-card:hover {
-        border-color: rgba(124, 58, 237, 0.3);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-    }
-
-    .text-gradient-premium {
-        background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .bg-mesh {
-        background-color: var(--background);
-        background-image:
-            radial-gradient(at 40% 20%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
-            radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-            radial-gradient(at 0% 50%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
-    }
-
-    /* Animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .animate-fade-in-up {
-        animation: fadeInUp 0.8s ease-out forwards;
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: var(--background);
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #3f3f46;
-        border-radius: 5px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #52525b;
-    }
-</style>
-
-    <style>
-        body {
-            padding-top: 100px;
-        }
-
-        .post-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            background: rgba(9, 9, 11, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 1rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        .post-header {
-            margin-bottom: 3rem;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 2rem;
-        }
-
-        .post-meta {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-            color: var(--muted-foreground);
-        }
-
-        .episode-badge {
-            background: rgba(124, 58, 237, 0.1);
-            color: var(--primary);
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-family: var(--font-mono);
-            font-weight: 600;
-        }
-
-        .post-title {
-            font-size: 2.5rem;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .post-content {
-            font-size: 1.125rem;
-            line-height: 1.8;
-            color: #d1d5db;
-            word-break: break-word;
-        }
-
-        .post-content p {
-            margin-bottom: 1.5rem;
-        }
-
-        .post-content h2 {
-            font-size: 1.75rem;
-            margin-top: 3rem;
-            margin-bottom: 1.5rem;
-            color: var(--foreground);
-        }
-
-        .post-content h3 {
-            font-size: 1.5rem;
-            margin-top: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--foreground);
-        }
-
-        .post-content ul,
-        .post-content ol {
-            margin-bottom: 1.5rem;
-            padding-left: 1.5rem;
-        }
-
-        .post-content li {
-            margin-bottom: 0.5rem;
-        }
-
-        .post-content a {
-            color: var(--primary-glow);
-            text-decoration: none;
-            border-bottom: 1px solid rgba(124, 58, 237, 0.3);
-            transition: all 0.2s;
-        }
-
-        .post-content a:hover {
-            border-bottom-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .post-content blockquote {
-            border-left: 4px solid var(--primary);
-            padding-left: 1.5rem;
-            margin: 2rem 0;
-            font-style: italic;
-            color: var(--muted-foreground);
-            background: rgba(255, 255, 255, 0.03);
-            padding: 1.5rem;
-            border-radius: 0 0.5rem 0.5rem 0;
-        }
-
-        .post-content code {
-            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-            font-size: 0.9em;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.2em 0.4em;
-            border-radius: 0.25rem;
-            color: #e2e8f0;
-        }
-
-        .post-content pre {
-            background: #111827;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            margin: 2rem 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .post-content pre code {
-            background: none;
-            padding: 0;
-            color: #e5e7eb;
-            font-size: 0.9rem;
-        }
-
-        .post-content img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 0.5rem;
-            margin: 2rem 0;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        .post-footer {
-            margin-top: 4rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--muted-foreground);
-            font-size: 0.875rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .post-tags-footer {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .tag-pill {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--muted-foreground);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .tag-pill:hover {
-            background: rgba(124, 58, 237, 0.1);
-            color: var(--primary-glow);
-            border-color: rgba(124, 58, 237, 0.2);
-        }
-
-        /* Reading progress */
-        .reading-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-glow));
-            z-index: 2000;
-            transition: width 0.1s ease;
-        }
-
-        /* Navigation */
-        .post-navigation {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-top: 3rem;
-        }
-
-        .nav-previous,
-        .nav-next {
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-previous a,
-        .nav-next a {
-            text-decoration: none;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--muted-foreground);
-            margin-bottom: 0.5rem;
-        }
-
-        .nav-title {
-            font-family: var(--font-heading);
-            font-weight: 600;
-            color: var(--foreground);
-            font-size: 1.125rem;
-            transition: color 0.2s;
-        }
-
-        .nav-previous:hover .nav-title,
-        .nav-next:hover .nav-title {
-            color: var(--primary-glow);
-        }
-
-        .nav-next {
-            text-align: right;
-        }
-
-        @media (max-width: 768px) {
-            .post-title {
-                font-size: 2rem;
-            }
-
-            .post-navigation {
-                grid-template-columns: 1fr;
-            }
-
-            .nav-next {
-                text-align: left;
-            }
-
-            .post-container {
-                padding: 1.5rem;
-            }
-        }
-
-        /* Inline styles injected from frontmatter */
-            {
-                {
-                inlineStyles
-            }
-        }
-    </style>
-</head>
-
-<body class="bg-mesh">
-    <div class="reading-progress"></div>
-
-    <style>
-    /* Top Bar Header */
-    .site-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 1000;
-        transition: all 0.3s ease;
-        background: transparent;
-        border-bottom: 1px solid transparent;
-    }
-
-    .site-header.scrolled {
-        background: rgba(9, 9, 11, 0.7);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .header-inner {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 1rem 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .site-logo {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        font-size: 1.25rem;
-        color: var(--foreground);
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .text-gradient-premium {
-        background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        color: transparent;
-        display: inline-block;
-    }
-
-    .site-nav {
-        display: flex;
-        gap: 2rem;
-    }
-
-    .nav-link {
-        font-family: var(--font-sans);
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--muted-foreground);
-        text-decoration: none;
-        transition: color 0.2s ease;
-        position: relative;
-    }
-
-    .nav-link:hover {
-        color: var(--primary-glow);
-    }
-
-    .nav-link.active {
-        color: var(--foreground);
-    }
-
-    /* Mobile Menu */
-    .mobile-menu-toggle {
-        display: none;
-        background: none;
-        border: none;
-        color: var(--foreground);
-        cursor: pointer;
-        padding: 0.5rem;
-    }
-
-    @media (max-width: 768px) {
-        .site-nav {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            flex-direction: column;
-            background: rgba(9, 9, 11, 0.95);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1rem;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .site-nav.open {
-            display: flex;
-            animation: slideDown 0.3s ease-out forwards;
-        }
-
-        .mobile-menu-toggle {
-            display: block;
-        }
-    }
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Search Button */
-    .search-trigger {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: var(--muted-foreground);
-        padding: 0.5rem 1rem;
-        border-radius: 9999px;
-        font-size: 0.875rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.2s ease;
-    }
-
-    .search-trigger:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--foreground);
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .search-text,
-    .search-shortcut {
-        display: none;
-    }
-
-    @media (min-width: 768px) {
-        .search-text {
-            display: inline;
-        }
-
-        .search-shortcut {
-            display: inline;
-            font-size: 0.75rem;
-            opacity: 0.6;
-            margin-left: 0.5rem;
-        }
-    }
-
-    /* Search Modal */
-    .search-modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(8px);
-        z-index: 2000;
-        align-items: flex-start;
-        justify-content: center;
-        padding-top: 100px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .search-modal-overlay.open {
-        display: flex;
-        opacity: 1;
-    }
-
-    .search-modal {
-        background: #09090b;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 1rem;
-        width: 90%;
-        max-width: 600px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        overflow: hidden;
-        transform: scale(0.95);
-        transition: transform 0.3s ease;
-    }
-
-    .search-modal-overlay.open .search-modal {
-        transform: scale(1);
-    }
-
-    .search-input-container {
-        padding: 1.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        align-items: center;
-    }
-
-    .search-icon {
-        color: var(--muted-foreground);
-        margin-right: 1rem;
-    }
-
-    .search-input {
-        background: transparent;
-        border: none;
-        color: var(--foreground);
-        font-size: 1.125rem;
-        width: 100%;
-        outline: none;
-        font-family: var(--font-sans);
-    }
-
-    .search-results {
-        max-height: 400px;
-        overflow-y: auto;
-        padding: 0.5rem;
-    }
-
-    .search-result-item {
-        display: block;
-        padding: 1rem;
-        text-decoration: none;
-        color: var(--muted-foreground);
-        border-radius: 0.5rem;
-        transition: all 0.2s ease;
-        margin-bottom: 0.25rem;
-    }
-
-    .search-result-item:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--foreground);
-    }
-
-    .search-result-title {
-        font-weight: 600;
-        font-size: 1rem;
-        color: var(--primary-glow);
-        margin-bottom: 0.25rem;
-    }
-
-    .search-result-excerpt {
-        font-size: 0.875rem;
-        color: var(--muted-foreground);
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-</style>
-
-<header class="site-header" id="siteHeader">
-    <div class="header-inner">
-        <a href="/" class="site-logo">
-            <img src="/logo.svg" alt="JJ" width="32" height="32">
-            <span>Jeffrey<span style="color: var(--primary)">.</span><span
-                    class="text-gradient-premium">Jose</span></span>
-        </a>
-
-        <nav class="site-nav">
-            <a href="/#hero" class="nav-link">Home</a>
-            <a href="/#projects" class="nav-link">Projects</a>
-            <a href="/#skills" class="nav-link">Skills</a>
-            <a href="/#experience" class="nav-link">Experience</a>
-            <a href="/#education" class="nav-link">Education</a>
-            <a href="/#contact" class="nav-link">Contact</a>
-            <a href="/blog" class="nav-link active">Blog</a>
-            <a href="/analytics.html" class="nav-link">Analytics</a>
-        </nav>
-
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <button class="search-trigger" onclick="openSearch()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <span class="search-text">Search</span>
-                <span class="search-shortcut">⌘K</span>
-            </button>
-
-            <button class="mobile-menu-toggle" aria-label="Toggle menu"
-                onclick="document.querySelector('.site-nav').classList.toggle('open')">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-            </button>
-        </div>
-    </div>
-</header>
-
-<!-- Search Modal HTML -->
-<div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()">
-    <div class="search-modal">
-        <div class="search-input-container">
-            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" class="search-input" placeholder="Search posts..." id="searchInput" autocomplete="off">
-        </div>
-        <div class="search-results" id="searchResults">
-            <!-- Results will be injected here -->
-        </div>
-    </div>
-</div>
-
-<script>
-    // Header Scroll Effect
-    window.addEventListener('scroll', () => {
-        const header = document.getElementById('siteHeader');
-        if (window.scrollY > 20) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    });
-
-    let searchIndex = [];
-    let isSearchOpen = false;
-
-    async function loadSearchIndex() {
-        if (searchIndex.length > 0) return;
-        try {
-            const response = await fetch('/blog/search.json');
-            searchIndex = await response.json();
-        } catch (e) {
-            console.error('Failed to load search index', e);
-        }
-    }
-
-    function openSearch() {
-        document.getElementById('searchModal').classList.add('open');
-        document.getElementById('searchInput').focus();
-        isSearchOpen = true;
-        loadSearchIndex();
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeSearch() {
-        document.getElementById('searchModal').classList.remove('open');
-        isSearchOpen = false;
-        document.body.style.overflow = '';
-    }
-
-    function performSearch(query) {
-        if (!query) {
-            document.getElementById('searchResults').innerHTML = '';
-            return;
-        }
-
-        const results = searchIndex.filter(post => {
-            const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
-            const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
-            const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
-            return titleMatch || descMatch || tagMatch;
-        }).slice(0, 5); // Limit to 5 results
-
-        const resultsHtml = results.map(post => `
-            <a href="/blog/${post.slug}" class="search-result-item" onclick="closeSearch()">
-                <div class="search-result-title">${post.title}</div>
-                <div class="search-result-excerpt">${post.description || ''}</div>
-            </a>
-        `).join('');
-
-        document.getElementById('searchResults').innerHTML = results.length > 0
-            ? resultsHtml
-            : '<div style="padding: 1rem; color: var(--muted-foreground); text-align: center;">No results found</div>';
-    }
-
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-        performSearch(e.target.value);
-    });
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-            e.preventDefault();
-            if (isSearchOpen) closeSearch();
-            else openSearch();
-        }
-        if (e.key === 'Escape' && isSearchOpen) {
-            closeSearch();
-        }
-    });
-</script>
-
-    <main class="container animate-fade-in-up">
-        <article class="post-container">
-            <header class="post-header">
-                <div class="post-meta">
-                    <span class="episode-badge">#019</span>
-                    <span>20 Nov 2025</span>
-                    <span>·</span>
-                    <span>5 min read</span>
-                </div>
-                <h1 class="post-title">Building a Secure Password Reset Flow</h1>
-            </header>
-
-            <div class="post-content">
-                <p>Implementing a secure <strong>forgot password</strong> feature is a <span class="attention">critical</span> requirement for any <span class="attention">authentication</span> <span class="structure">system</span>. In this post, I&#39;ll walk through how we added a robust password reset flow to the <strong><span class="success">Scalable</span> Chat Platform</strong>, leveraging <strong><span class="structure">Spring Boot</span></strong> for the backend, <strong><span class="structure">React</span></strong> for the frontend, and <strong>Brevo</strong> (formerly Sendinblue) for <span class="success">reliable</span> email delivery.</p>
-<h2>The <span class="structure">Architecture</span></h2>
-<p>The flow follows a standard secure <span class="meta">pattern</span>:</p>
-<ol>
-<li>User requests a password reset via email.</li>
-<li>Backend generates a unique, time-limited token.</li>
-<li>An email containing a <span class="connection">link</span> with this token is sent to the user.</li>
-<li>User clicks the <span class="connection">link</span>, landing on a frontend page to enter a new password.</li>
-<li>Frontend sends the token and new password to the backend.</li>
-<li>Backend validates the token and updates the password.</li>
-</ol>
-<h2>Backend Implementation</h2>
-<h3>The Controller Layer</h3>
-<p>We extended our <code>AuthController</code> to handle two new endpoints:</p>
-<pre><code class="language-java">@PostMapping(&quot;/forgot-password&quot;)
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Building a Secure Password Reset Flow - Jeffrey Jose</title> <meta name="description" content="A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service." /> <meta property="og:title" content="Building a Secure Password Reset Flow"> <meta property="og:description" content="A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service."> <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/building-a-secure-password-reset-flow"> <meta property="og:type" content="article"> <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/building-a-secure-password-reset-flow.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Building a Secure Password Reset Flow"> <meta name="twitter:description" content="A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service."> <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/building-a-secure-password-reset-flow.png"> <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" /> <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" /> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link
+href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+rel="stylesheet"> <style>
+:root {
+/* Premium Dark Theme Variables */
+--background: #09090b;
+--foreground: #f8fafc;
+--primary: #7c3aed;
+--primary-foreground: #f8fafc;
+--primary-glow: #a78bfa;
+--secondary: #1e1e24;
+--secondary-foreground: #f8fafc;
+--muted: #1e1e24;
+--muted-foreground: #94a3b8;
+--accent: #1e1e24;
+--accent-foreground: #f8fafc;
+--border: #27272a;
+--input: #27272a;
+--font-sans: 'Inter', sans-serif;
+--font-heading: 'Outfit', sans-serif;
+--gradient-hero: linear-gradient(135deg, #09090b, #1e1b4b);
+--gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+--gradient-accent: linear-gradient(135deg, #7c3aed, #c084fc);
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: var(--font-sans);
+background-color: var(--background);
+color: var(--foreground);
+line-height: 1.6;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+overflow-x: hidden;
+max-width: 100vw;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+font-family: var(--font-heading);
+font-weight: 700;
+line-height: 1.2;
+margin-bottom: 1rem;
+}
+a {
+color: inherit;
+text-decoration: none;
+transition: color 0.2s ease;
+}
+/* Utilities */
+.container {
+width: 100%;
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 1.5rem;
+}
+.glass {
+background: rgba(255, 255, 255, 0.05);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.glass-card {
+background: rgba(255, 255, 255, 0.03);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border: 1px solid rgba(255, 255, 255, 0.05);
+border-radius: 1rem;
+transition: all 0.3s ease;
+}
+.glass-card:hover {
+border-color: rgba(124, 58, 237, 0.3);
+transform: translateY(-2px);
+box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+.bg-mesh {
+background-color: var(--background);
+background-image:
+radial-gradient(at 40% 20%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
+radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+radial-gradient(at 0% 50%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
+}
+/* Animations */
+@keyframes fadeInUp {
+from {
+opacity: 0;
+transform: translateY(20px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+.animate-fade-in-up {
+animation: fadeInUp 0.8s ease-out forwards;
+}
+/* Scrollbar */
+::-webkit-scrollbar {
+width: 10px;
+}
+::-webkit-scrollbar-track {
+background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+background: #3f3f46;
+border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #52525b;
+}
+</style> <style>
+body {
+padding-top: 100px;
+}
+.post-container {
+max-width: 800px;
+margin: 0 auto;
+padding: 2rem;
+background: rgba(9, 9, 11, 0.6);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border: 1px solid rgba(255, 255, 255, 0.05);
+border-radius: 1rem;
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+.post-header {
+margin-bottom: 3rem;
+text-align: center;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+padding-bottom: 2rem;
+}
+.post-meta {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 1rem;
+margin-bottom: 1rem;
+font-size: 0.875rem;
+color: var(--muted-foreground);
+}
+.episode-badge {
+background: rgba(124, 58, 237, 0.1);
+color: var(--primary);
+padding: 0.25rem 0.75rem;
+border-radius: 9999px;
+font-family: var(--font-mono);
+font-weight: 600;
+}
+.post-title {
+font-size: 2.5rem;
+line-height: 1.2;
+margin-bottom: 1.5rem;
+background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+.post-content {
+font-size: 1.125rem;
+line-height: 1.8;
+color: #d1d5db;
+word-break: break-word;
+}
+.post-content p {
+margin-bottom: 1.5rem;
+}
+.post-content h2 {
+font-size: 1.75rem;
+margin-top: 3rem;
+margin-bottom: 1.5rem;
+color: var(--foreground);
+}
+.post-content h3 {
+font-size: 1.5rem;
+margin-top: 2.5rem;
+margin-bottom: 1rem;
+color: var(--foreground);
+}
+.post-content ul,
+.post-content ol {
+margin-bottom: 1.5rem;
+padding-left: 1.5rem;
+}
+.post-content li {
+margin-bottom: 0.5rem;
+}
+.post-content a {
+color: var(--primary-glow);
+text-decoration: none;
+border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+transition: all 0.2s;
+}
+.post-content a:hover {
+border-bottom-color: var(--primary);
+color: var(--primary);
+}
+.post-content blockquote {
+border-left: 4px solid var(--primary);
+padding-left: 1.5rem;
+margin: 2rem 0;
+font-style: italic;
+color: var(--muted-foreground);
+background: rgba(255, 255, 255, 0.03);
+padding: 1.5rem;
+border-radius: 0 0.5rem 0.5rem 0;
+}
+.post-content code {
+font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+font-size: 0.9em;
+background: rgba(255, 255, 255, 0.1);
+padding: 0.2em 0.4em;
+border-radius: 0.25rem;
+color: #e2e8f0;
+}
+.post-content pre {
+background: #111827;
+padding: 1.5rem;
+border-radius: 0.5rem;
+overflow-x: auto;
+margin: 2rem -2rem;
+border: 1px solid rgba(255, 255, 255, 0.1);
+width: calc(100% + 4rem);
+}
+@media (max-width: 768px) {
+.post-content pre {
+margin-left: -1rem;
+margin-right: -1rem;
+width: calc(100% + 2rem);
+border-radius: 0;
+}
+}
+.post-content pre code {
+background: none;
+padding: 0;
+color: #e5e7eb;
+font-size: 0.9rem;
+}
+.post-content img {
+max-width: 100%;
+height: auto;
+border-radius: 0.5rem;
+margin: 2rem 0;
+box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.post-footer {
+margin-top: 4rem;
+padding-top: 2rem;
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--muted-foreground);
+font-size: 0.875rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 1rem;
+}
+.post-tags-footer {
+display: flex;
+gap: 0.5rem;
+flex-wrap: wrap;
+}
+.tag-pill {
+font-size: 0.75rem;
+padding: 0.25rem 0.75rem;
+border-radius: 9999px;
+background: rgba(255, 255, 255, 0.05);
+color: var(--muted-foreground);
+border: 1px solid rgba(255, 255, 255, 0.1);
+text-decoration: none;
+transition: all 0.2s;
+}
+.tag-pill:hover {
+background: rgba(124, 58, 237, 0.1);
+color: var(--primary-glow);
+border-color: rgba(124, 58, 237, 0.2);
+}
+/* Author card */
+.author-card {
+display: flex;
+align-items: center;
+gap: 1.25rem;
+margin-top: 3rem;
+padding: 1.5rem;
+background: rgba(255, 255, 255, 0.03);
+border: 1px solid rgba(255, 255, 255, 0.08);
+border-radius: 0.75rem;
+}
+.author-avatar {
+width: 56px;
+height: 56px;
+border-radius: 50%;
+object-fit: cover;
+border: 2px solid rgba(124, 58, 237, 0.3);
+flex-shrink: 0;
+}
+.author-info {
+display: flex;
+flex-direction: column;
+gap: 0.25rem;
+}
+.author-name {
+font-family: var(--font-heading);
+font-weight: 600;
+color: var(--foreground);
+font-size: 1rem;
+}
+.author-bio {
+font-size: 0.85rem;
+color: var(--muted-foreground);
+line-height: 1.5;
+}
+.author-links {
+display: flex;
+gap: 0.75rem;
+margin-top: 0.25rem;
+}
+.author-links a {
+font-size: 0.8rem;
+color: var(--primary-glow);
+text-decoration: none;
+transition: color 0.2s;
+}
+.author-links a:hover {
+color: var(--primary);
+}
+/* Reading progress */
+.reading-progress {
+position: fixed;
+top: 0;
+left: 0;
+height: 3px;
+background: linear-gradient(90deg, var(--primary), var(--primary-glow));
+z-index: 2000;
+transition: width 0.1s ease;
+}
+/* Navigation */
+.post-navigation {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 1.5rem;
+margin-top: 3rem;
+}
+.nav-previous,
+.nav-next {
+padding: 1.5rem;
+display: flex;
+flex-direction: column;
+}
+.nav-previous a,
+.nav-next a {
+text-decoration: none;
+height: 100%;
+display: flex;
+flex-direction: column;
+}
+.nav-label {
+font-size: 0.75rem;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+color: var(--muted-foreground);
+margin-bottom: 0.5rem;
+}
+.nav-title {
+font-family: var(--font-heading);
+font-weight: 600;
+color: var(--foreground);
+font-size: 1.125rem;
+transition: color 0.2s;
+}
+.nav-previous:hover .nav-title,
+.nav-next:hover .nav-title {
+color: var(--primary-glow);
+}
+.nav-next {
+text-align: right;
+}
+@media (max-width: 768px) {
+.post-title {
+font-size: 2rem;
+}
+.post-navigation {
+grid-template-columns: 1fr;
+}
+.nav-next {
+text-align: left;
+}
+.post-container {
+padding: 1.5rem;
+}
+}
+/* Inline styles injected from frontmatter */
+{
+{
+inlineStyles
+}
+}
+</style> </head> <body class="bg-mesh"> <div class="reading-progress"></div> <style>
+/* Top Bar Header */
+.site-header {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+z-index: 1000;
+transition: all 0.3s ease;
+background: transparent;
+border-bottom: 1px solid transparent;
+}
+.site-header.scrolled {
+background: rgba(9, 9, 11, 0.7);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.header-inner {
+max-width: 1280px;
+margin: 0 auto;
+padding: 1rem 1.5rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+.site-logo {
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.25rem;
+color: var(--foreground);
+text-decoration: none;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: transparent;
+display: inline-block;
+}
+.site-nav {
+display: flex;
+gap: 2rem;
+}
+.nav-link {
+font-family: var(--font-sans);
+font-size: 0.875rem;
+font-weight: 500;
+color: var(--muted-foreground);
+text-decoration: none;
+transition: color 0.2s ease;
+position: relative;
+}
+.nav-link:hover {
+color: var(--primary-glow);
+}
+.nav-link.active {
+color: var(--foreground);
+}
+/* Mobile Menu */
+.mobile-menu-toggle {
+display: none;
+background: none;
+border: none;
+color: var(--foreground);
+cursor: pointer;
+padding: 0.5rem;
+}
+@media (max-width: 768px) {
+.site-nav {
+display: none;
+position: absolute;
+top: 100%;
+left: 0;
+right: 0;
+flex-direction: column;
+background: rgba(9, 9, 11, 0.95);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+padding: 1rem;
+gap: 1rem;
+align-items: center;
+}
+.site-nav.open {
+display: flex;
+animation: slideDown 0.3s ease-out forwards;
+}
+.mobile-menu-toggle {
+display: block;
+}
+}
+@keyframes slideDown {
+from {
+opacity: 0;
+transform: translateY(-10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+/* Search Button */
+.search-trigger {
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--muted-foreground);
+padding: 0.5rem 1rem;
+border-radius: 9999px;
+font-size: 0.875rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+transition: all 0.2s ease;
+}
+.search-trigger:hover {
+background: rgba(255, 255, 255, 0.1);
+color: var(--foreground);
+border-color: rgba(255, 255, 255, 0.2);
+}
+.search-text,
+.search-shortcut {
+display: none;
+}
+@media (min-width: 768px) {
+.search-text {
+display: inline;
+}
+.search-shortcut {
+display: inline;
+font-size: 0.75rem;
+opacity: 0.6;
+margin-left: 0.5rem;
+}
+}
+/* Search Modal */
+.search-modal-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(8px);
+z-index: 2000;
+align-items: flex-start;
+justify-content: center;
+padding-top: 100px;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+.search-modal-overlay.open {
+display: flex;
+opacity: 1;
+}
+.search-modal {
+background: #09090b;
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 1rem;
+width: 90%;
+max-width: 600px;
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+overflow: hidden;
+transform: scale(0.95);
+transition: transform 0.3s ease;
+}
+.search-modal-overlay.open .search-modal {
+transform: scale(1);
+}
+.search-input-container {
+padding: 1.5rem;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+display: flex;
+align-items: center;
+}
+.search-icon {
+color: var(--muted-foreground);
+margin-right: 1rem;
+}
+.search-input {
+background: transparent;
+border: none;
+color: var(--foreground);
+font-size: 1.125rem;
+width: 100%;
+outline: none;
+font-family: var(--font-sans);
+}
+.search-results {
+max-height: 400px;
+overflow-y: auto;
+padding: 0.5rem;
+}
+.search-result-item {
+display: block;
+padding: 1rem;
+text-decoration: none;
+color: var(--muted-foreground);
+border-radius: 0.5rem;
+transition: all 0.2s ease;
+margin-bottom: 0.25rem;
+}
+.search-result-item:hover {
+background: rgba(255, 255, 255, 0.05);
+color: var(--foreground);
+}
+.search-result-title {
+font-weight: 600;
+font-size: 1rem;
+color: var(--primary-glow);
+margin-bottom: 0.25rem;
+}
+.search-result-excerpt {
+font-size: 0.875rem;
+color: var(--muted-foreground);
+display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient: vertical;
+overflow: hidden;
+}
+</style> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <img src="/logo.svg" alt="JJ" width="32" height="32"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
+class="text-gradient-premium">Jose</span></span> </a> <nav class="site-nav"> <a href="/#hero" class="nav-link">Home</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/#skills" class="nav-link">Skills</a> <a href="/#experience" class="nav-link">Experience</a> <a href="/#education" class="nav-link">Education</a> <a href="/#contact" class="nav-link">Contact</a> <a href="/blog" class="nav-link active">Blog</a> <a href="/analytics.html" class="nav-link">Analytics</a> </nav> <div style="display: flex; align-items: center; gap: 1rem;"> <button class="search-trigger" onclick="openSearch()"> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut">⌘K</span> </button> <button class="mobile-menu-toggle" aria-label="Toggle menu"
+onclick="document.querySelector('.site-nav').classList.toggle('open')"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()"> <div class="search-modal"> <div class="search-input-container"> <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts..." id="searchInput" autocomplete="off"> </div> <div class="search-results" id="searchResults"> </div> </div> </div> <script>
+// Header Scroll Effect
+window.addEventListener('scroll', () => {
+const header = document.getElementById('siteHeader');
+if (window.scrollY > 20) {
+header.classList.add('scrolled');
+} else {
+header.classList.remove('scrolled');
+}
+});
+let searchIndex = [];
+let isSearchOpen = false;
+async function loadSearchIndex() {
+if (searchIndex.length > 0) return;
+try {
+const response = await fetch('/blog/search.json');
+searchIndex = await response.json();
+} catch (e) {
+console.error('Failed to load search index', e);
+}
+}
+function openSearch() {
+document.getElementById('searchModal').classList.add('open');
+document.getElementById('searchInput').focus();
+isSearchOpen = true;
+loadSearchIndex();
+document.body.style.overflow = 'hidden';
+}
+function closeSearch() {
+document.getElementById('searchModal').classList.remove('open');
+isSearchOpen = false;
+document.body.style.overflow = '';
+}
+function performSearch(query) {
+if (!query) {
+document.getElementById('searchResults').innerHTML = '';
+return;
+}
+const results = searchIndex.filter(post => {
+const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
+const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
+const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
+return titleMatch || descMatch || tagMatch;
+}).slice(0, 5); // Limit to 5 results
+const resultsHtml = results.map(post => `
+<a href="/blog/${post.slug}" class="search-result-item" onclick="closeSearch()"> <div class="search-result-title">${post.title}</div> <div class="search-result-excerpt">${post.description || ''}</div> </a>
+`).join('');
+document.getElementById('searchResults').innerHTML = results.length > 0
+? resultsHtml
+: '<div style="padding: 1rem; color: var(--muted-foreground); text-align: center;">No results found</div>';
+}
+document.getElementById('searchInput').addEventListener('input', (e) => {
+performSearch(e.target.value);
+});
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+e.preventDefault();
+if (isSearchOpen) closeSearch();
+else openSearch();
+}
+if (e.key === 'Escape' && isSearchOpen) {
+closeSearch();
+}
+});
+</script> <main class="container animate-fade-in-up"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#019</span> <span>20 Nov 2025</span> <span>·</span> <span>5 min read</span> </div> <h1 class="post-title">Building a Secure Password Reset Flow</h1> </header> <div class="post-content"> <p>Implementing a secure <strong>forgot password</strong> feature is a <span class="attention">critical</span> requirement for any <span class="attention">authentication</span> <span class="structure">system</span>. In this post, I&#39;ll walk through how we added a robust password reset flow to the <strong><span class="success">Scalable</span> Chat Platform</strong>, leveraging <strong><span class="structure">Spring Boot</span></strong> for the backend, <strong><span class="structure">React</span></strong> for the frontend, and <strong>Brevo</strong> (formerly Sendinblue) for <span class="success">reliable</span> email delivery.</p> <h2>The <span class="structure">Architecture</span></h2> <p>The flow follows a standard secure <span class="meta">pattern</span>:</p> <ol> <li>User requests a password reset via email.</li> <li>Backend generates a unique, time-limited token.</li> <li>An email containing a <span class="connection">link</span> with this token is sent to the user.</li> <li>User clicks the <span class="connection">link</span>, landing on a frontend page to enter a new password.</li> <li>Frontend sends the token and new password to the backend.</li> <li>Backend validates the token and updates the password.</li> </ol> <h2>Backend Implementation</h2> <h3>The Controller Layer</h3> <p>We extended our <code>AuthController</code> to handle two new endpoints:</p> <pre><code class="language-java">@PostMapping(&quot;/forgot-password&quot;)
 public ResponseEntity&lt;MessageResponse&lt;Void&gt;&gt; forgotPassword(
-        @Valid @RequestBody ForgotPasswordRequest request) {
-    try {
-        authService.sendPasswordResetEmail(request.email());
-        return ResponseUtils.success(Constants.PASSWORD_RESET_EMAIL_SENT);
-    } catch (Exception e) {
-        // Security: Always return success to prevent email enumeration
-        return ResponseUtils.success(Constants.PASSWORD_RESET_EMAIL_SENT);
-    }
+@Valid @RequestBody ForgotPasswordRequest request) {
+try {
+authService.sendPasswordResetEmail(request.email());
+return ResponseUtils.success(Constants.PASSWORD_RESET_EMAIL_SENT);
+} catch (Exception e) {
+// Security: Always return success to prevent email enumeration
+return ResponseUtils.success(Constants.PASSWORD_RESET_EMAIL_SENT);
 }
-</code></pre>
-<blockquote>
-<p>[!NOTE]
-Notice the <span class="attention">security</span> best practice here: we always return a <span class="success">success</span> message, even if the email doesn&#39;t exist in our <span class="structure">system</span>. This prevents attackers from enumerating valid email addresses.</p>
-</blockquote>
-<h3>Email Service with Brevo</h3>
-<p><span class="success">Reliable</span> email delivery is crucial. We integrated <strong>Brevo</strong> using their transactional email <span class="connection">API</span>. The <code>BrevoEmailService</code> constructs a professional <span class="process">HTML</span> email template:</p>
-<pre><code class="language-java">@Service
+}
+</code></pre> <blockquote> <p>[!NOTE]
+Notice the <span class="attention">security</span> best practice here: we always return a <span class="success">success</span> message, even if the email doesn&#39;t exist in our <span class="structure">system</span>. This prevents attackers from enumerating valid email addresses.</p> </blockquote> <h3>Email Service with Brevo</h3> <p><span class="success">Reliable</span> email delivery is crucial. We integrated <strong>Brevo</strong> using their transactional email <span class="connection">API</span>. The <code>BrevoEmailService</code> constructs a professional <span class="process">HTML</span> email template:</p> <pre><code class="language-java">@Service
 public class BrevoEmailService implements EmailService {
-    // ... initialization ...
-
-    @Override
-    public void sendPasswordResetEmail(String to, String resetToken, String userName) {
-        String resetLink = frontendUrl + &quot;/reset-password?token=&quot; + resetToken;
-        
-        // Construct HTML content
-        String htmlContent = buildPasswordResetEmailHtml(userName, resetLink);
-        
-        SendSmtpEmail email = new SendSmtpEmail();
-        email.setTo(List.of(new SendSmtpEmailTo().email(to)));
-        email.setHtmlContent(htmlContent);
-        
-        apiInstance.sendTransacEmail(email);
-    }
+// ... initialization ...
+@Override
+public void sendPasswordResetEmail(String to, String resetToken, String userName) {
+String resetLink = frontendUrl + &quot;/reset-password?token=&quot; + resetToken;
+// Construct HTML content
+String htmlContent = buildPasswordResetEmailHtml(userName, resetLink);
+SendSmtpEmail email = new SendSmtpEmail();
+email.setTo(List.of(new SendSmtpEmailTo().email(to)));
+email.setHtmlContent(htmlContent);
+apiInstance.sendTransacEmail(email);
 }
-</code></pre>
-<p>We use environment variables to securely store the <span class="connection">API</span> key and configure the sender address.</p>
-<h2>Frontend Implementation</h2>
-<h3>The Reset Page</h3>
-<p>On the <strong><span class="structure">React</span></strong> side, we created a <code>ResetPasswordPage</code> that captures the token from the URL query parameters:</p>
-<pre><code class="language-typescript">const [searchParams] = useSearchParams();
+}
+</code></pre> <p>We use environment variables to securely store the <span class="connection">API</span> key and configure the sender address.</p> <h2>Frontend Implementation</h2> <h3>The Reset Page</h3> <p>On the <strong><span class="structure">React</span></strong> side, we created a <code>ResetPasswordPage</code> that captures the token from the URL query parameters:</p> <pre><code class="language-typescript">const [searchParams] = useSearchParams();
 const token = searchParams.get(&#39;token&#39;);
-</code></pre>
-<h3>Password Strength Meter</h3>
-<p>To encourage better <span class="attention">security</span>, we implemented a <span class="attention">real-time</span> password strength meter. It analyzes the password <span class="meta">complexity</span> based on length, case sensitivity, numbers, and special characters:</p>
-<pre><code class="language-typescript">const calculatePasswordStrength = (password: string) =&gt; {
-    if (password.length &gt;= 12 &amp;&amp; hasAllComplexityRequirements(password)) {
-        return &#39;strong&#39;; // Green
-    } else if (password.length &gt;= 8 &amp;&amp; hasSomeComplexity(password)) {
-        return &#39;medium&#39;; // Yellow
-    }
-    return &#39;weak&#39;; // Red
+</code></pre> <h3>Password Strength Meter</h3> <p>To encourage better <span class="attention">security</span>, we implemented a <span class="attention">real-time</span> password strength meter. It analyzes the password <span class="meta">complexity</span> based on length, case sensitivity, numbers, and special characters:</p> <pre><code class="language-typescript">const calculatePasswordStrength = (password: string) =&gt; {
+if (password.length &gt;= 12 &amp;&amp; hasAllComplexityRequirements(password)) {
+return &#39;strong&#39;; // Green
+} else if (password.length &gt;= 8 &amp;&amp; hasSomeComplexity(password)) {
+return &#39;medium&#39;; // Yellow
+}
+return &#39;weak&#39;; // Red
 };
-</code></pre>
-<p>This gives users immediate visual feedback, guiding them to create stronger credentials.</p>
-<h2><span class="attention">Security</span> Considerations</h2>
-<p>We implemented several layers of <span class="attention">security</span>:</p>
-<ol>
-<li><strong>Token Expiration</strong>: Reset tokens have a short lifespan (30 minutes) to minimize the attack window.</li>
-<li><strong><span class="connection">HTTPS</span></strong>: All communication happens over encrypted channels.</li>
-<li><strong>Input Validation</strong>: Strict validation on both frontend and backend ensures passwords meet <span class="meta">complexity</span> requirements.</li>
-<li><strong>Environment Isolation</strong>: <span class="connection">API</span> keys and sensitive configuration are kept in environment variables, never in the <span class="process">code</span>.</li>
-</ol>
-<h2>Conclusion</h2>
-<p>Adding this feature significantly improves the <span class="meta">user experience</span> and <span class="attention">security</span> of the platform. By combining <strong><span class="structure">Spring Boot</span>&#39;s</strong> robust <span class="attention">security</span> features with <strong><span class="structure">React</span>&#39;s</strong> interactive UI and <strong>Brevo&#39;s</strong> <span class="success">reliable</span> delivery, we&#39;ve created a seamless recovery flow.</p>
-<p>Check out the full implementation in the <a href="https://github.com/jeffreyjose07/scalable-chat-platform"><span class="success">Scalable</span> Chat Platform</a> repository.</p>
-
-            </div>
-
-            <footer class="post-footer">
-                <div class="post-tags-footer">
-                    <a href="/blog#tag-Spring Boot" class="tag neutral" data-tag="Spring Boot">Spring Boot</a>, <a href="/blog#tag-React" class="tag neutral" data-tag="React">React</a>, <a href="/blog#tag-Security" class="tag neutral" data-tag="Security">Security</a>, <a href="/blog#tag-Brevo" class="tag neutral" data-tag="Brevo">Brevo</a>
-                </div>
-                <div id="view-count" style="font-family: var(--font-mono); font-size: 0.75rem;">
-                    👀 views loading...
-                </div>
-            </footer>
-        </article>
-
-        <nav class="post-navigation">
-            <div class="nav-previous glass-card">
-                <a href="/blog/adding-interactive-scripts-to-blog-posts">
-                    <span class="nav-label">← previous</span>
-                    <span class="nav-title">Adding Interactive Scripts to Blog Posts</span>
-                </a>
-            </div>
-            <div class="nav-next glass-card">
-                <a href="/blog/enhancing-game-ui-mobile-responsiveness-and-termin">
-                    <span class="nav-label">next →</span>
-                    <span class="nav-title">Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics</span>
-                </a>
-            </div></nav>
-
-        <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;">
-            <a href="/blog/feed.xml" class="glass"
-                style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    style="margin-right: 0.5rem; color: #f59e0b;">
-                    <path d="M4 11a9 9 0 0 1 9 9"></path>
-                    <path d="M4 4a16 16 0 0 1 16 16"></path>
-                    <circle cx="5" cy="19" r="1"></circle>
-                </svg>
-                Subscribe via RSS
-            </a>
-        </div>
-    </main>
-
-    <script>
-        // Prevent scroll restoration but don't interfere with navigation
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
-
-        // Only scroll to top on actual page refresh (not navigation)
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                window.scrollTo(0, 0);
-            }, 0);
-        });
-
-        // Reading progress indicator
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.querySelector('.reading-progress').style.width = scrolled + '%';
-        });
-
-        // Load view count from GoatCounter
-        document.addEventListener('DOMContentLoaded', () => {
-            loadViewCount();
-        });
-
-        function loadViewCount() {
-            const path = window.location.pathname;
-            const viewCountElement = document.getElementById('view-count');
-
-            fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    const count = data.count || '0';
-                    viewCountElement.innerHTML = `👀 ${count} views`;
-                    viewCountElement.style.color = 'var(--primary-glow)';
-                })
-                .catch(error => {
-                    console.warn('Could not load view count:', error);
-                });
-        }
-
-        /* Inline scripts injected from frontmatter */
-        { { inlineScripts } }
-    </script>
-
-    <!-- GoatCounter Analytics -->
-    <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-</body>
-
-</html>
+</code></pre> <p>This gives users immediate visual feedback, guiding them to create stronger credentials.</p> <h2><span class="attention">Security</span> Considerations</h2> <p>We implemented several layers of <span class="attention">security</span>:</p> <ol> <li><strong>Token Expiration</strong>: Reset tokens have a short lifespan (30 minutes) to minimize the attack window.</li> <li><strong><span class="connection">HTTPS</span></strong>: All communication happens over encrypted channels.</li> <li><strong>Input Validation</strong>: Strict validation on both frontend and backend ensures passwords meet <span class="meta">complexity</span> requirements.</li> <li><strong>Environment Isolation</strong>: <span class="connection">API</span> keys and sensitive configuration are kept in environment variables, never in the <span class="process">code</span>.</li> </ol> <h2>Conclusion</h2> <p>Adding this feature significantly improves the <span class="meta">user experience</span> and <span class="attention">security</span> of the platform. By combining <strong><span class="structure">Spring Boot</span>&#39;s</strong> robust <span class="attention">security</span> features with <strong><span class="structure">React</span>&#39;s</strong> interactive UI and <strong>Brevo&#39;s</strong> <span class="success">reliable</span> delivery, we&#39;ve created a seamless recovery flow.</p> <p>Check out the full implementation in the <a href="https://github.com/jeffreyjose07/scalable-chat-platform"><span class="success">Scalable</span> Chat Platform</a> repository.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-Spring Boot" class="tag neutral" data-tag="Spring Boot">Spring Boot</a>, <a href="/blog#tag-React" class="tag neutral" data-tag="React">React</a>, <a href="/blog#tag-Security" class="tag neutral" data-tag="Security">Security</a>, <a href="/blog#tag-Brevo" class="tag neutral" data-tag="Brevo">Brevo</a> </div> <div id="view-count" style="font-family: var(--font-mono); font-size: 0.75rem;">
+👀 views loading...
+</div> </footer> <div class="author-card"> <img src="/jeffrey-profile.jpg" alt="Jeffrey Jose" class="author-avatar" width="56" height="56" loading="lazy"> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/adding-interactive-scripts-to-blog-posts"> <span class="nav-label">← previous</span> <span class="nav-title">Adding Interactive Scripts to Blog Posts</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/enhancing-game-ui-mobile-responsiveness-and-termin"> <span class="nav-label">next →</span> <span class="nav-title">Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
+Subscribe via RSS
+</a> </div> </main> <script>
+// Prevent scroll restoration but don't interfere with navigation
+if ('scrollRestoration' in history) {
+history.scrollRestoration = 'manual';
+}
+// Only scroll to top on actual page refresh (not navigation)
+window.addEventListener('load', () => {
+setTimeout(() => {
+window.scrollTo(0, 0);
+}, 0);
+});
+// Reading progress indicator
+window.addEventListener('scroll', () => {
+const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+const scrolled = (winScroll / height) * 100;
+document.querySelector('.reading-progress').style.width = scrolled + '%';
+});
+// Load view count from GoatCounter
+document.addEventListener('DOMContentLoaded', () => {
+loadViewCount();
+});
+function loadViewCount() {
+const path = window.location.pathname;
+const viewCountElement = document.getElementById('view-count');
+fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
+.then(response => response.json())
+.then(data => {
+const count = data.count || '0';
+viewCountElement.innerHTML = `👀 ${count} views`;
+viewCountElement.style.color = 'var(--primary-glow)';
+})
+.catch(error => {
+console.warn('Could not load view count:', error);
+});
+}
+/* Inline scripts injected from frontmatter */
+{ { inlineScripts } }
+</script> <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script> </body> </html>

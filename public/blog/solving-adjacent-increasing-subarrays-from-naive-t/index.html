@@ -1,1163 +1,834 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solving Adjacent Increasing Subarrays: From Naive to Optimal - Jeffrey Jose</title>
-    <meta name="description" content="A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization" />
-
-    <!-- SEO Meta Tags -->
-    <meta property="og:title" content="Solving Adjacent Increasing Subarrays: From Naive to Optimal">
-    <meta property="og:description" content="A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization">
-    <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/solving-adjacent-increasing-subarrays-from-naive-t">
-    <meta property="og:type" content="article">
-    <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/solving-adjacent-increasing-subarrays-from-naive-t.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Solving Adjacent Increasing Subarrays: From Naive to Optimal">
-    <meta name="twitter:description" content="A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization">
-    <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/solving-adjacent-increasing-subarrays-from-naive-t.png">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
-    <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
-
-    <!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet">
-
-<style>
-    :root {
-        /* Premium Dark Theme Variables */
-        --background: #09090b;
-        --foreground: #f8fafc;
-
-        --primary: #7c3aed;
-        --primary-foreground: #f8fafc;
-        --primary-glow: #a78bfa;
-
-        --secondary: #1e1e24;
-        --secondary-foreground: #f8fafc;
-
-        --muted: #1e1e24;
-        --muted-foreground: #94a3b8;
-
-        --accent: #1e1e24;
-        --accent-foreground: #f8fafc;
-
-        --border: #27272a;
-        --input: #27272a;
-
-        --font-sans: 'Inter', sans-serif;
-        --font-heading: 'Outfit', sans-serif;
-
-        --gradient-hero: linear-gradient(135deg, #09090b, #1e1b4b);
-        --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-        --gradient-accent: linear-gradient(135deg, #7c3aed, #c084fc);
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: var(--font-sans);
-        background-color: var(--background);
-        color: var(--foreground);
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        overflow-x: hidden;
-        max-width: 100vw;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        line-height: 1.2;
-        margin-bottom: 1rem;
-    }
-
-    a {
-        color: inherit;
-        text-decoration: none;
-        transition: color 0.2s ease;
-    }
-
-    /* Utilities */
-    .container {
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 1.5rem;
-    }
-
-    .glass {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .glass-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 1rem;
-        transition: all 0.3s ease;
-    }
-
-    .glass-card:hover {
-        border-color: rgba(124, 58, 237, 0.3);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-    }
-
-    .text-gradient-premium {
-        background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .bg-mesh {
-        background-color: var(--background);
-        background-image:
-            radial-gradient(at 40% 20%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
-            radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-            radial-gradient(at 0% 50%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
-    }
-
-    /* Animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .animate-fade-in-up {
-        animation: fadeInUp 0.8s ease-out forwards;
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: var(--background);
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #3f3f46;
-        border-radius: 5px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #52525b;
-    }
-</style>
-
-    <style>
-        body {
-            padding-top: 100px;
-        }
-
-        .post-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            background: rgba(9, 9, 11, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 1rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        .post-header {
-            margin-bottom: 3rem;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 2rem;
-        }
-
-        .post-meta {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-            color: var(--muted-foreground);
-        }
-
-        .episode-badge {
-            background: rgba(124, 58, 237, 0.1);
-            color: var(--primary);
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-family: var(--font-mono);
-            font-weight: 600;
-        }
-
-        .post-title {
-            font-size: 2.5rem;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .post-content {
-            font-size: 1.125rem;
-            line-height: 1.8;
-            color: #d1d5db;
-            word-break: break-word;
-        }
-
-        .post-content p {
-            margin-bottom: 1.5rem;
-        }
-
-        .post-content h2 {
-            font-size: 1.75rem;
-            margin-top: 3rem;
-            margin-bottom: 1.5rem;
-            color: var(--foreground);
-        }
-
-        .post-content h3 {
-            font-size: 1.5rem;
-            margin-top: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--foreground);
-        }
-
-        .post-content ul,
-        .post-content ol {
-            margin-bottom: 1.5rem;
-            padding-left: 1.5rem;
-        }
-
-        .post-content li {
-            margin-bottom: 0.5rem;
-        }
-
-        .post-content a {
-            color: var(--primary-glow);
-            text-decoration: none;
-            border-bottom: 1px solid rgba(124, 58, 237, 0.3);
-            transition: all 0.2s;
-        }
-
-        .post-content a:hover {
-            border-bottom-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .post-content blockquote {
-            border-left: 4px solid var(--primary);
-            padding-left: 1.5rem;
-            margin: 2rem 0;
-            font-style: italic;
-            color: var(--muted-foreground);
-            background: rgba(255, 255, 255, 0.03);
-            padding: 1.5rem;
-            border-radius: 0 0.5rem 0.5rem 0;
-        }
-
-        .post-content code {
-            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-            font-size: 0.9em;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.2em 0.4em;
-            border-radius: 0.25rem;
-            color: #e2e8f0;
-        }
-
-        .post-content pre {
-            background: #111827;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            margin: 2rem 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .post-content pre code {
-            background: none;
-            padding: 0;
-            color: #e5e7eb;
-            font-size: 0.9rem;
-        }
-
-        .post-content img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 0.5rem;
-            margin: 2rem 0;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        .post-footer {
-            margin-top: 4rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--muted-foreground);
-            font-size: 0.875rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .post-tags-footer {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .tag-pill {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--muted-foreground);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .tag-pill:hover {
-            background: rgba(124, 58, 237, 0.1);
-            color: var(--primary-glow);
-            border-color: rgba(124, 58, 237, 0.2);
-        }
-
-        /* Reading progress */
-        .reading-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-glow));
-            z-index: 2000;
-            transition: width 0.1s ease;
-        }
-
-        /* Navigation */
-        .post-navigation {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-top: 3rem;
-        }
-
-        .nav-previous,
-        .nav-next {
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-previous a,
-        .nav-next a {
-            text-decoration: none;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--muted-foreground);
-            margin-bottom: 0.5rem;
-        }
-
-        .nav-title {
-            font-family: var(--font-heading);
-            font-weight: 600;
-            color: var(--foreground);
-            font-size: 1.125rem;
-            transition: color 0.2s;
-        }
-
-        .nav-previous:hover .nav-title,
-        .nav-next:hover .nav-title {
-            color: var(--primary-glow);
-        }
-
-        .nav-next {
-            text-align: right;
-        }
-
-        @media (max-width: 768px) {
-            .post-title {
-                font-size: 2rem;
-            }
-
-            .post-navigation {
-                grid-template-columns: 1fr;
-            }
-
-            .nav-next {
-                text-align: left;
-            }
-
-            .post-container {
-                padding: 1.5rem;
-            }
-        }
-
-        /* Inline styles injected from frontmatter */
-            {
-                {
-                inlineStyles
-            }
-        }
-    </style>
-</head>
-
-<body class="bg-mesh">
-    <div class="reading-progress"></div>
-
-    <style>
-    /* Top Bar Header */
-    .site-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 1000;
-        transition: all 0.3s ease;
-        background: transparent;
-        border-bottom: 1px solid transparent;
-    }
-
-    .site-header.scrolled {
-        background: rgba(9, 9, 11, 0.7);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .header-inner {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 1rem 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .site-logo {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        font-size: 1.25rem;
-        color: var(--foreground);
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .text-gradient-premium {
-        background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        color: transparent;
-        display: inline-block;
-    }
-
-    .site-nav {
-        display: flex;
-        gap: 2rem;
-    }
-
-    .nav-link {
-        font-family: var(--font-sans);
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--muted-foreground);
-        text-decoration: none;
-        transition: color 0.2s ease;
-        position: relative;
-    }
-
-    .nav-link:hover {
-        color: var(--primary-glow);
-    }
-
-    .nav-link.active {
-        color: var(--foreground);
-    }
-
-    /* Mobile Menu */
-    .mobile-menu-toggle {
-        display: none;
-        background: none;
-        border: none;
-        color: var(--foreground);
-        cursor: pointer;
-        padding: 0.5rem;
-    }
-
-    @media (max-width: 768px) {
-        .site-nav {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            flex-direction: column;
-            background: rgba(9, 9, 11, 0.95);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1rem;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .site-nav.open {
-            display: flex;
-            animation: slideDown 0.3s ease-out forwards;
-        }
-
-        .mobile-menu-toggle {
-            display: block;
-        }
-    }
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Search Button */
-    .search-trigger {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: var(--muted-foreground);
-        padding: 0.5rem 1rem;
-        border-radius: 9999px;
-        font-size: 0.875rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.2s ease;
-    }
-
-    .search-trigger:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--foreground);
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .search-text,
-    .search-shortcut {
-        display: none;
-    }
-
-    @media (min-width: 768px) {
-        .search-text {
-            display: inline;
-        }
-
-        .search-shortcut {
-            display: inline;
-            font-size: 0.75rem;
-            opacity: 0.6;
-            margin-left: 0.5rem;
-        }
-    }
-
-    /* Search Modal */
-    .search-modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(8px);
-        z-index: 2000;
-        align-items: flex-start;
-        justify-content: center;
-        padding-top: 100px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .search-modal-overlay.open {
-        display: flex;
-        opacity: 1;
-    }
-
-    .search-modal {
-        background: #09090b;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 1rem;
-        width: 90%;
-        max-width: 600px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        overflow: hidden;
-        transform: scale(0.95);
-        transition: transform 0.3s ease;
-    }
-
-    .search-modal-overlay.open .search-modal {
-        transform: scale(1);
-    }
-
-    .search-input-container {
-        padding: 1.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        align-items: center;
-    }
-
-    .search-icon {
-        color: var(--muted-foreground);
-        margin-right: 1rem;
-    }
-
-    .search-input {
-        background: transparent;
-        border: none;
-        color: var(--foreground);
-        font-size: 1.125rem;
-        width: 100%;
-        outline: none;
-        font-family: var(--font-sans);
-    }
-
-    .search-results {
-        max-height: 400px;
-        overflow-y: auto;
-        padding: 0.5rem;
-    }
-
-    .search-result-item {
-        display: block;
-        padding: 1rem;
-        text-decoration: none;
-        color: var(--muted-foreground);
-        border-radius: 0.5rem;
-        transition: all 0.2s ease;
-        margin-bottom: 0.25rem;
-    }
-
-    .search-result-item:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--foreground);
-    }
-
-    .search-result-title {
-        font-weight: 600;
-        font-size: 1rem;
-        color: var(--primary-glow);
-        margin-bottom: 0.25rem;
-    }
-
-    .search-result-excerpt {
-        font-size: 0.875rem;
-        color: var(--muted-foreground);
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-</style>
-
-<header class="site-header" id="siteHeader">
-    <div class="header-inner">
-        <a href="/" class="site-logo">
-            <img src="/logo.svg" alt="JJ" width="32" height="32">
-            <span>Jeffrey<span style="color: var(--primary)">.</span><span
-                    class="text-gradient-premium">Jose</span></span>
-        </a>
-
-        <nav class="site-nav">
-            <a href="/#hero" class="nav-link">Home</a>
-            <a href="/#projects" class="nav-link">Projects</a>
-            <a href="/#skills" class="nav-link">Skills</a>
-            <a href="/#experience" class="nav-link">Experience</a>
-            <a href="/#education" class="nav-link">Education</a>
-            <a href="/#contact" class="nav-link">Contact</a>
-            <a href="/blog" class="nav-link active">Blog</a>
-            <a href="/analytics.html" class="nav-link">Analytics</a>
-        </nav>
-
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <button class="search-trigger" onclick="openSearch()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <span class="search-text">Search</span>
-                <span class="search-shortcut">⌘K</span>
-            </button>
-
-            <button class="mobile-menu-toggle" aria-label="Toggle menu"
-                onclick="document.querySelector('.site-nav').classList.toggle('open')">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-            </button>
-        </div>
-    </div>
-</header>
-
-<!-- Search Modal HTML -->
-<div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()">
-    <div class="search-modal">
-        <div class="search-input-container">
-            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" class="search-input" placeholder="Search posts..." id="searchInput" autocomplete="off">
-        </div>
-        <div class="search-results" id="searchResults">
-            <!-- Results will be injected here -->
-        </div>
-    </div>
-</div>
-
-<script>
-    // Header Scroll Effect
-    window.addEventListener('scroll', () => {
-        const header = document.getElementById('siteHeader');
-        if (window.scrollY > 20) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    });
-
-    let searchIndex = [];
-    let isSearchOpen = false;
-
-    async function loadSearchIndex() {
-        if (searchIndex.length > 0) return;
-        try {
-            const response = await fetch('/blog/search.json');
-            searchIndex = await response.json();
-        } catch (e) {
-            console.error('Failed to load search index', e);
-        }
-    }
-
-    function openSearch() {
-        document.getElementById('searchModal').classList.add('open');
-        document.getElementById('searchInput').focus();
-        isSearchOpen = true;
-        loadSearchIndex();
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeSearch() {
-        document.getElementById('searchModal').classList.remove('open');
-        isSearchOpen = false;
-        document.body.style.overflow = '';
-    }
-
-    function performSearch(query) {
-        if (!query) {
-            document.getElementById('searchResults').innerHTML = '';
-            return;
-        }
-
-        const results = searchIndex.filter(post => {
-            const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
-            const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
-            const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
-            return titleMatch || descMatch || tagMatch;
-        }).slice(0, 5); // Limit to 5 results
-
-        const resultsHtml = results.map(post => `
-            <a href="/blog/${post.slug}" class="search-result-item" onclick="closeSearch()">
-                <div class="search-result-title">${post.title}</div>
-                <div class="search-result-excerpt">${post.description || ''}</div>
-            </a>
-        `).join('');
-
-        document.getElementById('searchResults').innerHTML = results.length > 0
-            ? resultsHtml
-            : '<div style="padding: 1rem; color: var(--muted-foreground); text-align: center;">No results found</div>';
-    }
-
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-        performSearch(e.target.value);
-    });
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-            e.preventDefault();
-            if (isSearchOpen) closeSearch();
-            else openSearch();
-        }
-        if (e.key === 'Escape' && isSearchOpen) {
-            closeSearch();
-        }
-    });
-</script>
-
-    <main class="container animate-fade-in-up">
-        <article class="post-container">
-            <header class="post-header">
-                <div class="post-meta">
-                    <span class="episode-badge">#017</span>
-                    <span>26 Jan 2025</span>
-                    <span>·</span>
-                    <span>10 min read</span>
-                </div>
-                <h1 class="post-title">Solving Adjacent Increasing Subarrays: From Naive to Optimal</h1>
-            </header>
-
-            <div class="post-content">
-                <p>When I first encountered this problem on <strong>LeetCode</strong>, I did what most developers do - jumped straight to the naive solution. What followed was a journey through increasingly elegant <strong>optimizations</strong>, each revealing deeper insights about algorithmic thinking. This documents that evolution from a <span class="success">working</span>-but-<span class="attention">slow</span> O(n³) solution to an optimal O(n) <strong><span class="process">algorithm</span></strong>.</p>
-<h2>the problem</h2>
-<p>Given an <strong>array</strong> of integers, find the maximum value of <code>k</code> for which there exist two adjacent subarrays of length <code>k</code> each, where both subarrays are strictly increasing.</p>
-<p><strong>Constraints:</strong></p>
-<ul>
-<li>Both subarrays must be strictly increasing</li>
-<li>The subarrays must be adjacent</li>
-<li><strong>Array</strong> length can be up to 200,000 elements</li>
-</ul>
-<p><strong>Example:</strong></p>
-<pre><code>nums = [2,5,7,8,9,2,3,4,3,1]
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Solving Adjacent Increasing Subarrays: From Naive to Optimal - Jeffrey Jose</title> <meta name="description" content="A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization" /> <meta property="og:title" content="Solving Adjacent Increasing Subarrays: From Naive to Optimal"> <meta property="og:description" content="A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization"> <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/solving-adjacent-increasing-subarrays-from-naive-t"> <meta property="og:type" content="article"> <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/solving-adjacent-increasing-subarrays-from-naive-t.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Solving Adjacent Increasing Subarrays: From Naive to Optimal"> <meta name="twitter:description" content="A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization"> <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/solving-adjacent-increasing-subarrays-from-naive-t.png"> <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" /> <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" /> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link
+href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+rel="stylesheet"> <style>
+:root {
+/* Premium Dark Theme Variables */
+--background: #09090b;
+--foreground: #f8fafc;
+--primary: #7c3aed;
+--primary-foreground: #f8fafc;
+--primary-glow: #a78bfa;
+--secondary: #1e1e24;
+--secondary-foreground: #f8fafc;
+--muted: #1e1e24;
+--muted-foreground: #94a3b8;
+--accent: #1e1e24;
+--accent-foreground: #f8fafc;
+--border: #27272a;
+--input: #27272a;
+--font-sans: 'Inter', sans-serif;
+--font-heading: 'Outfit', sans-serif;
+--gradient-hero: linear-gradient(135deg, #09090b, #1e1b4b);
+--gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+--gradient-accent: linear-gradient(135deg, #7c3aed, #c084fc);
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: var(--font-sans);
+background-color: var(--background);
+color: var(--foreground);
+line-height: 1.6;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+overflow-x: hidden;
+max-width: 100vw;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+font-family: var(--font-heading);
+font-weight: 700;
+line-height: 1.2;
+margin-bottom: 1rem;
+}
+a {
+color: inherit;
+text-decoration: none;
+transition: color 0.2s ease;
+}
+/* Utilities */
+.container {
+width: 100%;
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 1.5rem;
+}
+.glass {
+background: rgba(255, 255, 255, 0.05);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.glass-card {
+background: rgba(255, 255, 255, 0.03);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border: 1px solid rgba(255, 255, 255, 0.05);
+border-radius: 1rem;
+transition: all 0.3s ease;
+}
+.glass-card:hover {
+border-color: rgba(124, 58, 237, 0.3);
+transform: translateY(-2px);
+box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+.bg-mesh {
+background-color: var(--background);
+background-image:
+radial-gradient(at 40% 20%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
+radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+radial-gradient(at 0% 50%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
+}
+/* Animations */
+@keyframes fadeInUp {
+from {
+opacity: 0;
+transform: translateY(20px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+.animate-fade-in-up {
+animation: fadeInUp 0.8s ease-out forwards;
+}
+/* Scrollbar */
+::-webkit-scrollbar {
+width: 10px;
+}
+::-webkit-scrollbar-track {
+background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+background: #3f3f46;
+border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #52525b;
+}
+</style> <style>
+body {
+padding-top: 100px;
+}
+.post-container {
+max-width: 800px;
+margin: 0 auto;
+padding: 2rem;
+background: rgba(9, 9, 11, 0.6);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border: 1px solid rgba(255, 255, 255, 0.05);
+border-radius: 1rem;
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+.post-header {
+margin-bottom: 3rem;
+text-align: center;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+padding-bottom: 2rem;
+}
+.post-meta {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 1rem;
+margin-bottom: 1rem;
+font-size: 0.875rem;
+color: var(--muted-foreground);
+}
+.episode-badge {
+background: rgba(124, 58, 237, 0.1);
+color: var(--primary);
+padding: 0.25rem 0.75rem;
+border-radius: 9999px;
+font-family: var(--font-mono);
+font-weight: 600;
+}
+.post-title {
+font-size: 2.5rem;
+line-height: 1.2;
+margin-bottom: 1.5rem;
+background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+.post-content {
+font-size: 1.125rem;
+line-height: 1.8;
+color: #d1d5db;
+word-break: break-word;
+}
+.post-content p {
+margin-bottom: 1.5rem;
+}
+.post-content h2 {
+font-size: 1.75rem;
+margin-top: 3rem;
+margin-bottom: 1.5rem;
+color: var(--foreground);
+}
+.post-content h3 {
+font-size: 1.5rem;
+margin-top: 2.5rem;
+margin-bottom: 1rem;
+color: var(--foreground);
+}
+.post-content ul,
+.post-content ol {
+margin-bottom: 1.5rem;
+padding-left: 1.5rem;
+}
+.post-content li {
+margin-bottom: 0.5rem;
+}
+.post-content a {
+color: var(--primary-glow);
+text-decoration: none;
+border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+transition: all 0.2s;
+}
+.post-content a:hover {
+border-bottom-color: var(--primary);
+color: var(--primary);
+}
+.post-content blockquote {
+border-left: 4px solid var(--primary);
+padding-left: 1.5rem;
+margin: 2rem 0;
+font-style: italic;
+color: var(--muted-foreground);
+background: rgba(255, 255, 255, 0.03);
+padding: 1.5rem;
+border-radius: 0 0.5rem 0.5rem 0;
+}
+.post-content code {
+font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+font-size: 0.9em;
+background: rgba(255, 255, 255, 0.1);
+padding: 0.2em 0.4em;
+border-radius: 0.25rem;
+color: #e2e8f0;
+}
+.post-content pre {
+background: #111827;
+padding: 1.5rem;
+border-radius: 0.5rem;
+overflow-x: auto;
+margin: 2rem -2rem;
+border: 1px solid rgba(255, 255, 255, 0.1);
+width: calc(100% + 4rem);
+}
+@media (max-width: 768px) {
+.post-content pre {
+margin-left: -1rem;
+margin-right: -1rem;
+width: calc(100% + 2rem);
+border-radius: 0;
+}
+}
+.post-content pre code {
+background: none;
+padding: 0;
+color: #e5e7eb;
+font-size: 0.9rem;
+}
+.post-content img {
+max-width: 100%;
+height: auto;
+border-radius: 0.5rem;
+margin: 2rem 0;
+box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.post-footer {
+margin-top: 4rem;
+padding-top: 2rem;
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--muted-foreground);
+font-size: 0.875rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 1rem;
+}
+.post-tags-footer {
+display: flex;
+gap: 0.5rem;
+flex-wrap: wrap;
+}
+.tag-pill {
+font-size: 0.75rem;
+padding: 0.25rem 0.75rem;
+border-radius: 9999px;
+background: rgba(255, 255, 255, 0.05);
+color: var(--muted-foreground);
+border: 1px solid rgba(255, 255, 255, 0.1);
+text-decoration: none;
+transition: all 0.2s;
+}
+.tag-pill:hover {
+background: rgba(124, 58, 237, 0.1);
+color: var(--primary-glow);
+border-color: rgba(124, 58, 237, 0.2);
+}
+/* Author card */
+.author-card {
+display: flex;
+align-items: center;
+gap: 1.25rem;
+margin-top: 3rem;
+padding: 1.5rem;
+background: rgba(255, 255, 255, 0.03);
+border: 1px solid rgba(255, 255, 255, 0.08);
+border-radius: 0.75rem;
+}
+.author-avatar {
+width: 56px;
+height: 56px;
+border-radius: 50%;
+object-fit: cover;
+border: 2px solid rgba(124, 58, 237, 0.3);
+flex-shrink: 0;
+}
+.author-info {
+display: flex;
+flex-direction: column;
+gap: 0.25rem;
+}
+.author-name {
+font-family: var(--font-heading);
+font-weight: 600;
+color: var(--foreground);
+font-size: 1rem;
+}
+.author-bio {
+font-size: 0.85rem;
+color: var(--muted-foreground);
+line-height: 1.5;
+}
+.author-links {
+display: flex;
+gap: 0.75rem;
+margin-top: 0.25rem;
+}
+.author-links a {
+font-size: 0.8rem;
+color: var(--primary-glow);
+text-decoration: none;
+transition: color 0.2s;
+}
+.author-links a:hover {
+color: var(--primary);
+}
+/* Reading progress */
+.reading-progress {
+position: fixed;
+top: 0;
+left: 0;
+height: 3px;
+background: linear-gradient(90deg, var(--primary), var(--primary-glow));
+z-index: 2000;
+transition: width 0.1s ease;
+}
+/* Navigation */
+.post-navigation {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 1.5rem;
+margin-top: 3rem;
+}
+.nav-previous,
+.nav-next {
+padding: 1.5rem;
+display: flex;
+flex-direction: column;
+}
+.nav-previous a,
+.nav-next a {
+text-decoration: none;
+height: 100%;
+display: flex;
+flex-direction: column;
+}
+.nav-label {
+font-size: 0.75rem;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+color: var(--muted-foreground);
+margin-bottom: 0.5rem;
+}
+.nav-title {
+font-family: var(--font-heading);
+font-weight: 600;
+color: var(--foreground);
+font-size: 1.125rem;
+transition: color 0.2s;
+}
+.nav-previous:hover .nav-title,
+.nav-next:hover .nav-title {
+color: var(--primary-glow);
+}
+.nav-next {
+text-align: right;
+}
+@media (max-width: 768px) {
+.post-title {
+font-size: 2rem;
+}
+.post-navigation {
+grid-template-columns: 1fr;
+}
+.nav-next {
+text-align: left;
+}
+.post-container {
+padding: 1.5rem;
+}
+}
+/* Inline styles injected from frontmatter */
+{
+{
+inlineStyles
+}
+}
+</style> </head> <body class="bg-mesh"> <div class="reading-progress"></div> <style>
+/* Top Bar Header */
+.site-header {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+z-index: 1000;
+transition: all 0.3s ease;
+background: transparent;
+border-bottom: 1px solid transparent;
+}
+.site-header.scrolled {
+background: rgba(9, 9, 11, 0.7);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.header-inner {
+max-width: 1280px;
+margin: 0 auto;
+padding: 1rem 1.5rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+.site-logo {
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.25rem;
+color: var(--foreground);
+text-decoration: none;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: transparent;
+display: inline-block;
+}
+.site-nav {
+display: flex;
+gap: 2rem;
+}
+.nav-link {
+font-family: var(--font-sans);
+font-size: 0.875rem;
+font-weight: 500;
+color: var(--muted-foreground);
+text-decoration: none;
+transition: color 0.2s ease;
+position: relative;
+}
+.nav-link:hover {
+color: var(--primary-glow);
+}
+.nav-link.active {
+color: var(--foreground);
+}
+/* Mobile Menu */
+.mobile-menu-toggle {
+display: none;
+background: none;
+border: none;
+color: var(--foreground);
+cursor: pointer;
+padding: 0.5rem;
+}
+@media (max-width: 768px) {
+.site-nav {
+display: none;
+position: absolute;
+top: 100%;
+left: 0;
+right: 0;
+flex-direction: column;
+background: rgba(9, 9, 11, 0.95);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+padding: 1rem;
+gap: 1rem;
+align-items: center;
+}
+.site-nav.open {
+display: flex;
+animation: slideDown 0.3s ease-out forwards;
+}
+.mobile-menu-toggle {
+display: block;
+}
+}
+@keyframes slideDown {
+from {
+opacity: 0;
+transform: translateY(-10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+/* Search Button */
+.search-trigger {
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--muted-foreground);
+padding: 0.5rem 1rem;
+border-radius: 9999px;
+font-size: 0.875rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+transition: all 0.2s ease;
+}
+.search-trigger:hover {
+background: rgba(255, 255, 255, 0.1);
+color: var(--foreground);
+border-color: rgba(255, 255, 255, 0.2);
+}
+.search-text,
+.search-shortcut {
+display: none;
+}
+@media (min-width: 768px) {
+.search-text {
+display: inline;
+}
+.search-shortcut {
+display: inline;
+font-size: 0.75rem;
+opacity: 0.6;
+margin-left: 0.5rem;
+}
+}
+/* Search Modal */
+.search-modal-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(8px);
+z-index: 2000;
+align-items: flex-start;
+justify-content: center;
+padding-top: 100px;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+.search-modal-overlay.open {
+display: flex;
+opacity: 1;
+}
+.search-modal {
+background: #09090b;
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 1rem;
+width: 90%;
+max-width: 600px;
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+overflow: hidden;
+transform: scale(0.95);
+transition: transform 0.3s ease;
+}
+.search-modal-overlay.open .search-modal {
+transform: scale(1);
+}
+.search-input-container {
+padding: 1.5rem;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+display: flex;
+align-items: center;
+}
+.search-icon {
+color: var(--muted-foreground);
+margin-right: 1rem;
+}
+.search-input {
+background: transparent;
+border: none;
+color: var(--foreground);
+font-size: 1.125rem;
+width: 100%;
+outline: none;
+font-family: var(--font-sans);
+}
+.search-results {
+max-height: 400px;
+overflow-y: auto;
+padding: 0.5rem;
+}
+.search-result-item {
+display: block;
+padding: 1rem;
+text-decoration: none;
+color: var(--muted-foreground);
+border-radius: 0.5rem;
+transition: all 0.2s ease;
+margin-bottom: 0.25rem;
+}
+.search-result-item:hover {
+background: rgba(255, 255, 255, 0.05);
+color: var(--foreground);
+}
+.search-result-title {
+font-weight: 600;
+font-size: 1rem;
+color: var(--primary-glow);
+margin-bottom: 0.25rem;
+}
+.search-result-excerpt {
+font-size: 0.875rem;
+color: var(--muted-foreground);
+display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient: vertical;
+overflow: hidden;
+}
+</style> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <img src="/logo.svg" alt="JJ" width="32" height="32"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
+class="text-gradient-premium">Jose</span></span> </a> <nav class="site-nav"> <a href="/#hero" class="nav-link">Home</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/#skills" class="nav-link">Skills</a> <a href="/#experience" class="nav-link">Experience</a> <a href="/#education" class="nav-link">Education</a> <a href="/#contact" class="nav-link">Contact</a> <a href="/blog" class="nav-link active">Blog</a> <a href="/analytics.html" class="nav-link">Analytics</a> </nav> <div style="display: flex; align-items: center; gap: 1rem;"> <button class="search-trigger" onclick="openSearch()"> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut">⌘K</span> </button> <button class="mobile-menu-toggle" aria-label="Toggle menu"
+onclick="document.querySelector('.site-nav').classList.toggle('open')"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()"> <div class="search-modal"> <div class="search-input-container"> <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts..." id="searchInput" autocomplete="off"> </div> <div class="search-results" id="searchResults"> </div> </div> </div> <script>
+// Header Scroll Effect
+window.addEventListener('scroll', () => {
+const header = document.getElementById('siteHeader');
+if (window.scrollY > 20) {
+header.classList.add('scrolled');
+} else {
+header.classList.remove('scrolled');
+}
+});
+let searchIndex = [];
+let isSearchOpen = false;
+async function loadSearchIndex() {
+if (searchIndex.length > 0) return;
+try {
+const response = await fetch('/blog/search.json');
+searchIndex = await response.json();
+} catch (e) {
+console.error('Failed to load search index', e);
+}
+}
+function openSearch() {
+document.getElementById('searchModal').classList.add('open');
+document.getElementById('searchInput').focus();
+isSearchOpen = true;
+loadSearchIndex();
+document.body.style.overflow = 'hidden';
+}
+function closeSearch() {
+document.getElementById('searchModal').classList.remove('open');
+isSearchOpen = false;
+document.body.style.overflow = '';
+}
+function performSearch(query) {
+if (!query) {
+document.getElementById('searchResults').innerHTML = '';
+return;
+}
+const results = searchIndex.filter(post => {
+const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
+const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
+const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
+return titleMatch || descMatch || tagMatch;
+}).slice(0, 5); // Limit to 5 results
+const resultsHtml = results.map(post => `
+<a href="/blog/${post.slug}" class="search-result-item" onclick="closeSearch()"> <div class="search-result-title">${post.title}</div> <div class="search-result-excerpt">${post.description || ''}</div> </a>
+`).join('');
+document.getElementById('searchResults').innerHTML = results.length > 0
+? resultsHtml
+: '<div style="padding: 1rem; color: var(--muted-foreground); text-align: center;">No results found</div>';
+}
+document.getElementById('searchInput').addEventListener('input', (e) => {
+performSearch(e.target.value);
+});
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+e.preventDefault();
+if (isSearchOpen) closeSearch();
+else openSearch();
+}
+if (e.key === 'Escape' && isSearchOpen) {
+closeSearch();
+}
+});
+</script> <main class="container animate-fade-in-up"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#017</span> <span>26 Jan 2025</span> <span>·</span> <span>10 min read</span> </div> <h1 class="post-title">Solving Adjacent Increasing Subarrays: From Naive to Optimal</h1> </header> <div class="post-content"> <p>When I first encountered this problem on <strong>LeetCode</strong>, I did what most developers do - jumped straight to the naive solution. What followed was a journey through increasingly elegant <strong>optimizations</strong>, each revealing deeper insights about algorithmic thinking. This documents that evolution from a <span class="success">working</span>-but-<span class="attention">slow</span> O(n³) solution to an optimal O(n) <strong><span class="process">algorithm</span></strong>.</p> <h2>the problem</h2> <p>Given an <strong>array</strong> of integers, find the maximum value of <code>k</code> for which there exist two adjacent subarrays of length <code>k</code> each, where both subarrays are strictly increasing.</p> <p><strong>Constraints:</strong></p> <ul> <li>Both subarrays must be strictly increasing</li> <li>The subarrays must be adjacent</li> <li><strong>Array</strong> length can be up to 200,000 elements</li> </ul> <p><strong>Example:</strong></p> <pre><code>nums = [2,5,7,8,9,2,3,4,3,1]
 output = 3
-
 The subarray [7,8,9] is strictly increasing
 The subarray [2,3,4] is strictly increasing
 They are adjacent, and k=3 is the maximum
-</code></pre>
-<h2>the naive approach</h2>
-<p>The straightforward solution: try every possible value of k, check every possible window, and verify if both halves are increasing.</p>
-<pre><code class="language-cpp">class Solution {
+</code></pre> <h2>the naive approach</h2> <p>The straightforward solution: try every possible value of k, check every possible window, and verify if both halves are increasing.</p> <pre><code class="language-cpp">class Solution {
 public:
-    bool isStrictlyIncreasing(vector&lt;int&gt;&amp; nums, int start, int length) {
-        for (int i = start + 1; i &lt; start + length; i++) {
-            if (nums[i] &lt;= nums[i-1]) return false;
-        }
-        return true;
-    }
-
-    int maxIncreasingSubarrays(vector&lt;int&gt;&amp; nums) {
-        int n = nums.size();
-
-        for (int k = n/2; k &gt;= 1; k--) {
-            for (int i = 0; i &lt;= n - 2*k; i++) {
-                if (isStrictlyIncreasing(nums, i, k) &amp;&amp;
-                    isStrictlyIncreasing(nums, i + k, k)) {
-                    return k;
-                }
-            }
-        }
-        return 0;
-    }
+bool isStrictlyIncreasing(vector&lt;int&gt;&amp; nums, int start, int length) {
+for (int i = start + 1; i &lt; start + length; i++) {
+if (nums[i] &lt;= nums[i-1]) return false;
+}
+return true;
+}
+int maxIncreasingSubarrays(vector&lt;int&gt;&amp; nums) {
+int n = nums.size();
+for (int k = n/2; k &gt;= 1; k--) {
+for (int i = 0; i &lt;= n - 2*k; i++) {
+if (isStrictlyIncreasing(nums, i, k) &amp;&amp;
+isStrictlyIncreasing(nums, i + k, k)) {
+return k;
+}
+}
+}
+return 0;
+}
 };
-</code></pre>
-<p><strong>Time <span class="meta">complexity</span>:</strong> O(n² × k) ≈ O(n³)
-<strong>Space <span class="meta">complexity</span>:</strong> O(1)</p>
-<p>With n = 200,000, this times out immediately.</p>
-<h2>first <span class="success">optimization</span>: precomputation</h2>
-<p>The naive solution repeatedly checks if subarrays are increasing. The key insight: <strong>precompute</strong> how long each increasing sequence is.</p>
-<h3><span class="process">run</span> length array</h3>
-<pre><code>nums      = [2, 5, 7, 8, 9, 2, 3, 4, 3, 1]
+</code></pre> <p><strong>Time <span class="meta">complexity</span>:</strong> O(n² × k) ≈ O(n³)
+<strong>Space <span class="meta">complexity</span>:</strong> O(1)</p> <p>With n = 200,000, this times out immediately.</p> <h2>first <span class="success">optimization</span>: precomputation</h2> <p>The naive solution repeatedly checks if subarrays are increasing. The key insight: <strong>precompute</strong> how long each increasing sequence is.</p> <h3><span class="process">run</span> length array</h3> <pre><code>nums      = [2, 5, 7, 8, 9, 2, 3, 4, 3, 1]
 runLength = [1, 2, 3, 4, 5, 1, 2, 3, 1, 1]
-</code></pre>
-<p>At index 4, <code>runLength[4] = 5</code> means there&#39;s an increasing sequence of length 5 ending at position 4.</p>
-<pre><code class="language-cpp">class Solution {
+</code></pre> <p>At index 4, <code>runLength[4] = 5</code> means there&#39;s an increasing sequence of length 5 ending at position 4.</p> <pre><code class="language-cpp">class Solution {
 public:
-    int maxIncreasingSubarrays(vector&lt;int&gt;&amp; nums) {
-        int n = nums.size();
-        vector&lt;int&gt; runLength(n, 1);
-
-        for (int i = 1; i &lt; n; i++) {
-            if (nums[i] &gt; nums[i-1]) {
-                runLength[i] = runLength[i-1] + 1;
-            }
-        }
-
-        int maxK = 0;
-        for (int i = 0; i &lt; n - 1; i++) {
-            for (int k = 1; k &lt;= (n - i) / 2; k++) {
-                if (runLength[i + k - 1] &gt;= k &amp;&amp;
-                    runLength[i + 2*k - 1] &gt;= k) {
-                    maxK = max(maxK, k);
-                }
-            }
-        }
-
-        return maxK;
-    }
+int maxIncreasingSubarrays(vector&lt;int&gt;&amp; nums) {
+int n = nums.size();
+vector&lt;int&gt; runLength(n, 1);
+for (int i = 1; i &lt; n; i++) {
+if (nums[i] &gt; nums[i-1]) {
+runLength[i] = runLength[i-1] + 1;
+}
+}
+int maxK = 0;
+for (int i = 0; i &lt; n - 1; i++) {
+for (int k = 1; k &lt;= (n - i) / 2; k++) {
+if (runLength[i + k - 1] &gt;= k &amp;&amp;
+runLength[i + 2*k - 1] &gt;= k) {
+maxK = max(maxK, k);
+}
+}
+}
+return maxK;
+}
 };
-</code></pre>
-<p><strong>Time <span class="meta">complexity</span>:</strong> O(n²)
-<strong>Space <span class="meta">complexity</span>:</strong> O(n)</p>
-<p>Better, but still quadratic. With n = 200,000, we&#39;re at 40 billion <strong>operations</strong>.</p>
-<h2>the optimal solution</h2>
-<p>The breakthrough: at any point in the <strong>array</strong>, there are exactly two ways to form adjacent increasing subarrays.</p>
-<h3>scenario 1: <span class="connection">bridge</span> two separate runs</h3>
-<pre><code>Previous Run          Current Run
+</code></pre> <p><strong>Time <span class="meta">complexity</span>:</strong> O(n²)
+<strong>Space <span class="meta">complexity</span>:</strong> O(n)</p> <p>Better, but still quadratic. With n = 200,000, we&#39;re at 40 billion <strong>operations</strong>.</p> <h2>the optimal solution</h2> <p>The breakthrough: at any point in the <strong>array</strong>, there are exactly two ways to form adjacent increasing subarrays.</p> <h3>scenario 1: <span class="connection">bridge</span> two separate runs</h3> <pre><code>Previous Run          Current Run
 [...........] [break] [...........]
-   length=A              length=B
-
+length=A              length=B
 maximum k = min(A, B)
-</code></pre>
-<h3>scenario 2: split a single <span class="process">run</span></h3>
-<pre><code>One Long Run
+</code></pre> <h3>scenario 2: split a single <span class="process">run</span></h3> <pre><code>One Long Run
 [........................]
-        length=L
-
+length=L
 maximum k = L / 2
-</code></pre>
-<h3>the <span class="process">algorithm</span></h3>
-<pre><code class="language-cpp">class Solution {
+</code></pre> <h3>the <span class="process">algorithm</span></h3> <pre><code class="language-cpp">class Solution {
 public:
-    int maxIncreasingSubarrays(vector&lt;int&gt;&amp; nums) {
-        int n = nums.size();
-
-        int currentRunLength = 1;
-        int previousRunLength = 0;
-        int maxK = 0;
-
-        for (int i = 1; i &lt; n; i++) {
-            if (nums[i] &gt; nums[i - 1]) {
-                currentRunLength++;
-            } else {
-                previousRunLength = currentRunLength;
-                currentRunLength = 1;
-            }
-
-            int kFromTwoRuns = min(previousRunLength, currentRunLength);
-            int kFromSplittingRun = currentRunLength / 2;
-
-            maxK = max({maxK, kFromTwoRuns, kFromSplittingRun});
-        }
-
-        return maxK;
-    }
+int maxIncreasingSubarrays(vector&lt;int&gt;&amp; nums) {
+int n = nums.size();
+int currentRunLength = 1;
+int previousRunLength = 0;
+int maxK = 0;
+for (int i = 1; i &lt; n; i++) {
+if (nums[i] &gt; nums[i - 1]) {
+currentRunLength++;
+} else {
+previousRunLength = currentRunLength;
+currentRunLength = 1;
+}
+int kFromTwoRuns = min(previousRunLength, currentRunLength);
+int kFromSplittingRun = currentRunLength / 2;
+maxK = max({maxK, kFromTwoRuns, kFromSplittingRun});
+}
+return maxK;
+}
 };
-</code></pre>
-<p><strong>Time <span class="meta">complexity</span>:</strong> O(n)
-<strong>Space <span class="meta">complexity</span>:</strong> O(1)</p>
-<p>Single pass, <span class="process">constant</span> space.</p>
-<h2>the visualization</h2>
-<div class="viz-container">
-    <div class="input-section">
-        <label>enter an array (max 10 numbers, comma-separated)</label>
-        <div class="input-group">
-            <input type="text" id="arrayInput" placeholder="2,5,7,8,9,2,3,4,3,1"
-                   onkeypress="if(event.key==='Enter') loadCustomArray()">
-            <button onclick="loadCustomArray()">load</button>
-        </div>
-        <div class="presets">
-            <a href="#" onclick="document.getElementById('arrayInput').value='1,2,3,4,5,6,7,8'; loadCustomArray(); return false;">split run example</a> |
-            <a href="#" onclick="document.getElementById('arrayInput').value='1,2,3,4,4,4,4,5,6,7'; loadCustomArray(); return false;">bridge runs example</a>
-        </div>
-    </div>
-    <div class="array-container" id="arrayContainer"></div>
-    <div class="state-container">
-        <div class="state-box">
-            <h4>current state</h4>
-            <div class="state-item">
-                <span class="state-label">position</span>
-                <span class="state-value" id="position">0</span>
-            </div>
-            <div class="state-item">
-                <span class="state-label">current run</span>
-                <span class="state-value" id="currentRun">1</span>
-            </div>
-            <div class="state-item">
-                <span class="state-label">previous run</span>
-                <span class="state-value" id="previousRun">0</span>
-            </div>
-        </div>
-        <div class="state-box">
-            <h4>maximum k</h4>
-            <div style="text-align: center; padding: 12px 0;">
-                <span class="state-value" id="maxK" style="font-size: 32px;">0</span>
-            </div>
-        </div>
-    </div>
-    <div class="explanation">
-        <h4>what's happening</h4>
-        <p id="explanation">click next step to begin</p>
-    </div>
-    <div id="scenarios"></div>
-    <div class="controls">
-        <button onclick="reset()">reset</button>
-        <button id="stepBtn" onclick="step()">next step</button>
-        <button onclick="autoPlay()">auto play</button>
-    </div>
-    <div class="result-box" id="resultBox">
-        <h3>algorithm complete</h3>
-        <p id="resultText"></p>
-    </div>
-</div>
-
-<h2><span class="meta">complexity</span> comparison</h2>
-<table>
-<thead>
-<tr>
-<th>approach</th>
-<th>time</th>
-<th>space</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>naive</td>
-<td>O(n³)</td>
-<td>O(1)</td>
-</tr>
-<tr>
-<td>precomputation</td>
-<td>O(n²)</td>
-<td>O(n)</td>
-</tr>
-<tr>
-<td>optimal</td>
-<td>O(n)</td>
-<td>O(1)</td>
-</tr>
-</tbody></table>
-<h2>lessons learned</h2>
-<p><strong>start simple</strong> - The naive solution helped understand the problem deeply.</p>
-<p><strong>precomputation is powerful</strong> - When repeating calculations, precompute them.</p>
-<p><strong>state tracking enables single passes</strong> - Track just enough <strong>state</strong> to make decisions without looking back.</p>
-<p><strong><span class="meta">pattern</span> recognition matters</strong> - Recognizing there are exactly two ways to form the answer unlocks the O(n) solution.</p>
-<p>This problem taught me that <strong><span class="success">optimization</span></strong> isn&#39;t just about making <span class="process">code</span> faster - it&#39;s about understanding the problem <span class="structure">structure</span> deeply enough to see elegant solutions. The journey from O(n³) to O(n) wasn&#39;t just about removing loops; it was about recognizing fundamental <strong>patterns</strong> in the problem itself.</p>
-
-            </div>
-
-            <footer class="post-footer">
-                <div class="post-tags-footer">
-                    <a href="/blog#tag-algorithms" class="tag neutral" data-tag="algorithms">algorithms</a>, <a href="/blog#tag-optimization" class="tag neutral" data-tag="optimization">optimization</a>, <a href="/blog#tag-leetcode" class="tag neutral" data-tag="leetcode">leetcode</a>, <a href="/blog#tag-data-structures" class="tag neutral" data-tag="data-structures">data-structures</a>, <a href="/blog#tag-problem-solving" class="tag neutral" data-tag="problem-solving">problem-solving</a>
-                </div>
-                <div id="view-count" style="font-family: var(--font-mono); font-size: 0.75rem;">
-                    👀 views loading...
-                </div>
-            </footer>
-        </article>
-
-        <nav class="post-navigation">
-            <div class="nav-previous glass-card">
-                <a href="/blog/adding-custom-domain-jeffreyjose07is-adev">
-                    <span class="nav-label">← previous</span>
-                    <span class="nav-title">Adding Custom Domain: jeffreyjose07.is-a.dev</span>
-                </a>
-            </div>
-            <div class="nav-next glass-card">
-                <a href="/blog/adding-interactive-scripts-to-blog-posts">
-                    <span class="nav-label">next →</span>
-                    <span class="nav-title">Adding Interactive Scripts to Blog Posts</span>
-                </a>
-            </div></nav>
-
-        <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;">
-            <a href="/blog/feed.xml" class="glass"
-                style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    style="margin-right: 0.5rem; color: #f59e0b;">
-                    <path d="M4 11a9 9 0 0 1 9 9"></path>
-                    <path d="M4 4a16 16 0 0 1 16 16"></path>
-                    <circle cx="5" cy="19" r="1"></circle>
-                </svg>
-                Subscribe via RSS
-            </a>
-        </div>
-    </main>
-
-    <script>
-        // Prevent scroll restoration but don't interfere with navigation
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
-
-        // Only scroll to top on actual page refresh (not navigation)
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                window.scrollTo(0, 0);
-            }, 0);
-        });
-
-        // Reading progress indicator
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.querySelector('.reading-progress').style.width = scrolled + '%';
-        });
-
-        // Load view count from GoatCounter
-        document.addEventListener('DOMContentLoaded', () => {
-            loadViewCount();
-        });
-
-        function loadViewCount() {
-            const path = window.location.pathname;
-            const viewCountElement = document.getElementById('view-count');
-
-            fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    const count = data.count || '0';
-                    viewCountElement.innerHTML = `👀 ${count} views`;
-                    viewCountElement.style.color = 'var(--primary-glow)';
-                })
-                .catch(error => {
-                    console.warn('Could not load view count:', error);
-                });
-        }
-
-        /* Inline scripts injected from frontmatter */
-        { { inlineScripts } }
-    </script>
-
-    <!-- GoatCounter Analytics -->
-    <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-</body>
-
-</html>
+</code></pre> <p><strong>Time <span class="meta">complexity</span>:</strong> O(n)
+<strong>Space <span class="meta">complexity</span>:</strong> O(1)</p> <p>Single pass, <span class="process">constant</span> space.</p> <h2>the visualization</h2> <div class="viz-container"> <div class="input-section"> <label>enter an array (max 10 numbers, comma-separated)</label> <div class="input-group"> <input type="text" id="arrayInput" placeholder="2,5,7,8,9,2,3,4,3,1"
+onkeypress="if(event.key==='Enter') loadCustomArray()"> <button onclick="loadCustomArray()">load</button> </div> <div class="presets"> <a href="#" onclick="document.getElementById('arrayInput').value='1,2,3,4,5,6,7,8'; loadCustomArray(); return false;">split run example</a> |
+<a href="#" onclick="document.getElementById('arrayInput').value='1,2,3,4,4,4,4,5,6,7'; loadCustomArray(); return false;">bridge runs example</a> </div> </div> <div class="array-container" id="arrayContainer"></div> <div class="state-container"> <div class="state-box"> <h4>current state</h4> <div class="state-item"> <span class="state-label">position</span> <span class="state-value" id="position">0</span> </div> <div class="state-item"> <span class="state-label">current run</span> <span class="state-value" id="currentRun">1</span> </div> <div class="state-item"> <span class="state-label">previous run</span> <span class="state-value" id="previousRun">0</span> </div> </div> <div class="state-box"> <h4>maximum k</h4> <div style="text-align: center; padding: 12px 0;"> <span class="state-value" id="maxK" style="font-size: 32px;">0</span> </div> </div> </div> <div class="explanation"> <h4>what's happening</h4> <p id="explanation">click next step to begin</p> </div> <div id="scenarios"></div> <div class="controls"> <button onclick="reset()">reset</button> <button id="stepBtn" onclick="step()">next step</button> <button onclick="autoPlay()">auto play</button> </div> <div class="result-box" id="resultBox"> <h3>algorithm complete</h3> <p id="resultText"></p> </div> </div> <h2><span class="meta">complexity</span> comparison</h2> <table> <thead> <tr> <th>approach</th> <th>time</th> <th>space</th> </tr> </thead> <tbody><tr> <td>naive</td> <td>O(n³)</td> <td>O(1)</td> </tr> <tr> <td>precomputation</td> <td>O(n²)</td> <td>O(n)</td> </tr> <tr> <td>optimal</td> <td>O(n)</td> <td>O(1)</td> </tr> </tbody></table> <h2>lessons learned</h2> <p><strong>start simple</strong> - The naive solution helped understand the problem deeply.</p> <p><strong>precomputation is powerful</strong> - When repeating calculations, precompute them.</p> <p><strong>state tracking enables single passes</strong> - Track just enough <strong>state</strong> to make decisions without looking back.</p> <p><strong><span class="meta">pattern</span> recognition matters</strong> - Recognizing there are exactly two ways to form the answer unlocks the O(n) solution.</p> <p>This problem taught me that <strong><span class="success">optimization</span></strong> isn&#39;t just about making <span class="process">code</span> faster - it&#39;s about understanding the problem <span class="structure">structure</span> deeply enough to see elegant solutions. The journey from O(n³) to O(n) wasn&#39;t just about removing loops; it was about recognizing fundamental <strong>patterns</strong> in the problem itself.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-algorithms" class="tag neutral" data-tag="algorithms">algorithms</a>, <a href="/blog#tag-optimization" class="tag neutral" data-tag="optimization">optimization</a>, <a href="/blog#tag-leetcode" class="tag neutral" data-tag="leetcode">leetcode</a>, <a href="/blog#tag-data-structures" class="tag neutral" data-tag="data-structures">data-structures</a>, <a href="/blog#tag-problem-solving" class="tag neutral" data-tag="problem-solving">problem-solving</a> </div> <div id="view-count" style="font-family: var(--font-mono); font-size: 0.75rem;">
+👀 views loading...
+</div> </footer> <div class="author-card"> <img src="/jeffrey-profile.jpg" alt="Jeffrey Jose" class="author-avatar" width="56" height="56" loading="lazy"> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/adding-custom-domain-jeffreyjose07is-adev"> <span class="nav-label">← previous</span> <span class="nav-title">Adding Custom Domain: jeffreyjose07.is-a.dev</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/adding-interactive-scripts-to-blog-posts"> <span class="nav-label">next →</span> <span class="nav-title">Adding Interactive Scripts to Blog Posts</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
+Subscribe via RSS
+</a> </div> </main> <script>
+// Prevent scroll restoration but don't interfere with navigation
+if ('scrollRestoration' in history) {
+history.scrollRestoration = 'manual';
+}
+// Only scroll to top on actual page refresh (not navigation)
+window.addEventListener('load', () => {
+setTimeout(() => {
+window.scrollTo(0, 0);
+}, 0);
+});
+// Reading progress indicator
+window.addEventListener('scroll', () => {
+const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+const scrolled = (winScroll / height) * 100;
+document.querySelector('.reading-progress').style.width = scrolled + '%';
+});
+// Load view count from GoatCounter
+document.addEventListener('DOMContentLoaded', () => {
+loadViewCount();
+});
+function loadViewCount() {
+const path = window.location.pathname;
+const viewCountElement = document.getElementById('view-count');
+fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
+.then(response => response.json())
+.then(data => {
+const count = data.count || '0';
+viewCountElement.innerHTML = `👀 ${count} views`;
+viewCountElement.style.color = 'var(--primary-glow)';
+})
+.catch(error => {
+console.warn('Could not load view count:', error);
+});
+}
+/* Inline scripts injected from frontmatter */
+{ { inlineScripts } }
+</script> <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script> </body> </html>

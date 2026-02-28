@@ -1,13 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github } from "lucide-react";
-import { projects } from "@/data/projects";
+import { featuredProjects, otherProjects } from "@/data/projects";
 
 const Projects = () => {
   return (
     <section id="projects" className="py-24 relative overflow-hidden">
-      {/* Background Elements */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -z-10"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-3xl -z-10"></div>
 
@@ -22,15 +20,15 @@ const Projects = () => {
           </p>
         </div>
 
-        <div className="max-w-6xl mx-auto grid gap-16">
-          {projects.map((project, index) => (
+        {/* Featured projects — full cards */}
+        <div className="max-w-6xl mx-auto grid gap-16 mb-20">
+          {featuredProjects.map((project, index) => (
             <div
               key={index}
               className="group relative rounded-3xl glass-card overflow-hidden glow-border animate-fade-in-up"
               style={{ animationDelay: `${index * 0.2}s` }}
             >
               <div className="grid lg:grid-cols-2 gap-0">
-                {/* Project Image/Video */}
                 <div className="relative h-full min-h-[300px] lg:min-h-[400px] overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent z-10 lg:hidden"></div>
 
@@ -64,11 +62,12 @@ const Projects = () => {
                       alt={project.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"
+                      width={600}
+                      height={400}
                     />
                   )}
                 </div>
 
-                {/* Project Details */}
                 <div className="p-8 lg:p-10 flex flex-col justify-center relative z-20">
                   <div className="mb-6">
                     <h3 className="text-3xl font-heading font-bold mb-4 group-hover:text-primary transition-colors duration-300">
@@ -80,17 +79,19 @@ const Projects = () => {
                   </div>
 
                   <div className="space-y-6 mb-8">
-                    <div>
-                      <h4 className="text-sm font-semibold uppercase tracking-wider text-primary mb-3">Key Features</h4>
-                      <ul className="space-y-2">
-                        {project.highlights.map((highlight, i) => (
-                          <li key={i} className="text-muted-foreground flex items-start gap-3">
-                            <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2.5 flex-shrink-0"></span>
-                            <span>{highlight}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    {project.highlights.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold uppercase tracking-wider text-primary mb-3">Key Features</h4>
+                        <ul className="space-y-2">
+                          {project.highlights.map((highlight, i) => (
+                            <li key={i} className="text-muted-foreground flex items-start gap-3">
+                              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2.5 flex-shrink-0"></span>
+                              <span>{highlight}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
                     <div>
                       <h4 className="text-sm font-semibold uppercase tracking-wider text-primary mb-3">Technologies</h4>
@@ -133,6 +134,40 @@ const Projects = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Other projects — compact grid */}
+        <div className="max-w-6xl mx-auto">
+          <h3 className="text-2xl font-heading font-bold mb-8 text-center text-muted-foreground">
+            Academic & Research Projects
+          </h3>
+          <div className="grid md:grid-cols-3 gap-6">
+            {otherProjects.map((project, index) => (
+              <div
+                key={index}
+                className="group rounded-2xl glass-card p-6 animate-fade-in-up"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <h4 className="text-lg font-heading font-bold mb-2 group-hover:text-primary transition-colors duration-300">
+                  {project.title}
+                </h4>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                  {project.description}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {project.technologies.map((tech, i) => (
+                    <Badge
+                      key={i}
+                      variant="secondary"
+                      className="px-2 py-0.5 text-xs bg-white/5 text-muted-foreground border border-white/10"
+                    >
+                      {tech}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

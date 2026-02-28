@@ -1,1132 +1,750 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deploying a Chat Platform to Render - Jeffrey Jose</title>
-    <meta name="description" content="deploying a production-ready chat platform with spring boot, react, and multiple databases to render" />
-
-    <!-- SEO Meta Tags -->
-    <meta property="og:title" content="Deploying a Chat Platform to Render">
-    <meta property="og:description" content="deploying a production-ready chat platform with spring boot, react, and multiple databases to render">
-    <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/deploying-a-chat-platform-to-render">
-    <meta property="og:type" content="article">
-    <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/deploying-a-chat-platform-to-render.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Deploying a Chat Platform to Render">
-    <meta name="twitter:description" content="deploying a production-ready chat platform with spring boot, react, and multiple databases to render">
-    <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/deploying-a-chat-platform-to-render.png">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
-    <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" />
-
-    <!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet">
-
-<style>
-    :root {
-        /* Premium Dark Theme Variables */
-        --background: #09090b;
-        --foreground: #f8fafc;
-
-        --primary: #7c3aed;
-        --primary-foreground: #f8fafc;
-        --primary-glow: #a78bfa;
-
-        --secondary: #1e1e24;
-        --secondary-foreground: #f8fafc;
-
-        --muted: #1e1e24;
-        --muted-foreground: #94a3b8;
-
-        --accent: #1e1e24;
-        --accent-foreground: #f8fafc;
-
-        --border: #27272a;
-        --input: #27272a;
-
-        --font-sans: 'Inter', sans-serif;
-        --font-heading: 'Outfit', sans-serif;
-
-        --gradient-hero: linear-gradient(135deg, #09090b, #1e1b4b);
-        --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-        --gradient-accent: linear-gradient(135deg, #7c3aed, #c084fc);
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: var(--font-sans);
-        background-color: var(--background);
-        color: var(--foreground);
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        overflow-x: hidden;
-        max-width: 100vw;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        line-height: 1.2;
-        margin-bottom: 1rem;
-    }
-
-    a {
-        color: inherit;
-        text-decoration: none;
-        transition: color 0.2s ease;
-    }
-
-    /* Utilities */
-    .container {
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 1.5rem;
-    }
-
-    .glass {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .glass-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 1rem;
-        transition: all 0.3s ease;
-    }
-
-    .glass-card:hover {
-        border-color: rgba(124, 58, 237, 0.3);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-    }
-
-    .text-gradient-premium {
-        background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .bg-mesh {
-        background-color: var(--background);
-        background-image:
-            radial-gradient(at 40% 20%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
-            radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-            radial-gradient(at 0% 50%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
-    }
-
-    /* Animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .animate-fade-in-up {
-        animation: fadeInUp 0.8s ease-out forwards;
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: var(--background);
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #3f3f46;
-        border-radius: 5px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #52525b;
-    }
-</style>
-
-    <style>
-        body {
-            padding-top: 100px;
-        }
-
-        .post-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            background: rgba(9, 9, 11, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 1rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        .post-header {
-            margin-bottom: 3rem;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 2rem;
-        }
-
-        .post-meta {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-            color: var(--muted-foreground);
-        }
-
-        .episode-badge {
-            background: rgba(124, 58, 237, 0.1);
-            color: var(--primary);
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-family: var(--font-mono);
-            font-weight: 600;
-        }
-
-        .post-title {
-            font-size: 2.5rem;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .post-content {
-            font-size: 1.125rem;
-            line-height: 1.8;
-            color: #d1d5db;
-            word-break: break-word;
-        }
-
-        .post-content p {
-            margin-bottom: 1.5rem;
-        }
-
-        .post-content h2 {
-            font-size: 1.75rem;
-            margin-top: 3rem;
-            margin-bottom: 1.5rem;
-            color: var(--foreground);
-        }
-
-        .post-content h3 {
-            font-size: 1.5rem;
-            margin-top: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--foreground);
-        }
-
-        .post-content ul,
-        .post-content ol {
-            margin-bottom: 1.5rem;
-            padding-left: 1.5rem;
-        }
-
-        .post-content li {
-            margin-bottom: 0.5rem;
-        }
-
-        .post-content a {
-            color: var(--primary-glow);
-            text-decoration: none;
-            border-bottom: 1px solid rgba(124, 58, 237, 0.3);
-            transition: all 0.2s;
-        }
-
-        .post-content a:hover {
-            border-bottom-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .post-content blockquote {
-            border-left: 4px solid var(--primary);
-            padding-left: 1.5rem;
-            margin: 2rem 0;
-            font-style: italic;
-            color: var(--muted-foreground);
-            background: rgba(255, 255, 255, 0.03);
-            padding: 1.5rem;
-            border-radius: 0 0.5rem 0.5rem 0;
-        }
-
-        .post-content code {
-            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-            font-size: 0.9em;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.2em 0.4em;
-            border-radius: 0.25rem;
-            color: #e2e8f0;
-        }
-
-        .post-content pre {
-            background: #111827;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            margin: 2rem 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .post-content pre code {
-            background: none;
-            padding: 0;
-            color: #e5e7eb;
-            font-size: 0.9rem;
-        }
-
-        .post-content img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 0.5rem;
-            margin: 2rem 0;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        .post-footer {
-            margin-top: 4rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--muted-foreground);
-            font-size: 0.875rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .post-tags-footer {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .tag-pill {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--muted-foreground);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .tag-pill:hover {
-            background: rgba(124, 58, 237, 0.1);
-            color: var(--primary-glow);
-            border-color: rgba(124, 58, 237, 0.2);
-        }
-
-        /* Reading progress */
-        .reading-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-glow));
-            z-index: 2000;
-            transition: width 0.1s ease;
-        }
-
-        /* Navigation */
-        .post-navigation {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-top: 3rem;
-        }
-
-        .nav-previous,
-        .nav-next {
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-previous a,
-        .nav-next a {
-            text-decoration: none;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--muted-foreground);
-            margin-bottom: 0.5rem;
-        }
-
-        .nav-title {
-            font-family: var(--font-heading);
-            font-weight: 600;
-            color: var(--foreground);
-            font-size: 1.125rem;
-            transition: color 0.2s;
-        }
-
-        .nav-previous:hover .nav-title,
-        .nav-next:hover .nav-title {
-            color: var(--primary-glow);
-        }
-
-        .nav-next {
-            text-align: right;
-        }
-
-        @media (max-width: 768px) {
-            .post-title {
-                font-size: 2rem;
-            }
-
-            .post-navigation {
-                grid-template-columns: 1fr;
-            }
-
-            .nav-next {
-                text-align: left;
-            }
-
-            .post-container {
-                padding: 1.5rem;
-            }
-        }
-
-        /* Inline styles injected from frontmatter */
-            {
-                {
-                inlineStyles
-            }
-        }
-    </style>
-</head>
-
-<body class="bg-mesh">
-    <div class="reading-progress"></div>
-
-    <style>
-    /* Top Bar Header */
-    .site-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 1000;
-        transition: all 0.3s ease;
-        background: transparent;
-        border-bottom: 1px solid transparent;
-    }
-
-    .site-header.scrolled {
-        background: rgba(9, 9, 11, 0.7);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .header-inner {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 1rem 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .site-logo {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        font-size: 1.25rem;
-        color: var(--foreground);
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .text-gradient-premium {
-        background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        color: transparent;
-        display: inline-block;
-    }
-
-    .site-nav {
-        display: flex;
-        gap: 2rem;
-    }
-
-    .nav-link {
-        font-family: var(--font-sans);
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--muted-foreground);
-        text-decoration: none;
-        transition: color 0.2s ease;
-        position: relative;
-    }
-
-    .nav-link:hover {
-        color: var(--primary-glow);
-    }
-
-    .nav-link.active {
-        color: var(--foreground);
-    }
-
-    /* Mobile Menu */
-    .mobile-menu-toggle {
-        display: none;
-        background: none;
-        border: none;
-        color: var(--foreground);
-        cursor: pointer;
-        padding: 0.5rem;
-    }
-
-    @media (max-width: 768px) {
-        .site-nav {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            flex-direction: column;
-            background: rgba(9, 9, 11, 0.95);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1rem;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .site-nav.open {
-            display: flex;
-            animation: slideDown 0.3s ease-out forwards;
-        }
-
-        .mobile-menu-toggle {
-            display: block;
-        }
-    }
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Search Button */
-    .search-trigger {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: var(--muted-foreground);
-        padding: 0.5rem 1rem;
-        border-radius: 9999px;
-        font-size: 0.875rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.2s ease;
-    }
-
-    .search-trigger:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--foreground);
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .search-text,
-    .search-shortcut {
-        display: none;
-    }
-
-    @media (min-width: 768px) {
-        .search-text {
-            display: inline;
-        }
-
-        .search-shortcut {
-            display: inline;
-            font-size: 0.75rem;
-            opacity: 0.6;
-            margin-left: 0.5rem;
-        }
-    }
-
-    /* Search Modal */
-    .search-modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(8px);
-        z-index: 2000;
-        align-items: flex-start;
-        justify-content: center;
-        padding-top: 100px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .search-modal-overlay.open {
-        display: flex;
-        opacity: 1;
-    }
-
-    .search-modal {
-        background: #09090b;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 1rem;
-        width: 90%;
-        max-width: 600px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        overflow: hidden;
-        transform: scale(0.95);
-        transition: transform 0.3s ease;
-    }
-
-    .search-modal-overlay.open .search-modal {
-        transform: scale(1);
-    }
-
-    .search-input-container {
-        padding: 1.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        align-items: center;
-    }
-
-    .search-icon {
-        color: var(--muted-foreground);
-        margin-right: 1rem;
-    }
-
-    .search-input {
-        background: transparent;
-        border: none;
-        color: var(--foreground);
-        font-size: 1.125rem;
-        width: 100%;
-        outline: none;
-        font-family: var(--font-sans);
-    }
-
-    .search-results {
-        max-height: 400px;
-        overflow-y: auto;
-        padding: 0.5rem;
-    }
-
-    .search-result-item {
-        display: block;
-        padding: 1rem;
-        text-decoration: none;
-        color: var(--muted-foreground);
-        border-radius: 0.5rem;
-        transition: all 0.2s ease;
-        margin-bottom: 0.25rem;
-    }
-
-    .search-result-item:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--foreground);
-    }
-
-    .search-result-title {
-        font-weight: 600;
-        font-size: 1rem;
-        color: var(--primary-glow);
-        margin-bottom: 0.25rem;
-    }
-
-    .search-result-excerpt {
-        font-size: 0.875rem;
-        color: var(--muted-foreground);
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-</style>
-
-<header class="site-header" id="siteHeader">
-    <div class="header-inner">
-        <a href="/" class="site-logo">
-            <img src="/logo.svg" alt="JJ" width="32" height="32">
-            <span>Jeffrey<span style="color: var(--primary)">.</span><span
-                    class="text-gradient-premium">Jose</span></span>
-        </a>
-
-        <nav class="site-nav">
-            <a href="/#hero" class="nav-link">Home</a>
-            <a href="/#projects" class="nav-link">Projects</a>
-            <a href="/#skills" class="nav-link">Skills</a>
-            <a href="/#experience" class="nav-link">Experience</a>
-            <a href="/#education" class="nav-link">Education</a>
-            <a href="/#contact" class="nav-link">Contact</a>
-            <a href="/blog" class="nav-link active">Blog</a>
-            <a href="/analytics.html" class="nav-link">Analytics</a>
-        </nav>
-
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <button class="search-trigger" onclick="openSearch()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <span class="search-text">Search</span>
-                <span class="search-shortcut">⌘K</span>
-            </button>
-
-            <button class="mobile-menu-toggle" aria-label="Toggle menu"
-                onclick="document.querySelector('.site-nav').classList.toggle('open')">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-            </button>
-        </div>
-    </div>
-</header>
-
-<!-- Search Modal HTML -->
-<div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()">
-    <div class="search-modal">
-        <div class="search-input-container">
-            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" class="search-input" placeholder="Search posts..." id="searchInput" autocomplete="off">
-        </div>
-        <div class="search-results" id="searchResults">
-            <!-- Results will be injected here -->
-        </div>
-    </div>
-</div>
-
-<script>
-    // Header Scroll Effect
-    window.addEventListener('scroll', () => {
-        const header = document.getElementById('siteHeader');
-        if (window.scrollY > 20) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    });
-
-    let searchIndex = [];
-    let isSearchOpen = false;
-
-    async function loadSearchIndex() {
-        if (searchIndex.length > 0) return;
-        try {
-            const response = await fetch('/blog/search.json');
-            searchIndex = await response.json();
-        } catch (e) {
-            console.error('Failed to load search index', e);
-        }
-    }
-
-    function openSearch() {
-        document.getElementById('searchModal').classList.add('open');
-        document.getElementById('searchInput').focus();
-        isSearchOpen = true;
-        loadSearchIndex();
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeSearch() {
-        document.getElementById('searchModal').classList.remove('open');
-        isSearchOpen = false;
-        document.body.style.overflow = '';
-    }
-
-    function performSearch(query) {
-        if (!query) {
-            document.getElementById('searchResults').innerHTML = '';
-            return;
-        }
-
-        const results = searchIndex.filter(post => {
-            const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
-            const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
-            const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
-            return titleMatch || descMatch || tagMatch;
-        }).slice(0, 5); // Limit to 5 results
-
-        const resultsHtml = results.map(post => `
-            <a href="/blog/${post.slug}" class="search-result-item" onclick="closeSearch()">
-                <div class="search-result-title">${post.title}</div>
-                <div class="search-result-excerpt">${post.description || ''}</div>
-            </a>
-        `).join('');
-
-        document.getElementById('searchResults').innerHTML = results.length > 0
-            ? resultsHtml
-            : '<div style="padding: 1rem; color: var(--muted-foreground); text-align: center;">No results found</div>';
-    }
-
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-        performSearch(e.target.value);
-    });
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-            e.preventDefault();
-            if (isSearchOpen) closeSearch();
-            else openSearch();
-        }
-        if (e.key === 'Escape' && isSearchOpen) {
-            closeSearch();
-        }
-    });
-</script>
-
-    <main class="container animate-fade-in-up">
-        <article class="post-container">
-            <header class="post-header">
-                <div class="post-meta">
-                    <span class="episode-badge">#009</span>
-                    <span>25 Jan 2025</span>
-                    <span>·</span>
-                    <span>6 min read</span>
-                </div>
-                <h1 class="post-title">Deploying a Chat Platform to Render</h1>
-            </header>
-
-            <div class="post-content">
-                <p>I <span class="success">deployed</span> my <span class="success">scalable</span> chat platform to Render this week. Based on the README, it&#39;s described as a &quot;<span class="success">production</span>-ready <span class="attention">real-time</span> chat platform&quot; built for educational and demonstration purposes, with comprehensive features and modern web technologies.</p>
-<h2>What the Platform Actually Includes</h2>
-<p>According to the repository documentation, this is a full-featured chat application:</p>
-<p><strong>Backend Stack (<span class="structure">Spring Boot</span> 3.2 with <span class="process">Java</span> 17):</strong></p>
-<ul>
-<li><span class="attention">Real-time</span> messaging with <span class="connection">WebSocket</span> support</li>
-<li>User <span class="attention">authentication</span> using JWT</li>
-<li>Role-based group management <span class="structure">system</span></li>
-<li><span class="structure">PostgreSQL</span> for primary data storage</li>
-<li><span class="structure">MongoDB</span> for message persistence</li>
-<li><span class="structure">Redis</span> for caching and session management</li>
-</ul>
-<p><strong>Frontend Stack (<span class="structure">React</span> 18 with <span class="process">TypeScript</span>):</strong></p>
-<ul>
-<li>Responsive UI built with Tailwind <span class="process">CSS</span></li>
-<li><span class="attention">Real-time</span> messaging with automatic reconnection</li>
-<li>Private and group conversation support</li>
-<li>Unread message tracking</li>
-<li>Read receipts <span class="structure">system</span></li>
-</ul>
-<p><strong>Repository Stats:</strong></p>
-<ul>
-<li>Created: July 8, 2025</li>
-<li>Total commits: 170</li>
-<li>Languages: <span class="process">Java</span> (57%), <span class="process">TypeScript</span> (37.3%), Shell (4.1%)</li>
-</ul>
-<h2><span class="success">Deployment</span> <span class="structure">Architecture</span></h2>
-<p>The platform uses a single-service <span class="structure">architecture</span> optimized specifically for Render <span class="success">deployment</span>:</p>
-<ul>
-<li><span class="success">Docker</span> containerization for consistent environments</li>
-<li>Environment-based configuration management</li>
-<li><span class="structure">Database</span> connections configured for cloud <span class="success">deployment</span></li>
-<li><span class="connection">WebSocket</span> configuration optimized for Render&#39;s infrastructure</li>
-</ul>
-<p>The README emphasizes that the platform is designed to work on Render&#39;s free tier, which influenced several architectural decisions.</p>
-<h2><span class="meta">CI/CD</span> <span class="connection">Pipeline</span> Implementation</h2>
-<p>The <span class="success">GitHub</span> Actions <span class="connection">workflow</span> includes comprehensive automation:</p>
-<p><strong>Testing and Quality:</strong></p>
-<ul>
-<li>Backend unit and <span class="connection">integration</span> tests</li>
-<li>Frontend ESLint and <span class="process">TypeScript</span> checks</li>
-<li><span class="attention">Security</span> scanning for vulnerabilities</li>
-<li>Automated dependency updates via Dependabot</li>
-</ul>
-<p><strong><span class="success">Deployment</span> Strategy:</strong></p>
-<ul>
-<li><strong>Staging</strong>: Automatic <span class="success">deployment</span> on main branch push</li>
-<li><strong><span class="success">Production</span></strong>: Manual trigger via <span class="connection">workflow</span> dispatch</li>
-<li><strong><span class="meta">Tag</span>-based</strong>: Support for version-tagged releases (v*.<em>.</em>)</li>
-</ul>
-<p><strong>Development Practices:</strong></p>
-<ul>
-<li>Branch protection rules enforced</li>
-<li>No direct commits to main branch allowed</li>
-<li>Pull request reviews required</li>
-<li>Local testing mandatory before commits</li>
-</ul>
-<h2>Render Platform Experience</h2>
-<p>The <span class="success">deployment</span> process leveraged Render&#39;s specific features:</p>
-<h3>Service Configuration</h3>
-<ul>
-<li>Single web service <span class="success">deployment</span> model</li>
-<li>Automatic SSL certificate provisioning</li>
-<li>Environment <span class="process">variable</span> management through Render dashboard</li>
-<li>Built-in monitoring and logging capabilities</li>
-</ul>
-<h3><span class="structure">Database</span> Setup</h3>
-<p>The multi-<span class="structure">database</span> <span class="structure">architecture</span> required careful configuration:</p>
-<ul>
-<li><span class="structure">PostgreSQL</span> instance for user data and relationships</li>
-<li><span class="structure">MongoDB</span> for chat message storage and retrieval</li>
-<li><span class="structure">Redis</span> for <span class="attention">real-time</span> features and session management</li>
-</ul>
-<h3><span class="connection">WebSocket</span> Handling</h3>
-<p>Render&#39;s <span class="connection">load balancer</span> needed specific configuration for <span class="connection">WebSocket</span> connections:</p>
-<ul>
-<li>Session affinity settings</li>
-<li><span class="connection">Connection</span> <span class="attention">timeout</span> configuration  </li>
-<li>Automatic reconnection <span class="process">logic</span> in the frontend</li>
-</ul>
-<h2>Development <span class="connection">Workflow</span></h2>
-<p>The repository follows strict development practices:</p>
-<ol>
-<li><strong>Feature Development</strong>: Create feature branches from main</li>
-<li><strong>Local Testing</strong>: Ensure all tests pass locally</li>
-<li><strong>Pull Request</strong>: Submit PR with conventional commit messages</li>
-<li><strong>Review Process</strong>: <span class="process">Code</span> review and automated checks</li>
-<li><strong>Staging Deploy</strong>: Automatic <span class="success">deployment</span> to staging environment</li>
-<li><strong><span class="success">Production</span> Deploy</strong>: Manual trigger after staging verification</li>
-</ol>
-<p>This <span class="connection">workflow</span> ensures <span class="process">code</span> quality and <span class="success">deployment</span> reliability.</p>
-<h2><span class="attention">Real-Time</span> Features Implementation</h2>
-<p>The platform implements several sophisticated <span class="attention">real-time</span> features:</p>
-<h3>Message <span class="structure">System</span></h3>
-<ul>
-<li>Instant message delivery via WebSockets</li>
-<li>Message persistence across sessions</li>
-<li>Delivery confirmation and read receipts</li>
-<li>Unread message counters</li>
-</ul>
-<h3><span class="connection">Connection</span> Management</h3>
-<ul>
-<li>Automatic reconnection on <span class="connection">connection</span> loss</li>
-<li>Graceful handling of <span class="connection">network</span> interruptions</li>
-<li><span class="attention">Real-time</span> user presence indicators</li>
-<li><span class="connection">Connection</span> status feedback</li>
-</ul>
-<h3>Group Management</h3>
-<ul>
-<li>Role-based permissions (admin, moderator, member)</li>
-<li><span class="attention">Real-time</span> group member updates</li>
-<li>Group creation and management tools</li>
-<li>Private messaging within groups</li>
-</ul>
-<h2>Scalability Considerations</h2>
-<p>The <span class="structure">architecture</span> includes several scalability features:</p>
-<h3><span class="structure">Database</span> Design</h3>
-<ul>
-<li>Separate databases for different data types</li>
-<li>Optimized queries for message retrieval</li>
-<li>Caching layer with <span class="structure">Redis</span> for frequently accessed data</li>
-<li><span class="connection">Connection</span> pooling for <span class="structure">database</span> efficiency</li>
-</ul>
-<h3>Frontend <span class="success">Performance</span></h3>
-<ul>
-<li><span class="structure">Component</span>-based <span class="structure">React</span> <span class="structure">architecture</span></li>
-<li><span class="process">TypeScript</span> for type safety and development efficiency</li>
-<li>Tailwind <span class="process">CSS</span> for optimized styling</li>
-<li>Responsive design for all device types</li>
-</ul>
-<h2><span class="success">Deployment</span> Lessons</h2>
-<h3>Multi-<span class="structure">Database</span> <span class="meta">Complexity</span></h3>
-<p>Managing three different databases in a cloud environment required careful planning:</p>
-<ul>
-<li><span class="connection">Connection</span> string management through environment variables</li>
-<li><span class="structure">Database</span> initialization and migration scripts</li>
-<li>Backup and recovery considerations for <span class="success">production</span> data</li>
-</ul>
-<h3><span class="connection">WebSocket</span> Configuration</h3>
-<p><span class="attention">Real-time</span> features needed specific attention:</p>
-<ul>
-<li><span class="connection">Load balancer</span> configuration for sticky sessions</li>
-<li><span class="connection">Connection</span> pooling and management</li>
-<li><span class="attention">Error</span> handling for <span class="connection">network</span> interruptions</li>
-<li><span class="success">Performance</span> monitoring for concurrent connections</li>
-</ul>
-<h3>Environment Management</h3>
-<p>The platform supports multiple <span class="success">deployment</span> environments:</p>
-<ul>
-<li>Development with local <span class="structure">database</span> instances</li>
-<li>Staging with cloud <span class="structure">database</span> connections</li>
-<li><span class="success">Production</span> with optimized configurations and monitoring</li>
-</ul>
-<h2>Current Platform Status</h2>
-<p>The platform is <span class="success">deployed</span> on Render with full functionality:</p>
-<ul>
-<li>User registration and <span class="attention">authentication</span> <span class="success">working</span></li>
-<li><span class="attention">Real-time</span> messaging across private and group chats</li>
-<li><span class="structure">Database</span> persistence for all user data and messages</li>
-<li>Responsive <span class="structure">interface</span> accessible on all devices</li>
-</ul>
-<p>The <span class="success">deployment</span> includes comprehensive monitoring and logging for <span class="success">production</span> use.</p>
-<h2>Next Development Phase</h2>
-<p>Based on the repository&#39;s roadmap and current implementation:</p>
-<ul>
-<li><span class="success">Performance</span> <span class="success">optimization</span> for high-concurrency scenarios  </li>
-<li>Advanced group management features</li>
-<li>Message search and filtering capabilities</li>
-<li>File sharing and media message support</li>
-<li>Mobile app development using the existing <span class="connection">API</span></li>
-</ul>
-<h2><span class="structure">Architecture</span> Benefits</h2>
-<p>The single-service approach with multiple databases provides:</p>
-<ul>
-<li>Simplified <span class="success">deployment</span> and maintenance</li>
-<li>Clear separation of data concerns</li>
-<li>Optimized <span class="success">performance</span> for different data types</li>
-<li><span class="success">Scalable</span> foundation for future features</li>
-</ul>
-<h2>Conclusion</h2>
-<p>Deploying this <span class="success">production</span>-ready chat platform to Render demonstrated the platform&#39;s capabilities for hosting complex, multi-<span class="structure">database</span> applications. The combination of <span class="structure">Spring Boot</span>&#39;s robustness, <span class="structure">React</span>&#39;s <span class="meta">user experience</span>, and Render&#39;s <span class="success">deployment</span> simplicity created an effective development and hosting environment.</p>
-<p>The 170 commits and comprehensive feature set show the depth of implementation, while the <span class="meta">CI/CD</span> <span class="connection">pipeline</span> ensures <span class="success">reliable</span> <span class="success">deployment</span> processes. The platform serves as both a functional chat application and a demonstration of modern web development practices.</p>
-<p>The complete source <span class="process">code</span> and documentation are available at <a href="https://github.com/jeffreyjose07/scalable-chat-platform"><span class="success">scalable</span>-chat-platform</a> on <span class="success">GitHub</span>.</p>
-
-            </div>
-
-            <footer class="post-footer">
-                <div class="post-tags-footer">
-                    <a href="/blog#tag-deployment" class="tag neutral" data-tag="deployment">deployment</a>, <a href="/blog#tag-render" class="tag neutral" data-tag="render">render</a>, <a href="/blog#tag-spring-boot" class="tag structure" data-tag="spring-boot">spring-boot</a>, <a href="/blog#tag-react" class="tag process" data-tag="react">react</a>, <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a>
-                </div>
-                <div id="view-count" style="font-family: var(--font-mono); font-size: 0.75rem;">
-                    👀 views loading...
-                </div>
-            </footer>
-        </article>
-
-        <nav class="post-navigation">
-            <div class="nav-previous glass-card">
-                <a href="/blog/ai-as-learning-catalyst-how-to-gain-skills-without">
-                    <span class="nav-label">← previous</span>
-                    <span class="nav-title">AI as Learning Catalyst: How to Gain Skills Without Losing Competence</span>
-                </a>
-            </div>
-            <div class="nav-next glass-card">
-                <a href="/blog/building-void-blocks-a-cyberpunk-tetris-game">
-                    <span class="nav-label">next →</span>
-                    <span class="nav-title">Building Void Blocks: A Cyberpunk Tetris Game</span>
-                </a>
-            </div></nav>
-
-        <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;">
-            <a href="/blog/feed.xml" class="glass"
-                style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    style="margin-right: 0.5rem; color: #f59e0b;">
-                    <path d="M4 11a9 9 0 0 1 9 9"></path>
-                    <path d="M4 4a16 16 0 0 1 16 16"></path>
-                    <circle cx="5" cy="19" r="1"></circle>
-                </svg>
-                Subscribe via RSS
-            </a>
-        </div>
-    </main>
-
-    <script>
-        // Prevent scroll restoration but don't interfere with navigation
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
-
-        // Only scroll to top on actual page refresh (not navigation)
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                window.scrollTo(0, 0);
-            }, 0);
-        });
-
-        // Reading progress indicator
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.querySelector('.reading-progress').style.width = scrolled + '%';
-        });
-
-        // Load view count from GoatCounter
-        document.addEventListener('DOMContentLoaded', () => {
-            loadViewCount();
-        });
-
-        function loadViewCount() {
-            const path = window.location.pathname;
-            const viewCountElement = document.getElementById('view-count');
-
-            fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    const count = data.count || '0';
-                    viewCountElement.innerHTML = `👀 ${count} views`;
-                    viewCountElement.style.color = 'var(--primary-glow)';
-                })
-                .catch(error => {
-                    console.warn('Could not load view count:', error);
-                });
-        }
-
-        /* Inline scripts injected from frontmatter */
-        { { inlineScripts } }
-    </script>
-
-    <!-- GoatCounter Analytics -->
-    <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-</body>
-
-</html>
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Deploying a Chat Platform to Render - Jeffrey Jose</title> <meta name="description" content="deploying a production-ready chat platform with spring boot, react, and multiple databases to render" /> <meta property="og:title" content="Deploying a Chat Platform to Render"> <meta property="og:description" content="deploying a production-ready chat platform with spring boot, react, and multiple databases to render"> <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/deploying-a-chat-platform-to-render"> <meta property="og:type" content="article"> <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/deploying-a-chat-platform-to-render.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Deploying a Chat Platform to Render"> <meta name="twitter:description" content="deploying a production-ready chat platform with spring boot, react, and multiple databases to render"> <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/deploying-a-chat-platform-to-render.png"> <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" /> <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" /> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link
+href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+rel="stylesheet"> <style>
+:root {
+/* Premium Dark Theme Variables */
+--background: #09090b;
+--foreground: #f8fafc;
+--primary: #7c3aed;
+--primary-foreground: #f8fafc;
+--primary-glow: #a78bfa;
+--secondary: #1e1e24;
+--secondary-foreground: #f8fafc;
+--muted: #1e1e24;
+--muted-foreground: #94a3b8;
+--accent: #1e1e24;
+--accent-foreground: #f8fafc;
+--border: #27272a;
+--input: #27272a;
+--font-sans: 'Inter', sans-serif;
+--font-heading: 'Outfit', sans-serif;
+--gradient-hero: linear-gradient(135deg, #09090b, #1e1b4b);
+--gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+--gradient-accent: linear-gradient(135deg, #7c3aed, #c084fc);
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: var(--font-sans);
+background-color: var(--background);
+color: var(--foreground);
+line-height: 1.6;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+overflow-x: hidden;
+max-width: 100vw;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+font-family: var(--font-heading);
+font-weight: 700;
+line-height: 1.2;
+margin-bottom: 1rem;
+}
+a {
+color: inherit;
+text-decoration: none;
+transition: color 0.2s ease;
+}
+/* Utilities */
+.container {
+width: 100%;
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 1.5rem;
+}
+.glass {
+background: rgba(255, 255, 255, 0.05);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.glass-card {
+background: rgba(255, 255, 255, 0.03);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border: 1px solid rgba(255, 255, 255, 0.05);
+border-radius: 1rem;
+transition: all 0.3s ease;
+}
+.glass-card:hover {
+border-color: rgba(124, 58, 237, 0.3);
+transform: translateY(-2px);
+box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+.bg-mesh {
+background-color: var(--background);
+background-image:
+radial-gradient(at 40% 20%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
+radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+radial-gradient(at 0% 50%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
+}
+/* Animations */
+@keyframes fadeInUp {
+from {
+opacity: 0;
+transform: translateY(20px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+.animate-fade-in-up {
+animation: fadeInUp 0.8s ease-out forwards;
+}
+/* Scrollbar */
+::-webkit-scrollbar {
+width: 10px;
+}
+::-webkit-scrollbar-track {
+background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+background: #3f3f46;
+border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #52525b;
+}
+</style> <style>
+body {
+padding-top: 100px;
+}
+.post-container {
+max-width: 800px;
+margin: 0 auto;
+padding: 2rem;
+background: rgba(9, 9, 11, 0.6);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border: 1px solid rgba(255, 255, 255, 0.05);
+border-radius: 1rem;
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+.post-header {
+margin-bottom: 3rem;
+text-align: center;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+padding-bottom: 2rem;
+}
+.post-meta {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 1rem;
+margin-bottom: 1rem;
+font-size: 0.875rem;
+color: var(--muted-foreground);
+}
+.episode-badge {
+background: rgba(124, 58, 237, 0.1);
+color: var(--primary);
+padding: 0.25rem 0.75rem;
+border-radius: 9999px;
+font-family: var(--font-mono);
+font-weight: 600;
+}
+.post-title {
+font-size: 2.5rem;
+line-height: 1.2;
+margin-bottom: 1.5rem;
+background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+.post-content {
+font-size: 1.125rem;
+line-height: 1.8;
+color: #d1d5db;
+word-break: break-word;
+}
+.post-content p {
+margin-bottom: 1.5rem;
+}
+.post-content h2 {
+font-size: 1.75rem;
+margin-top: 3rem;
+margin-bottom: 1.5rem;
+color: var(--foreground);
+}
+.post-content h3 {
+font-size: 1.5rem;
+margin-top: 2.5rem;
+margin-bottom: 1rem;
+color: var(--foreground);
+}
+.post-content ul,
+.post-content ol {
+margin-bottom: 1.5rem;
+padding-left: 1.5rem;
+}
+.post-content li {
+margin-bottom: 0.5rem;
+}
+.post-content a {
+color: var(--primary-glow);
+text-decoration: none;
+border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+transition: all 0.2s;
+}
+.post-content a:hover {
+border-bottom-color: var(--primary);
+color: var(--primary);
+}
+.post-content blockquote {
+border-left: 4px solid var(--primary);
+padding-left: 1.5rem;
+margin: 2rem 0;
+font-style: italic;
+color: var(--muted-foreground);
+background: rgba(255, 255, 255, 0.03);
+padding: 1.5rem;
+border-radius: 0 0.5rem 0.5rem 0;
+}
+.post-content code {
+font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+font-size: 0.9em;
+background: rgba(255, 255, 255, 0.1);
+padding: 0.2em 0.4em;
+border-radius: 0.25rem;
+color: #e2e8f0;
+}
+.post-content pre {
+background: #111827;
+padding: 1.5rem;
+border-radius: 0.5rem;
+overflow-x: auto;
+margin: 2rem -2rem;
+border: 1px solid rgba(255, 255, 255, 0.1);
+width: calc(100% + 4rem);
+}
+@media (max-width: 768px) {
+.post-content pre {
+margin-left: -1rem;
+margin-right: -1rem;
+width: calc(100% + 2rem);
+border-radius: 0;
+}
+}
+.post-content pre code {
+background: none;
+padding: 0;
+color: #e5e7eb;
+font-size: 0.9rem;
+}
+.post-content img {
+max-width: 100%;
+height: auto;
+border-radius: 0.5rem;
+margin: 2rem 0;
+box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.post-footer {
+margin-top: 4rem;
+padding-top: 2rem;
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--muted-foreground);
+font-size: 0.875rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 1rem;
+}
+.post-tags-footer {
+display: flex;
+gap: 0.5rem;
+flex-wrap: wrap;
+}
+.tag-pill {
+font-size: 0.75rem;
+padding: 0.25rem 0.75rem;
+border-radius: 9999px;
+background: rgba(255, 255, 255, 0.05);
+color: var(--muted-foreground);
+border: 1px solid rgba(255, 255, 255, 0.1);
+text-decoration: none;
+transition: all 0.2s;
+}
+.tag-pill:hover {
+background: rgba(124, 58, 237, 0.1);
+color: var(--primary-glow);
+border-color: rgba(124, 58, 237, 0.2);
+}
+/* Author card */
+.author-card {
+display: flex;
+align-items: center;
+gap: 1.25rem;
+margin-top: 3rem;
+padding: 1.5rem;
+background: rgba(255, 255, 255, 0.03);
+border: 1px solid rgba(255, 255, 255, 0.08);
+border-radius: 0.75rem;
+}
+.author-avatar {
+width: 56px;
+height: 56px;
+border-radius: 50%;
+object-fit: cover;
+border: 2px solid rgba(124, 58, 237, 0.3);
+flex-shrink: 0;
+}
+.author-info {
+display: flex;
+flex-direction: column;
+gap: 0.25rem;
+}
+.author-name {
+font-family: var(--font-heading);
+font-weight: 600;
+color: var(--foreground);
+font-size: 1rem;
+}
+.author-bio {
+font-size: 0.85rem;
+color: var(--muted-foreground);
+line-height: 1.5;
+}
+.author-links {
+display: flex;
+gap: 0.75rem;
+margin-top: 0.25rem;
+}
+.author-links a {
+font-size: 0.8rem;
+color: var(--primary-glow);
+text-decoration: none;
+transition: color 0.2s;
+}
+.author-links a:hover {
+color: var(--primary);
+}
+/* Reading progress */
+.reading-progress {
+position: fixed;
+top: 0;
+left: 0;
+height: 3px;
+background: linear-gradient(90deg, var(--primary), var(--primary-glow));
+z-index: 2000;
+transition: width 0.1s ease;
+}
+/* Navigation */
+.post-navigation {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 1.5rem;
+margin-top: 3rem;
+}
+.nav-previous,
+.nav-next {
+padding: 1.5rem;
+display: flex;
+flex-direction: column;
+}
+.nav-previous a,
+.nav-next a {
+text-decoration: none;
+height: 100%;
+display: flex;
+flex-direction: column;
+}
+.nav-label {
+font-size: 0.75rem;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+color: var(--muted-foreground);
+margin-bottom: 0.5rem;
+}
+.nav-title {
+font-family: var(--font-heading);
+font-weight: 600;
+color: var(--foreground);
+font-size: 1.125rem;
+transition: color 0.2s;
+}
+.nav-previous:hover .nav-title,
+.nav-next:hover .nav-title {
+color: var(--primary-glow);
+}
+.nav-next {
+text-align: right;
+}
+@media (max-width: 768px) {
+.post-title {
+font-size: 2rem;
+}
+.post-navigation {
+grid-template-columns: 1fr;
+}
+.nav-next {
+text-align: left;
+}
+.post-container {
+padding: 1.5rem;
+}
+}
+/* Inline styles injected from frontmatter */
+{
+{
+inlineStyles
+}
+}
+</style> </head> <body class="bg-mesh"> <div class="reading-progress"></div> <style>
+/* Top Bar Header */
+.site-header {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+z-index: 1000;
+transition: all 0.3s ease;
+background: transparent;
+border-bottom: 1px solid transparent;
+}
+.site-header.scrolled {
+background: rgba(9, 9, 11, 0.7);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.header-inner {
+max-width: 1280px;
+margin: 0 auto;
+padding: 1rem 1.5rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+.site-logo {
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.25rem;
+color: var(--foreground);
+text-decoration: none;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: transparent;
+display: inline-block;
+}
+.site-nav {
+display: flex;
+gap: 2rem;
+}
+.nav-link {
+font-family: var(--font-sans);
+font-size: 0.875rem;
+font-weight: 500;
+color: var(--muted-foreground);
+text-decoration: none;
+transition: color 0.2s ease;
+position: relative;
+}
+.nav-link:hover {
+color: var(--primary-glow);
+}
+.nav-link.active {
+color: var(--foreground);
+}
+/* Mobile Menu */
+.mobile-menu-toggle {
+display: none;
+background: none;
+border: none;
+color: var(--foreground);
+cursor: pointer;
+padding: 0.5rem;
+}
+@media (max-width: 768px) {
+.site-nav {
+display: none;
+position: absolute;
+top: 100%;
+left: 0;
+right: 0;
+flex-direction: column;
+background: rgba(9, 9, 11, 0.95);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+padding: 1rem;
+gap: 1rem;
+align-items: center;
+}
+.site-nav.open {
+display: flex;
+animation: slideDown 0.3s ease-out forwards;
+}
+.mobile-menu-toggle {
+display: block;
+}
+}
+@keyframes slideDown {
+from {
+opacity: 0;
+transform: translateY(-10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+/* Search Button */
+.search-trigger {
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--muted-foreground);
+padding: 0.5rem 1rem;
+border-radius: 9999px;
+font-size: 0.875rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+transition: all 0.2s ease;
+}
+.search-trigger:hover {
+background: rgba(255, 255, 255, 0.1);
+color: var(--foreground);
+border-color: rgba(255, 255, 255, 0.2);
+}
+.search-text,
+.search-shortcut {
+display: none;
+}
+@media (min-width: 768px) {
+.search-text {
+display: inline;
+}
+.search-shortcut {
+display: inline;
+font-size: 0.75rem;
+opacity: 0.6;
+margin-left: 0.5rem;
+}
+}
+/* Search Modal */
+.search-modal-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(8px);
+z-index: 2000;
+align-items: flex-start;
+justify-content: center;
+padding-top: 100px;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+.search-modal-overlay.open {
+display: flex;
+opacity: 1;
+}
+.search-modal {
+background: #09090b;
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 1rem;
+width: 90%;
+max-width: 600px;
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+overflow: hidden;
+transform: scale(0.95);
+transition: transform 0.3s ease;
+}
+.search-modal-overlay.open .search-modal {
+transform: scale(1);
+}
+.search-input-container {
+padding: 1.5rem;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+display: flex;
+align-items: center;
+}
+.search-icon {
+color: var(--muted-foreground);
+margin-right: 1rem;
+}
+.search-input {
+background: transparent;
+border: none;
+color: var(--foreground);
+font-size: 1.125rem;
+width: 100%;
+outline: none;
+font-family: var(--font-sans);
+}
+.search-results {
+max-height: 400px;
+overflow-y: auto;
+padding: 0.5rem;
+}
+.search-result-item {
+display: block;
+padding: 1rem;
+text-decoration: none;
+color: var(--muted-foreground);
+border-radius: 0.5rem;
+transition: all 0.2s ease;
+margin-bottom: 0.25rem;
+}
+.search-result-item:hover {
+background: rgba(255, 255, 255, 0.05);
+color: var(--foreground);
+}
+.search-result-title {
+font-weight: 600;
+font-size: 1rem;
+color: var(--primary-glow);
+margin-bottom: 0.25rem;
+}
+.search-result-excerpt {
+font-size: 0.875rem;
+color: var(--muted-foreground);
+display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient: vertical;
+overflow: hidden;
+}
+</style> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <img src="/logo.svg" alt="JJ" width="32" height="32"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
+class="text-gradient-premium">Jose</span></span> </a> <nav class="site-nav"> <a href="/#hero" class="nav-link">Home</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/#skills" class="nav-link">Skills</a> <a href="/#experience" class="nav-link">Experience</a> <a href="/#education" class="nav-link">Education</a> <a href="/#contact" class="nav-link">Contact</a> <a href="/blog" class="nav-link active">Blog</a> <a href="/analytics.html" class="nav-link">Analytics</a> </nav> <div style="display: flex; align-items: center; gap: 1rem;"> <button class="search-trigger" onclick="openSearch()"> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut">⌘K</span> </button> <button class="mobile-menu-toggle" aria-label="Toggle menu"
+onclick="document.querySelector('.site-nav').classList.toggle('open')"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()"> <div class="search-modal"> <div class="search-input-container"> <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts..." id="searchInput" autocomplete="off"> </div> <div class="search-results" id="searchResults"> </div> </div> </div> <script>
+// Header Scroll Effect
+window.addEventListener('scroll', () => {
+const header = document.getElementById('siteHeader');
+if (window.scrollY > 20) {
+header.classList.add('scrolled');
+} else {
+header.classList.remove('scrolled');
+}
+});
+let searchIndex = [];
+let isSearchOpen = false;
+async function loadSearchIndex() {
+if (searchIndex.length > 0) return;
+try {
+const response = await fetch('/blog/search.json');
+searchIndex = await response.json();
+} catch (e) {
+console.error('Failed to load search index', e);
+}
+}
+function openSearch() {
+document.getElementById('searchModal').classList.add('open');
+document.getElementById('searchInput').focus();
+isSearchOpen = true;
+loadSearchIndex();
+document.body.style.overflow = 'hidden';
+}
+function closeSearch() {
+document.getElementById('searchModal').classList.remove('open');
+isSearchOpen = false;
+document.body.style.overflow = '';
+}
+function performSearch(query) {
+if (!query) {
+document.getElementById('searchResults').innerHTML = '';
+return;
+}
+const results = searchIndex.filter(post => {
+const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
+const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
+const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
+return titleMatch || descMatch || tagMatch;
+}).slice(0, 5); // Limit to 5 results
+const resultsHtml = results.map(post => `
+<a href="/blog/${post.slug}" class="search-result-item" onclick="closeSearch()"> <div class="search-result-title">${post.title}</div> <div class="search-result-excerpt">${post.description || ''}</div> </a>
+`).join('');
+document.getElementById('searchResults').innerHTML = results.length > 0
+? resultsHtml
+: '<div style="padding: 1rem; color: var(--muted-foreground); text-align: center;">No results found</div>';
+}
+document.getElementById('searchInput').addEventListener('input', (e) => {
+performSearch(e.target.value);
+});
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+e.preventDefault();
+if (isSearchOpen) closeSearch();
+else openSearch();
+}
+if (e.key === 'Escape' && isSearchOpen) {
+closeSearch();
+}
+});
+</script> <main class="container animate-fade-in-up"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#009</span> <span>25 Jan 2025</span> <span>·</span> <span>6 min read</span> </div> <h1 class="post-title">Deploying a Chat Platform to Render</h1> </header> <div class="post-content"> <p>I <span class="success">deployed</span> my <span class="success">scalable</span> chat platform to Render this week. Based on the README, it&#39;s described as a &quot;<span class="success">production</span>-ready <span class="attention">real-time</span> chat platform&quot; built for educational and demonstration purposes, with comprehensive features and modern web technologies.</p> <h2>What the Platform Actually Includes</h2> <p>According to the repository documentation, this is a full-featured chat application:</p> <p><strong>Backend Stack (<span class="structure">Spring Boot</span> 3.2 with <span class="process">Java</span> 17):</strong></p> <ul> <li><span class="attention">Real-time</span> messaging with <span class="connection">WebSocket</span> support</li> <li>User <span class="attention">authentication</span> using JWT</li> <li>Role-based group management <span class="structure">system</span></li> <li><span class="structure">PostgreSQL</span> for primary data storage</li> <li><span class="structure">MongoDB</span> for message persistence</li> <li><span class="structure">Redis</span> for caching and session management</li> </ul> <p><strong>Frontend Stack (<span class="structure">React</span> 18 with <span class="process">TypeScript</span>):</strong></p> <ul> <li>Responsive UI built with Tailwind <span class="process">CSS</span></li> <li><span class="attention">Real-time</span> messaging with automatic reconnection</li> <li>Private and group conversation support</li> <li>Unread message tracking</li> <li>Read receipts <span class="structure">system</span></li> </ul> <p><strong>Repository Stats:</strong></p> <ul> <li>Created: July 8, 2025</li> <li>Total commits: 170</li> <li>Languages: <span class="process">Java</span> (57%), <span class="process">TypeScript</span> (37.3%), Shell (4.1%)</li> </ul> <h2><span class="success">Deployment</span> <span class="structure">Architecture</span></h2> <p>The platform uses a single-service <span class="structure">architecture</span> optimized specifically for Render <span class="success">deployment</span>:</p> <ul> <li><span class="success">Docker</span> containerization for consistent environments</li> <li>Environment-based configuration management</li> <li><span class="structure">Database</span> connections configured for cloud <span class="success">deployment</span></li> <li><span class="connection">WebSocket</span> configuration optimized for Render&#39;s infrastructure</li> </ul> <p>The README emphasizes that the platform is designed to work on Render&#39;s free tier, which influenced several architectural decisions.</p> <h2><span class="meta">CI/CD</span> <span class="connection">Pipeline</span> Implementation</h2> <p>The <span class="success">GitHub</span> Actions <span class="connection">workflow</span> includes comprehensive automation:</p> <p><strong>Testing and Quality:</strong></p> <ul> <li>Backend unit and <span class="connection">integration</span> tests</li> <li>Frontend ESLint and <span class="process">TypeScript</span> checks</li> <li><span class="attention">Security</span> scanning for vulnerabilities</li> <li>Automated dependency updates via Dependabot</li> </ul> <p><strong><span class="success">Deployment</span> Strategy:</strong></p> <ul> <li><strong>Staging</strong>: Automatic <span class="success">deployment</span> on main branch push</li> <li><strong><span class="success">Production</span></strong>: Manual trigger via <span class="connection">workflow</span> dispatch</li> <li><strong><span class="meta">Tag</span>-based</strong>: Support for version-tagged releases (v*.<em>.</em>)</li> </ul> <p><strong>Development Practices:</strong></p> <ul> <li>Branch protection rules enforced</li> <li>No direct commits to main branch allowed</li> <li>Pull request reviews required</li> <li>Local testing mandatory before commits</li> </ul> <h2>Render Platform Experience</h2> <p>The <span class="success">deployment</span> process leveraged Render&#39;s specific features:</p> <h3>Service Configuration</h3> <ul> <li>Single web service <span class="success">deployment</span> model</li> <li>Automatic SSL certificate provisioning</li> <li>Environment <span class="process">variable</span> management through Render dashboard</li> <li>Built-in monitoring and logging capabilities</li> </ul> <h3><span class="structure">Database</span> Setup</h3> <p>The multi-<span class="structure">database</span> <span class="structure">architecture</span> required careful configuration:</p> <ul> <li><span class="structure">PostgreSQL</span> instance for user data and relationships</li> <li><span class="structure">MongoDB</span> for chat message storage and retrieval</li> <li><span class="structure">Redis</span> for <span class="attention">real-time</span> features and session management</li> </ul> <h3><span class="connection">WebSocket</span> Handling</h3> <p>Render&#39;s <span class="connection">load balancer</span> needed specific configuration for <span class="connection">WebSocket</span> connections:</p> <ul> <li>Session affinity settings</li> <li><span class="connection">Connection</span> <span class="attention">timeout</span> configuration  </li> <li>Automatic reconnection <span class="process">logic</span> in the frontend</li> </ul> <h2>Development <span class="connection">Workflow</span></h2> <p>The repository follows strict development practices:</p> <ol> <li><strong>Feature Development</strong>: Create feature branches from main</li> <li><strong>Local Testing</strong>: Ensure all tests pass locally</li> <li><strong>Pull Request</strong>: Submit PR with conventional commit messages</li> <li><strong>Review Process</strong>: <span class="process">Code</span> review and automated checks</li> <li><strong>Staging Deploy</strong>: Automatic <span class="success">deployment</span> to staging environment</li> <li><strong><span class="success">Production</span> Deploy</strong>: Manual trigger after staging verification</li> </ol> <p>This <span class="connection">workflow</span> ensures <span class="process">code</span> quality and <span class="success">deployment</span> reliability.</p> <h2><span class="attention">Real-Time</span> Features Implementation</h2> <p>The platform implements several sophisticated <span class="attention">real-time</span> features:</p> <h3>Message <span class="structure">System</span></h3> <ul> <li>Instant message delivery via WebSockets</li> <li>Message persistence across sessions</li> <li>Delivery confirmation and read receipts</li> <li>Unread message counters</li> </ul> <h3><span class="connection">Connection</span> Management</h3> <ul> <li>Automatic reconnection on <span class="connection">connection</span> loss</li> <li>Graceful handling of <span class="connection">network</span> interruptions</li> <li><span class="attention">Real-time</span> user presence indicators</li> <li><span class="connection">Connection</span> status feedback</li> </ul> <h3>Group Management</h3> <ul> <li>Role-based permissions (admin, moderator, member)</li> <li><span class="attention">Real-time</span> group member updates</li> <li>Group creation and management tools</li> <li>Private messaging within groups</li> </ul> <h2>Scalability Considerations</h2> <p>The <span class="structure">architecture</span> includes several scalability features:</p> <h3><span class="structure">Database</span> Design</h3> <ul> <li>Separate databases for different data types</li> <li>Optimized queries for message retrieval</li> <li>Caching layer with <span class="structure">Redis</span> for frequently accessed data</li> <li><span class="connection">Connection</span> pooling for <span class="structure">database</span> efficiency</li> </ul> <h3>Frontend <span class="success">Performance</span></h3> <ul> <li><span class="structure">Component</span>-based <span class="structure">React</span> <span class="structure">architecture</span></li> <li><span class="process">TypeScript</span> for type safety and development efficiency</li> <li>Tailwind <span class="process">CSS</span> for optimized styling</li> <li>Responsive design for all device types</li> </ul> <h2><span class="success">Deployment</span> Lessons</h2> <h3>Multi-<span class="structure">Database</span> <span class="meta">Complexity</span></h3> <p>Managing three different databases in a cloud environment required careful planning:</p> <ul> <li><span class="connection">Connection</span> string management through environment variables</li> <li><span class="structure">Database</span> initialization and migration scripts</li> <li>Backup and recovery considerations for <span class="success">production</span> data</li> </ul> <h3><span class="connection">WebSocket</span> Configuration</h3> <p><span class="attention">Real-time</span> features needed specific attention:</p> <ul> <li><span class="connection">Load balancer</span> configuration for sticky sessions</li> <li><span class="connection">Connection</span> pooling and management</li> <li><span class="attention">Error</span> handling for <span class="connection">network</span> interruptions</li> <li><span class="success">Performance</span> monitoring for concurrent connections</li> </ul> <h3>Environment Management</h3> <p>The platform supports multiple <span class="success">deployment</span> environments:</p> <ul> <li>Development with local <span class="structure">database</span> instances</li> <li>Staging with cloud <span class="structure">database</span> connections</li> <li><span class="success">Production</span> with optimized configurations and monitoring</li> </ul> <h2>Current Platform Status</h2> <p>The platform is <span class="success">deployed</span> on Render with full functionality:</p> <ul> <li>User registration and <span class="attention">authentication</span> <span class="success">working</span></li> <li><span class="attention">Real-time</span> messaging across private and group chats</li> <li><span class="structure">Database</span> persistence for all user data and messages</li> <li>Responsive <span class="structure">interface</span> accessible on all devices</li> </ul> <p>The <span class="success">deployment</span> includes comprehensive monitoring and logging for <span class="success">production</span> use.</p> <h2>Next Development Phase</h2> <p>Based on the repository&#39;s roadmap and current implementation:</p> <ul> <li><span class="success">Performance</span> <span class="success">optimization</span> for high-concurrency scenarios  </li> <li>Advanced group management features</li> <li>Message search and filtering capabilities</li> <li>File sharing and media message support</li> <li>Mobile app development using the existing <span class="connection">API</span></li> </ul> <h2><span class="structure">Architecture</span> Benefits</h2> <p>The single-service approach with multiple databases provides:</p> <ul> <li>Simplified <span class="success">deployment</span> and maintenance</li> <li>Clear separation of data concerns</li> <li>Optimized <span class="success">performance</span> for different data types</li> <li><span class="success">Scalable</span> foundation for future features</li> </ul> <h2>Conclusion</h2> <p>Deploying this <span class="success">production</span>-ready chat platform to Render demonstrated the platform&#39;s capabilities for hosting complex, multi-<span class="structure">database</span> applications. The combination of <span class="structure">Spring Boot</span>&#39;s robustness, <span class="structure">React</span>&#39;s <span class="meta">user experience</span>, and Render&#39;s <span class="success">deployment</span> simplicity created an effective development and hosting environment.</p> <p>The 170 commits and comprehensive feature set show the depth of implementation, while the <span class="meta">CI/CD</span> <span class="connection">pipeline</span> ensures <span class="success">reliable</span> <span class="success">deployment</span> processes. The platform serves as both a functional chat application and a demonstration of modern web development practices.</p> <p>The complete source <span class="process">code</span> and documentation are available at <a href="https://github.com/jeffreyjose07/scalable-chat-platform"><span class="success">scalable</span>-chat-platform</a> on <span class="success">GitHub</span>.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-deployment" class="tag neutral" data-tag="deployment">deployment</a>, <a href="/blog#tag-render" class="tag neutral" data-tag="render">render</a>, <a href="/blog#tag-spring-boot" class="tag structure" data-tag="spring-boot">spring-boot</a>, <a href="/blog#tag-react" class="tag process" data-tag="react">react</a>, <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a> </div> <div id="view-count" style="font-family: var(--font-mono); font-size: 0.75rem;">
+👀 views loading...
+</div> </footer> <div class="author-card"> <img src="/jeffrey-profile.jpg" alt="Jeffrey Jose" class="author-avatar" width="56" height="56" loading="lazy"> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/ai-as-learning-catalyst-how-to-gain-skills-without"> <span class="nav-label">← previous</span> <span class="nav-title">AI as Learning Catalyst: How to Gain Skills Without Losing Competence</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/building-void-blocks-a-cyberpunk-tetris-game"> <span class="nav-label">next →</span> <span class="nav-title">Building Void Blocks: A Cyberpunk Tetris Game</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
+Subscribe via RSS
+</a> </div> </main> <script>
+// Prevent scroll restoration but don't interfere with navigation
+if ('scrollRestoration' in history) {
+history.scrollRestoration = 'manual';
+}
+// Only scroll to top on actual page refresh (not navigation)
+window.addEventListener('load', () => {
+setTimeout(() => {
+window.scrollTo(0, 0);
+}, 0);
+});
+// Reading progress indicator
+window.addEventListener('scroll', () => {
+const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+const scrolled = (winScroll / height) * 100;
+document.querySelector('.reading-progress').style.width = scrolled + '%';
+});
+// Load view count from GoatCounter
+document.addEventListener('DOMContentLoaded', () => {
+loadViewCount();
+});
+function loadViewCount() {
+const path = window.location.pathname;
+const viewCountElement = document.getElementById('view-count');
+fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
+.then(response => response.json())
+.then(data => {
+const count = data.count || '0';
+viewCountElement.innerHTML = `👀 ${count} views`;
+viewCountElement.style.color = 'var(--primary-glow)';
+})
+.catch(error => {
+console.warn('Could not load view count:', error);
+});
+}
+/* Inline scripts injected from frontmatter */
+{ { inlineScripts } }
+</script> <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script> </body> </html>

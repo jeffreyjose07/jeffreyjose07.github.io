@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Linkedin, Github, Phone, MapPin, Send, Loader2 } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Loader2 } from "lucide-react";
+import { socialLinks } from "@/data/socials";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -147,11 +148,7 @@ const Contact = () => {
             </div>
 
             <div className="flex gap-4 mt-12">
-              {[
-                { icon: Linkedin, href: "https://www.linkedin.com/in/jeffrey-jose-07-k/", label: "LinkedIn" },
-                { icon: Github, href: "https://github.com/jeffreyjose07", label: "GitHub" },
-                { icon: Mail, href: "mailto:jeffreyjose.k@gmail.com", label: "Email" }
-              ].map((social, index) => (
+              {socialLinks.map((social, index) => (
                 <a
                   key={index}
                   href={social.href}

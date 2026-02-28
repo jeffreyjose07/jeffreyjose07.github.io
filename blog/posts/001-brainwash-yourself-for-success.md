@@ -6,7 +6,7 @@ description: "how i overcame procrastination and transformed my study habits for
 tags: ["personal", "tutorials"]
 ---
 
-![success](/blog/images/success-image.jpg)
+![success](/blog/images/success-image.webp)
 
 I've always been proud of my skill of remembering minute details from a movie, names of actors, details of their career and what not. I think everyone has some kind of quirky obsession that defines them - we would all forget a concept for an exam rather than the names of hundreds of movie characters or movie plots.
 
