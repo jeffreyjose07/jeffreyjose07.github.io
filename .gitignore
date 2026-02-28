@@ -194,3 +194,4 @@ dist
 # Vercel
 .vercel
 public/blog/feed.xml
+.playwright-mcp/
