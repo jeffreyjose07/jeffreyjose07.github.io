@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Download, ArrowRight } from "lucide-react";
+import { Download, ArrowRight, Mail } from "lucide-react";
 import profileImage from "@/assets/jeffrey-profile.jpg";
 import { socialLinks } from "@/data/socials";
 
