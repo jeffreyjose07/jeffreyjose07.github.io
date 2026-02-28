@@ -150,6 +150,12 @@ renderer.text = function (text) {
     return colorizer.colorizeText(text);
 };
 
+// Add loading="lazy" to inline images
+renderer.image = function (href, title, text) {
+    const titleAttr = title ? ` title="${title}"` : '';
+    return `<img src="${href}" alt="${text || ''}" loading="lazy"${titleAttr}>`;
+};
+
 // Configure marked options
 marked.setOptions({
     renderer: renderer,
@@ -726,6 +732,34 @@ async function build() {
     console.log('📊 Generating posts.json for analytics...');
     generatePostsJson(posts);
     console.log('✅ Generated posts.json');
+
+    // Minify all HTML files (index + post subdirectories)
+    console.log('🗜️ Minifying HTML output...');
+    function minifyHtml(html) {
+        return html
+            .replace(/<!--(?!\[)[\s\S]*?-->/g, '')
+            .replace(/\n\s*\n/g, '\n')
+            .replace(/^\s+/gm, '')
+            .replace(/>\s+</g, '> <');
+    }
+    function findHtmlFiles(dir) {
+        let results = [];
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+            const full = path.join(dir, entry.name);
+            if (entry.isDirectory()) results = results.concat(findHtmlFiles(full));
+            else if (entry.name.endsWith('.html')) results.push(full);
+        }
+        return results;
+    }
+    const allHtmlFiles = findHtmlFiles(OUTPUT_DIR);
+    let totalSaved = 0;
+    for (const filePath of allHtmlFiles) {
+        const original = fs.readFileSync(filePath, 'utf8');
+        const minified = minifyHtml(original);
+        fs.writeFileSync(filePath, minified, 'utf8');
+        totalSaved += original.length - minified.length;
+    }
+    console.log(`✅ Minified ${allHtmlFiles.length} HTML files (saved ${(totalSaved / 1024).toFixed(1)} KB)`);
 
     console.log(`🎉 Blog build complete! Generated ${posts.length} posts with navigation, RSS feed, archive, sitemap, posts.json, and semantic highlighting.`);
 }

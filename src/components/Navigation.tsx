@@ -16,12 +16,8 @@ const Navigation = () => {
   const navItems = [
     { label: "Home", href: "/#hero" },
     { label: "Projects", href: "/#projects" },
-    { label: "Skills", href: "/#skills" },
-    { label: "Experience", href: "/#experience" },
-    { label: "Education", href: "/#education" },
-    { label: "Contact", href: "/#contact" },
     { label: "Blog", href: "/blog", external: true },
-    { label: "Analytics", href: "/analytics.html", external: true }
+    { label: "Contact", href: "/#contact" },
   ];
 
   const gameItems = games.map(game => ({

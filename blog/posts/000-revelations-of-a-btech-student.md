@@ -6,7 +6,7 @@ description: "my journey from failing semester exams to achieving GATE rank 170 
 tags: ["personal"]
 ---
 
-![btech revelation 1](/blog/images/btech-revelation-1.jpg)
+![btech revelation 1](/blog/images/btech-revelation-1.webp)
 
 I'm Jeffrey Jose, a B.Tech Computer Science graduate from Government College of Engineering, Kannur, Kerala. This is the story of how failure became my greatest teacher, and how a rank of 170 in GATE 2017 taught me more about learning than four years of engineering ever did.
 
@@ -20,7 +20,7 @@ The irony wasn't lost on me when TCS offered me a job placement. Here I was, hav
 
 In June, after graduation, I made a decision that would fundamentally alter my relationship with learning: I would prepare for GATE 2017. Not because anyone expected it of me, but because I needed to know if I was capable of more than just getting by.
 
-![btech revelation 2](/blog/images/btech-revelation-2.jpg)
+![btech revelation 2](/blog/images/btech-revelation-2.webp)
 
 This wasn't about career advancement or societal expectations. This was about confronting the uncomfortable question: was I actually capable of sustained, disciplined effort? Or was I forever destined to be someone who did just enough?
 
@@ -59,7 +59,7 @@ When textbooks felt impenetrable, video lectures became my bridge to understandi
 ### Coding as Applied Learning
 Platforms like CodeChef and HackerRank transformed programming from an abstract concept into a tangible skill. Every problem solved was evidence that learning was actually happening.
 
-![btech revelation 3](/blog/images/btech-revelation-3.jpg)
+![btech revelation 3](/blog/images/btech-revelation-3.webp)
 
 ## The Philosophy of Learning vs Studying
 
