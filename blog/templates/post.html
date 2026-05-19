@@ -57,19 +57,20 @@
         }
 
         .episode-badge {
-            background: rgba(124, 58, 237, 0.1);
-            color: var(--primary);
+            background: rgba(28, 201, 160, 0.12);
+            color: var(--primary-glow);
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
             font-family: var(--font-mono);
             font-weight: 600;
+            font-size: 0.8rem;
         }
 
         .post-title {
-            font-size: 2.5rem;
-            line-height: 1.2;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            line-height: 1.15;
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -113,7 +114,7 @@
         .post-content a {
             color: var(--primary-glow);
             text-decoration: none;
-            border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+            border-bottom: 1px solid rgba(28, 201, 160, 0.35);
             transition: all 0.2s;
         }
 
@@ -168,12 +169,29 @@
             font-size: 0.9rem;
         }
 
-        .post-content img {
+        .post-figure {
+            margin: 2rem 0;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .post-content img,
+        .post-figure img {
+            display: block;
+            width: 100%;
             max-width: 100%;
             height: auto;
-            border-radius: 0.5rem;
-            margin: 2rem 0;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            margin: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .post-figure img {
+            aspect-ratio: auto;
+            object-fit: contain;
+            background: #0a0a0c;
         }
 
         .post-footer {
@@ -207,9 +225,9 @@
         }
 
         .tag-pill:hover {
-            background: rgba(124, 58, 237, 0.1);
+            background: rgba(28, 201, 160, 0.1);
             color: var(--primary-glow);
-            border-color: rgba(124, 58, 237, 0.2);
+            border-color: rgba(28, 201, 160, 0.25);
         }
 
         /* Author card */
@@ -224,13 +242,43 @@
             border-radius: 0.75rem;
         }
 
+        .author-avatar-wrap {
+            position: relative;
+            flex-shrink: 0;
+            width: 56px;
+            height: 56px;
+        }
+
         .author-avatar {
             width: 56px;
             height: 56px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid rgba(124, 58, 237, 0.3);
-            flex-shrink: 0;
+            border: 2px solid rgba(28, 201, 160, 0.4);
+            display: block;
+        }
+
+        .author-avatar-fallback {
+            display: none;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary-foreground);
+            background: linear-gradient(135deg, #1cc9a0, #22d3ee);
+            border: 2px solid rgba(28, 201, 160, 0.4);
+        }
+
+        .author-avatar-wrap.is-fallback .author-avatar {
+            display: none;
+        }
+
+        .author-avatar-wrap.is-fallback .author-avatar-fallback {
+            display: flex;
         }
 
         .author-info {
@@ -380,13 +428,14 @@
                 <div class="post-tags-footer">
                     {{tagsFormatted}}
                 </div>
-                <div id="view-count" style="font-family: var(--font-mono); font-size: 0.75rem;">
-                    👀 views loading...
-                </div>
+                <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div>
             </footer>
 
             <div class="author-card">
-                <img src="/jeffrey-profile.jpg" alt="Jeffrey Jose" class="author-avatar" width="56" height="56" loading="lazy">
+                <div class="author-avatar-wrap" id="authorAvatarWrap">
+                    <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')">
+                    <span class="author-avatar-fallback" aria-hidden="true">JJ</span>
+                </div>
                 <div class="author-info">
                     <span class="author-name">Jeffrey Jose</span>
                     <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span>
@@ -445,16 +494,20 @@
         function loadViewCount() {
             const path = window.location.pathname;
             const viewCountElement = document.getElementById('view-count');
+            if (!viewCountElement) return;
 
             fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    const count = data.count || '0';
-                    viewCountElement.innerHTML = `👀 ${count} views`;
-                    viewCountElement.style.color = 'var(--primary-glow)';
+                .then(response => {
+                    if (!response.ok) throw new Error('View count unavailable');
+                    return response.json();
                 })
-                .catch(error => {
-                    console.warn('Could not load view count:', error);
+                .then(data => {
+                    const count = data.count ?? 0;
+                    viewCountElement.textContent = `${count.toLocaleString()} views`;
+                    viewCountElement.hidden = false;
+                })
+                .catch(() => {
+                    viewCountElement.hidden = true;
                 });
         }
 

@@ -1,26 +1,27 @@
 <!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Adding Custom Domain: jeffreyjose07.is-a.dev - Jeffrey Jose</title> <meta name="description" content="How I configured a custom domain for my portfolio and blog, moving from jeffreyjose07.github.io to jeffreyjose07.is-a.dev" /> <meta property="og:title" content="Adding Custom Domain: jeffreyjose07.is-a.dev"> <meta property="og:description" content="How I configured a custom domain for my portfolio and blog, moving from jeffreyjose07.github.io to jeffreyjose07.is-a.dev"> <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/adding-custom-domain-jeffreyjose07is-adev"> <meta property="og:type" content="article"> <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/adding-custom-domain-jeffreyjose07is-adev.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Adding Custom Domain: jeffreyjose07.is-a.dev"> <meta name="twitter:description" content="How I configured a custom domain for my portfolio and blog, moving from jeffreyjose07.github.io to jeffreyjose07.is-a.dev"> <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/adding-custom-domain-jeffreyjose07is-adev.png"> <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" /> <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" /> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link
-href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@500;600;700;800&display=swap"
 rel="stylesheet"> <style>
 :root {
-/* Premium Dark Theme Variables */
 --background: #09090b;
---foreground: #f8fafc;
---primary: #7c3aed;
---primary-foreground: #f8fafc;
---primary-glow: #a78bfa;
---secondary: #1e1e24;
---secondary-foreground: #f8fafc;
---muted: #1e1e24;
---muted-foreground: #94a3b8;
---accent: #1e1e24;
---accent-foreground: #f8fafc;
+--foreground: #fafafa;
+--primary: #1cc9a0;
+--primary-foreground: #fafafa;
+--primary-glow: #5eead4;
+--secondary: #18181b;
+--secondary-foreground: #fafafa;
+--muted: #18181b;
+--muted-foreground: #a1a1aa;
+--accent: #18181b;
+--accent-foreground: #fafafa;
 --border: #27272a;
 --input: #27272a;
---font-sans: 'Inter', sans-serif;
---font-heading: 'Outfit', sans-serif;
---gradient-hero: linear-gradient(135deg, #09090b, #1e1b4b);
+--font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+--font-heading: 'Syne', system-ui, sans-serif;
+--font-mono: ui-monospace, 'Menlo', monospace;
+--gradient-hero: linear-gradient(135deg, #09090b, #0c1f1a);
 --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
---gradient-accent: linear-gradient(135deg, #7c3aed, #c084fc);
+--gradient-accent: linear-gradient(135deg, #1cc9a0, #22d3ee);
+--radius: 0.75rem;
 }
 * {
 margin: 0;
@@ -47,13 +48,13 @@ font-family: var(--font-heading);
 font-weight: 700;
 line-height: 1.2;
 margin-bottom: 1rem;
+letter-spacing: -0.02em;
 }
 a {
 color: inherit;
 text-decoration: none;
 transition: color 0.2s ease;
 }
-/* Utilities */
 .container {
 width: 100%;
 max-width: 1200px;
@@ -61,42 +62,43 @@ margin: 0 auto;
 padding: 0 1.5rem;
 }
 .glass {
-background: rgba(255, 255, 255, 0.05);
+background: rgba(255, 255, 255, 0.04);
 backdrop-filter: blur(16px);
 -webkit-backdrop-filter: blur(16px);
-border: 1px solid rgba(255, 255, 255, 0.1);
+border: 1px solid rgba(255, 255, 255, 0.08);
 }
 .glass-card {
 background: rgba(255, 255, 255, 0.03);
 backdrop-filter: blur(12px);
 -webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.05);
-border-radius: 1rem;
-transition: all 0.3s ease;
+border: 1px solid rgba(255, 255, 255, 0.06);
+border-radius: var(--radius);
+transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 .glass-card:hover {
-border-color: rgba(124, 58, 237, 0.3);
+border-color: rgba(28, 201, 160, 0.35);
 transform: translateY(-2px);
-box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+box-shadow: 0 12px 40px -16px rgba(0, 0, 0, 0.6);
 }
 .text-gradient-premium {
-background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
+color: transparent;
+display: inline-block;
 }
 .bg-mesh {
 background-color: var(--background);
 background-image:
-radial-gradient(at 40% 20%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
-radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-radial-gradient(at 0% 50%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
+radial-gradient(at 40% 20%, rgba(28, 201, 160, 0.09) 0px, transparent 50%),
+radial-gradient(at 80% 0%, rgba(34, 211, 238, 0.07) 0px, transparent 50%),
+radial-gradient(at 0% 50%, rgba(28, 201, 160, 0.06) 0px, transparent 50%);
 }
-/* Animations */
 @keyframes fadeInUp {
 from {
 opacity: 0;
-transform: translateY(20px);
+transform: translateY(16px);
 }
 to {
 opacity: 1;
@@ -104,21 +106,31 @@ transform: translateY(0);
 }
 }
 .animate-fade-in-up {
-animation: fadeInUp 0.8s ease-out forwards;
+animation: fadeInUp 0.6s ease-out forwards;
 }
-/* Scrollbar */
 ::-webkit-scrollbar {
-width: 10px;
+width: 8px;
 }
 ::-webkit-scrollbar-track {
 background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
 background: #3f3f46;
-border-radius: 5px;
+border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
 background: #52525b;
+}
+.sr-only {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+margin: -1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border: 0;
 }
 </style> <style>
 body {
@@ -151,18 +163,19 @@ font-size: 0.875rem;
 color: var(--muted-foreground);
 }
 .episode-badge {
-background: rgba(124, 58, 237, 0.1);
-color: var(--primary);
+background: rgba(28, 201, 160, 0.12);
+color: var(--primary-glow);
 padding: 0.25rem 0.75rem;
 border-radius: 9999px;
 font-family: var(--font-mono);
 font-weight: 600;
+font-size: 0.8rem;
 }
 .post-title {
-font-size: 2.5rem;
-line-height: 1.2;
+font-size: clamp(1.75rem, 4vw, 2.5rem);
+line-height: 1.15;
 margin-bottom: 1.5rem;
-background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
@@ -199,7 +212,7 @@ margin-bottom: 0.5rem;
 .post-content a {
 color: var(--primary-glow);
 text-decoration: none;
-border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+border-bottom: 1px solid rgba(28, 201, 160, 0.35);
 transition: all 0.2s;
 }
 .post-content a:hover {
@@ -247,12 +260,27 @@ padding: 0;
 color: #e5e7eb;
 font-size: 0.9rem;
 }
-.post-content img {
+.post-figure {
+margin: 2rem 0;
+border-radius: var(--radius);
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.08);
+background: rgba(255, 255, 255, 0.02);
+}
+.post-content img,
+.post-figure img {
+display: block;
+width: 100%;
 max-width: 100%;
 height: auto;
-border-radius: 0.5rem;
-margin: 2rem 0;
-box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+margin: 0;
+border-radius: 0;
+box-shadow: none;
+}
+.post-figure img {
+aspect-ratio: auto;
+object-fit: contain;
+background: #0a0a0c;
 }
 .post-footer {
 margin-top: 4rem;
@@ -282,9 +310,9 @@ text-decoration: none;
 transition: all 0.2s;
 }
 .tag-pill:hover {
-background: rgba(124, 58, 237, 0.1);
+background: rgba(28, 201, 160, 0.1);
 color: var(--primary-glow);
-border-color: rgba(124, 58, 237, 0.2);
+border-color: rgba(28, 201, 160, 0.25);
 }
 /* Author card */
 .author-card {
@@ -297,13 +325,39 @@ background: rgba(255, 255, 255, 0.03);
 border: 1px solid rgba(255, 255, 255, 0.08);
 border-radius: 0.75rem;
 }
+.author-avatar-wrap {
+position: relative;
+flex-shrink: 0;
+width: 56px;
+height: 56px;
+}
 .author-avatar {
 width: 56px;
 height: 56px;
 border-radius: 50%;
 object-fit: cover;
-border: 2px solid rgba(124, 58, 237, 0.3);
-flex-shrink: 0;
+border: 2px solid rgba(28, 201, 160, 0.4);
+display: block;
+}
+.author-avatar-fallback {
+display: none;
+width: 56px;
+height: 56px;
+border-radius: 50%;
+align-items: center;
+justify-content: center;
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.1rem;
+color: var(--primary-foreground);
+background: linear-gradient(135deg, #1cc9a0, #22d3ee);
+border: 2px solid rgba(28, 201, 160, 0.4);
+}
+.author-avatar-wrap.is-fallback .author-avatar {
+display: none;
+}
+.author-avatar-wrap.is-fallback .author-avatar-fallback {
+display: flex;
 }
 .author-info {
 display: flex;
@@ -443,7 +497,7 @@ align-items: center;
 gap: 0.5rem;
 }
 .text-gradient-premium {
-background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
@@ -720,9 +774,7 @@ closeSearch();
 &quot;TXT&quot;: &quot;github-verification-string-here&quot;
 }
 }
-</code></pre> <ol start="4"> <li><strong>Wait for DNS propagation</strong> (can take up to 24 hours)</li> <li><strong>Verify domain</strong> in <span class="success">GitHub</span> Pages settings</li> </ol> <h3>step 4: dns propagation and testing</h3> <p>The <strong>is-a.dev</strong> service handles all DNS configuration automatically. Once the pull requests are merged:</p> <ul> <li><strong>CNAME record</strong> points <code>jeffreyjose07.is-a.dev</code> → <code>jeffreyjose07.github.io</code></li> <li><strong>TXT record</strong> provides domain verification for <span class="success">GitHub</span></li> <li><strong><span class="connection">HTTPS</span> certificate</strong> is automatically provisioned by <span class="success">GitHub</span> Pages</li> </ul> <p>I monitored the setup using online <strong>DNS checker</strong> tools to verify propagation across different global locations.</p> <h2>the migration experience</h2> <h3>dns propagation</h3> <p>The most nerve-wracking part was waiting for <strong>DNS propagation</strong>. Changes can take up to 24 hours, but mine propagated within 2 hours. I used online <strong>DNS checker</strong> tools to monitor progress across different global locations.</p> <h3><span class="connection">https</span> enforcement</h3> <p>Once the domain was verified, I enabled <strong><span class="connection">HTTPS</span> enforcement</strong> in <strong><span class="success">GitHub</span> Pages</strong> settings. This ensures all traffic is encrypted and provides the <span class="attention">security</span> padlock that users expect.</p> <h3>testing the migration</h3> <p>I thoroughly tested:</p> <ul> <li><strong>Root domain</strong> access (<code>jeffreyjose07.is-a.dev</code>)</li> <li><strong>WWW subdomain</strong> redirects</li> <li><strong><span class="connection">HTTPS</span></strong> enforcement and certificate validity</li> <li><strong>All existing URLs</strong> and internal links</li> <li><strong>Mobile responsiveness</strong> on the new domain</li> </ul> <h2>lessons learned</h2> <h3>community-driven domain service</h3> <p><strong>is-a.dev</strong> operates differently from traditional domain registrars. The process involves:</p> <ul> <li><strong>Pull request <span class="connection">workflow</span></strong> instead of automated registration</li> <li><strong>Community review</strong> of domain requests</li> <li><strong>Free service</strong> supported by donations and community contributions</li> <li><strong>Developer-focused</strong> TLD that signals technical expertise</li> </ul> <h3>timing is <span class="attention">critical</span></h3> <p>The order of operations matters significantly:</p> <ol> <li><strong>First</strong>: Submit is-a.dev pull request and wait for merge</li> <li><strong>Then</strong>: Configure custom domain in <span class="success">GitHub</span> Pages</li> <li><strong>Finally</strong>: Submit verification TXT record pull request</li> </ol> <p>Doing these steps out of order results in 404 errors and verification failures.</p> <h3>dns patience required</h3> <p><strong>DNS propagation</strong> through is-a.dev can take longer than traditional registrars:</p> <ul> <li><strong>Initial setup</strong>: 2-6 hours for pull request merge</li> <li><strong>DNS propagation</strong>: Up to 24 hours for global availability</li> <li><strong>Verification</strong>: Additional 24 hours for <span class="success">GitHub</span> domain verification</li> </ul> <h3><span class="success">github</span> actions compatibility</h3> <p>My existing <strong><span class="success">GitHub</span> Actions</strong> <span class="connection">workflow</span> continued <span class="success">working</span> seamlessly. The <span class="process">build</span> process automatically detected the custom domain and updated all generated URLs accordingly.</p> <h3>seo considerations</h3> <p><strong><span class="success">GitHub</span> Pages</strong> automatically handles redirects from the old subdomain, preserving <strong>SEO value</strong> and ensuring existing bookmarks continue <span class="success">working</span>.</p> <h3>monitoring and maintenance</h3> <p><strong>is-a.dev</strong> handles DNS management, while <strong><span class="success">GitHub</span> Pages</strong> manages <span class="connection">HTTPS</span> certificates. Both services provide <span class="success">reliable</span> uptime and automatic renewal.</p> <h2>the result</h2> <p>The migration was successful and transparent. My portfolio now lives at <code>https://jeffreyjose07.is-a.dev/</code> with:</p> <ul> <li><strong>Faster perceived loading</strong> due to cleaner URLs</li> <li><strong>Professional credibility</strong> from the custom domain</li> <li><strong>Maintained functionality</strong> - all features work identically</li> <li><strong>Enhanced branding</strong> that aligns with the technical <span class="meta">aesthetic</span></li> </ul> <p>The <strong><span class="meta">terminal</span> <span class="meta">aesthetic</span></strong> of the site now has a domain that matches its technical sophistication. The <code>.is-a.dev</code> TLD perfectly complements the minimalist, developer-focused design <span class="meta">philosophy</span>.</p> <h2>the is-a.dev community</h2> <p><strong>is-a.dev</strong> is more than just a domain service - it&#39;s a community of developers who value:</p> <ul> <li><strong>Open source principles</strong> with transparent domain management</li> <li><strong>Developer-first approach</strong> with technical TLDs</li> <li><strong>Community support</strong> through <span class="success">GitHub</span>-based workflows</li> <li><strong>Accessibility</strong> with free subdomains for developers</li> </ul> <p>The pull request process ensures quality control and prevents domain squatting, while the community-driven approach aligns perfectly with the <strong>open source</strong> nature of my portfolio and blog.</p> <h2>next steps</h2> <p>With the custom domain in place, I&#39;m considering:</p> <ul> <li><strong>Email setup</strong> using the domain for professional communication</li> <li><strong>Subdomain experiments</strong> for different projects or experiments  </li> <li><strong>Analytics <span class="success">optimization</span></strong> to track the impact of the domain change</li> <li><strong>Community contribution</strong> back to the is-a.dev project</li> </ul> <p>The custom domain represents more than just a URL change - it&#39;s a commitment to professional presentation, technical excellence, and community participation that matches the quality of the content and design.</p> <p><em>The site is now <span class="success">live</span> at <a href="https://jeffreyjose07.is-a.dev/"><span class="connection">https</span>://jeffreyjose07.is-a.dev/</a> - a cleaner, more professional home for my technical thoughts and projects, powered by the developer community.</em></p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-domain" class="tag neutral" data-tag="domain">domain</a>, <a href="/blog#tag-github-pages" class="tag neutral" data-tag="github-pages">github-pages</a>, <a href="/blog#tag-deployment" class="tag neutral" data-tag="deployment">deployment</a>, <a href="/blog#tag-infrastructure" class="tag neutral" data-tag="infrastructure">infrastructure</a> </div> <div id="view-count" style="font-family: var(--font-mono); font-size: 0.75rem;">
-👀 views loading...
-</div> </footer> <div class="author-card"> <img src="/jeffrey-profile.jpg" alt="Jeffrey Jose" class="author-avatar" width="56" height="56" loading="lazy"> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/building-a-secure-snake-game-with-terminal-aesthet"> <span class="nav-label">← previous</span> <span class="nav-title">Building a Secure Snake Game with Terminal Aesthetic</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/solving-adjacent-increasing-subarrays-from-naive-t"> <span class="nav-label">next →</span> <span class="nav-title">Solving Adjacent Increasing Subarrays: From Naive to Optimal</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+</code></pre> <ol start="4"> <li><strong>Wait for DNS propagation</strong> (can take up to 24 hours)</li> <li><strong>Verify domain</strong> in <span class="success">GitHub</span> Pages settings</li> </ol> <h3>step 4: dns propagation and testing</h3> <p>The <strong>is-a.dev</strong> service handles all DNS configuration automatically. Once the pull requests are merged:</p> <ul> <li><strong>CNAME record</strong> points <code>jeffreyjose07.is-a.dev</code> → <code>jeffreyjose07.github.io</code></li> <li><strong>TXT record</strong> provides domain verification for <span class="success">GitHub</span></li> <li><strong><span class="connection">HTTPS</span> certificate</strong> is automatically provisioned by <span class="success">GitHub</span> Pages</li> </ul> <p>I monitored the setup using online <strong>DNS checker</strong> tools to verify propagation across different global locations.</p> <h2>the migration experience</h2> <h3>dns propagation</h3> <p>The most nerve-wracking part was waiting for <strong>DNS propagation</strong>. Changes can take up to 24 hours, but mine propagated within 2 hours. I used online <strong>DNS checker</strong> tools to monitor progress across different global locations.</p> <h3><span class="connection">https</span> enforcement</h3> <p>Once the domain was verified, I enabled <strong><span class="connection">HTTPS</span> enforcement</strong> in <strong><span class="success">GitHub</span> Pages</strong> settings. This ensures all traffic is encrypted and provides the <span class="attention">security</span> padlock that users expect.</p> <h3>testing the migration</h3> <p>I thoroughly tested:</p> <ul> <li><strong>Root domain</strong> access (<code>jeffreyjose07.is-a.dev</code>)</li> <li><strong>WWW subdomain</strong> redirects</li> <li><strong><span class="connection">HTTPS</span></strong> enforcement and certificate validity</li> <li><strong>All existing URLs</strong> and internal links</li> <li><strong>Mobile responsiveness</strong> on the new domain</li> </ul> <h2>lessons learned</h2> <h3>community-driven domain service</h3> <p><strong>is-a.dev</strong> operates differently from traditional domain registrars. The process involves:</p> <ul> <li><strong>Pull request <span class="connection">workflow</span></strong> instead of automated registration</li> <li><strong>Community review</strong> of domain requests</li> <li><strong>Free service</strong> supported by donations and community contributions</li> <li><strong>Developer-focused</strong> TLD that signals technical expertise</li> </ul> <h3>timing is <span class="attention">critical</span></h3> <p>The order of operations matters significantly:</p> <ol> <li><strong>First</strong>: Submit is-a.dev pull request and wait for merge</li> <li><strong>Then</strong>: Configure custom domain in <span class="success">GitHub</span> Pages</li> <li><strong>Finally</strong>: Submit verification TXT record pull request</li> </ol> <p>Doing these steps out of order results in 404 errors and verification failures.</p> <h3>dns patience required</h3> <p><strong>DNS propagation</strong> through is-a.dev can take longer than traditional registrars:</p> <ul> <li><strong>Initial setup</strong>: 2-6 hours for pull request merge</li> <li><strong>DNS propagation</strong>: Up to 24 hours for global availability</li> <li><strong>Verification</strong>: Additional 24 hours for <span class="success">GitHub</span> domain verification</li> </ul> <h3><span class="success">github</span> actions compatibility</h3> <p>My existing <strong><span class="success">GitHub</span> Actions</strong> <span class="connection">workflow</span> continued <span class="success">working</span> seamlessly. The <span class="process">build</span> process automatically detected the custom domain and updated all generated URLs accordingly.</p> <h3>seo considerations</h3> <p><strong><span class="success">GitHub</span> Pages</strong> automatically handles redirects from the old subdomain, preserving <strong>SEO value</strong> and ensuring existing bookmarks continue <span class="success">working</span>.</p> <h3>monitoring and maintenance</h3> <p><strong>is-a.dev</strong> handles DNS management, while <strong><span class="success">GitHub</span> Pages</strong> manages <span class="connection">HTTPS</span> certificates. Both services provide <span class="success">reliable</span> uptime and automatic renewal.</p> <h2>the result</h2> <p>The migration was successful and transparent. My portfolio now lives at <code>https://jeffreyjose07.is-a.dev/</code> with:</p> <ul> <li><strong>Faster perceived loading</strong> due to cleaner URLs</li> <li><strong>Professional credibility</strong> from the custom domain</li> <li><strong>Maintained functionality</strong> - all features work identically</li> <li><strong>Enhanced branding</strong> that aligns with the technical <span class="meta">aesthetic</span></li> </ul> <p>The <strong><span class="meta">terminal</span> <span class="meta">aesthetic</span></strong> of the site now has a domain that matches its technical sophistication. The <code>.is-a.dev</code> TLD perfectly complements the minimalist, developer-focused design <span class="meta">philosophy</span>.</p> <h2>the is-a.dev community</h2> <p><strong>is-a.dev</strong> is more than just a domain service - it&#39;s a community of developers who value:</p> <ul> <li><strong>Open source principles</strong> with transparent domain management</li> <li><strong>Developer-first approach</strong> with technical TLDs</li> <li><strong>Community support</strong> through <span class="success">GitHub</span>-based workflows</li> <li><strong>Accessibility</strong> with free subdomains for developers</li> </ul> <p>The pull request process ensures quality control and prevents domain squatting, while the community-driven approach aligns perfectly with the <strong>open source</strong> nature of my portfolio and blog.</p> <h2>next steps</h2> <p>With the custom domain in place, I&#39;m considering:</p> <ul> <li><strong>Email setup</strong> using the domain for professional communication</li> <li><strong>Subdomain experiments</strong> for different projects or experiments  </li> <li><strong>Analytics <span class="success">optimization</span></strong> to track the impact of the domain change</li> <li><strong>Community contribution</strong> back to the is-a.dev project</li> </ul> <p>The custom domain represents more than just a URL change - it&#39;s a commitment to professional presentation, technical excellence, and community participation that matches the quality of the content and design.</p> <p><em>The site is now <span class="success">live</span> at <a href="https://jeffreyjose07.is-a.dev/"><span class="connection">https</span>://jeffreyjose07.is-a.dev/</a> - a cleaner, more professional home for my technical thoughts and projects, powered by the developer community.</em></p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-domain" class="tag neutral" data-tag="domain">domain</a>, <a href="/blog#tag-github-pages" class="tag neutral" data-tag="github-pages">github-pages</a>, <a href="/blog#tag-deployment" class="tag neutral" data-tag="deployment">deployment</a>, <a href="/blog#tag-infrastructure" class="tag neutral" data-tag="infrastructure">infrastructure</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/building-a-secure-snake-game-with-terminal-aesthet"> <span class="nav-label">← previous</span> <span class="nav-title">Building a Secure Snake Game with Terminal Aesthetic</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/solving-adjacent-increasing-subarrays-from-naive-t"> <span class="nav-label">next →</span> <span class="nav-title">Solving Adjacent Increasing Subarrays: From Naive to Optimal</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
 style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
@@ -752,15 +804,19 @@ loadViewCount();
 function loadViewCount() {
 const path = window.location.pathname;
 const viewCountElement = document.getElementById('view-count');
+if (!viewCountElement) return;
 fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
-.then(response => response.json())
-.then(data => {
-const count = data.count || '0';
-viewCountElement.innerHTML = `👀 ${count} views`;
-viewCountElement.style.color = 'var(--primary-glow)';
+.then(response => {
+if (!response.ok) throw new Error('View count unavailable');
+return response.json();
 })
-.catch(error => {
-console.warn('Could not load view count:', error);
+.then(data => {
+const count = data.count ?? 0;
+viewCountElement.textContent = `${count.toLocaleString()} views`;
+viewCountElement.hidden = false;
+})
+.catch(() => {
+viewCountElement.hidden = true;
 });
 }
 /* Inline scripts injected from frontmatter */

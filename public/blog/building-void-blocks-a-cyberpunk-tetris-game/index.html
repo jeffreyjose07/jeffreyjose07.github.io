@@ -1,26 +1,27 @@
 <!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Building Void Blocks: A Cyberpunk Tetris Game - Jeffrey Jose</title> <meta name="description" content="creating a cyberpunk-inspired tetris variant, from littlejs to vanilla javascript, with automated deployment and terminal aesthetics" /> <meta property="og:title" content="Building Void Blocks: A Cyberpunk Tetris Game"> <meta property="og:description" content="creating a cyberpunk-inspired tetris variant, from littlejs to vanilla javascript, with automated deployment and terminal aesthetics"> <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/building-void-blocks-a-cyberpunk-tetris-game"> <meta property="og:type" content="article"> <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/building-void-blocks-a-cyberpunk-tetris-game.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Building Void Blocks: A Cyberpunk Tetris Game"> <meta name="twitter:description" content="creating a cyberpunk-inspired tetris variant, from littlejs to vanilla javascript, with automated deployment and terminal aesthetics"> <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/building-void-blocks-a-cyberpunk-tetris-game.png"> <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" /> <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" /> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link
-href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@500;600;700;800&display=swap"
 rel="stylesheet"> <style>
 :root {
-/* Premium Dark Theme Variables */
 --background: #09090b;
---foreground: #f8fafc;
---primary: #7c3aed;
---primary-foreground: #f8fafc;
---primary-glow: #a78bfa;
---secondary: #1e1e24;
---secondary-foreground: #f8fafc;
---muted: #1e1e24;
---muted-foreground: #94a3b8;
---accent: #1e1e24;
---accent-foreground: #f8fafc;
+--foreground: #fafafa;
+--primary: #1cc9a0;
+--primary-foreground: #fafafa;
+--primary-glow: #5eead4;
+--secondary: #18181b;
+--secondary-foreground: #fafafa;
+--muted: #18181b;
+--muted-foreground: #a1a1aa;
+--accent: #18181b;
+--accent-foreground: #fafafa;
 --border: #27272a;
 --input: #27272a;
---font-sans: 'Inter', sans-serif;
---font-heading: 'Outfit', sans-serif;
---gradient-hero: linear-gradient(135deg, #09090b, #1e1b4b);
+--font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+--font-heading: 'Syne', system-ui, sans-serif;
+--font-mono: ui-monospace, 'Menlo', monospace;
+--gradient-hero: linear-gradient(135deg, #09090b, #0c1f1a);
 --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
---gradient-accent: linear-gradient(135deg, #7c3aed, #c084fc);
+--gradient-accent: linear-gradient(135deg, #1cc9a0, #22d3ee);
+--radius: 0.75rem;
 }
 * {
 margin: 0;
@@ -47,13 +48,13 @@ font-family: var(--font-heading);
 font-weight: 700;
 line-height: 1.2;
 margin-bottom: 1rem;
+letter-spacing: -0.02em;
 }
 a {
 color: inherit;
 text-decoration: none;
 transition: color 0.2s ease;
 }
-/* Utilities */
 .container {
 width: 100%;
 max-width: 1200px;
@@ -61,42 +62,43 @@ margin: 0 auto;
 padding: 0 1.5rem;
 }
 .glass {
-background: rgba(255, 255, 255, 0.05);
+background: rgba(255, 255, 255, 0.04);
 backdrop-filter: blur(16px);
 -webkit-backdrop-filter: blur(16px);
-border: 1px solid rgba(255, 255, 255, 0.1);
+border: 1px solid rgba(255, 255, 255, 0.08);
 }
 .glass-card {
 background: rgba(255, 255, 255, 0.03);
 backdrop-filter: blur(12px);
 -webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.05);
-border-radius: 1rem;
-transition: all 0.3s ease;
+border: 1px solid rgba(255, 255, 255, 0.06);
+border-radius: var(--radius);
+transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 .glass-card:hover {
-border-color: rgba(124, 58, 237, 0.3);
+border-color: rgba(28, 201, 160, 0.35);
 transform: translateY(-2px);
-box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+box-shadow: 0 12px 40px -16px rgba(0, 0, 0, 0.6);
 }
 .text-gradient-premium {
-background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
+color: transparent;
+display: inline-block;
 }
 .bg-mesh {
 background-color: var(--background);
 background-image:
-radial-gradient(at 40% 20%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
-radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-radial-gradient(at 0% 50%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
+radial-gradient(at 40% 20%, rgba(28, 201, 160, 0.09) 0px, transparent 50%),
+radial-gradient(at 80% 0%, rgba(34, 211, 238, 0.07) 0px, transparent 50%),
+radial-gradient(at 0% 50%, rgba(28, 201, 160, 0.06) 0px, transparent 50%);
 }
-/* Animations */
 @keyframes fadeInUp {
 from {
 opacity: 0;
-transform: translateY(20px);
+transform: translateY(16px);
 }
 to {
 opacity: 1;
@@ -104,21 +106,31 @@ transform: translateY(0);
 }
 }
 .animate-fade-in-up {
-animation: fadeInUp 0.8s ease-out forwards;
+animation: fadeInUp 0.6s ease-out forwards;
 }
-/* Scrollbar */
 ::-webkit-scrollbar {
-width: 10px;
+width: 8px;
 }
 ::-webkit-scrollbar-track {
 background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
 background: #3f3f46;
-border-radius: 5px;
+border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
 background: #52525b;
+}
+.sr-only {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+margin: -1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border: 0;
 }
 </style> <style>
 body {
@@ -151,18 +163,19 @@ font-size: 0.875rem;
 color: var(--muted-foreground);
 }
 .episode-badge {
-background: rgba(124, 58, 237, 0.1);
-color: var(--primary);
+background: rgba(28, 201, 160, 0.12);
+color: var(--primary-glow);
 padding: 0.25rem 0.75rem;
 border-radius: 9999px;
 font-family: var(--font-mono);
 font-weight: 600;
+font-size: 0.8rem;
 }
 .post-title {
-font-size: 2.5rem;
-line-height: 1.2;
+font-size: clamp(1.75rem, 4vw, 2.5rem);
+line-height: 1.15;
 margin-bottom: 1.5rem;
-background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
@@ -199,7 +212,7 @@ margin-bottom: 0.5rem;
 .post-content a {
 color: var(--primary-glow);
 text-decoration: none;
-border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+border-bottom: 1px solid rgba(28, 201, 160, 0.35);
 transition: all 0.2s;
 }
 .post-content a:hover {
@@ -247,12 +260,27 @@ padding: 0;
 color: #e5e7eb;
 font-size: 0.9rem;
 }
-.post-content img {
+.post-figure {
+margin: 2rem 0;
+border-radius: var(--radius);
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.08);
+background: rgba(255, 255, 255, 0.02);
+}
+.post-content img,
+.post-figure img {
+display: block;
+width: 100%;
 max-width: 100%;
 height: auto;
-border-radius: 0.5rem;
-margin: 2rem 0;
-box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+margin: 0;
+border-radius: 0;
+box-shadow: none;
+}
+.post-figure img {
+aspect-ratio: auto;
+object-fit: contain;
+background: #0a0a0c;
 }
 .post-footer {
 margin-top: 4rem;
@@ -282,9 +310,9 @@ text-decoration: none;
 transition: all 0.2s;
 }
 .tag-pill:hover {
-background: rgba(124, 58, 237, 0.1);
+background: rgba(28, 201, 160, 0.1);
 color: var(--primary-glow);
-border-color: rgba(124, 58, 237, 0.2);
+border-color: rgba(28, 201, 160, 0.25);
 }
 /* Author card */
 .author-card {
@@ -297,13 +325,39 @@ background: rgba(255, 255, 255, 0.03);
 border: 1px solid rgba(255, 255, 255, 0.08);
 border-radius: 0.75rem;
 }
+.author-avatar-wrap {
+position: relative;
+flex-shrink: 0;
+width: 56px;
+height: 56px;
+}
 .author-avatar {
 width: 56px;
 height: 56px;
 border-radius: 50%;
 object-fit: cover;
-border: 2px solid rgba(124, 58, 237, 0.3);
-flex-shrink: 0;
+border: 2px solid rgba(28, 201, 160, 0.4);
+display: block;
+}
+.author-avatar-fallback {
+display: none;
+width: 56px;
+height: 56px;
+border-radius: 50%;
+align-items: center;
+justify-content: center;
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.1rem;
+color: var(--primary-foreground);
+background: linear-gradient(135deg, #1cc9a0, #22d3ee);
+border: 2px solid rgba(28, 201, 160, 0.4);
+}
+.author-avatar-wrap.is-fallback .author-avatar {
+display: none;
+}
+.author-avatar-wrap.is-fallback .author-avatar-fallback {
+display: flex;
 }
 .author-info {
 display: flex;
@@ -443,7 +497,7 @@ align-items: center;
 gap: 0.5rem;
 }
 .text-gradient-premium {
-background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
@@ -853,9 +907,7 @@ npm run preview # Local preview of production build
 <strong>Browser Support</strong>: Universal modern browser support with HTML5 Canvas</p> <h2>Technical Lessons Learned</h2> <h3>Engine Selection Impact</h3> <p>Choosing LittleJS over alternatives like Phaser or Three.js proved beneficial for this project:</p> <ul> <li><span class="meta">Minimal</span> learning curve for simple 2D games</li> <li>Excellent <span class="success">performance</span> characteristics for puzzle games</li> <li>CDN loading reduces bundle size significantly</li> <li>Built-in features handle common game development needs</li> </ul> <h3><span class="success">Deployment</span> Automation Benefits</h3> <p>The cross-repository <span class="success">deployment</span> automation provides several advantages:</p> <ul> <li>Zero-downtime deployments with automatic rollback capability</li> <li>Portfolio <span class="connection">integration</span> maintains consistent branding</li> <li>Version control for both game and <span class="success">deployment</span> configurations</li> <li><span class="success">Scalable</span> <span class="structure">architecture</span> for multiple game projects</li> </ul> <h3><span class="success">Performance</span> vs Features Balance</h3> <p>Every feature required careful <span class="success">performance</span> consideration:</p> <ul> <li>Visual effects balanced against frame rate impact</li> <li>Memory usage <span class="success">optimization</span> for extended play sessions</li> <li><span class="connection">Network</span> loading <span class="success">optimization</span> for various <span class="connection">connection</span> speeds</li> <li>Battery life considerations for mobile gameplay</li> </ul> <h2>Future Development Roadmap</h2> <p>Based on the current implementation foundation:</p> <p><strong>Audio <span class="structure">System</span></strong>: Cyberpunk ambient soundtrack and reactive sound effects
 <strong>Enhanced Visual Effects</strong>: Particle systems and background animations<br><strong>Mobile Controls</strong>: Touch-optimized input handling for mobile devices
 <strong>Additional Game Modes</strong>: Variations on core mechanics with unique challenges
-<strong>Multiplayer Features</strong>: <span class="attention">Real-time</span> competitive gameplay using <span class="connection">WebSocket</span> connections</p> <h2>Conclusion</h2> <p>Building <span class="meta">Void</span> Blocks demonstrated both the allure and the pitfalls of modern web game development. The project began with LittleJS engine <span class="connection">integration</span> and complex <span class="process">build</span> toolchains, but ultimately found <span class="success">success</span> through radical simplification to a single-file vanilla <span class="process">JavaScript</span> implementation.</p> <p>This evolution illustrates a crucial lesson in software engineering: <strong>the best solution is often the simplest one that meets your requirements</strong>. The final vanilla <span class="process">JavaScript</span> version delivers the same cyberpunk Tetris gameplay with better reliability, easier <span class="success">deployment</span>, and zero external dependencies.</p> <p><strong>Key Takeaways from This Project</strong>:</p> <ul> <li><strong>Technology Selection</strong>: Evaluate tools based on actual project needs, not feature lists</li> <li><strong>Dependency Management</strong>: Every external dependency introduces potential failure points  </li> <li><strong><span class="success">Deployment</span> <span class="meta">Complexity</span></strong>: Consider the entire <span class="connection">pipeline</span> when choosing technologies</li> <li><strong>Simplicity as a Feature</strong>: Vanilla web technologies are powerful and <span class="success">reliable</span></li> </ul> <p>The automated <span class="success">deployment</span> <span class="connection">pipeline</span> proved invaluable throughout both implementations, enabling rapid iteration and seamless portfolio <span class="connection">integration</span>. The detailed commit history captures the complete evolution from complex to simple, serving as documentation for future projects.</p> <p><strong>Final Implementation Metrics</strong>:</p> <ul> <li><strong>Single <span class="process">HTML</span> file</strong>: 862 lines, ~45KB</li> <li><strong>Zero dependencies</strong>: Completely self-contained</li> <li><strong>Universal compatibility</strong>: Runs in any modern browser</li> <li><strong>Instant loading</strong>: No external requests or <span class="process">build</span> <span class="meta">complexity</span></li> <li><strong>Full feature parity</strong>: All cyberpunk mechanics preserved</li> </ul> <p>The complete source <span class="process">code</span> evolution, <span class="success">deployment</span> configuration, and development history are available at <a href="https://github.com/jeffreyjose07/void-blocks-game"><span class="meta">void</span>-blocks-game</a> on <span class="success">GitHub</span>. The <span class="success">live</span> game is playable at <a href="https://jeffreyjose07.is-a.dev/games/void-blocks/">jeffreyjose07.is-a.dev/games/<span class="meta">void</span>-blocks/</a> - try it to experience the smooth, dependency-free gameplay that vanilla <span class="process">JavaScript</span> delivers.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-gamedev" class="tag neutral" data-tag="gamedev">gamedev</a>, <a href="/blog#tag-vanilla-js" class="tag neutral" data-tag="vanilla-js">vanilla-js</a>, <a href="/blog#tag-tetris" class="tag neutral" data-tag="tetris">tetris</a>, <a href="/blog#tag-cyberpunk" class="tag neutral" data-tag="cyberpunk">cyberpunk</a>, <a href="/blog#tag-single-file" class="tag neutral" data-tag="single-file">single-file</a>, <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a> </div> <div id="view-count" style="font-family: var(--font-mono); font-size: 0.75rem;">
-👀 views loading...
-</div> </footer> <div class="author-card"> <img src="/jeffrey-profile.jpg" alt="Jeffrey Jose" class="author-avatar" width="56" height="56" loading="lazy"> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/deploying-a-chat-platform-to-render"> <span class="nav-label">← previous</span> <span class="nav-title">Deploying a Chat Platform to Render</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/debugging-cross-repository-workflows"> <span class="nav-label">next →</span> <span class="nav-title">Debugging Cross-Repository GitHub Actions: A Void Blocks Tale</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+<strong>Multiplayer Features</strong>: <span class="attention">Real-time</span> competitive gameplay using <span class="connection">WebSocket</span> connections</p> <h2>Conclusion</h2> <p>Building <span class="meta">Void</span> Blocks demonstrated both the allure and the pitfalls of modern web game development. The project began with LittleJS engine <span class="connection">integration</span> and complex <span class="process">build</span> toolchains, but ultimately found <span class="success">success</span> through radical simplification to a single-file vanilla <span class="process">JavaScript</span> implementation.</p> <p>This evolution illustrates a crucial lesson in software engineering: <strong>the best solution is often the simplest one that meets your requirements</strong>. The final vanilla <span class="process">JavaScript</span> version delivers the same cyberpunk Tetris gameplay with better reliability, easier <span class="success">deployment</span>, and zero external dependencies.</p> <p><strong>Key Takeaways from This Project</strong>:</p> <ul> <li><strong>Technology Selection</strong>: Evaluate tools based on actual project needs, not feature lists</li> <li><strong>Dependency Management</strong>: Every external dependency introduces potential failure points  </li> <li><strong><span class="success">Deployment</span> <span class="meta">Complexity</span></strong>: Consider the entire <span class="connection">pipeline</span> when choosing technologies</li> <li><strong>Simplicity as a Feature</strong>: Vanilla web technologies are powerful and <span class="success">reliable</span></li> </ul> <p>The automated <span class="success">deployment</span> <span class="connection">pipeline</span> proved invaluable throughout both implementations, enabling rapid iteration and seamless portfolio <span class="connection">integration</span>. The detailed commit history captures the complete evolution from complex to simple, serving as documentation for future projects.</p> <p><strong>Final Implementation Metrics</strong>:</p> <ul> <li><strong>Single <span class="process">HTML</span> file</strong>: 862 lines, ~45KB</li> <li><strong>Zero dependencies</strong>: Completely self-contained</li> <li><strong>Universal compatibility</strong>: Runs in any modern browser</li> <li><strong>Instant loading</strong>: No external requests or <span class="process">build</span> <span class="meta">complexity</span></li> <li><strong>Full feature parity</strong>: All cyberpunk mechanics preserved</li> </ul> <p>The complete source <span class="process">code</span> evolution, <span class="success">deployment</span> configuration, and development history are available at <a href="https://github.com/jeffreyjose07/void-blocks-game"><span class="meta">void</span>-blocks-game</a> on <span class="success">GitHub</span>. The <span class="success">live</span> game is playable at <a href="https://jeffreyjose07.is-a.dev/games/void-blocks/">jeffreyjose07.is-a.dev/games/<span class="meta">void</span>-blocks/</a> - try it to experience the smooth, dependency-free gameplay that vanilla <span class="process">JavaScript</span> delivers.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-gamedev" class="tag neutral" data-tag="gamedev">gamedev</a>, <a href="/blog#tag-vanilla-js" class="tag neutral" data-tag="vanilla-js">vanilla-js</a>, <a href="/blog#tag-tetris" class="tag neutral" data-tag="tetris">tetris</a>, <a href="/blog#tag-cyberpunk" class="tag neutral" data-tag="cyberpunk">cyberpunk</a>, <a href="/blog#tag-single-file" class="tag neutral" data-tag="single-file">single-file</a>, <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/deploying-a-chat-platform-to-render"> <span class="nav-label">← previous</span> <span class="nav-title">Deploying a Chat Platform to Render</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/debugging-cross-repository-workflows"> <span class="nav-label">next →</span> <span class="nav-title">Debugging Cross-Repository GitHub Actions: A Void Blocks Tale</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
 style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
@@ -885,15 +937,19 @@ loadViewCount();
 function loadViewCount() {
 const path = window.location.pathname;
 const viewCountElement = document.getElementById('view-count');
+if (!viewCountElement) return;
 fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
-.then(response => response.json())
-.then(data => {
-const count = data.count || '0';
-viewCountElement.innerHTML = `👀 ${count} views`;
-viewCountElement.style.color = 'var(--primary-glow)';
+.then(response => {
+if (!response.ok) throw new Error('View count unavailable');
+return response.json();
 })
-.catch(error => {
-console.warn('Could not load view count:', error);
+.then(data => {
+const count = data.count ?? 0;
+viewCountElement.textContent = `${count.toLocaleString()} views`;
+viewCountElement.hidden = false;
+})
+.catch(() => {
+viewCountElement.hidden = true;
 });
 }
 /* Inline scripts injected from frontmatter */

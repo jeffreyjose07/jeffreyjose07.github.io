@@ -1,26 +1,27 @@
 <!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Debugging Cross-Repository GitHub Actions: A Void Blocks Tale - Jeffrey Jose</title> <meta name="description" content="A deep dive into the complex world of cross-repository workflows, race conditions, and permission errors I encountered while deploying my Void Blocks game." /> <meta property="og:title" content="Debugging Cross-Repository GitHub Actions: A Void Blocks Tale"> <meta property="og:description" content="A deep dive into the complex world of cross-repository workflows, race conditions, and permission errors I encountered while deploying my Void Blocks game."> <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/debugging-cross-repository-workflows"> <meta property="og:type" content="article"> <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/debugging-cross-repository-workflows.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Debugging Cross-Repository GitHub Actions: A Void Blocks Tale"> <meta name="twitter:description" content="A deep dive into the complex world of cross-repository workflows, race conditions, and permission errors I encountered while deploying my Void Blocks game."> <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/debugging-cross-repository-workflows.png"> <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" /> <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" /> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link
-href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@500;600;700;800&display=swap"
 rel="stylesheet"> <style>
 :root {
-/* Premium Dark Theme Variables */
 --background: #09090b;
---foreground: #f8fafc;
---primary: #7c3aed;
---primary-foreground: #f8fafc;
---primary-glow: #a78bfa;
---secondary: #1e1e24;
---secondary-foreground: #f8fafc;
---muted: #1e1e24;
---muted-foreground: #94a3b8;
---accent: #1e1e24;
---accent-foreground: #f8fafc;
+--foreground: #fafafa;
+--primary: #1cc9a0;
+--primary-foreground: #fafafa;
+--primary-glow: #5eead4;
+--secondary: #18181b;
+--secondary-foreground: #fafafa;
+--muted: #18181b;
+--muted-foreground: #a1a1aa;
+--accent: #18181b;
+--accent-foreground: #fafafa;
 --border: #27272a;
 --input: #27272a;
---font-sans: 'Inter', sans-serif;
---font-heading: 'Outfit', sans-serif;
---gradient-hero: linear-gradient(135deg, #09090b, #1e1b4b);
+--font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+--font-heading: 'Syne', system-ui, sans-serif;
+--font-mono: ui-monospace, 'Menlo', monospace;
+--gradient-hero: linear-gradient(135deg, #09090b, #0c1f1a);
 --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
---gradient-accent: linear-gradient(135deg, #7c3aed, #c084fc);
+--gradient-accent: linear-gradient(135deg, #1cc9a0, #22d3ee);
+--radius: 0.75rem;
 }
 * {
 margin: 0;
@@ -47,13 +48,13 @@ font-family: var(--font-heading);
 font-weight: 700;
 line-height: 1.2;
 margin-bottom: 1rem;
+letter-spacing: -0.02em;
 }
 a {
 color: inherit;
 text-decoration: none;
 transition: color 0.2s ease;
 }
-/* Utilities */
 .container {
 width: 100%;
 max-width: 1200px;
@@ -61,42 +62,43 @@ margin: 0 auto;
 padding: 0 1.5rem;
 }
 .glass {
-background: rgba(255, 255, 255, 0.05);
+background: rgba(255, 255, 255, 0.04);
 backdrop-filter: blur(16px);
 -webkit-backdrop-filter: blur(16px);
-border: 1px solid rgba(255, 255, 255, 0.1);
+border: 1px solid rgba(255, 255, 255, 0.08);
 }
 .glass-card {
 background: rgba(255, 255, 255, 0.03);
 backdrop-filter: blur(12px);
 -webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.05);
-border-radius: 1rem;
-transition: all 0.3s ease;
+border: 1px solid rgba(255, 255, 255, 0.06);
+border-radius: var(--radius);
+transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 .glass-card:hover {
-border-color: rgba(124, 58, 237, 0.3);
+border-color: rgba(28, 201, 160, 0.35);
 transform: translateY(-2px);
-box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+box-shadow: 0 12px 40px -16px rgba(0, 0, 0, 0.6);
 }
 .text-gradient-premium {
-background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
+color: transparent;
+display: inline-block;
 }
 .bg-mesh {
 background-color: var(--background);
 background-image:
-radial-gradient(at 40% 20%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
-radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-radial-gradient(at 0% 50%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
+radial-gradient(at 40% 20%, rgba(28, 201, 160, 0.09) 0px, transparent 50%),
+radial-gradient(at 80% 0%, rgba(34, 211, 238, 0.07) 0px, transparent 50%),
+radial-gradient(at 0% 50%, rgba(28, 201, 160, 0.06) 0px, transparent 50%);
 }
-/* Animations */
 @keyframes fadeInUp {
 from {
 opacity: 0;
-transform: translateY(20px);
+transform: translateY(16px);
 }
 to {
 opacity: 1;
@@ -104,21 +106,31 @@ transform: translateY(0);
 }
 }
 .animate-fade-in-up {
-animation: fadeInUp 0.8s ease-out forwards;
+animation: fadeInUp 0.6s ease-out forwards;
 }
-/* Scrollbar */
 ::-webkit-scrollbar {
-width: 10px;
+width: 8px;
 }
 ::-webkit-scrollbar-track {
 background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
 background: #3f3f46;
-border-radius: 5px;
+border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
 background: #52525b;
+}
+.sr-only {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+margin: -1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border: 0;
 }
 </style> <style>
 body {
@@ -151,18 +163,19 @@ font-size: 0.875rem;
 color: var(--muted-foreground);
 }
 .episode-badge {
-background: rgba(124, 58, 237, 0.1);
-color: var(--primary);
+background: rgba(28, 201, 160, 0.12);
+color: var(--primary-glow);
 padding: 0.25rem 0.75rem;
 border-radius: 9999px;
 font-family: var(--font-mono);
 font-weight: 600;
+font-size: 0.8rem;
 }
 .post-title {
-font-size: 2.5rem;
-line-height: 1.2;
+font-size: clamp(1.75rem, 4vw, 2.5rem);
+line-height: 1.15;
 margin-bottom: 1.5rem;
-background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
@@ -199,7 +212,7 @@ margin-bottom: 0.5rem;
 .post-content a {
 color: var(--primary-glow);
 text-decoration: none;
-border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+border-bottom: 1px solid rgba(28, 201, 160, 0.35);
 transition: all 0.2s;
 }
 .post-content a:hover {
@@ -247,12 +260,27 @@ padding: 0;
 color: #e5e7eb;
 font-size: 0.9rem;
 }
-.post-content img {
+.post-figure {
+margin: 2rem 0;
+border-radius: var(--radius);
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.08);
+background: rgba(255, 255, 255, 0.02);
+}
+.post-content img,
+.post-figure img {
+display: block;
+width: 100%;
 max-width: 100%;
 height: auto;
-border-radius: 0.5rem;
-margin: 2rem 0;
-box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+margin: 0;
+border-radius: 0;
+box-shadow: none;
+}
+.post-figure img {
+aspect-ratio: auto;
+object-fit: contain;
+background: #0a0a0c;
 }
 .post-footer {
 margin-top: 4rem;
@@ -282,9 +310,9 @@ text-decoration: none;
 transition: all 0.2s;
 }
 .tag-pill:hover {
-background: rgba(124, 58, 237, 0.1);
+background: rgba(28, 201, 160, 0.1);
 color: var(--primary-glow);
-border-color: rgba(124, 58, 237, 0.2);
+border-color: rgba(28, 201, 160, 0.25);
 }
 /* Author card */
 .author-card {
@@ -297,13 +325,39 @@ background: rgba(255, 255, 255, 0.03);
 border: 1px solid rgba(255, 255, 255, 0.08);
 border-radius: 0.75rem;
 }
+.author-avatar-wrap {
+position: relative;
+flex-shrink: 0;
+width: 56px;
+height: 56px;
+}
 .author-avatar {
 width: 56px;
 height: 56px;
 border-radius: 50%;
 object-fit: cover;
-border: 2px solid rgba(124, 58, 237, 0.3);
-flex-shrink: 0;
+border: 2px solid rgba(28, 201, 160, 0.4);
+display: block;
+}
+.author-avatar-fallback {
+display: none;
+width: 56px;
+height: 56px;
+border-radius: 50%;
+align-items: center;
+justify-content: center;
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.1rem;
+color: var(--primary-foreground);
+background: linear-gradient(135deg, #1cc9a0, #22d3ee);
+border: 2px solid rgba(28, 201, 160, 0.4);
+}
+.author-avatar-wrap.is-fallback .author-avatar {
+display: none;
+}
+.author-avatar-wrap.is-fallback .author-avatar-fallback {
+display: flex;
 }
 .author-info {
 display: flex;
@@ -443,7 +497,7 @@ align-items: center;
 gap: 0.5rem;
 }
 .text-gradient-premium {
-background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
@@ -740,9 +794,7 @@ git config --local user.name &quot;GitHub Action&quot;
 git add -A
 git commit -m &quot;Rebuild portfolio after game update: ${{ github.event.client_payload.game }}&quot; || echo &quot;No changes to commit&quot;
 git push
-</code></pre> <h2>lessons learned</h2> <p>This experience taught me a lot about the intricacies of <span class="success">GitHub</span> Actions:</p> <ul> <li><strong>Race conditions are real:</strong> When dealing with multiple workflows that interact with each other, it&#39;s important to consider the timing of events.</li> <li><strong>Permissions are key:</strong> Always check the permissions of the <code>GITHUB_TOKEN</code> in your workflows, especially when dealing with <code>repository_dispatch</code> events.</li> <li><strong>Lock files are important:</strong> Always commit your lock files to ensure reproducible builds.</li> <li><strong>Iterate and learn:</strong> Don&#39;t be afraid to try different solutions and learn from your mistakes.</li> </ul> <p>In the end, I was able to <span class="process">build</span> a fully automated <span class="success">deployment</span> <span class="connection">pipeline</span> that is both <span class="success">reliable</span> and <span class="success">efficient</span>. The journey was challenging, but the result was well worth the effort.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a>, <a href="/blog#tag-automation" class="tag success" data-tag="automation">automation</a>, <a href="/blog#tag-debugging" class="tag neutral" data-tag="debugging">debugging</a>, <a href="/blog#tag-devops" class="tag neutral" data-tag="devops">devops</a>, <a href="/blog#tag-ci-cd" class="tag neutral" data-tag="ci-cd">ci-cd</a> </div> <div id="view-count" style="font-family: var(--font-mono); font-size: 0.75rem;">
-👀 views loading...
-</div> </footer> <div class="author-card"> <img src="/jeffrey-profile.jpg" alt="Jeffrey Jose" class="author-avatar" width="56" height="56" loading="lazy"> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/building-void-blocks-a-cyberpunk-tetris-game"> <span class="nav-label">← previous</span> <span class="nav-title">Building Void Blocks: A Cyberpunk Tetris Game</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/implementing-privacy-first-analytics-from-research"> <span class="nav-label">next →</span> <span class="nav-title">Implementing Privacy-First Analytics: From Research to GoatCounter</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+</code></pre> <h2>lessons learned</h2> <p>This experience taught me a lot about the intricacies of <span class="success">GitHub</span> Actions:</p> <ul> <li><strong>Race conditions are real:</strong> When dealing with multiple workflows that interact with each other, it&#39;s important to consider the timing of events.</li> <li><strong>Permissions are key:</strong> Always check the permissions of the <code>GITHUB_TOKEN</code> in your workflows, especially when dealing with <code>repository_dispatch</code> events.</li> <li><strong>Lock files are important:</strong> Always commit your lock files to ensure reproducible builds.</li> <li><strong>Iterate and learn:</strong> Don&#39;t be afraid to try different solutions and learn from your mistakes.</li> </ul> <p>In the end, I was able to <span class="process">build</span> a fully automated <span class="success">deployment</span> <span class="connection">pipeline</span> that is both <span class="success">reliable</span> and <span class="success">efficient</span>. The journey was challenging, but the result was well worth the effort.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a>, <a href="/blog#tag-automation" class="tag success" data-tag="automation">automation</a>, <a href="/blog#tag-debugging" class="tag neutral" data-tag="debugging">debugging</a>, <a href="/blog#tag-devops" class="tag neutral" data-tag="devops">devops</a>, <a href="/blog#tag-ci-cd" class="tag neutral" data-tag="ci-cd">ci-cd</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/building-void-blocks-a-cyberpunk-tetris-game"> <span class="nav-label">← previous</span> <span class="nav-title">Building Void Blocks: A Cyberpunk Tetris Game</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/implementing-privacy-first-analytics-from-research"> <span class="nav-label">next →</span> <span class="nav-title">Implementing Privacy-First Analytics: From Research to GoatCounter</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
 style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
@@ -772,15 +824,19 @@ loadViewCount();
 function loadViewCount() {
 const path = window.location.pathname;
 const viewCountElement = document.getElementById('view-count');
+if (!viewCountElement) return;
 fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
-.then(response => response.json())
-.then(data => {
-const count = data.count || '0';
-viewCountElement.innerHTML = `👀 ${count} views`;
-viewCountElement.style.color = 'var(--primary-glow)';
+.then(response => {
+if (!response.ok) throw new Error('View count unavailable');
+return response.json();
 })
-.catch(error => {
-console.warn('Could not load view count:', error);
+.then(data => {
+const count = data.count ?? 0;
+viewCountElement.textContent = `${count.toLocaleString()} views`;
+viewCountElement.hidden = false;
+})
+.catch(() => {
+viewCountElement.hidden = true;
 });
 }
 /* Inline scripts injected from frontmatter */
