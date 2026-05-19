@@ -13,8 +13,8 @@ const Hero = () => {
 
       {/* Floating Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/15 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 text-center relative z-10 max-w-5xl">
@@ -54,7 +54,7 @@ const Hero = () => {
 
           <div className="mb-10">
             <p className="text-xl sm:text-2xl md:text-3xl font-light text-muted-foreground">
-              Code craftsman • Tech explorer • Minimalist
+              Senior Backend Engineer • Distributed Systems • 6 yrs @ Jio
             </p>
           </div>
 

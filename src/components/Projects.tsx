@@ -2,19 +2,26 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github } from "lucide-react";
 import { featuredProjects, otherProjects } from "@/data/projects";
+import { useInView } from "@/hooks/use-in-view";
 
 const Projects = () => {
+  const { ref: headingRef, isInView: headingVisible } = useInView();
+  const { ref: otherRef, isInView: otherVisible } = useInView();
+
   return (
     <section id="projects" className="py-24 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -z-10"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-3xl -z-10"></div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="text-center mb-20 animate-fade-in-up">
+        <div
+          ref={headingRef as React.RefObject<HTMLDivElement>}
+          className={`text-center mb-20 transition-all duration-700 ${headingVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+        >
           <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6">
             Featured <span className="text-gradient-premium">Projects</span>
           </h2>
-          <div className="w-24 h-1.5 bg-gradient-to-r from-primary to-accent rounded-full mx-auto mb-8"></div>
+          <div className="w-24 h-1.5 bg-gradient-to-r from-primary to-cyan-400 rounded-full mx-auto mb-8"></div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Showcasing innovative solutions and technical implementations across various domains
           </p>
@@ -137,9 +144,12 @@ const Projects = () => {
         </div>
 
         {/* Other projects — compact grid */}
-        <div className="max-w-6xl mx-auto">
-          <h3 className="text-2xl font-heading font-bold mb-8 text-center text-muted-foreground">
-            Academic & Research Projects
+        <div
+          ref={otherRef as React.RefObject<HTMLDivElement>}
+          className={`max-w-6xl mx-auto transition-all duration-700 ${otherVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+        >
+          <h3 className="text-2xl font-heading font-bold mb-8 text-center">
+            Academic & <span className="text-gradient-premium">Research</span> Projects
           </h3>
           <div className="grid md:grid-cols-3 gap-6">
             {otherProjects.map((project, index) => (

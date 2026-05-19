@@ -55,8 +55,11 @@ const Footer = () => {
           </button>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-white/5 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Jeffrey Jose. All rights reserved.
+        <div className="mt-8 pt-6 border-t border-white/5 text-center text-sm text-muted-foreground space-y-1">
+          <p className="font-mono text-xs text-primary/60 tracking-wider">
+            &gt; crafted with care, deployed with confidence
+          </p>
+          <p>&copy; {new Date().getFullYear()} Jeffrey Jose. All rights reserved.</p>
         </div>
       </div>
     </footer>

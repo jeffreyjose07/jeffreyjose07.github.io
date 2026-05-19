@@ -31,10 +31,10 @@ html {
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    /* Primary - Electric Violet */
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 40% 98%;
-    --primary-glow: 263.4 70% 65%;
+    /* Primary - Emerald Teal */
+    --primary: 162 75% 38%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 162 75% 52%;
 
     /* Secondary - Cool Gray */
     --secondary: 240 4.8% 95.9%;
@@ -53,12 +53,12 @@ html {
 
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 263.4 70% 50.4%;
+    --ring: 162 75% 38%;
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    --gradient-hero: linear-gradient(135deg, #f0fdf9 0%, #e6f7f4 100%);
     --gradient-card: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.01));
-    --gradient-accent: linear-gradient(135deg, hsl(263.4 70% 50.4%), hsl(280 65% 60%));
+    --gradient-accent: linear-gradient(135deg, hsl(162 75% 38%), hsl(188 85% 42%));
 
     --radius: 0.75rem;
 
@@ -83,9 +83,9 @@ html {
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 40% 98%;
-    --primary-glow: 263.4 70% 65%;
+    --primary: 162 75% 46%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 162 75% 60%;
 
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
@@ -101,11 +101,11 @@ html {
 
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --ring: 162 75% 46%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(240 10% 3.9%), hsl(263.4 70% 10%));
+    --gradient-hero: linear-gradient(135deg, hsl(240 10% 3.9%), hsl(162 50% 8%));
     --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-    --gradient-accent: linear-gradient(135deg, hsl(263.4 70% 50.4%), hsl(280 65% 60%));
+    --gradient-accent: linear-gradient(135deg, hsl(162 75% 46%), hsl(188 85% 50%));
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -161,7 +161,7 @@ html {
 /* Premium Utilities */
 @layer utilities {
   .text-gradient-premium {
-    background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+    background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -173,7 +173,7 @@ html {
 
   /* Dark mode override for gradient text */
   .dark .text-gradient-premium {
-    background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+    background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -181,7 +181,7 @@ html {
 
   /* Light mode gradient text */
   :root:not(.dark) .text-gradient-premium {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #0d9488 0%, #0891b2 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -203,7 +203,7 @@ html {
     content: '';
     position: absolute;
     inset: -1px;
-    background: linear-gradient(45deg, transparent, rgba(124, 58, 237, 0.3), transparent);
+    background: linear-gradient(45deg, transparent, rgba(20, 184, 166, 0.3), transparent);
     z-index: -1;
     border-radius: inherit;
     opacity: 0;
