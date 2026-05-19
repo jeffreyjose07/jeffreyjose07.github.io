@@ -1,5 +1,23 @@
 [
   {
+    "url": "/blog/redesigning-the-portfolio-teal-fonts-and-timelines",
+    "title": "Redesigning the Portfolio: Teal, Fonts, and Timelines",
+    "episode": "026",
+    "date": "2026-05-19",
+    "tags": [
+      "design",
+      "frontend",
+      "portfolio",
+      "ui-design",
+      "animation",
+      "css"
+    ],
+    "description": "A deep audit of the portfolio revealed broken animations, a split design system, and the violet monoculture. Here's how I fixed it.",
+    "readingTime": 6,
+    "wordCount": 950,
+    "slug": "redesigning-the-portfolio-teal-fonts-and-timelines"
+  },
+  {
     "url": "/blog/optimizing-performance-and-pagination-a-deep-dive",
     "title": "Optimizing Performance and Pagination: A Deep Dive into Web Vitals",
     "episode": "025",
