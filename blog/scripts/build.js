@@ -150,11 +150,31 @@ renderer.text = function (text) {
     return colorizer.colorizeText(text);
 };
 
-// Add loading="lazy" to inline images
+// Wrap inline images for consistent layout and lazy loading
 renderer.image = function (href, title, text) {
     const titleAttr = title ? ` title="${title}"` : '';
-    return `<img src="${href}" alt="${text || ''}" loading="lazy"${titleAttr}>`;
+    const alt = (text || '').replace(/"/g, '&quot;');
+    return `<figure class="post-figure"><img src="${href}" alt="${alt}" loading="lazy" decoding="async"${titleAttr}></figure>`;
 };
+
+// Avoid invalid <p><figure> nesting from marked
+const originalParagraph = renderer.paragraph.bind(renderer);
+renderer.paragraph = function (text) {
+    if (text.trim().startsWith('<figure class="post-figure">')) {
+        return `${text}\n`;
+    }
+    return originalParagraph(text);
+};
+
+// Sync profile photo into public/ for blog author cards
+function syncProfileImage() {
+    const profileSrc = path.join(__dirname, '../../src/assets/jeffrey-profile.jpg');
+    const profileDest = path.join(__dirname, '../../public/jeffrey-profile.jpg');
+    if (fs.existsSync(profileSrc)) {
+        fs.copyFileSync(profileSrc, profileDest);
+        console.log('📷 Synced profile image to public/jeffrey-profile.jpg');
+    }
+}
 
 // Configure marked options
 marked.setOptions({
@@ -640,6 +660,7 @@ ${postsHtml}
 // Main build function
 async function build() {
     console.log('🚀 Building blog with advanced semantic coloring...');
+    syncProfileImage();
 
     // Get all markdown files (excluding template)
     const files = fs.readdirSync(POSTS_DIR)

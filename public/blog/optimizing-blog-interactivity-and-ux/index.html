@@ -1,26 +1,27 @@
 <!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Optimizing Blog Interactivity and UX - Jeffrey Jose</title> <meta name="description" content="A deep dive into recent improvements: fixing the blank screen issue, implementing collapsible tag filters, and debugging critical interactivity bugs." /> <meta property="og:title" content="Optimizing Blog Interactivity and UX"> <meta property="og:description" content="A deep dive into recent improvements: fixing the blank screen issue, implementing collapsible tag filters, and debugging critical interactivity bugs."> <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/optimizing-blog-interactivity-and-ux"> <meta property="og:type" content="article"> <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/optimizing-blog-interactivity-and-ux.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Optimizing Blog Interactivity and UX"> <meta name="twitter:description" content="A deep dive into recent improvements: fixing the blank screen issue, implementing collapsible tag filters, and debugging critical interactivity bugs."> <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/optimizing-blog-interactivity-and-ux.png"> <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" /> <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" /> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link
-href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@500;600;700;800&display=swap"
 rel="stylesheet"> <style>
 :root {
-/* Premium Dark Theme Variables */
 --background: #09090b;
---foreground: #f8fafc;
---primary: #7c3aed;
---primary-foreground: #f8fafc;
---primary-glow: #a78bfa;
---secondary: #1e1e24;
---secondary-foreground: #f8fafc;
---muted: #1e1e24;
---muted-foreground: #94a3b8;
---accent: #1e1e24;
---accent-foreground: #f8fafc;
+--foreground: #fafafa;
+--primary: #1cc9a0;
+--primary-foreground: #fafafa;
+--primary-glow: #5eead4;
+--secondary: #18181b;
+--secondary-foreground: #fafafa;
+--muted: #18181b;
+--muted-foreground: #a1a1aa;
+--accent: #18181b;
+--accent-foreground: #fafafa;
 --border: #27272a;
 --input: #27272a;
---font-sans: 'Inter', sans-serif;
---font-heading: 'Outfit', sans-serif;
---gradient-hero: linear-gradient(135deg, #09090b, #1e1b4b);
+--font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+--font-heading: 'Syne', system-ui, sans-serif;
+--font-mono: ui-monospace, 'Menlo', monospace;
+--gradient-hero: linear-gradient(135deg, #09090b, #0c1f1a);
 --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
---gradient-accent: linear-gradient(135deg, #7c3aed, #c084fc);
+--gradient-accent: linear-gradient(135deg, #1cc9a0, #22d3ee);
+--radius: 0.75rem;
 }
 * {
 margin: 0;
@@ -47,13 +48,13 @@ font-family: var(--font-heading);
 font-weight: 700;
 line-height: 1.2;
 margin-bottom: 1rem;
+letter-spacing: -0.02em;
 }
 a {
 color: inherit;
 text-decoration: none;
 transition: color 0.2s ease;
 }
-/* Utilities */
 .container {
 width: 100%;
 max-width: 1200px;
@@ -61,42 +62,43 @@ margin: 0 auto;
 padding: 0 1.5rem;
 }
 .glass {
-background: rgba(255, 255, 255, 0.05);
+background: rgba(255, 255, 255, 0.04);
 backdrop-filter: blur(16px);
 -webkit-backdrop-filter: blur(16px);
-border: 1px solid rgba(255, 255, 255, 0.1);
+border: 1px solid rgba(255, 255, 255, 0.08);
 }
 .glass-card {
 background: rgba(255, 255, 255, 0.03);
 backdrop-filter: blur(12px);
 -webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.05);
-border-radius: 1rem;
-transition: all 0.3s ease;
+border: 1px solid rgba(255, 255, 255, 0.06);
+border-radius: var(--radius);
+transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 .glass-card:hover {
-border-color: rgba(124, 58, 237, 0.3);
+border-color: rgba(28, 201, 160, 0.35);
 transform: translateY(-2px);
-box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+box-shadow: 0 12px 40px -16px rgba(0, 0, 0, 0.6);
 }
 .text-gradient-premium {
-background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
+color: transparent;
+display: inline-block;
 }
 .bg-mesh {
 background-color: var(--background);
 background-image:
-radial-gradient(at 40% 20%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
-radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-radial-gradient(at 0% 50%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
+radial-gradient(at 40% 20%, rgba(28, 201, 160, 0.09) 0px, transparent 50%),
+radial-gradient(at 80% 0%, rgba(34, 211, 238, 0.07) 0px, transparent 50%),
+radial-gradient(at 0% 50%, rgba(28, 201, 160, 0.06) 0px, transparent 50%);
 }
-/* Animations */
 @keyframes fadeInUp {
 from {
 opacity: 0;
-transform: translateY(20px);
+transform: translateY(16px);
 }
 to {
 opacity: 1;
@@ -104,21 +106,31 @@ transform: translateY(0);
 }
 }
 .animate-fade-in-up {
-animation: fadeInUp 0.8s ease-out forwards;
+animation: fadeInUp 0.6s ease-out forwards;
 }
-/* Scrollbar */
 ::-webkit-scrollbar {
-width: 10px;
+width: 8px;
 }
 ::-webkit-scrollbar-track {
 background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
 background: #3f3f46;
-border-radius: 5px;
+border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
 background: #52525b;
+}
+.sr-only {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+margin: -1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border: 0;
 }
 </style> <style>
 body {
@@ -151,18 +163,19 @@ font-size: 0.875rem;
 color: var(--muted-foreground);
 }
 .episode-badge {
-background: rgba(124, 58, 237, 0.1);
-color: var(--primary);
+background: rgba(28, 201, 160, 0.12);
+color: var(--primary-glow);
 padding: 0.25rem 0.75rem;
 border-radius: 9999px;
 font-family: var(--font-mono);
 font-weight: 600;
+font-size: 0.8rem;
 }
 .post-title {
-font-size: 2.5rem;
-line-height: 1.2;
+font-size: clamp(1.75rem, 4vw, 2.5rem);
+line-height: 1.15;
 margin-bottom: 1.5rem;
-background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
@@ -199,7 +212,7 @@ margin-bottom: 0.5rem;
 .post-content a {
 color: var(--primary-glow);
 text-decoration: none;
-border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+border-bottom: 1px solid rgba(28, 201, 160, 0.35);
 transition: all 0.2s;
 }
 .post-content a:hover {
@@ -247,12 +260,27 @@ padding: 0;
 color: #e5e7eb;
 font-size: 0.9rem;
 }
-.post-content img {
+.post-figure {
+margin: 2rem 0;
+border-radius: var(--radius);
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.08);
+background: rgba(255, 255, 255, 0.02);
+}
+.post-content img,
+.post-figure img {
+display: block;
+width: 100%;
 max-width: 100%;
 height: auto;
-border-radius: 0.5rem;
-margin: 2rem 0;
-box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+margin: 0;
+border-radius: 0;
+box-shadow: none;
+}
+.post-figure img {
+aspect-ratio: auto;
+object-fit: contain;
+background: #0a0a0c;
 }
 .post-footer {
 margin-top: 4rem;
@@ -282,9 +310,9 @@ text-decoration: none;
 transition: all 0.2s;
 }
 .tag-pill:hover {
-background: rgba(124, 58, 237, 0.1);
+background: rgba(28, 201, 160, 0.1);
 color: var(--primary-glow);
-border-color: rgba(124, 58, 237, 0.2);
+border-color: rgba(28, 201, 160, 0.25);
 }
 /* Author card */
 .author-card {
@@ -297,13 +325,39 @@ background: rgba(255, 255, 255, 0.03);
 border: 1px solid rgba(255, 255, 255, 0.08);
 border-radius: 0.75rem;
 }
+.author-avatar-wrap {
+position: relative;
+flex-shrink: 0;
+width: 56px;
+height: 56px;
+}
 .author-avatar {
 width: 56px;
 height: 56px;
 border-radius: 50%;
 object-fit: cover;
-border: 2px solid rgba(124, 58, 237, 0.3);
-flex-shrink: 0;
+border: 2px solid rgba(28, 201, 160, 0.4);
+display: block;
+}
+.author-avatar-fallback {
+display: none;
+width: 56px;
+height: 56px;
+border-radius: 50%;
+align-items: center;
+justify-content: center;
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.1rem;
+color: var(--primary-foreground);
+background: linear-gradient(135deg, #1cc9a0, #22d3ee);
+border: 2px solid rgba(28, 201, 160, 0.4);
+}
+.author-avatar-wrap.is-fallback .author-avatar {
+display: none;
+}
+.author-avatar-wrap.is-fallback .author-avatar-fallback {
+display: flex;
 }
 .author-info {
 display: flex;
@@ -443,7 +497,7 @@ align-items: center;
 gap: 0.5rem;
 }
 .text-gradient-premium {
-background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
@@ -703,9 +757,7 @@ closeSearch();
 }
 });
 </script> <main class="container animate-fade-in-up"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#022</span> <span>30 Nov 2025</span> <span>·</span> <span>3 min read</span> </div> <h1 class="post-title">Optimizing Blog Interactivity and UX</h1> </header> <div class="post-content"> <p>In this update, I&#39;ve focused on refining the <span class="meta">user experience</span> of this blog and resolving some <span class="attention">critical</span> issues that were hindering usability. Here&#39;s a breakdown of the changes and the technical challenges I overcame.</p> <h2>1. Fixing the &quot;Blank Screen&quot; Issue</h2> <p><strong>The Problem:</strong> Users were reporting that the blog content wasn&#39;t loading immediately, often resulting in a blank screen. This was caused by a &quot;loading overlay&quot; and a complex materialization animation that was intended to be a cool effect but ended up blocking content delivery.</p> <p><strong>The Solution:</strong> I decided to prioritize <span class="success">performance</span> and immediate content visibility. I completely removed the <code>loadingOverlay</code> <span class="process">HTML</span> element and its associated <span class="process">CSS</span> animations and <span class="process">JavaScript</span> <span class="process">logic</span>. Now, the blog content renders instantly upon page load, providing a much snappier experience.</p> <h2>2. Collapsible <span class="meta">Tag</span> Filters</h2> <p><strong>The Problem:</strong> As the number of tags grew, the &quot;filter by <span class="meta">tag</span>&quot; section on the homepage became cluttered and took up too much vertical space, pushing the actual blog posts down.</p> <p><strong>The Solution:</strong> I implemented a collapsible <span class="meta">tag</span> filter section.</p> <ul> <li><strong>Default State:</strong> The section is now compact (limited to <code>85px</code> height) by default.</li> <li><strong>Interactivity:</strong> A &quot;show more&quot; button allows users to expand the full list of tags if they wish to explore.</li> <li><strong>Auto-Expansion:</strong> If you navigate to the blog with a specific <span class="meta">tag</span> selected (e.g., via a URL hash), the section automatically expands to show the active <span class="meta">tag</span>.</li> </ul> <h2>3. Debugging <span class="attention">Critical</span> Interactivity Bugs</h2> <p><strong>The Problem:</strong> After implementing the collapsible tags, I encountered a frustrating issue where the &quot;show more&quot; button and the <span class="meta">tag</span> filters themselves were completely non-functional. The browser console was surprisingly quiet, showing no obvious errors.</p> <p><strong>The Debugging Process:</strong></p> <ol> <li><strong>Initial Investigation:</strong> I suspected the event listeners weren&#39;t attaching correctly. I tried moving the <span class="process">script</span> placement and using <code>DOMContentLoaded</code>, but the issue persisted.</li> <li><strong>Deep Dive:</strong> I added extensive <code>console.log</code> statements, but none of them appeared. This suggested the <span class="process">script</span> wasn&#39;t executing <em>at all</em>.</li> <li><strong>The Breakthrough:</strong> I inspected the generated <span class="process">HTML</span> and found a syntax <span class="attention">error</span> in the injected data. The <span class="process">build</span> <span class="process">script</span> was replacing <code>{{ allPostsData }}</code> with the <span class="process">JSON</span> data, but the regex was too strict and didn&#39;t account for the spaces I had added in the template for readability (<code>{{ allPostsData }}</code>). This resulted in invalid <span class="process">JavaScript</span> syntax, crashing the entire <span class="process">script</span> block.</li> </ol> <p><strong>The Fix:</strong> I updated the <span class="process">build</span> <span class="process">script</span>&#39;s regex to be more flexible:</p> <pre><code class="language-javascript">.replace(/{{\s*allPostsData\s*}}/g, JSON.stringify(sortedPosts))
-</code></pre> <p>This simple change ensured the data was injected correctly, restoring all interactivity.</p> <h2>4. Restoring Animations and Sound</h2> <p>With the <span class="attention">critical</span> bugs squashed, I was able to re-enable the retro animations (like the &quot;digital rain&quot; effect) and the subtle sound effects that give this blog its unique cyberpunk <span class="meta">aesthetic</span>.</p> <h2>Conclusion</h2> <p>These updates highlight the importance of balancing <span class="meta">aesthetic</span> features with core usability. While animations are fun, they should never come at the cost of content accessibility. And sometimes, the trickiest bugs are hidden in the simplest places—like a few extra spaces in a template placeholder.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-web-development" class="tag neutral" data-tag="web-development">web-development</a>, <a href="/blog#tag-debugging" class="tag neutral" data-tag="debugging">debugging</a>, <a href="/blog#tag-ux" class="tag neutral" data-tag="ux">ux</a>, <a href="/blog#tag-javascript" class="tag process" data-tag="javascript">javascript</a> </div> <div id="view-count" style="font-family: var(--font-mono); font-size: 0.75rem;">
-👀 views loading...
-</div> </footer> <div class="author-card"> <img src="/jeffrey-profile.jpg" alt="Jeffrey Jose" class="author-avatar" width="56" height="56" loading="lazy"> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/building-truthmeter-ai-measuring-the-real-impact-o"> <span class="nav-label">← previous</span> <span class="nav-title">Building TruthMeter AI: Measuring the Real Impact of AI Coding Assistants</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/refining-navigation-and-branding-a-journey-to-cons"> <span class="nav-label">next →</span> <span class="nav-title">Refining Navigation and Branding: A Journey to Consistency</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+</code></pre> <p>This simple change ensured the data was injected correctly, restoring all interactivity.</p> <h2>4. Restoring Animations and Sound</h2> <p>With the <span class="attention">critical</span> bugs squashed, I was able to re-enable the retro animations (like the &quot;digital rain&quot; effect) and the subtle sound effects that give this blog its unique cyberpunk <span class="meta">aesthetic</span>.</p> <h2>Conclusion</h2> <p>These updates highlight the importance of balancing <span class="meta">aesthetic</span> features with core usability. While animations are fun, they should never come at the cost of content accessibility. And sometimes, the trickiest bugs are hidden in the simplest places—like a few extra spaces in a template placeholder.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-web-development" class="tag neutral" data-tag="web-development">web-development</a>, <a href="/blog#tag-debugging" class="tag neutral" data-tag="debugging">debugging</a>, <a href="/blog#tag-ux" class="tag neutral" data-tag="ux">ux</a>, <a href="/blog#tag-javascript" class="tag process" data-tag="javascript">javascript</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/building-truthmeter-ai-measuring-the-real-impact-o"> <span class="nav-label">← previous</span> <span class="nav-title">Building TruthMeter AI: Measuring the Real Impact of AI Coding Assistants</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/refining-navigation-and-branding-a-journey-to-cons"> <span class="nav-label">next →</span> <span class="nav-title">Refining Navigation and Branding: A Journey to Consistency</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
 style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
@@ -735,15 +787,19 @@ loadViewCount();
 function loadViewCount() {
 const path = window.location.pathname;
 const viewCountElement = document.getElementById('view-count');
+if (!viewCountElement) return;
 fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
-.then(response => response.json())
-.then(data => {
-const count = data.count || '0';
-viewCountElement.innerHTML = `👀 ${count} views`;
-viewCountElement.style.color = 'var(--primary-glow)';
+.then(response => {
+if (!response.ok) throw new Error('View count unavailable');
+return response.json();
 })
-.catch(error => {
-console.warn('Could not load view count:', error);
+.then(data => {
+const count = data.count ?? 0;
+viewCountElement.textContent = `${count.toLocaleString()} views`;
+viewCountElement.hidden = false;
+})
+.catch(() => {
+viewCountElement.hidden = true;
 });
 }
 /* Inline scripts injected from frontmatter */
