@@ -1,5 +1,23 @@
 [
   {
+    "url": "/blog/hardening-the-chat-platform-deps-deep-health-and-c",
+    "title": "Hardening the Chat Platform: Deps, Deep Health, and CI Pings",
+    "episode": "027",
+    "date": "2026-05-27",
+    "tags": [
+      "scalable-chat-platform",
+      "spring-boot",
+      "react",
+      "github-actions",
+      "health",
+      "deployment"
+    ],
+    "description": "Merged five Dependabot fronts, fixed React 19 + Docker builds, opened actuator health for probes, and added caching and rate limits—then moved scheduled pings into the app repo so nothing doubles up.",
+    "readingTime": 8,
+    "wordCount": 1100,
+    "slug": "hardening-the-chat-platform-deps-deep-health-and-c"
+  },
+  {
     "url": "/blog/redesigning-the-portfolio-teal-fonts-and-timelines",
     "title": "Redesigning the Portfolio: Teal, Fonts, and Timelines",
     "episode": "026",
