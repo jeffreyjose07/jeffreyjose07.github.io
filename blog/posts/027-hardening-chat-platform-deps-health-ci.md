@@ -11,7 +11,7 @@ tags:
     "deployment",
   ]
 description:
-  "Merged five Dependabot fronts, fixed React 19 + Docker builds, opened actuator health for probes,
+  "Merged five Dependabot frontend PRs, fixed React 19 + Docker builds, opened actuator health for probes,
   and added caching and rate limits—then moved scheduled pings into the app repo so nothing doubles up."
 readingTime: 8
 wordCount: 1100
