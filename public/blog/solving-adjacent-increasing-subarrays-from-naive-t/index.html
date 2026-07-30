@@ -237,28 +237,74 @@ padding: 0.2em 0.4em;
 border-radius: 0.25rem;
 color: #e2e8f0;
 }
-.post-content pre {
-background: #111827;
-padding: 1.5rem;
+/* Fenced blocks: Shiki (VS Code Dark+) owns token colors via inline styles */
+.post-content .code-block-wrap {
+position: relative;
+margin: 2rem -2rem;
+width: calc(100% + 4rem);
+border-radius: 0.5rem;
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.1);
+background: #1e1e1e;
+}
+.post-content .code-block-wrap .code-lang {
+position: absolute;
+top: 0.55rem;
+right: 0.75rem;
+z-index: 1;
+font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+font-size: 0.65rem;
+letter-spacing: 0.04em;
+text-transform: uppercase;
+color: rgba(212, 212, 212, 0.55);
+pointer-events: none;
+user-select: none;
+}
+.post-content pre,
+.post-content .code-block-wrap pre.shiki {
+background: #1e1e1e;
+padding: 1.5rem 1.25rem 1.25rem;
 border-radius: 0.5rem;
 overflow-x: auto;
 margin: 2rem -2rem;
 border: 1px solid rgba(255, 255, 255, 0.1);
 width: calc(100% + 4rem);
 }
+.post-content .code-block-wrap pre.shiki {
+margin: 0;
+width: 100%;
+border: none;
+border-radius: 0;
+background: transparent !important;
+}
 @media (max-width: 768px) {
-.post-content pre {
+.post-content pre,
+.post-content .code-block-wrap {
 margin-left: -1rem;
 margin-right: -1rem;
 width: calc(100% + 2rem);
 border-radius: 0;
 }
 }
-.post-content pre code {
+.post-content pre code,
+.post-content .code-block-wrap pre.shiki code {
 background: none;
 padding: 0;
-color: #e5e7eb;
 font-size: 0.9rem;
+/* Let Shiki token spans keep their IDE colors (do not force gray) */
+color: inherit;
+}
+.post-content .shiki .line {
+display: inline-block;
+width: 100%;
+min-height: 1.35em;
+}
+.post-content .shiki-fallback {
+margin: 0;
+width: 100%;
+border: none;
+border-radius: 0;
+color: #d4d4d4;
 }
 .post-figure {
 margin: 2rem 0;
@@ -756,88 +802,9 @@ if (e.key === 'Escape' && isSearchOpen) {
 closeSearch();
 }
 });
-</script> <main class="container animate-fade-in-up"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#017</span> <span>26 Jan 2025</span> <span>·</span> <span>10 min read</span> </div> <h1 class="post-title">Solving Adjacent Increasing Subarrays: From Naive to Optimal</h1> </header> <div class="post-content"> <p>When I first encountered this problem on <strong>LeetCode</strong>, I did what most developers do - jumped straight to the naive solution. What followed was a journey through increasingly elegant <strong>optimizations</strong>, each revealing deeper insights about algorithmic thinking. This documents that evolution from a <span class="success">working</span>-but-<span class="attention">slow</span> O(n³) solution to an optimal O(n) <strong><span class="process">algorithm</span></strong>.</p> <h2>the problem</h2> <p>Given an <strong>array</strong> of integers, find the maximum value of <code>k</code> for which there exist two adjacent subarrays of length <code>k</code> each, where both subarrays are strictly increasing.</p> <p><strong>Constraints:</strong></p> <ul> <li>Both subarrays must be strictly increasing</li> <li>The subarrays must be adjacent</li> <li><strong>Array</strong> length can be up to 200,000 elements</li> </ul> <p><strong>Example:</strong></p> <pre><code>nums = [2,5,7,8,9,2,3,4,3,1]
-output = 3
-The subarray [7,8,9] is strictly increasing
-The subarray [2,3,4] is strictly increasing
-They are adjacent, and k=3 is the maximum
-</code></pre> <h2>the naive approach</h2> <p>The straightforward solution: try every possible value of k, check every possible window, and verify if both halves are increasing.</p> <pre><code class="language-cpp">class Solution {
-public:
-bool isStrictlyIncreasing(vector&lt;int&gt;&amp; nums, int start, int length) {
-for (int i = start + 1; i &lt; start + length; i++) {
-if (nums[i] &lt;= nums[i-1]) return false;
-}
-return true;
-}
-int maxIncreasingSubarrays(vector&lt;int&gt;&amp; nums) {
-int n = nums.size();
-for (int k = n/2; k &gt;= 1; k--) {
-for (int i = 0; i &lt;= n - 2*k; i++) {
-if (isStrictlyIncreasing(nums, i, k) &amp;&amp;
-isStrictlyIncreasing(nums, i + k, k)) {
-return k;
-}
-}
-}
-return 0;
-}
-};
-</code></pre> <p><strong>Time <span class="meta">complexity</span>:</strong> O(n² × k) ≈ O(n³)
-<strong>Space <span class="meta">complexity</span>:</strong> O(1)</p> <p>With n = 200,000, this times out immediately.</p> <h2>first <span class="success">optimization</span>: precomputation</h2> <p>The naive solution repeatedly checks if subarrays are increasing. The key insight: <strong>precompute</strong> how long each increasing sequence is.</p> <h3><span class="process">run</span> length array</h3> <pre><code>nums      = [2, 5, 7, 8, 9, 2, 3, 4, 3, 1]
-runLength = [1, 2, 3, 4, 5, 1, 2, 3, 1, 1]
-</code></pre> <p>At index 4, <code>runLength[4] = 5</code> means there&#39;s an increasing sequence of length 5 ending at position 4.</p> <pre><code class="language-cpp">class Solution {
-public:
-int maxIncreasingSubarrays(vector&lt;int&gt;&amp; nums) {
-int n = nums.size();
-vector&lt;int&gt; runLength(n, 1);
-for (int i = 1; i &lt; n; i++) {
-if (nums[i] &gt; nums[i-1]) {
-runLength[i] = runLength[i-1] + 1;
-}
-}
-int maxK = 0;
-for (int i = 0; i &lt; n - 1; i++) {
-for (int k = 1; k &lt;= (n - i) / 2; k++) {
-if (runLength[i + k - 1] &gt;= k &amp;&amp;
-runLength[i + 2*k - 1] &gt;= k) {
-maxK = max(maxK, k);
-}
-}
-}
-return maxK;
-}
-};
-</code></pre> <p><strong>Time <span class="meta">complexity</span>:</strong> O(n²)
-<strong>Space <span class="meta">complexity</span>:</strong> O(n)</p> <p>Better, but still quadratic. With n = 200,000, we&#39;re at 40 billion <strong>operations</strong>.</p> <h2>the optimal solution</h2> <p>The breakthrough: at any point in the <strong>array</strong>, there are exactly two ways to form adjacent increasing subarrays.</p> <h3>scenario 1: <span class="connection">bridge</span> two separate runs</h3> <pre><code>Previous Run          Current Run
-[...........] [break] [...........]
-length=A              length=B
-maximum k = min(A, B)
-</code></pre> <h3>scenario 2: split a single <span class="process">run</span></h3> <pre><code>One Long Run
-[........................]
-length=L
-maximum k = L / 2
-</code></pre> <h3>the <span class="process">algorithm</span></h3> <pre><code class="language-cpp">class Solution {
-public:
-int maxIncreasingSubarrays(vector&lt;int&gt;&amp; nums) {
-int n = nums.size();
-int currentRunLength = 1;
-int previousRunLength = 0;
-int maxK = 0;
-for (int i = 1; i &lt; n; i++) {
-if (nums[i] &gt; nums[i - 1]) {
-currentRunLength++;
-} else {
-previousRunLength = currentRunLength;
-currentRunLength = 1;
-}
-int kFromTwoRuns = min(previousRunLength, currentRunLength);
-int kFromSplittingRun = currentRunLength / 2;
-maxK = max({maxK, kFromTwoRuns, kFromSplittingRun});
-}
-return maxK;
-}
-};
-</code></pre> <p><strong>Time <span class="meta">complexity</span>:</strong> O(n)
+</script> <main class="container animate-fade-in-up"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#017</span> <span>26 Jan 2025</span> <span>·</span> <span>10 min read</span> </div> <h1 class="post-title">Solving Adjacent Increasing Subarrays: From Naive to Optimal</h1> </header> <div class="post-content"> <p>When I first encountered this problem on <strong>LeetCode</strong>, I did what most developers do - jumped straight to the naive solution. What followed was a journey through increasingly elegant <strong>optimizations</strong>, each revealing deeper insights about algorithmic thinking. This documents that evolution from a <span class="success">working</span>-but-<span class="attention">slow</span> O(n³) solution to an optimal O(n) <strong><span class="process">algorithm</span></strong>.</p> <h2>the problem</h2> <p>Given an <strong>array</strong> of integers, find the maximum value of <code>k</code> for which there exist two adjacent subarrays of length <code>k</code> each, where both subarrays are strictly increasing.</p> <p><strong>Constraints:</strong></p> <ul> <li>Both subarrays must be strictly increasing</li> <li>The subarrays must be adjacent</li> <li><strong>Array</strong> length can be up to 200,000 elements</li> </ul> <p><strong>Example:</strong></p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki dark-plus" style="background-color:#1E1E1E;color:#D4D4D4" tabindex="0"><code><span class="line"><span>nums = [2,5,7,8,9,2,3,4,3,1]</span></span> <span class="line"><span>output = 3</span></span> <span class="line"><span></span></span> <span class="line"><span>The subarray [7,8,9] is strictly increasing</span></span> <span class="line"><span>The subarray [2,3,4] is strictly increasing</span></span> <span class="line"><span>They are adjacent, and k=3 is the maximum</span></span></code></pre></div> <h2>the naive approach</h2> <p>The straightforward solution: try every possible value of k, check every possible window, and verify if both halves are increasing.</p> <div class="code-block-wrap" data-lang="cpp"><span class="code-lang" aria-hidden="true">cpp</span><pre class="shiki dark-plus" style="background-color:#1E1E1E;color:#D4D4D4" tabindex="0"><code><span class="line"><span style="color:#569CD6">class</span><span style="color:#4EC9B0"> Solution</span><span style="color:#D4D4D4"> {</span></span> <span class="line"><span style="color:#569CD6">public:</span></span> <span class="line"><span style="color:#569CD6">    bool</span><span style="color:#DCDCAA"> isStrictlyIncreasing</span><span style="color:#D4D4D4">(</span><span style="color:#4EC9B0">vector</span><span style="color:#D4D4D4">&#x3C;</span><span style="color:#569CD6">int</span><span style="color:#D4D4D4">></span><span style="color:#569CD6">&#x26;</span><span style="color:#9CDCFE"> nums</span><span style="color:#D4D4D4">, </span><span style="color:#569CD6">int</span><span style="color:#9CDCFE"> start</span><span style="color:#D4D4D4">, </span><span style="color:#569CD6">int</span><span style="color:#9CDCFE"> length</span><span style="color:#D4D4D4">) {</span></span> <span class="line"><span style="color:#C586C0">        for</span><span style="color:#D4D4D4"> (</span><span style="color:#569CD6">int</span><span style="color:#D4D4D4"> i = start + </span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">; i &#x3C; start + length; i++) {</span></span> <span class="line"><span style="color:#C586C0">            if</span><span style="color:#D4D4D4"> (</span><span style="color:#9CDCFE">nums</span><span style="color:#D4D4D4">[i] &#x3C;= </span><span style="color:#9CDCFE">nums</span><span style="color:#D4D4D4">[i-</span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">]) </span><span style="color:#C586C0">return</span><span style="color:#569CD6"> false</span><span style="color:#D4D4D4">;</span></span> <span class="line"><span style="color:#D4D4D4">        }</span></span> <span class="line"><span style="color:#C586C0">        return</span><span style="color:#569CD6"> true</span><span style="color:#D4D4D4">;</span></span> <span class="line"><span style="color:#D4D4D4">    }</span></span> <span class="line"></span> <span class="line"><span style="color:#569CD6">    int</span><span style="color:#DCDCAA"> maxIncreasingSubarrays</span><span style="color:#D4D4D4">(</span><span style="color:#4EC9B0">vector</span><span style="color:#D4D4D4">&#x3C;</span><span style="color:#569CD6">int</span><span style="color:#D4D4D4">></span><span style="color:#569CD6">&#x26;</span><span style="color:#9CDCFE"> nums</span><span style="color:#D4D4D4">) {</span></span> <span class="line"><span style="color:#569CD6">        int</span><span style="color:#D4D4D4"> n = </span><span style="color:#9CDCFE">nums</span><span style="color:#D4D4D4">.</span><span style="color:#DCDCAA">size</span><span style="color:#D4D4D4">();</span></span> <span class="line"></span> <span class="line"><span style="color:#C586C0">        for</span><span style="color:#D4D4D4"> (</span><span style="color:#569CD6">int</span><span style="color:#D4D4D4"> k = n/</span><span style="color:#B5CEA8">2</span><span style="color:#D4D4D4">; k >= </span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">; k--) {</span></span> <span class="line"><span style="color:#C586C0">            for</span><span style="color:#D4D4D4"> (</span><span style="color:#569CD6">int</span><span style="color:#D4D4D4"> i = </span><span style="color:#B5CEA8">0</span><span style="color:#D4D4D4">; i &#x3C;= n - </span><span style="color:#B5CEA8">2</span><span style="color:#D4D4D4">*k; i++) {</span></span> <span class="line"><span style="color:#C586C0">                if</span><span style="color:#D4D4D4"> (</span><span style="color:#DCDCAA">isStrictlyIncreasing</span><span style="color:#D4D4D4">(nums, i, k) &#x26;&#x26;</span></span> <span class="line"><span style="color:#DCDCAA">                    isStrictlyIncreasing</span><span style="color:#D4D4D4">(nums, i + k, k)) {</span></span> <span class="line"><span style="color:#C586C0">                    return</span><span style="color:#D4D4D4"> k;</span></span> <span class="line"><span style="color:#D4D4D4">                }</span></span> <span class="line"><span style="color:#D4D4D4">            }</span></span> <span class="line"><span style="color:#D4D4D4">        }</span></span> <span class="line"><span style="color:#C586C0">        return</span><span style="color:#B5CEA8"> 0</span><span style="color:#D4D4D4">;</span></span> <span class="line"><span style="color:#D4D4D4">    }</span></span> <span class="line"><span style="color:#D4D4D4">};</span></span></code></pre></div> <p><strong>Time <span class="meta">complexity</span>:</strong> O(n² × k) ≈ O(n³)
+<strong>Space <span class="meta">complexity</span>:</strong> O(1)</p> <p>With n = 200,000, this times out immediately.</p> <h2>first <span class="success">optimization</span>: precomputation</h2> <p>The naive solution repeatedly checks if subarrays are increasing. The key insight: <strong>precompute</strong> how long each increasing sequence is.</p> <h3><span class="process">run</span> length array</h3> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki dark-plus" style="background-color:#1E1E1E;color:#D4D4D4" tabindex="0"><code><span class="line"><span>nums      = [2, 5, 7, 8, 9, 2, 3, 4, 3, 1]</span></span> <span class="line"><span>runLength = [1, 2, 3, 4, 5, 1, 2, 3, 1, 1]</span></span></code></pre></div> <p>At index 4, <code>runLength[4] = 5</code> means there&#39;s an increasing sequence of length 5 ending at position 4.</p> <div class="code-block-wrap" data-lang="cpp"><span class="code-lang" aria-hidden="true">cpp</span><pre class="shiki dark-plus" style="background-color:#1E1E1E;color:#D4D4D4" tabindex="0"><code><span class="line"><span style="color:#569CD6">class</span><span style="color:#4EC9B0"> Solution</span><span style="color:#D4D4D4"> {</span></span> <span class="line"><span style="color:#569CD6">public:</span></span> <span class="line"><span style="color:#569CD6">    int</span><span style="color:#DCDCAA"> maxIncreasingSubarrays</span><span style="color:#D4D4D4">(</span><span style="color:#4EC9B0">vector</span><span style="color:#D4D4D4">&#x3C;</span><span style="color:#569CD6">int</span><span style="color:#D4D4D4">></span><span style="color:#569CD6">&#x26;</span><span style="color:#9CDCFE"> nums</span><span style="color:#D4D4D4">) {</span></span> <span class="line"><span style="color:#569CD6">        int</span><span style="color:#D4D4D4"> n = </span><span style="color:#9CDCFE">nums</span><span style="color:#D4D4D4">.</span><span style="color:#DCDCAA">size</span><span style="color:#D4D4D4">();</span></span> <span class="line"><span style="color:#D4D4D4">        vector&#x3C;</span><span style="color:#569CD6">int</span><span style="color:#D4D4D4">> </span><span style="color:#DCDCAA">runLength</span><span style="color:#D4D4D4">(n, </span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">);</span></span> <span class="line"></span> <span class="line"><span style="color:#C586C0">        for</span><span style="color:#D4D4D4"> (</span><span style="color:#569CD6">int</span><span style="color:#D4D4D4"> i = </span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">; i &#x3C; n; i++) {</span></span> <span class="line"><span style="color:#C586C0">            if</span><span style="color:#D4D4D4"> (</span><span style="color:#9CDCFE">nums</span><span style="color:#D4D4D4">[i] > </span><span style="color:#9CDCFE">nums</span><span style="color:#D4D4D4">[i-</span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">]) {</span></span> <span class="line"><span style="color:#9CDCFE">                runLength</span><span style="color:#D4D4D4">[i] = </span><span style="color:#9CDCFE">runLength</span><span style="color:#D4D4D4">[i-</span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">] + </span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">;</span></span> <span class="line"><span style="color:#D4D4D4">            }</span></span> <span class="line"><span style="color:#D4D4D4">        }</span></span> <span class="line"></span> <span class="line"><span style="color:#569CD6">        int</span><span style="color:#D4D4D4"> maxK = </span><span style="color:#B5CEA8">0</span><span style="color:#D4D4D4">;</span></span> <span class="line"><span style="color:#C586C0">        for</span><span style="color:#D4D4D4"> (</span><span style="color:#569CD6">int</span><span style="color:#D4D4D4"> i = </span><span style="color:#B5CEA8">0</span><span style="color:#D4D4D4">; i &#x3C; n - </span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">; i++) {</span></span> <span class="line"><span style="color:#C586C0">            for</span><span style="color:#D4D4D4"> (</span><span style="color:#569CD6">int</span><span style="color:#D4D4D4"> k = </span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">; k &#x3C;= (n - i) / </span><span style="color:#B5CEA8">2</span><span style="color:#D4D4D4">; k++) {</span></span> <span class="line"><span style="color:#C586C0">                if</span><span style="color:#D4D4D4"> (</span><span style="color:#9CDCFE">runLength</span><span style="color:#D4D4D4">[i + k - </span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">] >= k &#x26;&#x26;</span></span> <span class="line"><span style="color:#9CDCFE">                    runLength</span><span style="color:#D4D4D4">[i + </span><span style="color:#B5CEA8">2</span><span style="color:#D4D4D4">*k - </span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">] >= k) {</span></span> <span class="line"><span style="color:#D4D4D4">                    maxK = </span><span style="color:#DCDCAA">max</span><span style="color:#D4D4D4">(maxK, k);</span></span> <span class="line"><span style="color:#D4D4D4">                }</span></span> <span class="line"><span style="color:#D4D4D4">            }</span></span> <span class="line"><span style="color:#D4D4D4">        }</span></span> <span class="line"></span> <span class="line"><span style="color:#C586C0">        return</span><span style="color:#D4D4D4"> maxK;</span></span> <span class="line"><span style="color:#D4D4D4">    }</span></span> <span class="line"><span style="color:#D4D4D4">};</span></span></code></pre></div> <p><strong>Time <span class="meta">complexity</span>:</strong> O(n²)
+<strong>Space <span class="meta">complexity</span>:</strong> O(n)</p> <p>Better, but still quadratic. With n = 200,000, we&#39;re at 40 billion <strong>operations</strong>.</p> <h2>the optimal solution</h2> <p>The breakthrough: at any point in the <strong>array</strong>, there are exactly two ways to form adjacent increasing subarrays.</p> <h3>scenario 1: <span class="connection">bridge</span> two separate runs</h3> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki dark-plus" style="background-color:#1E1E1E;color:#D4D4D4" tabindex="0"><code><span class="line"><span>Previous Run          Current Run</span></span> <span class="line"><span>[...........] [break] [...........]</span></span> <span class="line"><span>   length=A              length=B</span></span> <span class="line"><span></span></span> <span class="line"><span>maximum k = min(A, B)</span></span></code></pre></div> <h3>scenario 2: split a single <span class="process">run</span></h3> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki dark-plus" style="background-color:#1E1E1E;color:#D4D4D4" tabindex="0"><code><span class="line"><span>One Long Run</span></span> <span class="line"><span>[........................]</span></span> <span class="line"><span>        length=L</span></span> <span class="line"><span></span></span> <span class="line"><span>maximum k = L / 2</span></span></code></pre></div> <h3>the <span class="process">algorithm</span></h3> <div class="code-block-wrap" data-lang="cpp"><span class="code-lang" aria-hidden="true">cpp</span><pre class="shiki dark-plus" style="background-color:#1E1E1E;color:#D4D4D4" tabindex="0"><code><span class="line"><span style="color:#569CD6">class</span><span style="color:#4EC9B0"> Solution</span><span style="color:#D4D4D4"> {</span></span> <span class="line"><span style="color:#569CD6">public:</span></span> <span class="line"><span style="color:#569CD6">    int</span><span style="color:#DCDCAA"> maxIncreasingSubarrays</span><span style="color:#D4D4D4">(</span><span style="color:#4EC9B0">vector</span><span style="color:#D4D4D4">&#x3C;</span><span style="color:#569CD6">int</span><span style="color:#D4D4D4">></span><span style="color:#569CD6">&#x26;</span><span style="color:#9CDCFE"> nums</span><span style="color:#D4D4D4">) {</span></span> <span class="line"><span style="color:#569CD6">        int</span><span style="color:#D4D4D4"> n = </span><span style="color:#9CDCFE">nums</span><span style="color:#D4D4D4">.</span><span style="color:#DCDCAA">size</span><span style="color:#D4D4D4">();</span></span> <span class="line"></span> <span class="line"><span style="color:#569CD6">        int</span><span style="color:#D4D4D4"> currentRunLength = </span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">;</span></span> <span class="line"><span style="color:#569CD6">        int</span><span style="color:#D4D4D4"> previousRunLength = </span><span style="color:#B5CEA8">0</span><span style="color:#D4D4D4">;</span></span> <span class="line"><span style="color:#569CD6">        int</span><span style="color:#D4D4D4"> maxK = </span><span style="color:#B5CEA8">0</span><span style="color:#D4D4D4">;</span></span> <span class="line"></span> <span class="line"><span style="color:#C586C0">        for</span><span style="color:#D4D4D4"> (</span><span style="color:#569CD6">int</span><span style="color:#D4D4D4"> i = </span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">; i &#x3C; n; i++) {</span></span> <span class="line"><span style="color:#C586C0">            if</span><span style="color:#D4D4D4"> (</span><span style="color:#9CDCFE">nums</span><span style="color:#D4D4D4">[i] > </span><span style="color:#9CDCFE">nums</span><span style="color:#D4D4D4">[i - </span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">]) {</span></span> <span class="line"><span style="color:#D4D4D4">                currentRunLength++;</span></span> <span class="line"><span style="color:#D4D4D4">            } </span><span style="color:#C586C0">else</span><span style="color:#D4D4D4"> {</span></span> <span class="line"><span style="color:#D4D4D4">                previousRunLength = currentRunLength;</span></span> <span class="line"><span style="color:#D4D4D4">                currentRunLength = </span><span style="color:#B5CEA8">1</span><span style="color:#D4D4D4">;</span></span> <span class="line"><span style="color:#D4D4D4">            }</span></span> <span class="line"></span> <span class="line"><span style="color:#569CD6">            int</span><span style="color:#D4D4D4"> kFromTwoRuns = </span><span style="color:#DCDCAA">min</span><span style="color:#D4D4D4">(previousRunLength, currentRunLength);</span></span> <span class="line"><span style="color:#569CD6">            int</span><span style="color:#D4D4D4"> kFromSplittingRun = currentRunLength / </span><span style="color:#B5CEA8">2</span><span style="color:#D4D4D4">;</span></span> <span class="line"></span> <span class="line"><span style="color:#D4D4D4">            maxK = </span><span style="color:#DCDCAA">max</span><span style="color:#D4D4D4">({maxK, kFromTwoRuns, kFromSplittingRun});</span></span> <span class="line"><span style="color:#D4D4D4">        }</span></span> <span class="line"></span> <span class="line"><span style="color:#C586C0">        return</span><span style="color:#D4D4D4"> maxK;</span></span> <span class="line"><span style="color:#D4D4D4">    }</span></span> <span class="line"><span style="color:#D4D4D4">};</span></span></code></pre></div> <p><strong>Time <span class="meta">complexity</span>:</strong> O(n)
 <strong>Space <span class="meta">complexity</span>:</strong> O(1)</p> <p>Single pass, <span class="process">constant</span> space.</p> <h2>the visualization</h2> <div class="viz-container"> <div class="input-section"> <label>enter an array (max 10 numbers, comma-separated)</label> <div class="input-group"> <input type="text" id="arrayInput" placeholder="2,5,7,8,9,2,3,4,3,1"
 onkeypress="if(event.key==='Enter') loadCustomArray()"> <button onclick="loadCustomArray()">load</button> </div> <div class="presets"> <a href="#" onclick="document.getElementById('arrayInput').value='1,2,3,4,5,6,7,8'; loadCustomArray(); return false;">split run example</a> |
 <a href="#" onclick="document.getElementById('arrayInput').value='1,2,3,4,4,4,4,5,6,7'; loadCustomArray(); return false;">bridge runs example</a> </div> </div> <div class="array-container" id="arrayContainer"></div> <div class="state-container"> <div class="state-box"> <h4>current state</h4> <div class="state-item"> <span class="state-label">position</span> <span class="state-value" id="position">0</span> </div> <div class="state-item"> <span class="state-label">current run</span> <span class="state-value" id="currentRun">1</span> </div> <div class="state-item"> <span class="state-label">previous run</span> <span class="state-value" id="previousRun">0</span> </div> </div> <div class="state-box"> <h4>maximum k</h4> <div style="text-align: center; padding: 12px 0;"> <span class="state-value" id="maxK" style="font-size: 32px;">0</span> </div> </div> </div> <div class="explanation"> <h4>what's happening</h4> <p id="explanation">click next step to begin</p> </div> <div id="scenarios"></div> <div class="controls"> <button onclick="reset()">reset</button> <button id="stepBtn" onclick="step()">next step</button> <button onclick="autoPlay()">auto play</button> </div> <div class="result-box" id="resultBox"> <h3>algorithm complete</h3> <p id="resultText"></p> </div> </div> <h2><span class="meta">complexity</span> comparison</h2> <table> <thead> <tr> <th>approach</th> <th>time</th> <th>space</th> </tr> </thead> <tbody><tr> <td>naive</td> <td>O(n³)</td> <td>O(1)</td> </tr> <tr> <td>precomputation</td> <td>O(n²)</td> <td>O(n)</td> </tr> <tr> <td>optimal</td> <td>O(n)</td> <td>O(1)</td> </tr> </tbody></table> <h2>lessons learned</h2> <p><strong>start simple</strong> - The naive solution helped understand the problem deeply.</p> <p><strong>precomputation is powerful</strong> - When repeating calculations, precompute them.</p> <p><strong>state tracking enables single passes</strong> - Track just enough <strong>state</strong> to make decisions without looking back.</p> <p><strong><span class="meta">pattern</span> recognition matters</strong> - Recognizing there are exactly two ways to form the answer unlocks the O(n) solution.</p> <p>This problem taught me that <strong><span class="success">optimization</span></strong> isn&#39;t just about making <span class="process">code</span> faster - it&#39;s about understanding the problem <span class="structure">structure</span> deeply enough to see elegant solutions. The journey from O(n³) to O(n) wasn&#39;t just about removing loops; it was about recognizing fundamental <strong>patterns</strong> in the problem itself.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-algorithms" class="tag neutral" data-tag="algorithms">algorithms</a>, <a href="/blog#tag-optimization" class="tag neutral" data-tag="optimization">optimization</a>, <a href="/blog#tag-leetcode" class="tag neutral" data-tag="leetcode">leetcode</a>, <a href="/blog#tag-data-structures" class="tag neutral" data-tag="data-structures">data-structures</a>, <a href="/blog#tag-problem-solving" class="tag neutral" data-tag="problem-solving">problem-solving</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/adding-custom-domain-jeffreyjose07is-adev"> <span class="nav-label">← previous</span> <span class="nav-title">Adding Custom Domain: jeffreyjose07.is-a.dev</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/adding-interactive-scripts-to-blog-posts"> <span class="nav-label">next →</span> <span class="nav-title">Adding Interactive Scripts to Blog Posts</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
