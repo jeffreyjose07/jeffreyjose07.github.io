@@ -1,0 +1,48 @@
+# Dependabot was opening grouped major bumps (Vite 8, ESLint 10, RR7, etc.)
+# without companion peer upgrades, so every PR failed `npm ci` with ERESOLVE.
+# Keep patch/minor grouped; ignore known-breaking majors until we migrate on purpose.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    groups:
+      npm-patch-and-minor:
+        applies-to: version-updates
+        update-types:
+          - patch
+          - minor
+    ignore:
+      # Needs eslint-plugin-react-hooks >= 7 and @eslint/js 10 together
+      - dependency-name: eslint
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@eslint/js"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: eslint-plugin-react-hooks
+        update-types: ["version-update:semver-major"]
+      # Transitive major; already nested at 5.x under typescript-eslint
+      - dependency-name: brace-expansion
+        update-types: ["version-update:semver-major"]
+      # react-router@8 requires React >= 19.2.7 (RSC CSRF advisory is RSC-mode)
+      - dependency-name: react-router
+        update-types: ["version-update:semver-major"]
+      - dependency-name: react-router-dom
+        update-types: ["version-update:semver-major"]
+      # Land Vite majors with plugin-react-swc + Node engines in one intentional PR
+      - dependency-name: vite
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@vitejs/plugin-react-swc"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
