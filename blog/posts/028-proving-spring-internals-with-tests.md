@@ -15,8 +15,8 @@ description:
   "I stopped trusting slide-deck explanations of Spring proxies, ThreadLocals, and HikariCP.
   Here is a Java 21 / Spring Boot 4.1 lab where broken and fixed designs are proven with H2 tests—
   and where folklore quietly disagreed with the framework."
-readingTime: 12
-wordCount: 2100
+readingTime: 4
+wordCount: 780
 ---
 
 I have been grinding Spring Boot for Senior / Principal interviews the way a lot of us do: architecture stories, whiteboard failure modes, “remember self-invocation.” It sounds sharp until you realize you have never **forced the JVM to show you** the bug.
@@ -61,15 +61,15 @@ That last step mattered more than I expected.
 
 ### ThreadLocals and `@Async`
 
-`SecurityContextHolder` is ThreadLocal. A naive async executor has an empty locker.
+`SecurityContextHolder` uses a configurable strategy and is **ThreadLocal by default**. The strategy still returns a non-null `SecurityContext` even when nobody is logged in — what is missing on a naive async worker is the **`Authentication`** (principal). Calling `.getName()` on that null authentication is what blows up as an NPE.
 
-**Proof:** `SecurityContextAsyncTest` — naive executor NPE; explicit username arg works; `DelegatingSecurityContextRunnable` works.
+**Proof:** `SecurityContextAsyncTest` — naive executor fails on missing authentication; explicit username arg works; `DelegatingSecurityContextRunnable` copies the context across threads.
 
 ### Lifecycle and mini-umbrellas
 
 `@PostConstruct` runs **before** proxy creation. `@Transactional` on it is ignored, but Spring Data still opens **mini-transactions** per `save()`.
 
-Constructor A↔B with Boot’s default circular-ref ban refuses to start. `@Lazy` on one side is the principled band-aid; refactoring the cycle is the real fix.
+Constructor A↔B cannot even finish instantiation, so the context refuses to start (Boot has banned circular references by default since 2.6). `@Lazy` on one constructor arg is the principled band-aid; extracting a third orchestrator is the real fix. Separately: `spring.main.allow-circular-references` only applies when you boot via `SpringApplication` — a raw `ApplicationContextRunner` needs `.withAllowCircularReferences(true)` (or `@Lazy`) instead.
 
 **Proofs:** `PostConstructBeforeProxyTest`, `ConstructorCircularDependencyTest`, `RepositoryMiniUmbrellaTest`.
 
@@ -83,10 +83,10 @@ Ten parents each holding a connection and asking for `REQUIRES_NEW` against a po
 
 Implementing the lab on **Spring Boot 4.1** corrected several “everybody knows” claims:
 
-1. **Default `@Async` may already propagate SecurityContext.** I had to build a deliberately naive executor to demonstrate the null context.  
+1. **Default `@Async` may already propagate SecurityContext.** I had to build a deliberately naive executor to demonstrate the missing authentication on the worker thread.  
 2. **Connections are often acquired lazily** (first SQL), not always at `@Transactional` method entry.  
 3. **Pool deadlocks need a race window** — H2 is so fast the bad schedule barely happens without a barrier latch.  
-4. **`spring.main.allow-circular-references` does not apply to a raw `ApplicationContextRunner`** — use the runner API or `@Lazy`.  
+4. **`spring.main.allow-circular-references` does not apply to a raw `ApplicationContextRunner`** — use the runner API or `@Lazy`. Constructor cycles still fail without enabling anything; Boot’s default is already “no circular refs.”  
 5. **Inside a method, `this` is never the proxy** — even when a transaction is active. Check the bean from the context, or `TransactionSynchronizationManager`.
 
 Those notes are checked into [`docs/ground-truth.md`](https://github.com/jeffreyjose07/spring-validation-lab/blob/main/docs/ground-truth.md). Interview answers that ignore them are soft under follow-ups.
@@ -96,7 +96,9 @@ Those notes are checked into [`docs/ground-truth.md`](https://github.com/jeffrey
 ```bash
 git clone https://github.com/jeffreyjose07/spring-validation-lab.git
 cd spring-validation-lab
+# macOS:
 export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+# Linux/Windows: point JAVA_HOME at your JDK 21 install
 ./gradlew test --tests '*SelfInvocationProxyTest'
 ```
 
