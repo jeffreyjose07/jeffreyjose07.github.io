@@ -12,102 +12,53 @@ tags:
     "architecture",
   ]
 description:
-  "I stopped trusting slide-deck explanations of Spring proxies, ThreadLocals, and HikariCP.
-  Here is a Java 21 / Spring Boot 4.1 lab where broken and fixed designs are proven with H2 tests—
-  and where folklore quietly disagreed with the framework."
-readingTime: 4
-wordCount: 780
+  "Series hub: a Java 21 / Spring Boot 4.1 lab where broken and fixed Spring designs are proven
+  with H2 tests. Deep dives for proxies, ThreadLocals, lifecycle, and HikariCP."
+readingTime: 3
+wordCount: 520
 ---
 
-I have been grinding Spring Boot for Senior / Principal interviews the way a lot of us do: architecture stories, whiteboard failure modes, “remember self-invocation.” It sounds sharp until you realize you have never **forced the JVM to show you** the bug.
-
-So I built a lab.
+I stopped trusting slide-deck explanations of Spring proxies, ThreadLocals, and HikariCP. So I built a lab where every trap has a **broken** path, a **fixed** path, and assertions that force the JVM to show the bug.
 
 **Repo:** [jeffreyjose07/spring-validation-lab](https://github.com/jeffreyjose07/spring-validation-lab)  
 **Stack:** Java 21, Spring Boot 4.1, Gradle 9.3, H2, JUnit  
 
-Each topic has a **broken** path and a **fixed** path. Assertions are the proof. Console `LabLog` banners narrate what is happening while the test runs. Teaching notes live under [`docs/`](https://github.com/jeffreyjose07/spring-validation-lab/tree/main/docs) so the README stays a landing page, not a novel.
+This post is the **series index**. The short overview was not enough — the detailed write-ups live in the posts below.
 
-## Why README was not enough
+## Deep dives
 
-I looked at how serious learning repos are structured. The pattern that fits this lab:
+| # | Post | What we proved |
+|---|------|----------------|
+| 1 | [Proxies and self-invocation](/blog/spring-proxies-and-self-invocation) | `this.method()` skips the proxy; `REQUIRES_NEW` is dead text; separate bean leaves the independent row after outer rollback |
+| 2 | [ThreadLocals and `@Async`](/blog/spring-threadlocals-and-async) | Naive executor loses **Authentication** (context object can still be non-null); explicit args and `DelegatingSecurityContextRunnable` fix it |
+| 3 | [Bean lifecycle and mini-umbrellas](/blog/spring-bean-lifecycle-and-mini-umbrellas) | `@PostConstruct` before proxy; constructor cycles fail to boot; Spring Data invents mini-TXs without an outer umbrella |
+| 4 | [HikariCP, hogging, optimistic locking](/blog/spring-hikari-hogging-and-optimistic-locking) | `REQUIRES_NEW` vs pool of 10; HTTP inside TX after first SQL; `@Version` under 20 concurrent buyers |
 
-| Place | Job |
-|-------|-----|
-| **README** | What / why / how to run / link to docs |
-| **`docs/`** | Intent → theory → broken proof → fixed proof → interview one-liner |
-| **Tests + logs** | Executable proof and live commentary |
+Teaching notes in the repo mirror the same path under [`docs/`](https://github.com/jeffreyjose07/spring-validation-lab/tree/main/docs). Folklore corrections live in [`docs/ground-truth.md`](https://github.com/jeffreyjose07/spring-validation-lab/blob/main/docs/ground-truth.md).
 
-That is roughly the [Diátaxis](https://diataxis.fr/) split: orientation in the README, explanation next to the code. If everything is dumped into README, nobody runs the tests. If there is no README map, nobody finds the docs.
+## The loop
 
-## The loop I use now
-
-1. State the production trap (self-invocation, ThreadLocal loss, pool starvation, …).  
+1. State the production trap.  
 2. Write the **broken** service on purpose.  
 3. Assert the failure (wrong rows, NPE, timeouts, pool fully checked out).  
 4. Write the **fixed** design.  
 5. Assert the success.  
-6. Capture anything that disagreed with the blog-post version of Spring in `docs/ground-truth.md`.
-
-That last step mattered more than I expected.
-
-## What the proofs cover so far
-
-### Proxies and `@Transactional`
-
-`@Transactional` is a sticky note. The proxy reads it. `this.saveIndependently()` never hits the proxy, so `REQUIRES_NEW` is dead text and the “independent” save rolls back with the outer transaction.
-
-**Proof:** `SelfInvocationProxyTest` — broken count is 0; fixed separate-bean path leaves count 1 after outer failure.
-
-### ThreadLocals and `@Async`
-
-`SecurityContextHolder` uses a configurable strategy and is **ThreadLocal by default**. The strategy still returns a non-null `SecurityContext` even when nobody is logged in — what is missing on a naive async worker is the **`Authentication`** (principal). Calling `.getName()` on that null authentication is what blows up as an NPE.
-
-**Proof:** `SecurityContextAsyncTest` — naive executor fails on missing authentication; explicit username arg works; `DelegatingSecurityContextRunnable` copies the context across threads.
-
-### Lifecycle and mini-umbrellas
-
-`@PostConstruct` runs **before** proxy creation. `@Transactional` on it is ignored, but Spring Data still opens **mini-transactions** per `save()`.
-
-Constructor A↔B cannot even finish instantiation, so the context refuses to start (Boot has banned circular references by default since 2.6). `@Lazy` on one constructor arg is the principled band-aid; extracting a third orchestrator is the real fix. Separately: `spring.main.allow-circular-references` only applies when you boot via `SpringApplication` — a raw `ApplicationContextRunner` needs `.withAllowCircularReferences(true)` (or `@Lazy`) instead.
-
-**Proofs:** `PostConstructBeforeProxyTest`, `ConstructorCircularDependencyTest`, `RepositoryMiniUmbrellaTest`.
-
-### HikariCP, hogging, optimistic locking
-
-Ten parents each holding a connection and asking for `REQUIRES_NEW` against a pool of ten: timeouts. Slow HTTP inside a transaction after the first SQL: pool hogging. `@Version`: one winner under flash contention.
-
-**Proofs:** `RequiresNewPoolExhaustionTest`, `ConnectionHoggingTest`, `OptimisticLockingTest`.
-
-## Where folklore was wrong (this is the gold)
-
-Implementing the lab on **Spring Boot 4.1** corrected several “everybody knows” claims:
-
-1. **Default `@Async` may already propagate SecurityContext.** I had to build a deliberately naive executor to demonstrate the missing authentication on the worker thread.  
-2. **Connections are often acquired lazily** (first SQL), not always at `@Transactional` method entry.  
-3. **Pool deadlocks need a race window** — H2 is so fast the bad schedule barely happens without a barrier latch.  
-4. **`spring.main.allow-circular-references` does not apply to a raw `ApplicationContextRunner`** — use the runner API or `@Lazy`. Constructor cycles still fail without enabling anything; Boot’s default is already “no circular refs.”  
-5. **Inside a method, `this` is never the proxy** — even when a transaction is active. Check the bean from the context, or `TransactionSynchronizationManager`.
-
-Those notes are checked into [`docs/ground-truth.md`](https://github.com/jeffreyjose07/spring-validation-lab/blob/main/docs/ground-truth.md). Interview answers that ignore them are soft under follow-ups.
+6. Write down every place Boot 4.1 disagreed with the blog-post version of Spring.
 
 ## How to try it
 
 ```bash
 git clone https://github.com/jeffreyjose07/spring-validation-lab.git
 cd spring-validation-lab
-# macOS:
-export JAVA_HOME=$(/usr/libexec/java_home -v 21)
-# Linux/Windows: point JAVA_HOME at your JDK 21 install
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)   # macOS
 ./gradlew test --tests '*SelfInvocationProxyTest'
 ```
 
-Open a single test in IntelliJ and watch the Run console for lines like:
+Open a single test in IntelliJ and watch the Run console for `LabLog` banners like:
 
 ```text
 ========== [PHASE1-PROXY] BROKEN self-invocation ==========
   → Calling this.saveIndependently(...) — REQUIRES_NEW sticky note will NOT be read
-  ✗ Throwing after 'independent' save — expect BOTH to roll back...
 ```
 
 ## What I am not doing next (yet)
@@ -115,5 +66,3 @@ Open a single test in IntelliJ and watch the Run console for lines like:
 I am deliberately not racing into Kafka outbox / saga posts until the Phase 1–2 proofs feel boring. The point of this lab is **competence under the hood**, not checklist coverage.
 
 If you interview for Spring-heavy backend roles: stop only reading about proxies. Make one fail on purpose. Keep the green and red tests. Write down every place the framework surprised you.
-
-That surprise list is the difference between sounding senior and being able to debug production at 2 a.m.
