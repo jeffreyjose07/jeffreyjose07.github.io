@@ -1,5 +1,78 @@
 [
   {
+    "url": "/blog/spring-hikari-hogging-and-optimistic-locking",
+    "title": "HikariCP Exhaustion, Connection Hogging, and Optimistic Locking",
+    "episode": "032",
+    "date": "2026-07-30",
+    "tags": [
+      "spring-boot",
+      "java",
+      "hikaricp",
+      "transactions",
+      "concurrency",
+      "interview-prep",
+      "testing"
+    ],
+    "description": "Phase 2 of the spring-validation-lab: REQUIRES_NEW against a saturated pool, HTTP inside @Transactional after first SQL, and @Version under flash contention — all proven with H2 tests.",
+    "readingTime": 13,
+    "wordCount": 2700,
+    "slug": "spring-hikari-hogging-and-optimistic-locking"
+  },
+  {
+    "url": "/blog/spring-bean-lifecycle-and-mini-umbrellas",
+    "title": "Spring Bean Lifecycle, Circular Deps, and Mini-Umbrellas",
+    "episode": "031",
+    "date": "2026-07-30",
+    "tags": [
+      "spring-boot",
+      "java",
+      "transactions",
+      "lifecycle",
+      "interview-prep",
+      "testing"
+    ],
+    "description": "Phase 1 wrap: @PostConstruct runs before the AOP proxy; constructor cycles fail to boot; Spring Data invents mini-transactions when you have no outer @Transactional.",
+    "readingTime": 12,
+    "wordCount": 2500,
+    "slug": "spring-bean-lifecycle-and-mini-umbrellas"
+  },
+  {
+    "url": "/blog/spring-threadlocals-and-async",
+    "title": "Spring ThreadLocals and @Async: What We Proved",
+    "episode": "030",
+    "date": "2026-07-30",
+    "tags": [
+      "spring-boot",
+      "java",
+      "security",
+      "async",
+      "interview-prep",
+      "testing"
+    ],
+    "description": "Phase 1 continued: SecurityContext lives in a ThreadLocal by default. Naive @Async loses Authentication (not the context object). Explicit args and DelegatingSecurityContextRunnable fixes.",
+    "readingTime": 11,
+    "wordCount": 2200,
+    "slug": "spring-threadlocals-and-async"
+  },
+  {
+    "url": "/blog/spring-proxies-and-self-invocation",
+    "title": "Spring Proxies and Self-Invocation: What We Proved",
+    "episode": "029",
+    "date": "2026-07-30",
+    "tags": [
+      "spring-boot",
+      "java",
+      "transactions",
+      "aop",
+      "interview-prep",
+      "testing"
+    ],
+    "description": "Phase 1 of the spring-validation-lab: @Transactional is a sticky note read by a proxy. Self-invocation makes REQUIRES_NEW dead text. Broken and fixed designs, asserted with H2.",
+    "readingTime": 12,
+    "wordCount": 2400,
+    "slug": "spring-proxies-and-self-invocation"
+  },
+  {
     "url": "/blog/proving-spring-internals-with-tests",
     "title": "Proving Spring Internals With Tests (Not Folklore)",
     "episode": "028",
@@ -12,9 +85,9 @@
       "interview-prep",
       "architecture"
     ],
-    "description": "I stopped trusting slide-deck explanations of Spring proxies, ThreadLocals, and HikariCP. Here is a Java 21 / Spring Boot 4.1 lab where broken and fixed designs are proven with H2 tests— and where folklore quietly disagreed with the framework.",
-    "readingTime": 4,
-    "wordCount": 780,
+    "description": "Series hub: a Java 21 / Spring Boot 4.1 lab where broken and fixed Spring designs are proven with H2 tests. Deep dives for proxies, ThreadLocals, lifecycle, and HikariCP.",
+    "readingTime": 3,
+    "wordCount": 520,
     "slug": "proving-spring-internals-with-tests"
   },
   {
