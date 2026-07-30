@@ -63,10 +63,13 @@ jobs:
       if: steps.blog-changes.outputs.blog_changed == 'true'
       id: blog-generated
       run: |
-        if [ -n "$(git status --porcelain public/blog/)" ]; then
+        # Thumbnails live under public/assets/thumbnails/ (not public/blog/).
+        # Previously we only committed public/blog/, so new PNGs were generated
+        # on the runner and then discarded — broken <img> on the index.
+        if [ -n "$(git status --porcelain public/blog/ public/assets/thumbnails/)" ]; then
           echo "files_generated=true" >> $GITHUB_OUTPUT
-          echo "📄 Generated blog files detected:"
-          git status --porcelain public/blog/
+          echo "📄 Generated blog/thumbnail files detected:"
+          git status --porcelain public/blog/ public/assets/thumbnails/
         else
           echo "files_generated=false" >> $GITHUB_OUTPUT
           echo "📄 No new blog files generated"
@@ -81,22 +84,22 @@ jobs:
         BRANCH="${{ github.head_ref || github.ref_name }}"
         git checkout -B "$BRANCH"
         
-        git add public/blog/
+        git add public/blog/ public/assets/thumbnails/
         
         CHANGED_POSTS=$(git diff --name-only HEAD~1 HEAD | grep 'blog/posts/' | sed 's|blog/posts/||g' | sed 's|\.md$||g' | tr '\n' ',' | sed 's/,$//' || echo "")
         
         if [ -n "$CHANGED_POSTS" ]; then
           git commit -m "auto: rebuild blog posts ($CHANGED_POSTS)
           
-          Generated HTML files from Markdown source with semantic coloring."
+          Generated HTML files and terminal thumbnails from Markdown source."
         else
           git commit -m "auto: rebuild blog
           
-          Generated HTML files from updated templates or configuration."
+          Generated HTML files and terminal thumbnails from updated templates or configuration."
         fi
         
         git push origin "HEAD:$BRANCH"
-        echo "✅ Blog files committed and pushed to $BRANCH"
+        echo "✅ Blog files and thumbnails committed and pushed to $BRANCH"
     
     - name: Build portfolio
       run: |
