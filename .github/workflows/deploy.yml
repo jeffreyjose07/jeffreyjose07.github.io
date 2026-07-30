@@ -21,11 +21,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    # PRs default to a detached merge ref — git push then fails with
+    # "fatal: You are not currently on a branch." Checkout the PR head
+    # branch (or the pushed branch) so commit+push has a real ref.
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
         token: ${{ secrets.GITHUB_TOKEN }}
+        persist-credentials: true
+        ref: ${{ github.head_ref || github.ref_name }}
     
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -73,6 +78,9 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         
+        BRANCH="${{ github.head_ref || github.ref_name }}"
+        git checkout -B "$BRANCH"
+        
         git add public/blog/
         
         CHANGED_POSTS=$(git diff --name-only HEAD~1 HEAD | grep 'blog/posts/' | sed 's|blog/posts/||g' | sed 's|\.md$||g' | tr '\n' ',' | sed 's/,$//' || echo "")
@@ -87,8 +95,8 @@ jobs:
           Generated HTML files from updated templates or configuration."
         fi
         
-        git push
-        echo "✅ Blog files committed and pushed"
+        git push origin "HEAD:$BRANCH"
+        echo "✅ Blog files committed and pushed to $BRANCH"
     
     - name: Build portfolio
       run: |
@@ -96,23 +104,30 @@ jobs:
         npm run build
         echo "✅ Portfolio build completed"
     
+    # Only publish GitHub Pages from main (not from PR builds)
     - name: Setup Pages
+      if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
       uses: actions/configure-pages@v4
     
     - name: Upload artifact
+      if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
       uses: actions/upload-pages-artifact@v3
       with:
         path: './dist'
     
     - name: Deploy to GitHub Pages
+      if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
       id: deployment
       uses: actions/deploy-pages@v4
       
     - name: Deployment summary
       run: |
-        echo "🎉 Deployment completed successfully!"
-        echo "🌐 Portfolio URL: ${{ steps.deployment.outputs.page_url }}"
+        echo "🎉 Job completed successfully!"
+        if [ "${{ github.event_name }}" = "push" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "🌐 Portfolio URL: ${{ steps.deployment.outputs.page_url }}"
+        else
+          echo "ℹ️ PR build: blog HTML committed back to branch; Pages deploy skipped until merge to main."
+        fi
         if [ "${{ steps.blog-changes.outputs.blog_changed }}" == "true" ]; then
           echo "📝 Blog has been updated with semantic coloring"
         fi
-        echo "✅ Site is now live on GitHub Pages"
