@@ -1,5 +1,23 @@
 [
   {
+    "url": "/blog/proving-spring-internals-with-tests",
+    "title": "Proving Spring Internals With Tests (Not Folklore)",
+    "episode": "028",
+    "date": "2026-07-30",
+    "tags": [
+      "spring-boot",
+      "java",
+      "testing",
+      "transactions",
+      "interview-prep",
+      "architecture"
+    ],
+    "description": "I stopped trusting slide-deck explanations of Spring proxies, ThreadLocals, and HikariCP. Here is a Java 21 / Spring Boot 4.1 lab where broken and fixed designs are proven with H2 tests— and where folklore quietly disagreed with the framework.",
+    "readingTime": 4,
+    "wordCount": 780,
+    "slug": "proving-spring-internals-with-tests"
+  },
+  {
     "url": "/blog/hardening-the-chat-platform-deps-deep-health-and-c",
     "title": "Hardening the Chat Platform: Deps, Deep Health, and CI Pings",
     "episode": "027",
