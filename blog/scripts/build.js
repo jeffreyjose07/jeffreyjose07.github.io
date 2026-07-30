@@ -2,14 +2,19 @@
 
 import fs from 'fs';
 import path from 'path';
-import { marked } from 'marked';
+import { Marked } from 'marked';
+import markedShiki from 'marked-shiki';
 import matter from 'gray-matter';
 import { fileURLToPath } from 'url';
+import { getHighlighter, highlightCode, SHIKI_THEME } from './syntax-highlight.js';
 // import { generateThumbnails } from '../../scripts/thumbnail-generator/generate.js';
 
 // ES module equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+/** Shared Marked instance with semantic prose coloring + Shiki code fences. */
+let markdown = null;
 
 // Configuration
 const CONFIG_PATH = path.join(__dirname, '../config.json');
@@ -141,30 +146,51 @@ class SemanticColorizer {
 // Initialize semantic colorizer
 const colorizer = new SemanticColorizer(config);
 
-// Custom markdown renderer with advanced color coding
-const renderer = new marked.Renderer();
+async function initMarkdown() {
+    if (markdown) return markdown;
 
-// Override text rendering to apply semantic color coding
-const originalText = renderer.text;
-renderer.text = function (text) {
-    return colorizer.colorizeText(text);
-};
+    await getHighlighter();
+    console.log(`🎨 Shiki ready (theme: ${SHIKI_THEME}) — IDE-style fences for any language`);
 
-// Wrap inline images for consistent layout and lazy loading
-renderer.image = function (href, title, text) {
-    const titleAttr = title ? ` title="${title}"` : '';
-    const alt = (text || '').replace(/"/g, '&quot;');
-    return `<figure class="post-figure"><img src="${href}" alt="${alt}" loading="lazy" decoding="async"${titleAttr}></figure>`;
-};
+    markdown = new Marked({
+        gfm: true,
+        breaks: false,
+        pedantic: false,
+        smartLists: true,
+        smartypants: false,
+    });
 
-// Avoid invalid <p><figure> nesting from marked
-const originalParagraph = renderer.paragraph.bind(renderer);
-renderer.paragraph = function (text) {
-    if (text.trim().startsWith('<figure class="post-figure">')) {
-        return `${text}\n`;
-    }
-    return originalParagraph(text);
-};
+    // Prose coloring + image/paragraph tweaks (does not touch fenced code)
+    markdown.use({
+        renderer: {
+            text(text) {
+                return colorizer.colorizeText(text);
+            },
+            image(href, title, text) {
+                const titleAttr = title ? ` title="${title}"` : '';
+                const alt = (text || '').replace(/"/g, '&quot;');
+                return `<figure class="post-figure"><img src="${href}" alt="${alt}" loading="lazy" decoding="async"${titleAttr}></figure>`;
+            },
+            paragraph(text) {
+                if (String(text).trim().startsWith('<figure class="post-figure">')) {
+                    return `${text}\n`;
+                }
+                return `<p>${text}</p>\n`;
+            },
+        },
+    });
+
+    // Fenced code → Shiki (VS Code TextMate grammars + Dark+ theme)
+    markdown.use(
+        markedShiki({
+            highlight(code, lang) {
+                return highlightCode(code, lang);
+            },
+        }),
+    );
+
+    return markdown;
+}
 
 // Sync profile photo into public/ for blog author cards
 function syncProfileImage() {
@@ -175,17 +201,6 @@ function syncProfileImage() {
         console.log('📷 Synced profile image to public/jeffrey-profile.jpg');
     }
 }
-
-// Configure marked options
-marked.setOptions({
-    renderer: renderer,
-    gfm: true,
-    breaks: false,
-    pedantic: false,
-    sanitize: false,
-    smartLists: true,
-    smartypants: false
-});
 
 // Utility functions
 function createCleanSlug(title, customSlug) {
@@ -245,7 +260,7 @@ const siteHeader = loadTemplate('header');
 const styles = loadTemplate('styles');
 
 // Process a single blog post
-function processPost(filename, episodeNumber, allPosts = []) {
+async function processPost(filename, episodeNumber, allPosts = []) {
     const filePath = path.join(POSTS_DIR, filename);
     const fileContent = fs.readFileSync(filePath, 'utf8');
 
@@ -258,8 +273,9 @@ function processPost(filename, episodeNumber, allPosts = []) {
     // Determine thumbnail (default to generated terminal thumbnail)
     const thumbnail = frontmatter.thumbnail || frontmatter.image || `/assets/thumbnails/${slug}.png`;
 
-    // Generate HTML content
-    const htmlContent = marked(content);
+    // Generate HTML content (Shiki highlights fences at build time)
+    const md = await initMarkdown();
+    const htmlContent = await md.parse(content);
 
     // Calculate metadata
     const wordCount = frontmatter.wordCount || countWords(content);
@@ -659,8 +675,9 @@ ${postsHtml}
 
 // Main build function
 async function build() {
-    console.log('🚀 Building blog with advanced semantic coloring...');
+    console.log('🚀 Building blog with semantic coloring + Shiki syntax highlighting...');
     syncProfileImage();
+    await initMarkdown();
 
     // Get all markdown files (excluding template)
     const files = fs.readdirSync(POSTS_DIR)
@@ -711,19 +728,21 @@ async function build() {
     }
 
     // Second pass: process each post with navigation context
-    files.forEach((file, index) => {
+    for (let index = 0; index < files.length; index++) {
+        const file = files[index];
         const episodeNumber = index;
         console.log(`📄 Processing ${file} as episode ${episodeNumber.toString().padStart(3, '0')}...`);
 
         try {
-            const processedPost = processPost(file, episodeNumber, posts);
+            const processedPost = await processPost(file, episodeNumber, posts);
             // Update the posts array with the complete processed data
             posts[index] = processedPost;
             console.log(`✅ Generated ${processedPost.slug}/index.html with navigation`);
         } catch (error) {
             console.error(`❌ Error processing ${file}:`, error.message);
+            console.error(error.stack);
         }
-    });
+    }
 
     // Generate index page
     console.log('📝 Generating blog index with tag filtering...');
@@ -782,7 +801,7 @@ async function build() {
     }
     console.log(`✅ Minified ${allHtmlFiles.length} HTML files (saved ${(totalSaved / 1024).toFixed(1)} KB)`);
 
-    console.log(`🎉 Blog build complete! Generated ${posts.length} posts with navigation, RSS feed, archive, sitemap, posts.json, and semantic highlighting.`);
+    console.log(`🎉 Blog build complete! Generated ${posts.length} posts with navigation, RSS feed, archive, sitemap, posts.json, semantic coloring, and Shiki syntax highlighting.`);
 }
 
 // Run build if called directly

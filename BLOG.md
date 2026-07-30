@@ -118,15 +118,22 @@ You can add more terms in `blog/config.json` under `autoColorTerms`.
 3. With full styling
 ```
 
-### Code Blocks
+### Code Blocks (Shiki / VS Code Dark+)
+
+Fenced blocks are highlighted at **build time** with [Shiki](https://shiki.style/) — the same TextMate grammars VS Code uses — theme `dark-plus`.
+
 ```markdown
-```javascript
-// Code blocks get syntax highlighting
-function example() {
-  return "styled appropriately";
+```java
+@Transactional
+public void processBatchThenFail(String accountId, long amount) {
+    this.saveIndependently(accountId, amount);
 }
 ```
 ```
+
+Always set a language tag (`java`, `bash`, `typescript`, `json`, `yaml`, …). Unknown tags fall back to plaintext. Aliases like `js`→`javascript`, `sh`→`bash`, `gradle`→`groovy` are handled in `blog/scripts/syntax-highlight.js`.
+
+Prose still gets the terminal semantic color spans; only **fenced** code uses Shiki.
 
 ### Quotes
 ```markdown

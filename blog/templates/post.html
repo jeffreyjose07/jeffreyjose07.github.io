@@ -143,9 +143,35 @@
             color: #e2e8f0;
         }
 
-        .post-content pre {
-            background: #111827;
-            padding: 1.5rem;
+        /* Fenced blocks: Shiki (VS Code Dark+) owns token colors via inline styles */
+        .post-content .code-block-wrap {
+            position: relative;
+            margin: 2rem -2rem;
+            width: calc(100% + 4rem);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #1e1e1e;
+        }
+
+        .post-content .code-block-wrap .code-lang {
+            position: absolute;
+            top: 0.55rem;
+            right: 0.75rem;
+            z-index: 1;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: rgba(212, 212, 212, 0.55);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .post-content pre,
+        .post-content .code-block-wrap pre.shiki {
+            background: #1e1e1e;
+            padding: 1.5rem 1.25rem 1.25rem;
             border-radius: 0.5rem;
             overflow-x: auto;
             margin: 2rem -2rem;
@@ -153,8 +179,17 @@
             width: calc(100% + 4rem);
         }
 
+        .post-content .code-block-wrap pre.shiki {
+            margin: 0;
+            width: 100%;
+            border: none;
+            border-radius: 0;
+            background: transparent !important;
+        }
+
         @media (max-width: 768px) {
-            .post-content pre {
+            .post-content pre,
+            .post-content .code-block-wrap {
                 margin-left: -1rem;
                 margin-right: -1rem;
                 width: calc(100% + 2rem);
@@ -162,11 +197,27 @@
             }
         }
 
-        .post-content pre code {
+        .post-content pre code,
+        .post-content .code-block-wrap pre.shiki code {
             background: none;
             padding: 0;
-            color: #e5e7eb;
             font-size: 0.9rem;
+            /* Let Shiki token spans keep their IDE colors (do not force gray) */
+            color: inherit;
+        }
+
+        .post-content .shiki .line {
+            display: inline-block;
+            width: 100%;
+            min-height: 1.35em;
+        }
+
+        .post-content .shiki-fallback {
+            margin: 0;
+            width: 100%;
+            border: none;
+            border-radius: 0;
+            color: #d4d4d4;
         }
 
         .post-figure {
