@@ -27,8 +27,11 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Helmet>
-        <title>Jeffrey Jose | Portfolio</title>
-        <meta name="description" content="Portfolio of Jeffrey Jose - Software Engineer specializing in Full Stack Development, AI, and Game Development." />
+        <title>Jeffrey Jose | Senior Backend Engineer</title>
+        <meta
+          name="description"
+          content="Senior Backend Engineer at Jio — Spring Boot, Kafka, WebFlux, and distributed systems. Portfolio, projects, and technical writing."
+        />
       </Helmet>
       <Navigation />
       <Hero />

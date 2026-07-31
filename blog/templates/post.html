@@ -31,12 +31,9 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 2rem;
-            background: rgba(9, 9, 11, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 1rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
         }
 
         .post-header {
@@ -58,9 +55,9 @@
 
         .episode-badge {
             background: rgba(28, 201, 160, 0.12);
-            color: var(--primary-glow);
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
+            color: var(--primary);
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.375rem;
             font-family: var(--font-mono);
             font-weight: 600;
             font-size: 0.8rem;
@@ -70,10 +67,7 @@
             font-size: clamp(1.75rem, 4vw, 2.5rem);
             line-height: 1.15;
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--foreground);
         }
 
         .post-content {
@@ -277,18 +271,18 @@
 
         .tag-pill {
             font-size: 0.75rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.375rem;
             background: rgba(255, 255, 255, 0.05);
             color: var(--muted-foreground);
             border: 1px solid rgba(255, 255, 255, 0.1);
             text-decoration: none;
-            transition: all 0.2s;
+            transition: border-color 0.2s, color 0.2s;
         }
 
         .tag-pill:hover {
             background: rgba(28, 201, 160, 0.1);
-            color: var(--primary-glow);
+            color: var(--primary);
             border-color: rgba(28, 201, 160, 0.25);
         }
 
@@ -299,9 +293,9 @@
             gap: 1.25rem;
             margin-top: 3rem;
             padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 0.75rem;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
         }
 
         .author-avatar-wrap {
@@ -331,7 +325,7 @@
             font-weight: 700;
             font-size: 1.1rem;
             color: var(--primary-foreground);
-            background: linear-gradient(135deg, #1cc9a0, #22d3ee);
+            background: var(--primary);
             border: 2px solid rgba(28, 201, 160, 0.4);
         }
 
@@ -385,7 +379,7 @@
             top: 0;
             left: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-glow));
+            background: var(--primary);
             z-index: 2000;
             transition: width 0.1s ease;
         }
@@ -500,7 +494,7 @@
                 </div>
                 <div class="author-info">
                     <span class="author-name">Jeffrey Jose</span>
-                    <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span>
+                    <span class="author-bio">Senior backend engineer writing about Spring, distributed systems, and production debugging.</span>
                     <div class="author-links">
                         <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a>
                         <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
@@ -514,7 +508,7 @@
 
         <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;">
             <a href="/blog/feed.xml" class="glass"
-                style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;">
+                style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: color 0.2s, border-color 0.2s;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     style="margin-right: 0.5rem; color: #f59e0b;">

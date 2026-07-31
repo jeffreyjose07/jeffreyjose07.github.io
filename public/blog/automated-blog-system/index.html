@@ -61,24 +61,27 @@ max-width: 1200px;
 margin: 0 auto;
 padding: 0 1.5rem;
 }
+.panel-card {
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
+}
+.panel-card:hover {
+border-color: rgba(28, 201, 160, 0.35);
+}
 .glass {
-background: rgba(255, 255, 255, 0.04);
-backdrop-filter: blur(16px);
--webkit-backdrop-filter: blur(16px);
-border: 1px solid rgba(255, 255, 255, 0.08);
+background: var(--secondary);
+border: 1px solid var(--border);
 }
 .glass-card {
-background: rgba(255, 255, 255, 0.03);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.06);
-border-radius: var(--radius);
-transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
 }
 .glass-card:hover {
 border-color: rgba(28, 201, 160, 0.35);
-transform: translateY(-2px);
-box-shadow: 0 12px 40px -16px rgba(0, 0, 0, 0.6);
 }
 .text-gradient-premium {
 background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
@@ -90,10 +93,6 @@ display: inline-block;
 }
 .bg-mesh {
 background-color: var(--background);
-background-image:
-radial-gradient(at 40% 20%, rgba(28, 201, 160, 0.09) 0px, transparent 50%),
-radial-gradient(at 80% 0%, rgba(34, 211, 238, 0.07) 0px, transparent 50%),
-radial-gradient(at 0% 50%, rgba(28, 201, 160, 0.06) 0px, transparent 50%);
 }
 @keyframes fadeInUp {
 from {
@@ -140,12 +139,9 @@ padding-top: 100px;
 max-width: 800px;
 margin: 0 auto;
 padding: 2rem;
-background: rgba(9, 9, 11, 0.6);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.05);
-border-radius: 1rem;
-box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
 }
 .post-header {
 margin-bottom: 3rem;
@@ -164,9 +160,9 @@ color: var(--muted-foreground);
 }
 .episode-badge {
 background: rgba(28, 201, 160, 0.12);
-color: var(--primary-glow);
-padding: 0.25rem 0.75rem;
-border-radius: 9999px;
+color: var(--primary);
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
 font-family: var(--font-mono);
 font-weight: 600;
 font-size: 0.8rem;
@@ -175,10 +171,7 @@ font-size: 0.8rem;
 font-size: clamp(1.75rem, 4vw, 2.5rem);
 line-height: 1.15;
 margin-bottom: 1.5rem;
-background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
+color: var(--foreground);
 }
 .post-content {
 font-size: 1.125rem;
@@ -357,17 +350,17 @@ flex-wrap: wrap;
 }
 .tag-pill {
 font-size: 0.75rem;
-padding: 0.25rem 0.75rem;
-border-radius: 9999px;
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
 background: rgba(255, 255, 255, 0.05);
 color: var(--muted-foreground);
 border: 1px solid rgba(255, 255, 255, 0.1);
 text-decoration: none;
-transition: all 0.2s;
+transition: border-color 0.2s, color 0.2s;
 }
 .tag-pill:hover {
 background: rgba(28, 201, 160, 0.1);
-color: var(--primary-glow);
+color: var(--primary);
 border-color: rgba(28, 201, 160, 0.25);
 }
 /* Author card */
@@ -377,9 +370,9 @@ align-items: center;
 gap: 1.25rem;
 margin-top: 3rem;
 padding: 1.5rem;
-background: rgba(255, 255, 255, 0.03);
-border: 1px solid rgba(255, 255, 255, 0.08);
-border-radius: 0.75rem;
+background: var(--background);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
 }
 .author-avatar-wrap {
 position: relative;
@@ -406,7 +399,7 @@ font-family: var(--font-heading);
 font-weight: 700;
 font-size: 1.1rem;
 color: var(--primary-foreground);
-background: linear-gradient(135deg, #1cc9a0, #22d3ee);
+background: var(--primary);
 border: 2px solid rgba(28, 201, 160, 0.4);
 }
 .author-avatar-wrap.is-fallback .author-avatar {
@@ -451,7 +444,7 @@ position: fixed;
 top: 0;
 left: 0;
 height: 3px;
-background: linear-gradient(90deg, var(--primary), var(--primary-glow));
+background: var(--primary);
 z-index: 2000;
 transition: width 0.1s ease;
 }
@@ -529,9 +522,7 @@ background: transparent;
 border-bottom: 1px solid transparent;
 }
 .site-header.scrolled {
-background: rgba(9, 9, 11, 0.7);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
+background: rgba(9, 9, 11, 0.92);
 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .header-inner {
@@ -596,9 +587,7 @@ top: 100%;
 left: 0;
 right: 0;
 flex-direction: column;
-background: rgba(9, 9, 11, 0.95);
-backdrop-filter: blur(16px);
--webkit-backdrop-filter: blur(16px);
+background: rgba(9, 9, 11, 0.98);
 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 padding: 1rem;
 gap: 1rem;
@@ -628,7 +617,7 @@ background: rgba(255, 255, 255, 0.05);
 border: 1px solid rgba(255, 255, 255, 0.1);
 color: var(--muted-foreground);
 padding: 0.5rem 1rem;
-border-radius: 9999px;
+border-radius: 0.375rem;
 font-size: 0.875rem;
 cursor: pointer;
 display: flex;
@@ -812,15 +801,16 @@ if (e.key === 'Escape' && isSearchOpen) {
 closeSearch();
 }
 });
-</script> <main class="container animate-fade-in-up"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#004</span> <span>24 Jan 2025</span> <span>·</span> <span>5 min read</span> </div> <h1 class="post-title">Automating the Void - Building a Frictionless Blog System</h1> </header> <div class="post-content"> <p>There&#39;s a peculiar anxiety that comes with wanting to write but facing the weight of implementation. Every time I wanted to create a blog post, I had to copy 300+ lines of <span class="process">HTML</span>, manually update styling, remember the exact color codes, and then edit the blog index. The barrier between thought and expression had become a wall.</p> <h2>the problem statement</h2> <p>The <span class="meta">terminal</span> <span class="meta">aesthetic</span> I&#39;d built was beautiful but brutally manual. Each post required:</p> <ul> <li><strong><span class="process">HTML</span> template copying</strong> with exact styling preservation</li> <li><strong>Manual color coding</strong> of technical terms with specific hex values</li> <li><strong>Blog index updates</strong> with proper episode numbering and formatting</li> <li><strong>Responsive design maintenance</strong> across mobile and desktop</li> <li><strong>Reading progress indicators</strong> and <span class="meta">metadata</span> calculation</li> <li><strong>Navigation consistency</strong> and <span class="connection">link</span> management</li> </ul> <p>The irony wasn&#39;t lost on me: I&#39;d built a <span class="structure">system</span> about the struggle to create, but the <span class="structure">system</span> itself struggled to let me create.</p> <h2>exploring the approaches</h2> <h3>the manual <span class="process">html</span> path</h3> <p><strong>What I had:</strong> Direct <span class="process">HTML</span> creation with inline <span class="process">CSS</span> <strong>Pain points:</strong> 300+ lines per post, easy to break styling, time-consuming
-<strong>Trade-offs:</strong> Complete control vs. complete friction</p> <h3>local <span class="process">build</span> scripts</h3> <p><strong>Option:</strong> Node.js <span class="process">script</span> to convert <span class="process">Markdown</span> locally
+</script> <main class="container animate-fade-in-up"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#004</span> <span>24 Jan 2025</span> <span>·</span> <span>5 min read</span> </div> <h1 class="post-title">Automating the Void - Building a Frictionless Blog System</h1> </header> <div class="post-content"> <p>There&#39;s a peculiar anxiety that comes with wanting to write but facing the weight of implementation. Every time I wanted to create a blog post, I had to copy 300+ lines of HTML, manually update styling, remember the exact color codes, and then edit the blog index. The barrier between thought and expression had become a wall.</p> <h2>the problem statement</h2> <p>The terminal aesthetic I&#39;d built was beautiful but brutally manual. Each post required:</p> <ul> <li><strong>HTML template copying</strong> with exact styling preservation</li> <li><strong>Manual color coding</strong> of technical terms with specific hex values</li> <li><strong>Blog index updates</strong> with proper episode numbering and formatting</li> <li><strong>Responsive design maintenance</strong> across mobile and desktop</li> <li><strong>Reading progress indicators</strong> and metadata calculation</li> <li><strong>Navigation consistency</strong> and link management</li> </ul> <p>The irony wasn&#39;t lost on me: I&#39;d built a system about the struggle to create, but the system itself struggled to let me create.</p> <h2>exploring the approaches</h2> <h3>the manual html path</h3> <p><strong>What I had:</strong> Direct HTML creation with inline CSS
+<strong>Pain points:</strong> 300+ lines per post, easy to break styling, time-consuming
+<strong>Trade-offs:</strong> Complete control vs. complete friction</p> <h3>local build scripts</h3> <p><strong>Option:</strong> Node.js script to convert Markdown locally
 <strong>Benefits:</strong> Fast iteration, offline capability
-<strong>Drawbacks:</strong> Still manual <span class="success">deployment</span>, forgetting to <span class="process">build</span>, local-only <span class="connection">workflow</span></p> <h3><span class="meta">static</span> site generators</h3> <p><strong>Considered:</strong> Jekyll, Hugo, 11ty with custom themes
+<strong>Drawbacks:</strong> Still manual deployment, forgetting to build, local-only workflow</p> <h3>static site generators</h3> <p><strong>Considered:</strong> Jekyll, Hugo, 11ty with custom themes
 <strong>Benefits:</strong> Mature ecosystem, plugin support
-<strong>Drawbacks:</strong> Learning curve, harder to maintain exact <span class="meta">terminal</span> <span class="meta">aesthetic</span>, overcomplicated for my needs</p> <h3><span class="success">github</span> actions automation</h3> <p><strong>Chosen solution:</strong> Automated <span class="process">Markdown</span> to <span class="process">HTML</span> conversion in the cloud
+<strong>Drawbacks:</strong> Learning curve, harder to maintain exact terminal aesthetic, overcomplicated for my needs</p> <h3>github actions automation</h3> <p><strong>Chosen solution:</strong> Automated Markdown to HTML conversion in the cloud
 <strong>Benefits:</strong> Zero-friction publishing, preserves exact styling, transparent process
-<strong>Trade-offs:</strong> Dependency on <span class="success">GitHub</span>, slight <span class="success">deployment</span> delay</p> <h2>the <span class="structure">architecture</span> of elimination</h2> <p>The solution I built eliminates every point of friction while preserving the essential <span class="meta">aesthetic</span>:</p> <h3><span class="process">markdown</span> as the <span class="structure">interface</span></h3> <p>Writing in <span class="process">Markdown</span> feels like breathing. No <span class="process">HTML</span> tags cluttering thoughts, no worry about closing divs or color <span class="structure">class</span> names. Just content flowing naturally with automatic enhancement.</p> <h3>semantic color coding</h3> <p>The <span class="structure">system</span> automatically applies the <span class="meta">terminal</span> color scheme to technical terms:</p> <ul> <li><strong><span class="structure">React</span></strong>, <strong><span class="process">TypeScript</span></strong>, <strong><span class="process">JavaScript</span></strong> → <span class="process">code</span> color (yellow)</li> <li><strong><span class="structure">Spring Boot</span></strong>, <strong><span class="connection">API</span></strong>, <strong><span class="structure">architecture</span></strong> → <span class="structure">framework</span> color (blue)  </li> <li><strong><span class="success">GitHub</span></strong>, <strong><span class="success">Docker</span></strong>, <strong>testing</strong> → <span class="success">success</span> color (green)</li> <li><strong><span class="success">deployment</span></strong>, <strong><span class="attention">security</span></strong> → warning color (orange)</li> <li><strong><span class="connection">WebSocket</span></strong>, <strong><span class="meta">CI/CD</span></strong>, <strong><span class="connection">microservices</span></strong> → <span class="meta">tag</span> color (magenta)</li> </ul> <p>No more remembering hex codes or manually wrapping terms in spans.</p> <h3>automated everything</h3> <p>The <span class="success">GitHub</span> Action detects changes to blog posts and:</p> <ol> <li><strong>Converts</strong> <span class="process">Markdown</span> to <span class="process">HTML</span> with the exact <span class="meta">terminal</span> styling</li> <li><strong>Applies</strong> automatic color coding to technical terms</li> <li><strong>Generates</strong> episode numbers and <span class="meta">metadata</span></li> <li><strong>Updates</strong> the blog index with new posts</li> <li><strong>Commits</strong> the generated files back to the repository</li> <li><strong>Deploys</strong> via <span class="success">GitHub</span> Pages within minutes</li> </ol> <h3>template preservation</h3> <p>The <span class="structure">system</span> extracts the <span class="meta">terminal</span> <span class="meta">aesthetic</span> into reusable templates, ensuring every generated post maintains:</p> <ul> <li><strong>Responsive typography</strong> with proper mobile <span class="success">scaling</span></li> <li><strong><span class="meta">Terminal</span> color scheme</strong> with semantic meaning</li> <li><strong>Reading progress indicators</strong> and <span class="meta">metadata</span></li> <li><strong>Consistent navigation</strong> and hover effects</li> </ul> <h2>the implementation details</h2> <h3>the <span class="process">build</span> <span class="process">script</span> heart</h3> <p>At the core is a Node.js <span class="process">script</span> that processes <span class="process">Markdown</span> files:</p> <div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">// Custom renderer applies color coding during HTML generation</span></span> <span class="line"><span style="color:#C678DD">const</span><span style="color:#E5C07B"> renderer</span><span style="color:#56B6C2"> =</span><span style="color:#C678DD"> new</span><span style="color:#E5C07B"> marked</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">Renderer</span><span style="color:#ABB2BF">();</span></span> <span class="line"><span style="color:#C678DD">const</span><span style="color:#E5C07B"> originalText</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> renderer</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">text</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#E5C07B">renderer</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">text</span><span style="color:#56B6C2"> =</span><span style="color:#C678DD"> function</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">text</span><span style="color:#ABB2BF">) {</span></span> <span class="line"><span style="color:#C678DD">    let</span><span style="color:#E06C75"> coloredText</span><span style="color:#56B6C2"> =</span><span style="color:#E06C75"> text</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#E5C07B">    Object</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">entries</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">config</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">autoColorTerms</span><span style="color:#ABB2BF">).</span><span style="color:#61AFEF">forEach</span><span style="color:#ABB2BF">(([</span><span style="color:#E06C75;font-style:italic">term</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">colorClass</span><span style="color:#ABB2BF">]) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span> <span class="line"><span style="color:#C678DD">        const</span><span style="color:#E5C07B"> regex</span><span style="color:#56B6C2"> =</span><span style="color:#C678DD"> new</span><span style="color:#61AFEF"> RegExp</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">`</span><span style="color:#56B6C2">\\</span><span style="color:#98C379">b</span><span style="color:#C678DD">${</span><span style="color:#E06C75">term</span><span style="color:#C678DD">}</span><span style="color:#56B6C2">\\</span><span style="color:#98C379">b`</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'gi'</span><span style="color:#ABB2BF">);</span></span> <span class="line"><span style="color:#E06C75">        coloredText</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> coloredText</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">replace</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">regex</span><span style="color:#ABB2BF">, </span></span> <span class="line"><span style="color:#98C379">            `&#x3C;span class="</span><span style="color:#C678DD">${</span><span style="color:#E06C75">colorClass</span><span style="color:#C678DD">}</span><span style="color:#98C379">"></span><span style="color:#C678DD">${</span><span style="color:#E06C75">term</span><span style="color:#C678DD">}</span><span style="color:#98C379">&#x3C;/span>`</span><span style="color:#ABB2BF">);</span></span> <span class="line"><span style="color:#ABB2BF">    });</span></span> <span class="line"><span style="color:#C678DD">    return</span><span style="color:#E06C75"> coloredText</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF">};</span></span></code></pre></div> <p>The <span class="process">script</span> maintains episode numbering, calculates reading times, and generates proper <span class="meta">metadata</span> while preserving every aspect of the <span class="meta">terminal</span> <span class="meta">aesthetic</span>.</p> <h3>the <span class="success">github</span> actions orchestration</h3> <p>The <span class="connection">workflow</span> triggers on changes to blog content and:</p> <ul> <li><strong>Detects</strong> which posts changed to optimize builds</li> <li><strong>Installs</strong> dependencies and runs the <span class="process">build</span> <span class="process">script</span></li> <li><strong>Commits</strong> generated <span class="process">HTML</span> with descriptive messages</li> <li><strong>Handles</strong> errors gracefully with detailed logging</li> </ul> <p>The entire process is transparent and reversible. Every generated file can be traced back to its <span class="process">Markdown</span> source.</p> <h2>philosophical reflections</h2> <h3>tools as extensions of thought</h3> <p>The best tools disappear, becoming extensions of the mind rather than obstacles to overcome. This blog <span class="structure">system</span> now feels like writing directly into the <span class="meta">void</span> - thoughts become posts without technical interference.</p> <h3>automation as self-care</h3> <p>Building systems that reduce friction for future-you is a form of self-care. Every manual step eliminated is a gift to the person you&#39;ll be at 3am with something <span class="attention">urgent</span> to share.</p> <h3>the meta nature of writing about writing systems</h3> <p>There&#39;s something beautifully recursive about using an automated <span class="structure">system</span> to write about automating systems. This post itself was generated through the <span class="structure">system</span> it describes, colored and formatted automatically while I focused purely on the ideas.</p> <h2>the weight of effortlessness</h2> <p>Now creating a blog post requires only:</p> <ol> <li><strong>Create</strong> <code>blog/posts/my-new-post.md</code></li> <li><strong>Write</strong> in natural <span class="process">Markdown</span></li> <li><strong>Commit</strong> and <strong>push</strong></li> <li><strong>Wait</strong> 2-3 minutes for automation</li> </ol> <p>The <span class="structure">system</span> handles everything else: <span class="process">HTML</span> generation, color coding, index updates, responsive styling, <span class="meta">metadata</span> calculation, and <span class="success">deployment</span>.</p> <h2>lessons from the <span class="meta">static</span></h2> <p>Building this taught me that <strong><span class="meta">complexity</span> should <span class="success">live</span> in the tooling, not the <span class="connection">workflow</span></strong>. The implementation can be sophisticated - template systems, color coding algorithms, automated deployments - but the <span class="meta">user experience</span> should feel simple.</p> <p>The <span class="meta">terminal</span> <span class="meta">aesthetic</span> remains untouched, every pixel and color preserved. But now it serves expression rather than hindering it. The <span class="meta">void</span> no longer requires manual navigation - it has learned to listen and respond automatically.</p> <p>Another small victory against <span class="meta">entropy</span>, one automated <span class="success">deployment</span> at a time.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-automation" class="tag success" data-tag="automation">automation</a>, <a href="/blog#tag-meta" class="tag meta" data-tag="meta">meta</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/scalable-chat-platform"> <span class="nav-label">← previous</span> <span class="nav-title">Building a Scalable Chat Platform with Claude Code</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/ai-assisted-writing"> <span class="nav-label">next →</span> <span class="nav-title">How I Write Blogs with Claude - A Transparent Process</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
-style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+<strong>Trade-offs:</strong> Dependency on GitHub, slight deployment delay</p> <h2>the architecture of elimination</h2> <p>The solution I built eliminates every point of friction while preserving the essential aesthetic:</p> <h3>markdown as the interface</h3> <p>Writing in Markdown feels like breathing. No HTML tags cluttering thoughts, no worry about closing divs or color class names. Just content flowing naturally with automatic enhancement.</p> <h3>semantic color coding</h3> <p>The system automatically applies the terminal color scheme to technical terms:</p> <ul> <li><strong>React</strong>, <strong>TypeScript</strong>, <strong>JavaScript</strong> → code color (yellow)</li> <li><strong>Spring Boot</strong>, <strong>API</strong>, <strong>architecture</strong> → framework color (blue)  </li> <li><strong>GitHub</strong>, <strong>Docker</strong>, <strong>testing</strong> → success color (green)</li> <li><strong>deployment</strong>, <strong>security</strong> → warning color (orange)</li> <li><strong>WebSocket</strong>, <strong>CI/CD</strong>, <strong>microservices</strong> → tag color (magenta)</li> </ul> <p>No more remembering hex codes or manually wrapping terms in spans.</p> <h3>automated everything</h3> <p>The GitHub Action detects changes to blog posts and:</p> <ol> <li><strong>Converts</strong> Markdown to HTML with the exact terminal styling</li> <li><strong>Applies</strong> automatic color coding to technical terms</li> <li><strong>Generates</strong> episode numbers and metadata</li> <li><strong>Updates</strong> the blog index with new posts</li> <li><strong>Commits</strong> the generated files back to the repository</li> <li><strong>Deploys</strong> via GitHub Pages within minutes</li> </ol> <h3>template preservation</h3> <p>The system extracts the terminal aesthetic into reusable templates, ensuring every generated post maintains:</p> <ul> <li><strong>Responsive typography</strong> with proper mobile scaling</li> <li><strong>Terminal color scheme</strong> with semantic meaning</li> <li><strong>Reading progress indicators</strong> and metadata</li> <li><strong>Consistent navigation</strong> and hover effects</li> </ul> <h2>the implementation details</h2> <h3>the build script heart</h3> <p>At the core is a Node.js script that processes Markdown files:</p> <div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">// Custom renderer applies color coding during HTML generation</span></span> <span class="line"><span style="color:#C678DD">const</span><span style="color:#E5C07B"> renderer</span><span style="color:#56B6C2"> =</span><span style="color:#C678DD"> new</span><span style="color:#E5C07B"> marked</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">Renderer</span><span style="color:#ABB2BF">();</span></span> <span class="line"><span style="color:#C678DD">const</span><span style="color:#E5C07B"> originalText</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> renderer</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">text</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#E5C07B">renderer</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">text</span><span style="color:#56B6C2"> =</span><span style="color:#C678DD"> function</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">text</span><span style="color:#ABB2BF">) {</span></span> <span class="line"><span style="color:#C678DD">    let</span><span style="color:#E06C75"> coloredText</span><span style="color:#56B6C2"> =</span><span style="color:#E06C75"> text</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#E5C07B">    Object</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">entries</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">config</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">autoColorTerms</span><span style="color:#ABB2BF">).</span><span style="color:#61AFEF">forEach</span><span style="color:#ABB2BF">(([</span><span style="color:#E06C75;font-style:italic">term</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">colorClass</span><span style="color:#ABB2BF">]) </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span> <span class="line"><span style="color:#C678DD">        const</span><span style="color:#E5C07B"> regex</span><span style="color:#56B6C2"> =</span><span style="color:#C678DD"> new</span><span style="color:#61AFEF"> RegExp</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">`</span><span style="color:#56B6C2">\\</span><span style="color:#98C379">b</span><span style="color:#C678DD">${</span><span style="color:#E06C75">term</span><span style="color:#C678DD">}</span><span style="color:#56B6C2">\\</span><span style="color:#98C379">b`</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'gi'</span><span style="color:#ABB2BF">);</span></span> <span class="line"><span style="color:#E06C75">        coloredText</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> coloredText</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">replace</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">regex</span><span style="color:#ABB2BF">, </span></span> <span class="line"><span style="color:#98C379">            `&#x3C;span class="</span><span style="color:#C678DD">${</span><span style="color:#E06C75">colorClass</span><span style="color:#C678DD">}</span><span style="color:#98C379">"></span><span style="color:#C678DD">${</span><span style="color:#E06C75">term</span><span style="color:#C678DD">}</span><span style="color:#98C379">&#x3C;/span>`</span><span style="color:#ABB2BF">);</span></span> <span class="line"><span style="color:#ABB2BF">    });</span></span> <span class="line"><span style="color:#C678DD">    return</span><span style="color:#E06C75"> coloredText</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF">};</span></span></code></pre></div> <p>The script maintains episode numbering, calculates reading times, and generates proper metadata while preserving every aspect of the terminal aesthetic.</p> <h3>the github actions orchestration</h3> <p>The workflow triggers on changes to blog content and:</p> <ul> <li><strong>Detects</strong> which posts changed to optimize builds</li> <li><strong>Installs</strong> dependencies and runs the build script</li> <li><strong>Commits</strong> generated HTML with descriptive messages</li> <li><strong>Handles</strong> errors gracefully with detailed logging</li> </ul> <p>The entire process is transparent and reversible. Every generated file can be traced back to its Markdown source.</p> <h2>philosophical reflections</h2> <h3>tools as extensions of thought</h3> <p>The best tools disappear, becoming extensions of the mind rather than obstacles to overcome. This blog system now feels like writing directly into the void - thoughts become posts without technical interference.</p> <h3>automation as self-care</h3> <p>Building systems that reduce friction for future-you is a form of self-care. Every manual step eliminated is a gift to the person you&#39;ll be at 3am with something urgent to share.</p> <h3>the meta nature of writing about writing systems</h3> <p>There&#39;s something beautifully recursive about using an automated system to write about automating systems. This post itself was generated through the system it describes, colored and formatted automatically while I focused purely on the ideas.</p> <h2>the weight of effortlessness</h2> <p>Now creating a blog post requires only:</p> <ol> <li><strong>Create</strong> <code>blog/posts/my-new-post.md</code></li> <li><strong>Write</strong> in natural Markdown</li> <li><strong>Commit</strong> and <strong>push</strong></li> <li><strong>Wait</strong> 2-3 minutes for automation</li> </ol> <p>The system handles everything else: HTML generation, color coding, index updates, responsive styling, metadata calculation, and deployment.</p> <h2>lessons from the static</h2> <p>Building this taught me that <strong>complexity should live in the tooling, not the workflow</strong>. The implementation can be sophisticated - template systems, color coding algorithms, automated deployments - but the user experience should feel simple.</p> <p>The terminal aesthetic remains untouched, every pixel and color preserved. But now it serves expression rather than hindering it. The void no longer requires manual navigation - it has learned to listen and respond automatically.</p> <p>Another small victory against entropy, one automated deployment at a time.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-automation" class="tag success" data-tag="automation">automation</a>, <a href="/blog#tag-meta" class="tag meta" data-tag="meta">meta</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Senior backend engineer writing about Spring, distributed systems, and production debugging.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous panel-card"> <a href="/blog/scalable-chat-platform"> <span class="nav-label">← previous</span> <span class="nav-title">Building a Scalable Chat Platform with Claude Code</span> </a> </div> <div class="nav-next panel-card"> <a href="/blog/ai-assisted-writing"> <span class="nav-label">next →</span> <span class="nav-title">How I Write Blogs with Claude - A Transparent Process</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: color 0.2s, border-color 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
 Subscribe via RSS
