@@ -58,6 +58,10 @@ updates:
       - dependency-name: typescript-eslint
         update-types: ["version-update:semver-major"]
 
+      # lucide-react v1 changes icon APIs — stay on 0.x until intentional
+      - dependency-name: lucide-react
+        update-types: ["version-update:semver-major"]
+
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
