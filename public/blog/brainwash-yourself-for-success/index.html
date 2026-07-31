@@ -229,7 +229,8 @@ background: rgba(255, 255, 255, 0.03);
 padding: 1.5rem;
 border-radius: 0 0.5rem 0.5rem 0;
 }
-.post-content code {
+/* Inline code only — do not paint fenced blocks (Shiki owns those). */
+.post-content :not(pre) > code {
 font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
 font-size: 0.9em;
 background: rgba(255, 255, 255, 0.1);
@@ -237,15 +238,16 @@ padding: 0.2em 0.4em;
 border-radius: 0.25rem;
 color: #e2e8f0;
 }
-/* Fenced blocks: Shiki (VS Code Dark+) owns token colors via inline styles */
+/* Fenced blocks: Shiki (One Dark Pro) owns token colors via inline styles */
 .post-content .code-block-wrap {
 position: relative;
 margin: 2rem -2rem;
 width: calc(100% + 4rem);
 border-radius: 0.5rem;
 overflow: hidden;
-border: 1px solid rgba(255, 255, 255, 0.1);
-background: #1e1e1e;
+border: 1px solid rgba(255, 255, 255, 0.12);
+background: #282c34;
+box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 .post-content .code-block-wrap .code-lang {
 position: absolute;
@@ -256,19 +258,20 @@ font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
 font-size: 0.65rem;
 letter-spacing: 0.04em;
 text-transform: uppercase;
-color: rgba(212, 212, 212, 0.55);
+color: rgba(171, 178, 191, 0.65);
 pointer-events: none;
 user-select: none;
 }
 .post-content pre,
 .post-content .code-block-wrap pre.shiki {
-background: #1e1e1e;
-padding: 1.5rem 1.25rem 1.25rem;
+background: #282c34;
+padding: 1.65rem 1.25rem 1.35rem;
 border-radius: 0.5rem;
 overflow-x: auto;
 margin: 2rem -2rem;
 border: 1px solid rgba(255, 255, 255, 0.1);
 width: calc(100% + 4rem);
+line-height: 1.55;
 }
 .post-content .code-block-wrap pre.shiki {
 margin: 0;
@@ -288,11 +291,15 @@ border-radius: 0;
 }
 .post-content pre code,
 .post-content .code-block-wrap pre.shiki code {
-background: none;
+background: none !important;
 padding: 0;
-font-size: 0.9rem;
-/* Let Shiki token spans keep their IDE colors (do not force gray) */
+font-size: 0.92rem;
+/* Never flatten Shiki token colors */
 color: inherit;
+}
+.post-content .shiki span {
+/* Inline token colors must win over any inherited prose color */
+-webkit-text-fill-color: currentColor;
 }
 .post-content .shiki .line {
 display: inline-block;
@@ -304,7 +311,7 @@ margin: 0;
 width: 100%;
 border: none;
 border-radius: 0;
-color: #d4d4d4;
+color: #abb2bf;
 }
 .post-figure {
 margin: 2rem 0;

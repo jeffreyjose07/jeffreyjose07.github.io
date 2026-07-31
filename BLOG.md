@@ -120,7 +120,7 @@ You can add more terms in `blog/config.json` under `autoColorTerms`.
 
 ### Code Blocks (Shiki / VS Code Dark+)
 
-Fenced blocks are highlighted at **build time** with [Shiki](https://shiki.style/) — the same TextMate grammars VS Code uses — theme `dark-plus`.
+Fenced blocks are highlighted at **build time** with [Shiki](https://shiki.style/) — the same TextMate grammars VS Code uses — theme `one-dark-pro`.
 
 ```markdown
 ```java
@@ -131,7 +131,7 @@ public void processBatchThenFail(String accountId, long amount) {
 ```
 ```
 
-Always set a language tag (`java`, `bash`, `typescript`, `json`, `yaml`, …). Unknown tags fall back to plaintext. Aliases like `js`→`javascript`, `sh`→`bash`, `gradle`→`groovy` are handled in `blog/scripts/syntax-highlight.js`.
+Always set a language tag when you can (`java`, `bash`, `typescript`, `json`, `yaml`, `cpp`, …). Unlabeled fences are best-effort guessed (Java/TS/CSS/YAML/SQL/bash/…). Unknown tags load on demand from Shiki’s language bundle or fall back to plaintext. Aliases live in `blog/scripts/syntax-highlight.js`.
 
 Prose still gets the terminal semantic color spans; only **fenced** code uses Shiki.
 
