@@ -214,10 +214,13 @@
             -webkit-text-fill-color: currentColor;
         }
 
+        /* Must be block: HTML minify collapses newlines between .line spans.
+           inline-block + width:100% + leftover spaces keeps every line on one row. */
         .post-content .shiki .line {
-            display: inline-block;
+            display: block;
             width: 100%;
             min-height: 1.35em;
+            white-space: pre;
         }
 
         .post-content .shiki-fallback {
