@@ -25,7 +25,7 @@ jobs:
     # "fatal: You are not currently on a branch." Checkout the PR head
     # branch (or the pushed branch) so commit+push has a real ref.
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
         token: ${{ secrets.GITHUB_TOKEN }}
