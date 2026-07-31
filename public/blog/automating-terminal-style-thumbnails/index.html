@@ -61,24 +61,27 @@ max-width: 1200px;
 margin: 0 auto;
 padding: 0 1.5rem;
 }
+.panel-card {
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
+}
+.panel-card:hover {
+border-color: rgba(28, 201, 160, 0.35);
+}
 .glass {
-background: rgba(255, 255, 255, 0.04);
-backdrop-filter: blur(16px);
--webkit-backdrop-filter: blur(16px);
-border: 1px solid rgba(255, 255, 255, 0.08);
+background: var(--secondary);
+border: 1px solid var(--border);
 }
 .glass-card {
-background: rgba(255, 255, 255, 0.03);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.06);
-border-radius: var(--radius);
-transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
 }
 .glass-card:hover {
 border-color: rgba(28, 201, 160, 0.35);
-transform: translateY(-2px);
-box-shadow: 0 12px 40px -16px rgba(0, 0, 0, 0.6);
 }
 .text-gradient-premium {
 background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
@@ -90,23 +93,6 @@ display: inline-block;
 }
 .bg-mesh {
 background-color: var(--background);
-background-image:
-radial-gradient(at 40% 20%, rgba(28, 201, 160, 0.09) 0px, transparent 50%),
-radial-gradient(at 80% 0%, rgba(34, 211, 238, 0.07) 0px, transparent 50%),
-radial-gradient(at 0% 50%, rgba(28, 201, 160, 0.06) 0px, transparent 50%);
-}
-@keyframes fadeInUp {
-from {
-opacity: 0;
-transform: translateY(16px);
-}
-to {
-opacity: 1;
-transform: translateY(0);
-}
-}
-.animate-fade-in-up {
-animation: fadeInUp 0.6s ease-out forwards;
 }
 ::-webkit-scrollbar {
 width: 8px;
@@ -140,12 +126,9 @@ padding-top: 100px;
 max-width: 800px;
 margin: 0 auto;
 padding: 2rem;
-background: rgba(9, 9, 11, 0.6);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.05);
-border-radius: 1rem;
-box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
 }
 .post-header {
 margin-bottom: 3rem;
@@ -164,9 +147,9 @@ color: var(--muted-foreground);
 }
 .episode-badge {
 background: rgba(28, 201, 160, 0.12);
-color: var(--primary-glow);
-padding: 0.25rem 0.75rem;
-border-radius: 9999px;
+color: var(--primary);
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
 font-family: var(--font-mono);
 font-weight: 600;
 font-size: 0.8rem;
@@ -175,10 +158,7 @@ font-size: 0.8rem;
 font-size: clamp(1.75rem, 4vw, 2.5rem);
 line-height: 1.15;
 margin-bottom: 1.5rem;
-background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
+color: var(--foreground);
 }
 .post-content {
 font-size: 1.125rem;
@@ -357,17 +337,17 @@ flex-wrap: wrap;
 }
 .tag-pill {
 font-size: 0.75rem;
-padding: 0.25rem 0.75rem;
-border-radius: 9999px;
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
 background: rgba(255, 255, 255, 0.05);
 color: var(--muted-foreground);
 border: 1px solid rgba(255, 255, 255, 0.1);
 text-decoration: none;
-transition: all 0.2s;
+transition: border-color 0.2s, color 0.2s;
 }
 .tag-pill:hover {
 background: rgba(28, 201, 160, 0.1);
-color: var(--primary-glow);
+color: var(--primary);
 border-color: rgba(28, 201, 160, 0.25);
 }
 /* Author card */
@@ -377,9 +357,9 @@ align-items: center;
 gap: 1.25rem;
 margin-top: 3rem;
 padding: 1.5rem;
-background: rgba(255, 255, 255, 0.03);
-border: 1px solid rgba(255, 255, 255, 0.08);
-border-radius: 0.75rem;
+background: var(--background);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
 }
 .author-avatar-wrap {
 position: relative;
@@ -406,7 +386,7 @@ font-family: var(--font-heading);
 font-weight: 700;
 font-size: 1.1rem;
 color: var(--primary-foreground);
-background: linear-gradient(135deg, #1cc9a0, #22d3ee);
+background: var(--primary);
 border: 2px solid rgba(28, 201, 160, 0.4);
 }
 .author-avatar-wrap.is-fallback .author-avatar {
@@ -451,7 +431,7 @@ position: fixed;
 top: 0;
 left: 0;
 height: 3px;
-background: linear-gradient(90deg, var(--primary), var(--primary-glow));
+background: var(--primary);
 z-index: 2000;
 transition: width 0.1s ease;
 }
@@ -529,9 +509,7 @@ background: transparent;
 border-bottom: 1px solid transparent;
 }
 .site-header.scrolled {
-background: rgba(9, 9, 11, 0.7);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
+background: rgba(9, 9, 11, 0.92);
 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .header-inner {
@@ -596,9 +574,7 @@ top: 100%;
 left: 0;
 right: 0;
 flex-direction: column;
-background: rgba(9, 9, 11, 0.95);
-backdrop-filter: blur(16px);
--webkit-backdrop-filter: blur(16px);
+background: rgba(9, 9, 11, 0.98);
 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 padding: 1rem;
 gap: 1rem;
@@ -628,7 +604,7 @@ background: rgba(255, 255, 255, 0.05);
 border: 1px solid rgba(255, 255, 255, 0.1);
 color: var(--muted-foreground);
 padding: 0.5rem 1rem;
-border-radius: 9999px;
+border-radius: 0.375rem;
 font-size: 0.875rem;
 cursor: pointer;
 display: flex;
@@ -812,8 +788,8 @@ if (e.key === 'Escape' && isSearchOpen) {
 closeSearch();
 }
 });
-</script> <main class="container animate-fade-in-up"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#024</span> <span>3 Dec 2025</span> <span>·</span> <span>3 min read</span> </div> <h1 class="post-title">Automating Terminal-Style Thumbnails</h1> </header> <div class="post-content"> <p>I recently decided to give my blog a visual refresh. While I loved the content, the thumbnails were a mix of generic gradients and random screenshots. I wanted something that felt cohesive, technical, and aligned with the &quot;<span class="meta">terminal</span>/cyberpunk&quot; <span class="meta">aesthetic</span> of my portfolio.</p> <p>Instead of manually designing a cover image for every new post in Figma or Canva, I did what any engineer would do: I wrote a <span class="process">script</span> to do it for me.</p> <h2>The Goal</h2> <p>I wanted thumbnails that looked like a <span class="meta">terminal</span> window executing a command related to the post. For example:</p> <ul> <li>A backend post might show a <code>curl</code> request.</li> <li>A personal post might show a <code>cat journal.md</code> command.</li> <li>A <span class="structure">database</span> post might show a <code>psql</code> query.</li> </ul> <p>The result needed to be a high-quality PNG that could be used as an Open Graph image (for Twitter/LinkedIn cards) and as the header image on the blog itself.</p> <h2>The Tech Stack</h2> <ul> <li><strong>Node.js</strong>: The runtime for the <span class="process">script</span>.</li> <li><strong>Puppeteer</strong>: A headless Chrome Node.js <span class="connection">API</span>. This is the secret sauce. It allows me to render <span class="process">HTML</span>/<span class="process">CSS</span> exactly as a browser would and take a screenshot.</li> <li><strong><span class="process">HTML</span>/<span class="process">CSS</span></strong>: To design the &quot;<span class="meta">terminal</span> window&quot; layout.</li> </ul> <h2>The Implementation</h2> <h3>1. The Template</h3> <p>First, I created an <span class="process">HTML</span> template (<code>template.html</code>) that defines the look of the <span class="meta">terminal</span>. It uses Flexbox to center a &quot;window&quot; div, and <span class="process">CSS</span> to style the window controls (the red, yellow, and green dots) and the dark background.</p> <p>I used Google Fonts to load <strong>JetBrains Mono</strong> for the <span class="meta">terminal</span> text and <strong>Outfit</strong> for the window title, ensuring typography matches the <span class="connection">rest</span> of my site.</p> <div class="code-block-wrap" data-lang="html"><span class="code-lang" aria-hidden="true">html</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"terminal-window"</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"window-header"</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"window-controls"</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#7F848E;font-style:italic">            &#x3C;!-- Mac-style dots --></span></span> <span class="line"><span style="color:#ABB2BF">            &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"control-dot red"</span><span style="color:#ABB2BF">>&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">            &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"control-dot yellow"</span><span style="color:#ABB2BF">>&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">            &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"control-dot green"</span><span style="color:#ABB2BF">>&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">        &#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"window-title"</span><span style="color:#ABB2BF">>~/blog/posts/{{windowTitle}}&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">    &#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"terminal-content"</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">        {{terminalContent}}</span></span> <span class="line"><span style="color:#ABB2BF">    &#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span></code></pre></div> <h3>2. The Generator <span class="process">Script</span></h3> <p>The <span class="process">script</span> (<code>generate.js</code>) reads my blog&#39;s configuration and post <span class="meta">metadata</span>. It then launches a headless browser instance using Puppeteer.</p> <p>For each post, it:</p> <ol> <li>Determines the &quot;primary <span class="meta">tag</span>&quot; (e.g., <code>backend</code>, <code>personal</code>, <code>frontend</code>).</li> <li>Selects a corresponding &quot;command <span class="meta">pattern</span>&quot; based on that <span class="meta">tag</span>.</li> <li>Injects the post title and the generated command into the <span class="process">HTML</span> template.</li> <li>Takes a screenshot of the rendered page.</li> <li>Saves the image to <code>public/assets/thumbnails/</code>.</li> </ol> <p>Here&#39;s a snippet of the <span class="process">logic</span> that maps tags to <span class="meta">terminal</span> commands:</p> <div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">switch</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">primaryCategory</span><span style="color:#ABB2BF">) {</span></span> <span class="line"><span style="color:#C678DD">    case</span><span style="color:#98C379"> 'backend'</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">        commandHtml</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> `curl -X POST /api/v1/deploy`</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#E06C75">        outputHtml</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> `{"status": "success", "message": "Deployment initiated..."}`</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#C678DD">        break</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#C678DD">    case</span><span style="color:#98C379"> 'personal'</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">        commandHtml</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> `cat ~/journal/</span><span style="color:#C678DD">${</span><span style="color:#E06C75">slug</span><span style="color:#C678DD">}</span><span style="color:#98C379">.md`</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#E06C75">        outputHtml</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> `Reflecting on: "</span><span style="color:#C678DD">${</span><span style="color:#E06C75">description</span><span style="color:#C678DD">}</span><span style="color:#98C379">"`</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#C678DD">        break</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#7F848E;font-style:italic">    // ... other categories</span></span> <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div> <h3>3. <span class="process">Build</span> <span class="connection">Integration</span></h3> <p>The best part is that this is now part of my <span class="process">build</span> <span class="connection">pipeline</span>. Whenever I <span class="process">run</span> <code>npm run build:blog</code>, the <span class="process">script</span> checks if a thumbnail exists for each post. If it&#39;s missing, it automatically generates a fresh one in milliseconds.</p> <p>This means I never have to worry about assets again. I just write the <span class="process">markdown</span>, <span class="meta">tag</span> it appropriately, and the <span class="structure">system</span> generates a beautiful, custom thumbnail that perfectly matches the content.</p> <h2>The Result</h2> <p>You&#39;re looking at it right now! The thumbnail for this post was generated by the very <span class="structure">system</span> it describes. It&#39;s a meta-example of automation serving creativity.</p> <p>By treating design assets as <span class="process">code</span>, I&#39;ve ensured 100% consistency across the blog while removing manual toil from my writing process.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-automation" class="tag success" data-tag="automation">automation</a>, <a href="/blog#tag-design" class="tag neutral" data-tag="design">design</a>, <a href="/blog#tag-javascript" class="tag process" data-tag="javascript">javascript</a>, <a href="/blog#tag-nodejs" class="tag neutral" data-tag="nodejs">nodejs</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/refining-navigation-and-branding-a-journey-to-cons"> <span class="nav-label">← previous</span> <span class="nav-title">Refining Navigation and Branding: A Journey to Consistency</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/optimizing-performance-and-pagination-a-deep-dive"> <span class="nav-label">next →</span> <span class="nav-title">Optimizing Performance and Pagination: A Deep Dive into Web Vitals</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
-style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+</script> <main class="container"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#024</span> <span>3 Dec 2025</span> <span>·</span> <span>3 min read</span> </div> <h1 class="post-title">Automating Terminal-Style Thumbnails</h1> </header> <div class="post-content"> <p>I recently decided to give my blog a visual refresh. While I loved the content, the thumbnails were a mix of generic gradients and random screenshots. I wanted something that felt cohesive, technical, and aligned with the &quot;terminal/cyberpunk&quot; aesthetic of my portfolio.</p> <p>Instead of manually designing a cover image for every new post in Figma or Canva, I did what any engineer would do: I wrote a script to do it for me.</p> <h2>The Goal</h2> <p>I wanted thumbnails that looked like a terminal window executing a command related to the post. For example:</p> <ul> <li>A backend post might show a <code>curl</code> request.</li> <li>A personal post might show a <code>cat journal.md</code> command.</li> <li>A database post might show a <code>psql</code> query.</li> </ul> <p>The result needed to be a high-quality PNG that could be used as an Open Graph image (for Twitter/LinkedIn cards) and as the header image on the blog itself.</p> <h2>The Tech Stack</h2> <ul> <li><strong>Node.js</strong>: The runtime for the script.</li> <li><strong>Puppeteer</strong>: A headless Chrome Node.js API. This is the secret sauce. It allows me to render HTML/CSS exactly as a browser would and take a screenshot.</li> <li><strong>HTML/CSS</strong>: To design the &quot;terminal window&quot; layout.</li> </ul> <h2>The Implementation</h2> <h3>1. The Template</h3> <p>First, I created an HTML template (<code>template.html</code>) that defines the look of the terminal. It uses Flexbox to center a &quot;window&quot; div, and CSS to style the window controls (the red, yellow, and green dots) and the dark background.</p> <p>I used Google Fonts to load <strong>JetBrains Mono</strong> for the terminal text and <strong>Outfit</strong> for the window title, ensuring typography matches the rest of my site.</p> <div class="code-block-wrap" data-lang="html"><span class="code-lang" aria-hidden="true">html</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"terminal-window"</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"window-header"</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"window-controls"</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#7F848E;font-style:italic">            &#x3C;!-- Mac-style dots --></span></span> <span class="line"><span style="color:#ABB2BF">            &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"control-dot red"</span><span style="color:#ABB2BF">>&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">            &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"control-dot yellow"</span><span style="color:#ABB2BF">>&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">            &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"control-dot green"</span><span style="color:#ABB2BF">>&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">        &#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"window-title"</span><span style="color:#ABB2BF">>~/blog/posts/{{windowTitle}}&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">    &#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"terminal-content"</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">        {{terminalContent}}</span></span> <span class="line"><span style="color:#ABB2BF">    &#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span></code></pre></div> <h3>2. The Generator Script</h3> <p>The script (<code>generate.js</code>) reads my blog&#39;s configuration and post metadata. It then launches a headless browser instance using Puppeteer.</p> <p>For each post, it:</p> <ol> <li>Determines the &quot;primary tag&quot; (e.g., <code>backend</code>, <code>personal</code>, <code>frontend</code>).</li> <li>Selects a corresponding &quot;command pattern&quot; based on that tag.</li> <li>Injects the post title and the generated command into the HTML template.</li> <li>Takes a screenshot of the rendered page.</li> <li>Saves the image to <code>public/assets/thumbnails/</code>.</li> </ol> <p>Here&#39;s a snippet of the logic that maps tags to terminal commands:</p> <div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">switch</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">primaryCategory</span><span style="color:#ABB2BF">) {</span></span> <span class="line"><span style="color:#C678DD">    case</span><span style="color:#98C379"> 'backend'</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">        commandHtml</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> `curl -X POST /api/v1/deploy`</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#E06C75">        outputHtml</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> `{"status": "success", "message": "Deployment initiated..."}`</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#C678DD">        break</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#C678DD">    case</span><span style="color:#98C379"> 'personal'</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">        commandHtml</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> `cat ~/journal/</span><span style="color:#C678DD">${</span><span style="color:#E06C75">slug</span><span style="color:#C678DD">}</span><span style="color:#98C379">.md`</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#E06C75">        outputHtml</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> `Reflecting on: "</span><span style="color:#C678DD">${</span><span style="color:#E06C75">description</span><span style="color:#C678DD">}</span><span style="color:#98C379">"`</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#C678DD">        break</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#7F848E;font-style:italic">    // ... other categories</span></span> <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div> <h3>3. Build Integration</h3> <p>The best part is that this is now part of my build pipeline. Whenever I run <code>npm run build:blog</code>, the script checks if a thumbnail exists for each post. If it&#39;s missing, it automatically generates a fresh one in milliseconds.</p> <p>This means I never have to worry about assets again. I just write the markdown, tag it appropriately, and the system generates a beautiful, custom thumbnail that perfectly matches the content.</p> <h2>The Result</h2> <p>You&#39;re looking at it right now! The thumbnail for this post was generated by the very system it describes. It&#39;s a meta-example of automation serving creativity.</p> <p>By treating design assets as code, I&#39;ve ensured 100% consistency across the blog while removing manual toil from my writing process.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-automation" class="tag success" data-tag="automation">automation</a>, <a href="/blog#tag-design" class="tag neutral" data-tag="design">design</a>, <a href="/blog#tag-javascript" class="tag process" data-tag="javascript">javascript</a>, <a href="/blog#tag-nodejs" class="tag neutral" data-tag="nodejs">nodejs</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Senior backend engineer writing about Spring, distributed systems, and production debugging.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous panel-card"> <a href="/blog/refining-navigation-and-branding-a-journey-to-cons"> <span class="nav-label">← previous</span> <span class="nav-title">Refining Navigation and Branding: A Journey to Consistency</span> </a> </div> <div class="nav-next panel-card"> <a href="/blog/optimizing-performance-and-pagination-a-deep-dive"> <span class="nav-label">next →</span> <span class="nav-title">Optimizing Performance and Pagination: A Deep Dive into Web Vitals</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: color 0.2s, border-color 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
 Subscribe via RSS

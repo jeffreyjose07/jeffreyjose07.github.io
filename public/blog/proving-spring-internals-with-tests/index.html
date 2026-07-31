@@ -61,24 +61,27 @@ max-width: 1200px;
 margin: 0 auto;
 padding: 0 1.5rem;
 }
+.panel-card {
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
+}
+.panel-card:hover {
+border-color: rgba(28, 201, 160, 0.35);
+}
 .glass {
-background: rgba(255, 255, 255, 0.04);
-backdrop-filter: blur(16px);
--webkit-backdrop-filter: blur(16px);
-border: 1px solid rgba(255, 255, 255, 0.08);
+background: var(--secondary);
+border: 1px solid var(--border);
 }
 .glass-card {
-background: rgba(255, 255, 255, 0.03);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.06);
-border-radius: var(--radius);
-transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
 }
 .glass-card:hover {
 border-color: rgba(28, 201, 160, 0.35);
-transform: translateY(-2px);
-box-shadow: 0 12px 40px -16px rgba(0, 0, 0, 0.6);
 }
 .text-gradient-premium {
 background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
@@ -90,23 +93,6 @@ display: inline-block;
 }
 .bg-mesh {
 background-color: var(--background);
-background-image:
-radial-gradient(at 40% 20%, rgba(28, 201, 160, 0.09) 0px, transparent 50%),
-radial-gradient(at 80% 0%, rgba(34, 211, 238, 0.07) 0px, transparent 50%),
-radial-gradient(at 0% 50%, rgba(28, 201, 160, 0.06) 0px, transparent 50%);
-}
-@keyframes fadeInUp {
-from {
-opacity: 0;
-transform: translateY(16px);
-}
-to {
-opacity: 1;
-transform: translateY(0);
-}
-}
-.animate-fade-in-up {
-animation: fadeInUp 0.6s ease-out forwards;
 }
 ::-webkit-scrollbar {
 width: 8px;
@@ -140,12 +126,9 @@ padding-top: 100px;
 max-width: 800px;
 margin: 0 auto;
 padding: 2rem;
-background: rgba(9, 9, 11, 0.6);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.05);
-border-radius: 1rem;
-box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
 }
 .post-header {
 margin-bottom: 3rem;
@@ -164,9 +147,9 @@ color: var(--muted-foreground);
 }
 .episode-badge {
 background: rgba(28, 201, 160, 0.12);
-color: var(--primary-glow);
-padding: 0.25rem 0.75rem;
-border-radius: 9999px;
+color: var(--primary);
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
 font-family: var(--font-mono);
 font-weight: 600;
 font-size: 0.8rem;
@@ -175,10 +158,7 @@ font-size: 0.8rem;
 font-size: clamp(1.75rem, 4vw, 2.5rem);
 line-height: 1.15;
 margin-bottom: 1.5rem;
-background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
+color: var(--foreground);
 }
 .post-content {
 font-size: 1.125rem;
@@ -357,17 +337,17 @@ flex-wrap: wrap;
 }
 .tag-pill {
 font-size: 0.75rem;
-padding: 0.25rem 0.75rem;
-border-radius: 9999px;
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
 background: rgba(255, 255, 255, 0.05);
 color: var(--muted-foreground);
 border: 1px solid rgba(255, 255, 255, 0.1);
 text-decoration: none;
-transition: all 0.2s;
+transition: border-color 0.2s, color 0.2s;
 }
 .tag-pill:hover {
 background: rgba(28, 201, 160, 0.1);
-color: var(--primary-glow);
+color: var(--primary);
 border-color: rgba(28, 201, 160, 0.25);
 }
 /* Author card */
@@ -377,9 +357,9 @@ align-items: center;
 gap: 1.25rem;
 margin-top: 3rem;
 padding: 1.5rem;
-background: rgba(255, 255, 255, 0.03);
-border: 1px solid rgba(255, 255, 255, 0.08);
-border-radius: 0.75rem;
+background: var(--background);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
 }
 .author-avatar-wrap {
 position: relative;
@@ -406,7 +386,7 @@ font-family: var(--font-heading);
 font-weight: 700;
 font-size: 1.1rem;
 color: var(--primary-foreground);
-background: linear-gradient(135deg, #1cc9a0, #22d3ee);
+background: var(--primary);
 border: 2px solid rgba(28, 201, 160, 0.4);
 }
 .author-avatar-wrap.is-fallback .author-avatar {
@@ -451,7 +431,7 @@ position: fixed;
 top: 0;
 left: 0;
 height: 3px;
-background: linear-gradient(90deg, var(--primary), var(--primary-glow));
+background: var(--primary);
 z-index: 2000;
 transition: width 0.1s ease;
 }
@@ -529,9 +509,7 @@ background: transparent;
 border-bottom: 1px solid transparent;
 }
 .site-header.scrolled {
-background: rgba(9, 9, 11, 0.7);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
+background: rgba(9, 9, 11, 0.92);
 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .header-inner {
@@ -596,9 +574,7 @@ top: 100%;
 left: 0;
 right: 0;
 flex-direction: column;
-background: rgba(9, 9, 11, 0.95);
-backdrop-filter: blur(16px);
--webkit-backdrop-filter: blur(16px);
+background: rgba(9, 9, 11, 0.98);
 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 padding: 1rem;
 gap: 1rem;
@@ -628,7 +604,7 @@ background: rgba(255, 255, 255, 0.05);
 border: 1px solid rgba(255, 255, 255, 0.1);
 color: var(--muted-foreground);
 padding: 0.5rem 1rem;
-border-radius: 9999px;
+border-radius: 0.375rem;
 font-size: 0.875rem;
 cursor: pointer;
 display: flex;
@@ -812,8 +788,8 @@ if (e.key === 'Escape' && isSearchOpen) {
 closeSearch();
 }
 });
-</script> <main class="container animate-fade-in-up"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#028</span> <span>30 Jul 2026</span> <span>·</span> <span>3 min read</span> </div> <h1 class="post-title">Proving Spring Internals With Tests (Not Folklore)</h1> </header> <div class="post-content"> <p>I stopped trusting slide-deck explanations of Spring proxies, ThreadLocals, and HikariCP. So I built a lab where every trap has a <strong>broken</strong> path, a <strong>fixed</strong> path, and assertions that force the JVM to show the bug.</p> <p><strong>Repo:</strong> <a href="https://github.com/jeffreyjose07/spring-validation-lab">jeffreyjose07/spring-validation-lab</a><br><strong>Stack:</strong> <span class="process">Java</span> 21, <span class="structure">Spring Boot</span> 4.1, Gradle 9.3, H2, JUnit  </p> <p>This post is the <strong>series index</strong>. The short overview was not enough — the detailed write-ups <span class="success">live</span> in the posts below.</p> <h2>Deep dives</h2> <table> <thead> <tr> <th>#</th> <th>Post</th> <th>What we proved</th> </tr> </thead> <tbody><tr> <td>1</td> <td><a href="/blog/spring-proxies-and-self-invocation">Proxies and self-invocation</a></td> <td><code>this.method()</code> skips the <span class="connection">proxy</span>; <code>REQUIRES_NEW</code> is dead text; separate bean leaves the independent row after outer rollback</td> </tr> <tr> <td>2</td> <td><a href="/blog/spring-threadlocals-and-async">ThreadLocals and <code>@Async</code></a></td> <td>Naive executor loses <strong><span class="attention">Authentication</span></strong> (context object can still be non-null); explicit args and <code>DelegatingSecurityContextRunnable</code> fix it</td> </tr> <tr> <td>3</td> <td><a href="/blog/spring-bean-lifecycle-and-mini-umbrellas">Bean lifecycle and mini-umbrellas</a></td> <td><code>@PostConstruct</code> before <span class="connection">proxy</span>; constructor cycles fail to boot; Spring Data invents mini-TXs without an outer umbrella</td> </tr> <tr> <td>4</td> <td><a href="/blog/spring-hikari-hogging-and-optimistic-locking">HikariCP, hogging, optimistic locking</a></td> <td><code>REQUIRES_NEW</code> vs pool of 10; <span class="connection">HTTP</span> inside TX after first SQL; <code>@Version</code> under 20 concurrent buyers</td> </tr> </tbody></table> <p>Teaching notes in the repo mirror the same path under <a href="https://github.com/jeffreyjose07/spring-validation-lab/tree/main/docs"><code>docs/</code></a>. Folklore corrections <span class="success">live</span> in <a href="https://github.com/jeffreyjose07/spring-validation-lab/blob/main/docs/ground-truth.md"><code>docs/ground-truth.md</code></a>.</p> <h2>The loop</h2> <ol> <li>State the <span class="success">production</span> trap.  </li> <li>Write the <strong>broken</strong> service on purpose.  </li> <li>Assert the failure (wrong rows, NPE, timeouts, pool fully checked out).  </li> <li>Write the <strong>fixed</strong> design.  </li> <li>Assert the <span class="success">success</span>.  </li> <li>Write down every place Boot 4.1 disagreed with the blog-post version of Spring.</li> </ol> <h2>How to try it</h2> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">git</span><span style="color:#98C379"> clone</span><span style="color:#98C379"> https://github.com/jeffreyjose07/spring-validation-lab.git</span></span> <span class="line"><span style="color:#56B6C2">cd</span><span style="color:#98C379"> spring-validation-lab</span></span> <span class="line"><span style="color:#C678DD">export</span><span style="color:#E06C75"> JAVA_HOME</span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF">$(</span><span style="color:#61AFEF">/usr/libexec/java_home</span><span style="color:#D19A66"> -v</span><span style="color:#D19A66"> 21</span><span style="color:#ABB2BF">)   </span><span style="color:#7F848E;font-style:italic"># macOS</span></span> <span class="line"><span style="color:#61AFEF">./gradlew</span><span style="color:#98C379"> test</span><span style="color:#D19A66"> --tests</span><span style="color:#98C379"> '*SelfInvocationProxyTest'</span></span></code></pre></div> <p>Open a single <span class="process">test</span> in IntelliJ and watch the <span class="process">Run</span> console for <code>LabLog</code> banners like:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>========== [PHASE1-PROXY] BROKEN self-invocation ==========</span></span> <span class="line"><span>  → Calling this.saveIndependently(...) — REQUIRES_NEW sticky note will NOT be read</span></span></code></pre></div> <h2>What I am not doing next (yet)</h2> <p>I am deliberately not racing into Kafka outbox / saga posts until the Phase 1–2 proofs feel boring. The point of this lab is <strong>competence under the hood</strong>, not checklist coverage.</p> <p>If you interview for Spring-heavy backend roles: stop only reading about proxies. Make one fail on purpose. Keep the green and red tests. Write down every place the <span class="structure">framework</span> surprised you.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-spring-boot" class="tag structure" data-tag="spring-boot">spring-boot</a>, <a href="/blog#tag-java" class="tag neutral" data-tag="java">java</a>, <a href="/blog#tag-testing" class="tag neutral" data-tag="testing">testing</a>, <a href="/blog#tag-transactions" class="tag neutral" data-tag="transactions">transactions</a>, <a href="/blog#tag-interview-prep" class="tag neutral" data-tag="interview-prep">interview-prep</a>, <a href="/blog#tag-architecture" class="tag structure" data-tag="architecture">architecture</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/hardening-the-chat-platform-deps-deep-health-and-c"> <span class="nav-label">← previous</span> <span class="nav-title">Hardening the Chat Platform: Deps, Deep Health, and CI Pings</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/spring-proxies-and-self-invocation"> <span class="nav-label">next →</span> <span class="nav-title">Spring Proxies and Self-Invocation: What We Proved</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
-style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+</script> <main class="container"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#028</span> <span>30 Jul 2026</span> <span>·</span> <span>3 min read</span> </div> <h1 class="post-title">Proving Spring Internals With Tests (Not Folklore)</h1> </header> <div class="post-content"> <p>I stopped trusting slide-deck explanations of Spring proxies, ThreadLocals, and HikariCP. So I built a lab where every trap has a <strong>broken</strong> path, a <strong>fixed</strong> path, and assertions that force the JVM to show the bug.</p> <p><strong>Repo:</strong> <a href="https://github.com/jeffreyjose07/spring-validation-lab">jeffreyjose07/spring-validation-lab</a><br><strong>Stack:</strong> Java 21, Spring Boot 4.1, Gradle 9.3, H2, JUnit  </p> <p>This post is the <strong>series index</strong>. The short overview was not enough — the detailed write-ups live in the posts below.</p> <h2>Deep dives</h2> <table> <thead> <tr> <th>#</th> <th>Post</th> <th>What we proved</th> </tr> </thead> <tbody><tr> <td>1</td> <td><a href="/blog/spring-proxies-and-self-invocation">Proxies and self-invocation</a></td> <td><code>this.method()</code> skips the proxy; <code>REQUIRES_NEW</code> is dead text; separate bean leaves the independent row after outer rollback</td> </tr> <tr> <td>2</td> <td><a href="/blog/spring-threadlocals-and-async">ThreadLocals and <code>@Async</code></a></td> <td>Naive executor loses <strong>Authentication</strong> (context object can still be non-null); explicit args and <code>DelegatingSecurityContextRunnable</code> fix it</td> </tr> <tr> <td>3</td> <td><a href="/blog/spring-bean-lifecycle-and-mini-umbrellas">Bean lifecycle and mini-umbrellas</a></td> <td><code>@PostConstruct</code> before proxy; constructor cycles fail to boot; Spring Data invents mini-TXs without an outer umbrella</td> </tr> <tr> <td>4</td> <td><a href="/blog/spring-hikari-hogging-and-optimistic-locking">HikariCP, hogging, optimistic locking</a></td> <td><code>REQUIRES_NEW</code> vs pool of 10; HTTP inside TX after first SQL; <code>@Version</code> under 20 concurrent buyers</td> </tr> </tbody></table> <p>Teaching notes in the repo mirror the same path under <a href="https://github.com/jeffreyjose07/spring-validation-lab/tree/main/docs"><code>docs/</code></a>. Folklore corrections live in <a href="https://github.com/jeffreyjose07/spring-validation-lab/blob/main/docs/ground-truth.md"><code>docs/ground-truth.md</code></a>.</p> <h2>The loop</h2> <ol> <li>State the production trap.  </li> <li>Write the <strong>broken</strong> service on purpose.  </li> <li>Assert the failure (wrong rows, NPE, timeouts, pool fully checked out).  </li> <li>Write the <strong>fixed</strong> design.  </li> <li>Assert the success.  </li> <li>Write down every place Boot 4.1 disagreed with the blog-post version of Spring.</li> </ol> <h2>How to try it</h2> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">git</span><span style="color:#98C379"> clone</span><span style="color:#98C379"> https://github.com/jeffreyjose07/spring-validation-lab.git</span></span> <span class="line"><span style="color:#56B6C2">cd</span><span style="color:#98C379"> spring-validation-lab</span></span> <span class="line"><span style="color:#C678DD">export</span><span style="color:#E06C75"> JAVA_HOME</span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF">$(</span><span style="color:#61AFEF">/usr/libexec/java_home</span><span style="color:#D19A66"> -v</span><span style="color:#D19A66"> 21</span><span style="color:#ABB2BF">)   </span><span style="color:#7F848E;font-style:italic"># macOS</span></span> <span class="line"><span style="color:#61AFEF">./gradlew</span><span style="color:#98C379"> test</span><span style="color:#D19A66"> --tests</span><span style="color:#98C379"> '*SelfInvocationProxyTest'</span></span></code></pre></div> <p>Open a single test in IntelliJ and watch the Run console for <code>LabLog</code> banners like:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>========== [PHASE1-PROXY] BROKEN self-invocation ==========</span></span> <span class="line"><span>  → Calling this.saveIndependently(...) — REQUIRES_NEW sticky note will NOT be read</span></span></code></pre></div> <h2>What I am not doing next (yet)</h2> <p>I am deliberately not racing into Kafka outbox / saga posts until the Phase 1–2 proofs feel boring. The point of this lab is <strong>competence under the hood</strong>, not checklist coverage.</p> <p>If you interview for Spring-heavy backend roles: stop only reading about proxies. Make one fail on purpose. Keep the green and red tests. Write down every place the framework surprised you.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-spring-boot" class="tag structure" data-tag="spring-boot">spring-boot</a>, <a href="/blog#tag-java" class="tag neutral" data-tag="java">java</a>, <a href="/blog#tag-testing" class="tag neutral" data-tag="testing">testing</a>, <a href="/blog#tag-transactions" class="tag neutral" data-tag="transactions">transactions</a>, <a href="/blog#tag-interview-prep" class="tag neutral" data-tag="interview-prep">interview-prep</a>, <a href="/blog#tag-architecture" class="tag structure" data-tag="architecture">architecture</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Senior backend engineer writing about Spring, distributed systems, and production debugging.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous panel-card"> <a href="/blog/hardening-the-chat-platform-deps-deep-health-and-c"> <span class="nav-label">← previous</span> <span class="nav-title">Hardening the Chat Platform: Deps, Deep Health, and CI Pings</span> </a> </div> <div class="nav-next panel-card"> <a href="/blog/spring-proxies-and-self-invocation"> <span class="nav-label">next →</span> <span class="nav-title">Spring Proxies and Self-Invocation: What We Proved</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: color 0.2s, border-color 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
 Subscribe via RSS

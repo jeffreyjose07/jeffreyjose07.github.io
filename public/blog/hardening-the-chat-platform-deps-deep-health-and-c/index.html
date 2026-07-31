@@ -61,24 +61,27 @@ max-width: 1200px;
 margin: 0 auto;
 padding: 0 1.5rem;
 }
+.panel-card {
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
+}
+.panel-card:hover {
+border-color: rgba(28, 201, 160, 0.35);
+}
 .glass {
-background: rgba(255, 255, 255, 0.04);
-backdrop-filter: blur(16px);
--webkit-backdrop-filter: blur(16px);
-border: 1px solid rgba(255, 255, 255, 0.08);
+background: var(--secondary);
+border: 1px solid var(--border);
 }
 .glass-card {
-background: rgba(255, 255, 255, 0.03);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.06);
-border-radius: var(--radius);
-transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
 }
 .glass-card:hover {
 border-color: rgba(28, 201, 160, 0.35);
-transform: translateY(-2px);
-box-shadow: 0 12px 40px -16px rgba(0, 0, 0, 0.6);
 }
 .text-gradient-premium {
 background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
@@ -90,23 +93,6 @@ display: inline-block;
 }
 .bg-mesh {
 background-color: var(--background);
-background-image:
-radial-gradient(at 40% 20%, rgba(28, 201, 160, 0.09) 0px, transparent 50%),
-radial-gradient(at 80% 0%, rgba(34, 211, 238, 0.07) 0px, transparent 50%),
-radial-gradient(at 0% 50%, rgba(28, 201, 160, 0.06) 0px, transparent 50%);
-}
-@keyframes fadeInUp {
-from {
-opacity: 0;
-transform: translateY(16px);
-}
-to {
-opacity: 1;
-transform: translateY(0);
-}
-}
-.animate-fade-in-up {
-animation: fadeInUp 0.6s ease-out forwards;
 }
 ::-webkit-scrollbar {
 width: 8px;
@@ -140,12 +126,9 @@ padding-top: 100px;
 max-width: 800px;
 margin: 0 auto;
 padding: 2rem;
-background: rgba(9, 9, 11, 0.6);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-border: 1px solid rgba(255, 255, 255, 0.05);
-border-radius: 1rem;
-box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
 }
 .post-header {
 margin-bottom: 3rem;
@@ -164,9 +147,9 @@ color: var(--muted-foreground);
 }
 .episode-badge {
 background: rgba(28, 201, 160, 0.12);
-color: var(--primary-glow);
-padding: 0.25rem 0.75rem;
-border-radius: 9999px;
+color: var(--primary);
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
 font-family: var(--font-mono);
 font-weight: 600;
 font-size: 0.8rem;
@@ -175,10 +158,7 @@ font-size: 0.8rem;
 font-size: clamp(1.75rem, 4vw, 2.5rem);
 line-height: 1.15;
 margin-bottom: 1.5rem;
-background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
+color: var(--foreground);
 }
 .post-content {
 font-size: 1.125rem;
@@ -357,17 +337,17 @@ flex-wrap: wrap;
 }
 .tag-pill {
 font-size: 0.75rem;
-padding: 0.25rem 0.75rem;
-border-radius: 9999px;
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
 background: rgba(255, 255, 255, 0.05);
 color: var(--muted-foreground);
 border: 1px solid rgba(255, 255, 255, 0.1);
 text-decoration: none;
-transition: all 0.2s;
+transition: border-color 0.2s, color 0.2s;
 }
 .tag-pill:hover {
 background: rgba(28, 201, 160, 0.1);
-color: var(--primary-glow);
+color: var(--primary);
 border-color: rgba(28, 201, 160, 0.25);
 }
 /* Author card */
@@ -377,9 +357,9 @@ align-items: center;
 gap: 1.25rem;
 margin-top: 3rem;
 padding: 1.5rem;
-background: rgba(255, 255, 255, 0.03);
-border: 1px solid rgba(255, 255, 255, 0.08);
-border-radius: 0.75rem;
+background: var(--background);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
 }
 .author-avatar-wrap {
 position: relative;
@@ -406,7 +386,7 @@ font-family: var(--font-heading);
 font-weight: 700;
 font-size: 1.1rem;
 color: var(--primary-foreground);
-background: linear-gradient(135deg, #1cc9a0, #22d3ee);
+background: var(--primary);
 border: 2px solid rgba(28, 201, 160, 0.4);
 }
 .author-avatar-wrap.is-fallback .author-avatar {
@@ -451,7 +431,7 @@ position: fixed;
 top: 0;
 left: 0;
 height: 3px;
-background: linear-gradient(90deg, var(--primary), var(--primary-glow));
+background: var(--primary);
 z-index: 2000;
 transition: width 0.1s ease;
 }
@@ -529,9 +509,7 @@ background: transparent;
 border-bottom: 1px solid transparent;
 }
 .site-header.scrolled {
-background: rgba(9, 9, 11, 0.7);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
+background: rgba(9, 9, 11, 0.92);
 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .header-inner {
@@ -596,9 +574,7 @@ top: 100%;
 left: 0;
 right: 0;
 flex-direction: column;
-background: rgba(9, 9, 11, 0.95);
-backdrop-filter: blur(16px);
--webkit-backdrop-filter: blur(16px);
+background: rgba(9, 9, 11, 0.98);
 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 padding: 1rem;
 gap: 1rem;
@@ -628,7 +604,7 @@ background: rgba(255, 255, 255, 0.05);
 border: 1px solid rgba(255, 255, 255, 0.1);
 color: var(--muted-foreground);
 padding: 0.5rem 1rem;
-border-radius: 9999px;
+border-radius: 0.375rem;
 font-size: 0.875rem;
 cursor: pointer;
 display: flex;
@@ -812,8 +788,8 @@ if (e.key === 'Escape' && isSearchOpen) {
 closeSearch();
 }
 });
-</script> <main class="container animate-fade-in-up"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#027</span> <span>27 May 2026</span> <span>·</span> <span>8 min read</span> </div> <h1 class="post-title">Hardening the Chat Platform: Deps, Deep Health, and CI Pings</h1> </header> <div class="post-content"> <p>This is a <span class="success">working</span> log for <a href="https://github.com/jeffreyjose07/scalable-chat-platform"><span class="success">scalable</span>-chat-platform</a>: what got merged, why the order mattered, and where health checks and <span class="success">GitHub</span> Actions ended up. The app already exposes a <strong>deep</strong> checklist at <code>GET /api/health/status</code> (<span class="structure">PostgreSQL</span>, <span class="structure">MongoDB</span>, <span class="structure">Redis</span>); Actuator health is in the mix where Spring is configured for it. This session was about <strong>not</strong> treating that endpoint as free work for the world, and about <strong>not</strong> running the same cron in two repositories.</p> <h2>Dependabot and merge order</h2> <p>Five frontend-related bumps landed after resolving conflicts:</p> <ul> <li><strong>Headless UI</strong> → <code>2.2.9</code></li> <li><strong>axios</strong> → <code>1.12.2</code></li> <li><strong>@hookform/resolvers</strong> → <code>5.2.2</code></li> <li><strong><span class="structure">react</span>-hook-form</strong> → <code>7.65.0</code></li> <li><strong><span class="structure">React</span> 19</strong> with aligned types</li> </ul> <p><strong>Headless UI went in before <span class="structure">React</span> 19</strong> on purpose. Older Headless UI majors and <span class="structure">React</span> 19 do not always play nice together; ordering the merge avoids a broken peer dependency surface while the lockfile settles.</p> <p>After <span class="structure">React</span> 19 landed, <strong><code>useRef</code> typing in search-related components</strong> needed tightening—straightforward breakage from stricter generics, fixed in place rather than suppressed with <code>any</code>.</p> <h2>Health checks and abuse resistance</h2> <p>Nothing changed about what “healthy” means: the deep route still aggregates real dependencies. The hardening story is <strong>who can hammer it</strong> and <strong>how often the expensive path runs</strong>.</p> <p><strong><span class="attention">Security</span> configuration</strong> allows anonymous access to actuator-style health probes where uptime tools need them: <code>/api/actuator/health/**</code> and <code>/actuator/health/**</code> (see commit <code>13580ca</code> on the app repo). That keeps external monitors and container health checks honest without opening the <span class="connection">rest</span> of the admin surface.</p> <p>To avoid turning <code>/api/health/status</code> into an accidental DDoS against your own databases:</p> <ul> <li><strong>TTL caching</strong> on the deep health response so repeat hits within a window reuse a stored result.</li> <li>A <strong>separate rate-limit bucket</strong> for health traffic so normal <span class="connection">API</span> throttles stay sensible.</li> <li><strong>Broader URL patterns</strong> on the limiting filter (<code>/api/*</code>, <code>/actuator/*</code>, <code>/health</code>) so probes and <span class="connection">API</span> traffic are categorized consistently.</li> </ul> <p>Configuration lives under <code>app.health.*</code> (cache TTL and related knobs in <code>application.yml</code>). <strong>Tests</strong> cover the health controller—including cache behavior—so regressions fail in CI instead of <span class="success">production</span>.</p> <h2>Render, <span class="success">Docker</span>, and the frontend install step</h2> <p>Render’s <span class="success">Docker</span> <span class="process">build</span> failed during <code>frontendInstall</code>: <strong>Testing Library <span class="structure">React</span> v13</strong> and <strong><span class="structure">React</span> 19</strong> do not belong in the same install graph. The fix was to move to <strong>@testing-library/<span class="structure">react</span> v16</strong>, add <strong>@testing-library/dom</strong>, bump <strong>@testing-library/user-event</strong>, and <strong>regenerate <code>package-lock.json</code></strong> so CI and <span class="success">Docker</span> see one consistent tree.</p> <h2><span class="success">GitHub</span> Actions: one place for scheduled pings</h2> <p>The app repository now owns <strong><code>.github/workflows/ping-app-health.yml</code></strong>: cron roughly every five minutes plus <code>workflow_dispatch</code>, <code>APP_BASE_URL</code> secret, <code>curl</code>, and <strong><code>jq</code></strong> for a readable summary. That is where scheduled wake-ups belong—same repo as the service, secret colocated with <span class="success">deployment</span> docs.</p> <p>Earlier I had experimented with a <strong>portfolio</strong> <span class="connection">workflow</span> (<code>keep-alive.yml</code>) hitting the Render URL from <a href="https://github.com/jeffreyjose07/jeffreyjose07.github.io">jeffreyjose07.<span class="success">github</span>.io</a>. That duplicated the cron and split configuration across projects. <strong>I removed it from the Pages repo</strong> so there is exactly one scheduler: the chat platform <span class="connection">workflow</span>. No duplicate pings, no need for <code>APP_BASE_URL</code> on the blog side.</p> <h2>What I deliberately did not commit</h2> <p>Local <code>backend/src/main/resources/static/static/js/main.*</code> bundles from a dev <span class="process">build</span> stayed out of <span class="success">git</span>—noise, not source of truth.</p> <h2>Links and commits (app repo)</h2> <ul> <li><a href="https://github.com/jeffreyjose07/scalable-chat-platform/commit/13580ca"><code>13580ca</code></a> — actuator health paths reachable for anonymous probes.</li> <li><a href="https://github.com/jeffreyjose07/scalable-chat-platform/commit/f04579c"><code>f04579c</code></a> — ping <span class="connection">workflow</span>, Testing Library / lockfile fix, health cache, rate limits, tests, and config.</li> </ul> <p>If you fork the platform, copy the <strong>ping <span class="connection">workflow</span></strong> and set <strong><code>APP_BASE_URL</code></strong> in that repository’s secrets; keep the <strong>portfolio</strong> repository focused on <span class="meta">static</span> site and blog builds only.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-scalable-chat-platform" class="tag neutral" data-tag="scalable-chat-platform">scalable-chat-platform</a>, <a href="/blog#tag-spring-boot" class="tag structure" data-tag="spring-boot">spring-boot</a>, <a href="/blog#tag-react" class="tag process" data-tag="react">react</a>, <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a>, <a href="/blog#tag-health" class="tag neutral" data-tag="health">health</a>, <a href="/blog#tag-deployment" class="tag neutral" data-tag="deployment">deployment</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Software engineer writing about technology, career growth, and building things that matter.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous glass-card"> <a href="/blog/redesigning-the-portfolio-teal-fonts-and-timelines"> <span class="nav-label">← previous</span> <span class="nav-title">Redesigning the Portfolio: Teal, Fonts, and Timelines</span> </a> </div> <div class="nav-next glass-card"> <a href="/blog/proving-spring-internals-with-tests"> <span class="nav-label">next →</span> <span class="nav-title">Proving Spring Internals With Tests (Not Folklore)</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
-style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: all 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+</script> <main class="container"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#027</span> <span>27 May 2026</span> <span>·</span> <span>8 min read</span> </div> <h1 class="post-title">Hardening the Chat Platform: Deps, Deep Health, and CI Pings</h1> </header> <div class="post-content"> <p>This is a working log for <a href="https://github.com/jeffreyjose07/scalable-chat-platform">scalable-chat-platform</a>: what got merged, why the order mattered, and where health checks and GitHub Actions ended up. The app already exposes a <strong>deep</strong> checklist at <code>GET /api/health/status</code> (PostgreSQL, MongoDB, Redis); Actuator health is in the mix where Spring is configured for it. This session was about <strong>not</strong> treating that endpoint as free work for the world, and about <strong>not</strong> running the same cron in two repositories.</p> <h2>Dependabot and merge order</h2> <p>Five frontend-related bumps landed after resolving conflicts:</p> <ul> <li><strong>Headless UI</strong> → <code>2.2.9</code></li> <li><strong>axios</strong> → <code>1.12.2</code></li> <li><strong>@hookform/resolvers</strong> → <code>5.2.2</code></li> <li><strong>react-hook-form</strong> → <code>7.65.0</code></li> <li><strong>React 19</strong> with aligned types</li> </ul> <p><strong>Headless UI went in before React 19</strong> on purpose. Older Headless UI majors and React 19 do not always play nice together; ordering the merge avoids a broken peer dependency surface while the lockfile settles.</p> <p>After React 19 landed, <strong><code>useRef</code> typing in search-related components</strong> needed tightening—straightforward breakage from stricter generics, fixed in place rather than suppressed with <code>any</code>.</p> <h2>Health checks and abuse resistance</h2> <p>Nothing changed about what “healthy” means: the deep route still aggregates real dependencies. The hardening story is <strong>who can hammer it</strong> and <strong>how often the expensive path runs</strong>.</p> <p><strong>Security configuration</strong> allows anonymous access to actuator-style health probes where uptime tools need them: <code>/api/actuator/health/**</code> and <code>/actuator/health/**</code> (see commit <code>13580ca</code> on the app repo). That keeps external monitors and container health checks honest without opening the rest of the admin surface.</p> <p>To avoid turning <code>/api/health/status</code> into an accidental DDoS against your own databases:</p> <ul> <li><strong>TTL caching</strong> on the deep health response so repeat hits within a window reuse a stored result.</li> <li>A <strong>separate rate-limit bucket</strong> for health traffic so normal API throttles stay sensible.</li> <li><strong>Broader URL patterns</strong> on the limiting filter (<code>/api/*</code>, <code>/actuator/*</code>, <code>/health</code>) so probes and API traffic are categorized consistently.</li> </ul> <p>Configuration lives under <code>app.health.*</code> (cache TTL and related knobs in <code>application.yml</code>). <strong>Tests</strong> cover the health controller—including cache behavior—so regressions fail in CI instead of production.</p> <h2>Render, Docker, and the frontend install step</h2> <p>Render’s Docker build failed during <code>frontendInstall</code>: <strong>Testing Library React v13</strong> and <strong>React 19</strong> do not belong in the same install graph. The fix was to move to <strong>@testing-library/react v16</strong>, add <strong>@testing-library/dom</strong>, bump <strong>@testing-library/user-event</strong>, and <strong>regenerate <code>package-lock.json</code></strong> so CI and Docker see one consistent tree.</p> <h2>GitHub Actions: one place for scheduled pings</h2> <p>The app repository now owns <strong><code>.github/workflows/ping-app-health.yml</code></strong>: cron roughly every five minutes plus <code>workflow_dispatch</code>, <code>APP_BASE_URL</code> secret, <code>curl</code>, and <strong><code>jq</code></strong> for a readable summary. That is where scheduled wake-ups belong—same repo as the service, secret colocated with deployment docs.</p> <p>Earlier I had experimented with a <strong>portfolio</strong> workflow (<code>keep-alive.yml</code>) hitting the Render URL from <a href="https://github.com/jeffreyjose07/jeffreyjose07.github.io">jeffreyjose07.github.io</a>. That duplicated the cron and split configuration across projects. <strong>I removed it from the Pages repo</strong> so there is exactly one scheduler: the chat platform workflow. No duplicate pings, no need for <code>APP_BASE_URL</code> on the blog side.</p> <h2>What I deliberately did not commit</h2> <p>Local <code>backend/src/main/resources/static/static/js/main.*</code> bundles from a dev build stayed out of git—noise, not source of truth.</p> <h2>Links and commits (app repo)</h2> <ul> <li><a href="https://github.com/jeffreyjose07/scalable-chat-platform/commit/13580ca"><code>13580ca</code></a> — actuator health paths reachable for anonymous probes.</li> <li><a href="https://github.com/jeffreyjose07/scalable-chat-platform/commit/f04579c"><code>f04579c</code></a> — ping workflow, Testing Library / lockfile fix, health cache, rate limits, tests, and config.</li> </ul> <p>If you fork the platform, copy the <strong>ping workflow</strong> and set <strong><code>APP_BASE_URL</code></strong> in that repository’s secrets; keep the <strong>portfolio</strong> repository focused on static site and blog builds only.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-scalable-chat-platform" class="tag neutral" data-tag="scalable-chat-platform">scalable-chat-platform</a>, <a href="/blog#tag-spring-boot" class="tag structure" data-tag="spring-boot">spring-boot</a>, <a href="/blog#tag-react" class="tag process" data-tag="react">react</a>, <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a>, <a href="/blog#tag-health" class="tag neutral" data-tag="health">health</a>, <a href="/blog#tag-deployment" class="tag neutral" data-tag="deployment">deployment</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Senior backend engineer writing about Spring, distributed systems, and production debugging.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous panel-card"> <a href="/blog/redesigning-the-portfolio-teal-fonts-and-timelines"> <span class="nav-label">← previous</span> <span class="nav-title">Redesigning the Portfolio: Teal, Fonts, and Timelines</span> </a> </div> <div class="nav-next panel-card"> <a href="/blog/proving-spring-internals-with-tests"> <span class="nav-label">next →</span> <span class="nav-title">Proving Spring Internals With Tests (Not Folklore)</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: color 0.2s, border-color 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
 Subscribe via RSS

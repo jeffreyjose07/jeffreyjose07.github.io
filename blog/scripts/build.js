@@ -31,120 +31,15 @@ if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
-// Advanced semantic color detection
+// Semantic colorizer disabled — rainbow prose wraps read as AI chrome.
 class SemanticColorizer {
-    constructor(config) {
-        this.config = config;
-        this.semanticPatterns = this.buildPatterns();
-        this.technicalPhrases = config.contextualRules.technicalPhrases;
-        this.codePatternRegexes = this.buildCodePatterns();
-    }
-
-    buildPatterns() {
-        const patterns = new Map();
-
-        Object.entries(this.config.semanticCategories).forEach(([category, data]) => {
-            data.patterns.forEach(pattern => {
-                // Create case-insensitive regex for each pattern
-                const regex = new RegExp(`\\b${pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
-                patterns.set(regex, category);
-            });
-        });
-
-        return patterns;
-    }
-
-    buildCodePatterns() {
-        return {
-            camelCase: /\b[a-z][a-zA-Z0-9]*[A-Z][a-zA-Z0-9]*\b/g,
-            snake_case: /\b[a-z][a-z0-9]*(_[a-z0-9]+)+\b/g,
-            kebabCase: /\b[a-z][a-z0-9]*(-[a-z0-9]+)+\b/g,
-            CONSTANT_CASE: /\b[A-Z][A-Z0-9]*(_[A-Z0-9]+)*\b/g,
-            versions: /\b[a-zA-Z]+\s+\d+(\.\d+)*\b/g
-        };
-    }
-
-    detectContextualCategory(text, matchedText) {
-        // Check for technical phrases first (highest priority)
-        const lowerText = text.toLowerCase();
-        for (const [phrase, category] of Object.entries(this.technicalPhrases)) {
-            if (lowerText.includes(phrase.toLowerCase())) {
-                return category;
-            }
-        }
-
-        // Check code patterns
-        for (const [pattern, category] of Object.entries(this.config.contextualRules.codePatterns)) {
-            if (this.codePatternRegexes[pattern] && this.codePatternRegexes[pattern].test(matchedText)) {
-                return category;
-            }
-        }
-
-        return null;
-    }
-
     colorizeText(text) {
-        let coloredText = text;
-        const replacements = new Map();
-
-        // First pass: collect all matches with their positions
-        const matches = [];
-
-        // Check technical phrases first (longer patterns have priority)
-        Object.entries(this.technicalPhrases).forEach(([phrase, category]) => {
-            const regex = new RegExp(`\\b${phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
-            let match;
-            while ((match = regex.exec(text)) !== null) {
-                matches.push({
-                    start: match.index,
-                    end: match.index + match[0].length,
-                    text: match[0],
-                    category: category,
-                    priority: phrase.length // Longer phrases get higher priority
-                });
-            }
-        });
-
-        // Then check individual semantic patterns
-        this.semanticPatterns.forEach((category, regex) => {
-            let match;
-            regex.lastIndex = 0; // Reset regex state
-            while ((match = regex.exec(text)) !== null) {
-                // Check if this overlaps with any higher priority match
-                const overlaps = matches.some(m =>
-                    (match.index >= m.start && match.index < m.end) ||
-                    (match.index + match[0].length > m.start && match.index + match[0].length <= m.end)
-                );
-
-                if (!overlaps) {
-                    matches.push({
-                        start: match.index,
-                        end: match.index + match[0].length,
-                        text: match[0],
-                        category: category,
-                        priority: 1
-                    });
-                }
-            }
-        });
-
-        // Sort matches by position (reverse order for replacement)
-        matches.sort((a, b) => b.start - a.start);
-
-        // Apply replacements from end to start to maintain positions
-        matches.forEach(match => {
-            const before = coloredText.substring(0, match.start);
-            const after = coloredText.substring(match.end);
-            const colorClass = this.config.colors[match.category] ? match.category : 'neutral';
-            coloredText = before + `<span class="${colorClass}">${match.text}</span>` + after;
-        });
-
-        return coloredText;
+        return text;
     }
 }
 
-// Initialize semantic colorizer
-const colorizer = new SemanticColorizer(config);
+// Initialize semantic colorizer (no-op)
+const colorizer = new SemanticColorizer();
 
 async function initMarkdown() {
     if (markdown) return markdown;
@@ -354,7 +249,7 @@ function generatePostNavigation(prevPost, nextPost) {
 
     if (prevPost) {
         navHtml += `
-            <div class="nav-previous glass-card">
+            <div class="nav-previous panel-card">
                 <a href="/blog/${prevPost.slug}">
                     <span class="nav-label">← previous</span>
                     <span class="nav-title">${prevPost.title}</span>
@@ -364,7 +259,7 @@ function generatePostNavigation(prevPost, nextPost) {
 
     if (nextPost) {
         navHtml += `
-            <div class="nav-next glass-card">
+            <div class="nav-next panel-card">
                 <a href="/blog/${nextPost.slug}">
                     <span class="nav-label">next →</span>
                     <span class="nav-title">${nextPost.title}</span>
@@ -416,7 +311,7 @@ function generateIndex(posts) {
                 </div>`;
             }
 
-            return `            <div class="post-item glass-card" data-tags="${tagsAttr}">
+            return `            <div class="post-item panel-card" data-tags="${tagsAttr}">
                 <a href="/blog/${post.slug}">
                     ${thumbnailHtml}
                     <div class="post-content-wrapper">
@@ -638,7 +533,7 @@ function generateArchive(posts) {
 
         const postsHtml = yearPosts.map(post => {
             const episodeNum = post.episodeNumber.toString().padStart(3, '0');
-            return `            <li class="glass-card" style="margin-bottom: 10px; padding: 10px 15px;">
+            return `            <li class="panel-card" style="margin-bottom: 10px; padding: 10px 15px;">
                 <a href="/blog/${post.slug}" style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <span class="post-number" style="color: var(--primary); margin-right: 10px;">#${episodeNum}</span>
@@ -650,7 +545,7 @@ function generateArchive(posts) {
         }).join('\n');
 
         return `        <div class="year-section">
-            <h2 class="year-title text-gradient-premium">${year}</h2>
+            <h2 class="year-title">${year}</h2>
             <ul class="post-list">
 ${postsHtml}
             </ul>
@@ -675,7 +570,7 @@ ${postsHtml}
 
 // Main build function
 async function build() {
-    console.log('🚀 Building blog with semantic coloring + Shiki syntax highlighting...');
+    console.log('🚀 Building blog with Shiki syntax highlighting...');
     syncProfileImage();
     await initMarkdown();
 
@@ -801,7 +696,7 @@ async function build() {
     }
     console.log(`✅ Minified ${allHtmlFiles.length} HTML files (saved ${(totalSaved / 1024).toFixed(1)} KB)`);
 
-    console.log(`🎉 Blog build complete! Generated ${posts.length} posts with navigation, RSS feed, archive, sitemap, posts.json, semantic coloring, and Shiki syntax highlighting.`);
+    console.log(`🎉 Blog build complete! Generated ${posts.length} posts with navigation, RSS feed, archive, sitemap, posts.json, and Shiki syntax highlighting.`);
 }
 
 // Run build if called directly

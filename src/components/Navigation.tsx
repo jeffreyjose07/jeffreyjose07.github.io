@@ -109,7 +109,7 @@ const Navigation = () => {
                 e.preventDefault();
                 handleNavClick(item.href, (item as any).external);
               }}
-              className="px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 hover:bg-accent hover:text-primary relative group"
+              className="px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 hover:bg-accent hover:text-primary"
             >
               {item.label}
             </a>
@@ -125,7 +125,7 @@ const Navigation = () => {
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="ml-2 rounded-full hover:bg-transparent hover:text-primary transition-colors duration-300"
+              className="ml-2 rounded-md hover:bg-transparent hover:text-primary transition-colors duration-200"
               aria-label="Toggle theme"
             >
               {theme === "dark" ? (
@@ -143,7 +143,7 @@ const Navigation = () => {
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="rounded-full hover:bg-white/10"
+            className="rounded-md hover:bg-white/10"
             aria-label="Toggle theme"
           >
             {mounted && theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
@@ -153,7 +153,7 @@ const Navigation = () => {
             variant="ghost"
             size="icon"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="rounded-full hover:bg-white/10"
+            className="rounded-md hover:bg-white/10"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}

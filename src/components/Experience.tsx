@@ -1,9 +1,8 @@
 import { Badge } from "@/components/ui/badge";
-import { useInView } from "@/hooks/use-in-view";
 
 const experiences = [
   {
-    title: "Senior Software Engineer",
+    title: "Senior Backend Engineer",
     company: "Jio Platforms Ltd",
     period: "Apr 2022 – Present",
     location: "Bengaluru, India",
@@ -44,38 +43,24 @@ const experiences = [
 ];
 
 export default function Experience() {
-  const { ref: headingRef, isInView: headingVisible } = useInView();
-
   return (
-    <section id="experience" className="py-24 bg-background relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-3xl -z-10" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-3xl -z-10" />
-
+    <section id="experience" className="py-24 bg-background">
       <div className="container mx-auto px-6">
-        {/* Heading */}
-        <div
-          ref={headingRef as React.RefObject<HTMLDivElement>}
-          className={`text-center mb-20 transition-all duration-700 ${
-            headingVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6">
-            Work <span className="text-gradient-premium">Experience</span>
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4">
+            Work Experience
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-primary to-cyan-400 rounded-full mx-auto mb-8" />
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Building scalable systems and driving technical excellence across 6+ years at Jio Platforms.
+            Six years at Jio Platforms building batch pipelines, reactive services, and multi-tenant APIs with measurable outcomes.
           </p>
         </div>
 
-        {/* Timeline */}
         <div className="max-w-4xl mx-auto relative">
-          {/* Vertical connector line */}
-          <div className="absolute left-0 md:left-[180px] top-2 bottom-2 w-px bg-gradient-to-b from-primary/60 via-primary/20 to-transparent hidden md:block" />
+          <div className="absolute left-0 md:left-[180px] top-2 bottom-2 w-px bg-border hidden md:block" />
 
-          <div className="space-y-16">
+          <div className="space-y-12">
             {experiences.map((exp, index) => (
-              <TimelineEntry key={index} exp={exp} index={index} />
+              <TimelineEntry key={index} exp={exp} />
             ))}
           </div>
         </div>
@@ -84,37 +69,27 @@ export default function Experience() {
   );
 }
 
-function TimelineEntry({ exp, index }: { exp: typeof experiences[0]; index: number }) {
-  const { ref, isInView } = useInView(0.1);
-
+function TimelineEntry({ exp }: { exp: (typeof experiences)[0] }) {
   return (
-    <div
-      ref={ref as React.RefObject<HTMLDivElement>}
-      className={`md:grid md:grid-cols-[180px_1fr] gap-8 transition-all duration-700 ${
-        isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-      }`}
-      style={{ transitionDelay: `${index * 100}ms` }}
-    >
-      {/* Date column (desktop) */}
+    <div className="md:grid md:grid-cols-[180px_1fr] gap-8">
       <div className="hidden md:flex flex-col items-end pr-8 pt-1 relative">
         <span className="text-sm font-medium text-muted-foreground text-right leading-tight">
           {exp.period}
         </span>
         <span className="text-xs text-muted-foreground/60 text-right mt-1">{exp.location}</span>
-        {/* Timeline dot */}
         <div className="absolute -right-[4.5px] top-1.5 w-2.5 h-2.5 rounded-full bg-primary ring-4 ring-background" />
       </div>
 
-      {/* Content */}
-      <div className="glass-card rounded-2xl p-6 md:p-8 group hover:border-primary/30 transition-all duration-300">
-        {/* Mobile date */}
+      <div className="rounded-lg border border-border bg-secondary/15 p-6 md:p-8">
         <div className="md:hidden mb-4 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
-          <span className="text-xs text-muted-foreground">{exp.period} · {exp.location}</span>
+          <span className="text-xs text-muted-foreground">
+            {exp.period} · {exp.location}
+          </span>
         </div>
 
         <div className="mb-5">
-          <h3 className="text-xl md:text-2xl font-heading font-bold text-foreground group-hover:text-primary transition-colors duration-300 mb-1">
+          <h3 className="text-xl md:text-2xl font-heading font-bold text-foreground mb-1">
             {exp.title}
           </h3>
           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
@@ -136,7 +111,7 @@ function TimelineEntry({ exp, index }: { exp: typeof experiences[0]; index: numb
             <Badge
               key={i}
               variant="secondary"
-              className="px-3 py-1 text-xs bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors duration-200"
+              className="px-2.5 py-0.5 text-xs rounded-md bg-primary/10 text-primary border-primary/20"
             >
               {skill}
             </Badge>

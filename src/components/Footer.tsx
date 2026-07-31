@@ -13,7 +13,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="border-t border-white/10 bg-background/80 backdrop-blur-md">
+    <footer className="border-t border-border bg-background">
       <div className="container mx-auto px-6 py-12 max-w-6xl">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           {/* Quick links */}
@@ -22,7 +22,7 @@ const Footer = () => {
               <a
                 key={link.href}
                 href={link.href}
-                className="hover:text-primary transition-colors duration-300"
+                className="hover:text-primary transition-colors duration-200"
               >
                 {link.label}
               </a>
@@ -38,7 +38,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.label}
-                className="p-2 rounded-full text-muted-foreground hover:text-primary transition-colors duration-300"
+                className="p-2 rounded-md text-muted-foreground hover:text-primary transition-colors duration-200"
               >
                 <social.icon className="h-5 w-5" />
               </a>
@@ -49,16 +49,13 @@ const Footer = () => {
           <button
             onClick={scrollToTop}
             aria-label="Back to top"
-            className="p-2 rounded-full glass text-muted-foreground hover:text-primary transition-all duration-300 hover:-translate-y-1"
+            className="p-2 rounded-md text-muted-foreground hover:text-primary transition-colors duration-200"
           >
             <ArrowUp className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-white/5 text-center text-sm text-muted-foreground space-y-1">
-          <p className="font-mono text-xs text-primary/60 tracking-wider">
-            &gt; crafted with care, deployed with confidence
-          </p>
+        <div className="mt-8 pt-6 border-t border-border text-center text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Jeffrey Jose. All rights reserved.</p>
         </div>
       </div>
