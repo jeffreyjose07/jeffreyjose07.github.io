@@ -1,9 +1,8 @@
 import { Badge } from "@/components/ui/badge";
-import { useInView } from "@/hooks/use-in-view";
 
 const experiences = [
   {
-    title: "Senior Software Engineer",
+    title: "Senior Backend Engineer",
     company: "Jio Platforms Ltd",
     period: "Apr 2022 – Present",
     location: "Bengaluru, India",
@@ -61,7 +60,7 @@ export default function Experience() {
 
           <div className="space-y-12">
             {experiences.map((exp, index) => (
-              <TimelineEntry key={index} exp={exp} index={index} />
+              <TimelineEntry key={index} exp={exp} />
             ))}
           </div>
         </div>
@@ -70,17 +69,9 @@ export default function Experience() {
   );
 }
 
-function TimelineEntry({ exp, index }: { exp: (typeof experiences)[0]; index: number }) {
-  const { ref, isInView } = useInView(0.1);
-
+function TimelineEntry({ exp }: { exp: (typeof experiences)[0] }) {
   return (
-    <div
-      ref={ref as React.RefObject<HTMLDivElement>}
-      className={`md:grid md:grid-cols-[180px_1fr] gap-8 transition-opacity duration-500 ${
-        isInView ? "opacity-100" : "opacity-0"
-      }`}
-      style={{ transitionDelay: `${index * 80}ms` }}
-    >
+    <div className="md:grid md:grid-cols-[180px_1fr] gap-8">
       <div className="hidden md:flex flex-col items-end pr-8 pt-1 relative">
         <span className="text-sm font-medium text-muted-foreground text-right leading-tight">
           {exp.period}

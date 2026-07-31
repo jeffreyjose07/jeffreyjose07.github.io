@@ -94,19 +94,6 @@ display: inline-block;
 .bg-mesh {
 background-color: var(--background);
 }
-@keyframes fadeInUp {
-from {
-opacity: 0;
-transform: translateY(16px);
-}
-to {
-opacity: 1;
-transform: translateY(0);
-}
-}
-.animate-fade-in-up {
-animation: fadeInUp 0.6s ease-out forwards;
-}
 ::-webkit-scrollbar {
 width: 8px;
 }
@@ -801,7 +788,7 @@ if (e.key === 'Escape' && isSearchOpen) {
 closeSearch();
 }
 });
-</script> <main class="container animate-fade-in-up"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#004</span> <span>24 Jan 2025</span> <span>·</span> <span>5 min read</span> </div> <h1 class="post-title">Automating the Void - Building a Frictionless Blog System</h1> </header> <div class="post-content"> <p>There&#39;s a peculiar anxiety that comes with wanting to write but facing the weight of implementation. Every time I wanted to create a blog post, I had to copy 300+ lines of HTML, manually update styling, remember the exact color codes, and then edit the blog index. The barrier between thought and expression had become a wall.</p> <h2>the problem statement</h2> <p>The terminal aesthetic I&#39;d built was beautiful but brutally manual. Each post required:</p> <ul> <li><strong>HTML template copying</strong> with exact styling preservation</li> <li><strong>Manual color coding</strong> of technical terms with specific hex values</li> <li><strong>Blog index updates</strong> with proper episode numbering and formatting</li> <li><strong>Responsive design maintenance</strong> across mobile and desktop</li> <li><strong>Reading progress indicators</strong> and metadata calculation</li> <li><strong>Navigation consistency</strong> and link management</li> </ul> <p>The irony wasn&#39;t lost on me: I&#39;d built a system about the struggle to create, but the system itself struggled to let me create.</p> <h2>exploring the approaches</h2> <h3>the manual html path</h3> <p><strong>What I had:</strong> Direct HTML creation with inline CSS
+</script> <main class="container"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#004</span> <span>24 Jan 2025</span> <span>·</span> <span>5 min read</span> </div> <h1 class="post-title">Automating the Void - Building a Frictionless Blog System</h1> </header> <div class="post-content"> <p>There&#39;s a peculiar anxiety that comes with wanting to write but facing the weight of implementation. Every time I wanted to create a blog post, I had to copy 300+ lines of HTML, manually update styling, remember the exact color codes, and then edit the blog index. The barrier between thought and expression had become a wall.</p> <h2>the problem statement</h2> <p>The terminal aesthetic I&#39;d built was beautiful but brutally manual. Each post required:</p> <ul> <li><strong>HTML template copying</strong> with exact styling preservation</li> <li><strong>Manual color coding</strong> of technical terms with specific hex values</li> <li><strong>Blog index updates</strong> with proper episode numbering and formatting</li> <li><strong>Responsive design maintenance</strong> across mobile and desktop</li> <li><strong>Reading progress indicators</strong> and metadata calculation</li> <li><strong>Navigation consistency</strong> and link management</li> </ul> <p>The irony wasn&#39;t lost on me: I&#39;d built a system about the struggle to create, but the system itself struggled to let me create.</p> <h2>exploring the approaches</h2> <h3>the manual html path</h3> <p><strong>What I had:</strong> Direct HTML creation with inline CSS
 <strong>Pain points:</strong> 300+ lines per post, easy to break styling, time-consuming
 <strong>Trade-offs:</strong> Complete control vs. complete friction</p> <h3>local build scripts</h3> <p><strong>Option:</strong> Node.js script to convert Markdown locally
 <strong>Benefits:</strong> Fast iteration, offline capability

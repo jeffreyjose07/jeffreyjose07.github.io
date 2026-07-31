@@ -44,12 +44,19 @@ const Contact = () => {
       return;
     }
 
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+    if (!accessKey) {
+      toast({
+        title: "Form unavailable",
+        description: "Please email me directly at jeffreyjose.k@gmail.com",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const accessKey =
-        import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "d32b9d9e-c870-410c-9153-2f6f627c3baa";
-
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: {

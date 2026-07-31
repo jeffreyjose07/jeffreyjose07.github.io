@@ -94,19 +94,6 @@ display: inline-block;
 .bg-mesh {
 background-color: var(--background);
 }
-@keyframes fadeInUp {
-from {
-opacity: 0;
-transform: translateY(16px);
-}
-to {
-opacity: 1;
-transform: translateY(0);
-}
-}
-.animate-fade-in-up {
-animation: fadeInUp 0.6s ease-out forwards;
-}
 ::-webkit-scrollbar {
 width: 8px;
 }
@@ -801,7 +788,7 @@ if (e.key === 'Escape' && isSearchOpen) {
 closeSearch();
 }
 });
-</script> <main class="container animate-fade-in-up"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#012</span> <span>13 Jan 2025</span> <span>·</span> <span>6 min read</span> </div> <h1 class="post-title">Implementing Privacy-First Analytics: From Research to GoatCounter</h1> </header> <div class="post-content"> <p>After months of running my portfolio and blog without any visitor insights, I finally decided it was time to implement analytics. But not just any analytics - I wanted a solution that respected user privacy, didn&#39;t require consent banners, and provided the data I actually needed.</p> <h2>The Analytics Dilemma</h2> <p>Most developers reach for Google Analytics by default, but I had several concerns:</p> <ul> <li><strong>Privacy invasion</strong>: Extensive tracking and data collection</li> <li><strong>GDPR compliance</strong>: Cookie banners and consent management</li> <li><strong>Bloated scripts</strong>: ~28KB+ of JavaScript for basic analytics</li> <li><strong>Over-engineering</strong>: Complex interface for simple needs</li> </ul> <p>I needed something that would tell me:</p> <ul> <li>How many people visit my portfolio vs blog</li> <li>Which blog posts are most popular  </li> <li>How many people try my Void Blocks game</li> <li>Where visitors come from (referrers)</li> </ul> <h2>Research Phase: Exploring Options</h2> <h3>Option 1: Google Analytics 4</h3> <p><strong>Pros</strong>: Comprehensive features, familiar interface, free forever
+</script> <main class="container"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#012</span> <span>13 Jan 2025</span> <span>·</span> <span>6 min read</span> </div> <h1 class="post-title">Implementing Privacy-First Analytics: From Research to GoatCounter</h1> </header> <div class="post-content"> <p>After months of running my portfolio and blog without any visitor insights, I finally decided it was time to implement analytics. But not just any analytics - I wanted a solution that respected user privacy, didn&#39;t require consent banners, and provided the data I actually needed.</p> <h2>The Analytics Dilemma</h2> <p>Most developers reach for Google Analytics by default, but I had several concerns:</p> <ul> <li><strong>Privacy invasion</strong>: Extensive tracking and data collection</li> <li><strong>GDPR compliance</strong>: Cookie banners and consent management</li> <li><strong>Bloated scripts</strong>: ~28KB+ of JavaScript for basic analytics</li> <li><strong>Over-engineering</strong>: Complex interface for simple needs</li> </ul> <p>I needed something that would tell me:</p> <ul> <li>How many people visit my portfolio vs blog</li> <li>Which blog posts are most popular  </li> <li>How many people try my Void Blocks game</li> <li>Where visitors come from (referrers)</li> </ul> <h2>Research Phase: Exploring Options</h2> <h3>Option 1: Google Analytics 4</h3> <p><strong>Pros</strong>: Comprehensive features, familiar interface, free forever
 <strong>Cons</strong>: Privacy concerns, requires GDPR compliance, heavy script, complex setup</p> <h3>Option 2: GitHub Pages Built-in Analytics</h3> <p><strong>Status</strong>: Non-existent. GitHub Pages provides zero analytics capabilities beyond IP logging for security.</p> <p>After extensive research, I discovered GitHub still doesn&#39;t provide native analytics for Pages sites, despite years of community requests. This remains one of the most requested features.</p> <h3>Option 3: Privacy-Focused Alternatives</h3> <p>I evaluated several privacy-first solutions:</p> <p><strong>Plausible Analytics</strong>: Excellent privacy focus, beautiful dashboard, but $9/month
 <strong>Fathom Analytics</strong>: Similar to Plausible, but more expensive<br><strong>Umami</strong>: Self-hosted option, requires server setup and maintenance</p> <h3>Option 4: GoatCounter - The Winner</h3> <p><strong>Cost</strong>: Completely FREE (donation-supported)
 <strong>Privacy</strong>: No cookies, no personal data tracking, GDPR compliant
