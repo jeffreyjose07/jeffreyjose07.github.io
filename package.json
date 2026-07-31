@@ -48,7 +48,7 @@
     "marked": "^18.0.7",
     "marked-shiki": "^1.2.1",
     "postcss": "^8.5.25",
-    "puppeteer": "^24.31.0",
+    "puppeteer": "^25.4.0",
     "shiki": "^4.3.1",
     "tailwindcss": "^3.4.11",
     "typescript": "^5.5.3",
