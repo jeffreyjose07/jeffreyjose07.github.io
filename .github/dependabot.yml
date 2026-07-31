@@ -38,6 +38,15 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "@vitejs/plugin-react-swc"
         update-types: ["version-update:semver-major"]
+      # React 19 needs react-dom + @types/react-dom together; partial bumps fail npm ci
+      - dependency-name: react
+        update-types: ["version-update:semver-major"]
+      - dependency-name: react-dom
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react-dom"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: "/"
