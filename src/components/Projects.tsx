@@ -105,6 +105,29 @@ const Projects = () => {
                         ))}
                       </div>
                     </div>
+
+                    {project.writeups && project.writeups.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold uppercase tracking-wider text-primary mb-3">
+                          Written About
+                        </h4>
+                        <ul className="space-y-2">
+                          {project.writeups.map((writeup, i) => (
+                            <li key={i} className="flex items-start gap-3">
+                              <span className="text-primary mt-0.5 flex-shrink-0" aria-hidden="true">
+                                &rsaquo;
+                              </span>
+                              <a
+                                href={writeup.href}
+                                className="text-muted-foreground underline decoration-border underline-offset-4 hover:text-primary hover:decoration-primary transition-colors"
+                              >
+                                {writeup.label}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex flex-wrap gap-3 mt-auto">

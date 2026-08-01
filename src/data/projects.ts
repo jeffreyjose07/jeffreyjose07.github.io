@@ -1,3 +1,10 @@
+export interface Writeup {
+    /** Short label shown on the link, e.g. "Post-mortem: the two-month outage". */
+    label: string;
+    /** Path to the blog post, e.g. "/blog/two-month-outage-aiven-dns-and-jdbc-urls". */
+    href: string;
+}
+
 export interface Project {
     title: string;
     description: string;
@@ -7,9 +14,47 @@ export interface Project {
     githubUrl?: string;
     technologies: string[];
     highlights: string[];
+    /**
+     * Long-form writing about this project. These are the evidence behind the
+     * highlights — real incidents, migrations and measurements rather than
+     * claims — so they carry more weight than the bullet list above.
+     */
+    writeups?: Writeup[];
 }
 
 export const featuredProjects: Project[] = [
+    {
+        title: "Scalable Chat Platform",
+        description: "A production real-time chat application built with Spring Boot 3.2 and React 18, running on Render against Aiven PostgreSQL, MongoDB Atlas and Upstash Redis. Multi-database architecture, WebSocket messaging, and a deployment I have since taken apart in public — including a two-month outage post-mortem.",
+        image: "/scalable-chat-platform.png",
+        liveUrl: "https://scalable-chat-platform.onrender.com/",
+        githubUrl: "https://github.com/jeffreyjose07/scalable-chat-platform",
+        technologies: ["Spring Boot 3.2", "React 18", "TypeScript", "PostgreSQL", "MongoDB", "Redis", "Docker", "WebSocket"],
+        highlights: [
+            "Multi-database strategy: PostgreSQL for identity, MongoDB for messages, Redis for JWT revocation",
+            "Real-time WebSocket messaging with role-based access control and JWT authentication",
+            "Deep health endpoint probing all three datastores independently, with per-dependency latency",
+            "Dockerized single-service deployment: React compiled into the Spring Boot jar"
+        ],
+        writeups: [
+            {
+                label: "Post-mortem: two months down, dead DNS and eager filters",
+                href: "/blog/two-month-outage-aiven-dns-and-jdbc-urls"
+            },
+            {
+                label: "Hardening: deps, deep health checks and CI pings",
+                href: "/blog/hardening-the-chat-platform-deps-deep-health-and-c"
+            },
+            {
+                label: "Database odyssey: Neon → Supabase → Aiven",
+                href: "/blog/from-neon-to-supabase-to-aiven-a-postgresql-migrat"
+            },
+            {
+                label: "Deploying it to Render in the first place",
+                href: "/blog/deploying-a-chat-platform-to-render"
+            }
+        ]
+    },
     {
         title: "TruthMeter AI - AI Pair Programming Metrics Extension",
         description: "A VS Code extension that measures the ACTUAL impact of AI coding assistants on developer productivity based on peer-reviewed research, not vanity metrics. Works with any AI assistant (GitHub Copilot, Cursor, Windsurf Cascade, etc.) and tracks what actually matters: code quality, true productivity gains, and economic ROI.",
@@ -20,67 +65,66 @@ export const featuredProjects: Project[] = [
         highlights: [
             "Research-backed metrics from METR 2025, GitClear 2024, and GitHub studies",
             "Tracks code churn, duplication, complexity, and actual vs perceived productivity",
-            "Privacy-first design - all data stored locally, no cloud sync",
-            "145+ passing tests with 80%+ code coverage",
-            "Real-time dashboard with comprehensive metrics visualization",
-            "Economic ROI calculator including hidden costs and technical debt",
-            "SPACE Framework integration (Satisfaction, Performance, Activity, Efficiency)",
-            "Works with all AI coding assistants - GitHub Copilot, Cursor, Cascade, etc."
-        ]
-    },
-    {
-        title: "Scalable Chat Platform",
-        description: "A production-ready real-time chat application built with Spring Boot 3.2 and React 18. Features multi-database architecture, WebSocket messaging, and horizontal scaling design supporting 1000+ concurrent users.",
-        image: "/scalable-chat-platform.png",
-        liveUrl: "https://scalable-chat-platform.onrender.com/",
-        githubUrl: "https://github.com/jeffreyjose07/scalable-chat-platform",
-        technologies: ["Spring Boot 3.2", "React 18", "TypeScript", "PostgreSQL", "MongoDB", "Redis", "Docker", "WebSocket"],
-        highlights: [
-            "Multi-database strategy: PostgreSQL, MongoDB, Redis",
-            "Real-time WebSocket messaging with 500+ msg/sec capacity",
-            "Role-based access control with JWT authentication",
-            "Supports 1000+ concurrent users with horizontal scaling",
-            "Private and group conversations with read receipts",
-            "Message search and filtering capabilities",
-            "Dockerized deployment on Render platform",
-            "Event-driven architecture with async processing"
+            "Privacy-first design — all data stored locally, no cloud sync",
+            "145+ passing tests with 80%+ code coverage"
+        ],
+        writeups: [
+            {
+                label: "Why I built it, and what the research actually says",
+                href: "/blog/building-truthmeter-ai-measuring-the-real-impact-o"
+            }
         ]
     },
     {
         title: "VOID BLOCKS",
-        description: "A single-file cyberpunk Tetris variant built with vanilla JavaScript and HTML5 Canvas. Features unique virus spreading mechanics, firewall challenges, and terminal-aesthetic design with zero external dependencies.",
+        description: "A cyberpunk Tetris variant written to a hard constraint: one HTML file, no build step, no dependencies, no network. Everything — game loop, rendering, virus mechanics, audio — lives in under 50KB of vanilla JavaScript against a 16ms frame budget.",
         image: "/games/void-blocks/screenshot.png",
         liveUrl: "/play/void-blocks",
         githubUrl: "https://github.com/jeffreyjose07/void-blocks-game",
         technologies: ["Vanilla JavaScript", "HTML5 Canvas", "CSS3", "Game Development"],
         highlights: [
-            "Single HTML file under 50KB with zero dependencies",
-            "Virus spreading mechanics with 30% infection chance",
-            "Firewall challenges triggered every 10 levels",
-            "Time manipulation via data fragments",
-            "Optimized 60fps performance with requestAnimationFrame",
-            "Terminal-inspired cyberpunk aesthetic with glow effects"
+            "Single HTML file under 50KB with zero dependencies and no build step",
+            "Locked 60fps via requestAnimationFrame — all rendering in Canvas 2D, no sprite assets",
+            "Probabilistic virus-spread mechanic (30% infection chance) layered onto the classic grid",
+            "Firewall challenge phases triggered every 10 levels"
+        ],
+        writeups: [
+            {
+                label: "Building it: constraints, mechanics and the 50KB budget",
+                href: "/blog/building-void-blocks-a-cyberpunk-tetris-game"
+            },
+            {
+                label: "Mobile responsiveness and terminal UI",
+                href: "/blog/enhancing-game-ui-mobile-responsiveness-and-termin"
+            }
         ]
     },
     {
         title: "Snake Game - Terminal Aesthetic",
-        description: "A modern take on the classic Snake game with terminal-inspired cyberpunk aesthetics. Built with vanilla JavaScript and HTML5 Canvas, featuring smooth gameplay, retro glow effects, and responsive controls optimized for both desktop and mobile.",
+        description: "Classic Snake rebuilt under the same single-file constraint as VOID BLOCKS: zero dependencies, Canvas 2D rendering, and one input layer that has to work identically for keyboard and touch.",
         image: "/snake-game-screenshot.png",
         liveUrl: "/play/snake",
         githubUrl: "https://github.com/jeffreyjose07/snake-game",
         technologies: ["Vanilla JavaScript", "HTML5 Canvas", "CSS3", "Game Development", "Responsive Design"],
         highlights: [
-            "Classic Snake gameplay with modern enhancements",
-            "Terminal-inspired cyberpunk visual design",
-            "Smooth 60fps performance with requestAnimationFrame",
-            "Responsive controls for desktop and mobile",
-            "Retro glow effects and ASCII-style aesthetics",
-            "Score tracking and game over animations",
-            "Single HTML file with zero dependencies"
+            "Single HTML file with zero dependencies",
+            "Smooth 60fps game loop with requestAnimationFrame",
+            "One input abstraction serving both desktop keyboard and mobile touch",
+            "Retro glow effects rendered entirely in Canvas — no image assets"
+        ],
+        writeups: [
+            {
+                label: "Building it, and the security work behind it",
+                href: "/blog/building-a-secure-snake-game-with-terminal-aesthet"
+            }
         ]
     },
 ];
 
+/**
+ * Earlier academic work from IIT Kharagpur (2017–2019). Kept for completeness;
+ * these predate the professional work above and have no public repositories.
+ */
 export const otherProjects: Project[] = [
     {
         title: "Detection of Forest Area in SAR Images",
