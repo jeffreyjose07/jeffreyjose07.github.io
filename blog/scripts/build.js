@@ -5,7 +5,7 @@ import path from 'path';
 import { Marked } from 'marked';
 import markedShiki from 'marked-shiki';
 import matter from 'gray-matter';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { getHighlighter, highlightCode, SHIKI_THEME } from './syntax-highlight.js';
 // import { generateThumbnails } from '../../scripts/thumbnail-generator/generate.js';
 
@@ -702,8 +702,13 @@ async function build() {
     console.log(`🎉 Blog build complete! Generated ${posts.length} posts with navigation, RSS feed, archive, sitemap, posts.json, and Shiki syntax highlighting.`);
 }
 
-// Run build if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Run build if called directly.
+//
+// NOTE: compare URL-to-URL. `file://${process.argv[1]}` leaves the path
+// unencoded, while import.meta.url percent-encodes it — so any checkout in a
+// directory containing a space (or #, ?, %) failed this test, and the script
+// exited 0 having built nothing at all.
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     build();
 }
 

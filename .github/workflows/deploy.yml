@@ -58,7 +58,38 @@ jobs:
         echo "🚀 Building blog with semantic coloring..."
         npm run build:blog
         echo "✅ Blog build completed"
-    
+
+    # A green exit code is not proof the build produced usable HTML. Two past
+    # regressions exited 0 while shipping garbage: the marked v9 token API
+    # change emitted "[object Object]" into every paragraph across 34 posts,
+    # and an entry-guard bug made the script a silent no-op. Assert on the
+    # artifact, not the exit status.
+    - name: Verify blog output
+      if: steps.blog-changes.outputs.blog_changed == 'true'
+      run: |
+        set -euo pipefail
+
+        if [ ! -d public/blog ] || [ -z "$(find public/blog -name 'index.html' -print -quit)" ]; then
+          echo "::error::Blog build produced no HTML in public/blog/."
+          exit 1
+        fi
+
+        # Renderer regressions stringify token objects into the prose. Match the
+        # rendered *signature* — a block element whose content begins with the
+        # stringified object — not the bare string, because post 034 discusses
+        # "[object Object]" as prose and must not trip this check.
+        SIGNATURE='<(p|li|h[1-6]|td|th|blockquote)>\[object Object\]'
+        STRINGIFIED=$(grep -rlE "$SIGNATURE" public/blog --include='*.html' || true)
+        if [ -n "$STRINGIFIED" ]; then
+          echo "::error::Rendered HTML contains stringified tokens — renderer signature regression."
+          echo "$STRINGIFIED" | while read -r f; do
+            echo "  $f ($(grep -oE "$SIGNATURE" "$f" | wc -l | tr -d ' ') occurrences)"
+          done
+          exit 1
+        fi
+
+        echo "✅ Verified $(find public/blog -name 'index.html' | wc -l | tr -d ' ') pages, no stringified objects"
+
     - name: Check for generated blog files
       if: steps.blog-changes.outputs.blog_changed == 'true'
       id: blog-generated
