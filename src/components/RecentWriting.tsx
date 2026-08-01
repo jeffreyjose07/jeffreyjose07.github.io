@@ -12,7 +12,19 @@ interface BlogPost {
   slug: string;
 }
 
-const POST_COUNT = 3;
+const POST_COUNT = 4;
+
+/**
+ * Newest first: by date, then by episode number.
+ *
+ * The episode tiebreak matters — posts are frequently published on the same day
+ * (033, 034 and 035 all carry 2026-08-01), and comparing dates alone leaves those
+ * in whatever order posts.json happens to use. Episode number is the real
+ * publication order, so it decides ties rather than relying on sort stability.
+ */
+const byMostRecent = (a: BlogPost, b: BlogPost) =>
+  b.date.localeCompare(a.date) ||
+  Number(b.episode) - Number(a.episode);
 
 /**
  * Surfaces the most recent long-form posts on the front page.
@@ -37,7 +49,7 @@ const RecentWriting = () => {
       })
       .then((data: BlogPost[]) => {
         if (cancelled) return;
-        const sorted = [...data].sort((a, b) => b.date.localeCompare(a.date));
+        const sorted = [...data].sort(byMostRecent);
         setPosts(sorted.slice(0, POST_COUNT));
       })
       .catch(() => {
