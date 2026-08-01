@@ -1,5 +1,23 @@
 [
   {
+    "url": "/blog/documentation-that-outlived-its-code",
+    "title": "Documentation That Outlived Its Code",
+    "episode": "035",
+    "date": "2026-08-01",
+    "tags": [
+      "meta",
+      "documentation",
+      "refactoring",
+      "portfolio",
+      "blog",
+      "technical-debt"
+    ],
+    "description": "Every doc in this repo described a site that no longer existed — a terminal aesthetic replaced a year ago and a colour system reduced to an identity function. Auditing them turned up 60 lines of configuration that no code reads.",
+    "readingTime": 7,
+    "wordCount": 1364,
+    "slug": "documentation-that-outlived-its-code"
+  },
+  {
     "url": "/blog/object-object-marked-token-api",
     "title": "[object Object]: How One Dependabot Bump Broke 34 of 39 Posts",
     "episode": "034",
