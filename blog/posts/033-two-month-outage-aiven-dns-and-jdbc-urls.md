@@ -17,9 +17,11 @@ tags:
 description:
   "scalable-chat-platform was down for two months and I did not notice. A free-tier Postgres
   powered off, its DNS record vanished, and a servlet filter took the whole app down with it —
-  including the health endpoint that was supposed to tell me."
-readingTime: 14
-wordCount: 2900
+  including the health endpoint that was supposed to tell me. Now with the Render-side
+  postmortem: a 59-day hole in the deploy history, an empty healthCheckPath, and one of my
+  own conclusions falsified."
+readingTime: 17
+wordCount: 3500
 ---
 
 Working log for [scalable-chat-platform](https://github.com/jeffreyjose07/scalable-chat-platform). **Previous:** [Hardening the Chat Platform: Deps, Deep Health, and CI Pings](/blog/hardening-chat-platform-deps-health-ci).
@@ -226,9 +228,9 @@ conversations|5
 
 All three tables, all rows intact, PostgreSQL 15.18. A power-off is not a deletion — the volume is preserved. Worth knowing before you panic.
 
-## Fix, part two: two kinds of Postgres URL
+## The hazard I braced for, and did not actually hit
 
-This is the trap that would have cost me another hour if I had not caught it before redeploying.
+**Correction, added after pulling the Render deploy history — see the postmortem section below.** When I first wrote this I expected the next step to be fixing `DATABASE_URL`, and I said so. The deploy record shows I was wrong: the environment variable was already correct, and powering Aiven back on was the *entire* fix. I am leaving this section in because the trap is real and will bite anyone migrating providers — but it was not what broke this deployment.
 
 Aiven hands you a connection string in this shape:
 
@@ -266,7 +268,7 @@ So the same database now needs **two different strings** depending on who is con
 | Render `DATABASE_URL` (Spring) | JDBC | `jdbc:postgresql://host:port/db?user=…&password=…` |
 | GitHub secret (`psql`) | libpq URI | `postgres://user:pass@host:port/db?sslmode=require` |
 
-Writing that table down and keeping it somewhere is the actual deliverable of this section.
+Writing that table down and keeping it somewhere is the actual deliverable of this section — just not, as it turned out, the fix for this incident.
 
 ## Fix, part three: a truncated secret
 
@@ -332,6 +334,81 @@ spring:
 
 The configured timeout is **2 seconds**. The observed cold-start latency is **4 seconds**. A user request that lands on a cold Redis will time out where my health check succeeded — because the health check ran first and warmed the connection. That is a latent production bug I would not have found without printing per-dependency timings, and it is a good argument for putting response times in health payloads even when everything says `UP`.
 
+## The Render-side postmortem
+
+Everything above was reconstructed from application logs, GitHub Actions history, and probes from my laptop. Afterwards I connected Render's MCP server and pulled the platform's own record. It confirmed the diagnosis, corrected one of my conclusions, and surfaced three configuration problems I did not know I had.
+
+### The deploy history contains a two-month hole
+
+```
+dep-d8ftrdho3t8c738fk1f0   2026-06-03T08:00:28Z   live → deactivated
+                           ↑ commit 0582d37
+        ...nothing at all for 59 days...
+dep-d9mr0k2jnfac739p45hg   2026-08-01T08:42:17Z   manual redeploy
+dep-d9mr51nlk1mc738orheg   2026-08-01T08:48:56Z   live
+```
+
+That June 3rd deploy **succeeded**. It built, it started, Render marked it live, and it stayed the active deploy for the entire outage. Nothing was ever redeployed, rolled back, or reconfigured in between. The code that ran perfectly on June 3rd is byte-identical to the code that could not boot on August 1st — which is exactly what you would expect when the thing that changed is external.
+
+### The correction: `DATABASE_URL` was never wrong
+
+Here is the measurement that overturned my assumption. That manual redeploy on August 1st at 08:37 was triggered **after** I powered Aiven back on but **before** any environment variable was touched. It ran the unchanged June 3rd commit. And:
+
+```
+08:41:41.274  HikariPool-1 - Starting...
+08:41:44.032  HikariPool-1 - Start completed.
+```
+
+Two point seven seconds. Same code, same environment variables, same everything — the only difference in the universe was that the database hostname resolved again.
+
+So the JDBC-versus-libpq section above describes a genuine hazard that I did not actually hit. The deployed `DATABASE_URL` had been in correct JDBC form since the Aiven migration. I had predicted a second failure mode and it simply was not there. Worth stating plainly, because a post-mortem that quietly keeps its wrong predictions is worth much less than one that marks them.
+
+### `render.yaml` is not the source of truth
+
+The live service configuration disagrees with the `render.yaml` committed in the repository on three separate points:
+
+| Setting | `render.yaml` says | Render actually has |
+| --- | --- | --- |
+| `plan` | `starter` (commented "Upgraded from free") | **`free`** |
+| `region` | `oregon` | **`singapore`** |
+| `healthCheckPath` | `/api/health/status` | **`""` (empty)** |
+
+This is the trap of Blueprint files: Render only applies `render.yaml` when the service is **created from a Blueprint**. This service was created through the dashboard, so the file has been decorative from day one. I have been editing a configuration file for two months believing it configured something.
+
+The third row is the one that matters. **Render was never health-checking this service.** With `healthCheckPath` empty it only verifies that something binds the port at deploy time; it never probes the running app afterwards. Combined with the app dying at startup, Render had no mechanism to notice, mark the service unhealthy, or alert me — and the deploy stayed flagged "live" for two months while nothing worked.
+
+### The `free` plan explains the zero bytes
+
+`plan: free` also resolves the symptom I opened with. Free web services spin down after inactivity and cold-start on the next request. This app takes roughly 45–60 seconds to boot when everything is healthy — Spring context, JPA, three connection pools. My health probe uses `curl --max-time 45`.
+
+That is a race the probe cannot reliably win even against a *healthy* app, and cannot win at all against one that crash-loops. Rather than a fast 502 from a dead upstream, each request sat waiting on a container that was still starting, until curl gave up. Hence zero bytes at 45 seconds rather than an error page.
+
+### The platform metrics were empty, and that is the finding
+
+```
+instance_count      → []
+http_request_count  → []
+```
+
+Not zero — **empty**, for the full 30-day retention window. No instances recorded, no requests recorded. The service was so consistently down that Render's own telemetry had nothing to plot. An empty metrics response is easy to read as "monitoring is broken"; here it was the most concise possible statement of the outage.
+
+The memory series did have data, and it draws the crash loop precisely:
+
+```
+instance -6z9m7   07:55  131.8 MB    ← JVM starting up
+                  08:00   54.0 MB    ← died, fresh process
+                  08:05  130.2 MB    ← starting up again
+instance -lznsj   08:50  256.9 MB    ← recovered
+                  08:55  257.3 MB
+                  09:00  258.6 MB    ← flat = healthy
+```
+
+A sawtooth is a crash loop. A flat line is a running application. In the same window Render's logs carry twelve `UnknownHostException` events between 07:51:44 and 08:02:36 — arriving in pairs about seventy seconds apart, which is one restart cycle.
+
+### The last deploy was an accident
+
+A small irony in the record: the deploy that finally went live (`dep-d9mr51nlk1mc738orheg`, 08:47) was triggered by `new_commit` — the push of the keep-alive workflow described below. Auto-deploy is on for `main`, so committing the *prevention* for this incident is what shipped the *recovery* for it.
+
 ## Prevention
 
 The keep-alive workflow, modelled directly on the Redis one that had been quietly proving its worth all along:
@@ -377,6 +454,12 @@ If I wanted this app to survive a database outage in degraded mode, the thing to
 
 Any one of those turns "the entire site is a 60-second timeout" into "the site loads and says the database is down." That is a much better two months.
 
+And three platform-side fixes the Render data made obvious, none of which involve code:
+
+- **Set `healthCheckPath` on the actual service.** It is empty today, so Render never probes the running app. Setting it to `/api/health/status` means a failed boot marks the deploy unhealthy instead of silently "live" — the single highest-value change on this list.
+- **Reconcile or delete `render.yaml`.** A config file that configures nothing is worse than no file, because it invites you to "fix" production by editing it. Either recreate the service from the Blueprint so the file is authoritative, or delete it and treat the dashboard as the source of truth.
+- **Raise the probe timeout above the cold-start time**, or move off the free plan. A 45-second timeout against a 45-to-60-second cold start produces failures that are indistinguishable from a real outage — which is precisely how a genuine outage hid in plain sight.
+
 ## Lessons
 
 **A red check nobody looks at is not monitoring.** The signal was there, correct and precise, every five minutes for two months. The gap was not detection — it was escalation. A failing scheduled workflow needs to reach a human, or it is just a log file with a nicer UI.
@@ -386,5 +469,9 @@ Any one of those turns "the entire site is a 60-second timeout" into "the site l
 **Verify at each layer before moving to the next.** `dig`, then `nc`, then `psql`, then the app. Each step took seconds and each one eliminated an entire category of cause. Fixing the environment variable and hitting redeploy would have conflated three separate problems into one confusing loop.
 
 **Lazy initialization is not a resilience feature.** It defers what it can. Servlet filters are not among them. If a bean ends up in the filter chain, everything it transitively depends on is a startup-time hard dependency, whatever the config says.
+
+**Check what the platform thinks is true.** I reconstructed this entire incident from logs and probes, and got the shape right — but I also carried a wrong assumption to the end, and I only found the empty `healthCheckPath`, the `free` plan, and the `render.yaml` drift by asking Render directly. Your infrastructure-as-code file describes what you *intended*. Only the platform knows what you *have*.
+
+**Write down predictions so you can be shown wrong.** I stated that `DATABASE_URL` was the remaining blocker. It was not. Because that prediction was specific, one deploy record was enough to falsify it. A vaguer claim would have quietly survived.
 
 The app has been up since, the keep-alive is green, and the health endpoint is once again the first place I will look — assuming, this time, that something tells me to look.
