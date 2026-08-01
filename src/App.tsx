@@ -18,7 +18,7 @@ const App = () => (
     <HelmetProvider>
       <ThemeProvider
         attribute="class"
-        defaultTheme="light"
+        defaultTheme="dark"
         enableSystem
         disableTransitionOnChange
       >
