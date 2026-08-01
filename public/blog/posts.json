@@ -34,9 +34,9 @@
       "debugging",
       "deployment"
     ],
-    "description": "scalable-chat-platform was down for two months and I did not notice. A free-tier Postgres powered off, its DNS record vanished, and a servlet filter took the whole app down with it — including the health endpoint that was supposed to tell me.",
-    "readingTime": 14,
-    "wordCount": 2900,
+    "description": "scalable-chat-platform was down for two months and I did not notice. A free-tier Postgres powered off, its DNS record vanished, and a servlet filter took the whole app down with it — including the health endpoint that was supposed to tell me. Now with the Render-side postmortem: a 59-day hole in the deploy history, an empty healthCheckPath, and one of my own conclusions falsified.",
+    "readingTime": 17,
+    "wordCount": 3500,
     "slug": "two-month-outage-aiven-dns-and-jdbc-urls"
   },
   {
