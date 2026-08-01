@@ -25,6 +25,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://jeffreyjose07.is-a.dev/blog/object-object-marked-token-api</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://jeffreyjose07.is-a.dev/blog/two-month-outage-aiven-dns-and-jdbc-urls</loc>
     <lastmod>2026-08-01</lastmod>
     <changefreq>monthly</changefreq>

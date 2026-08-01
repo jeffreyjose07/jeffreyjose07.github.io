@@ -1,0 +1,838 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>[object Object]: How One Dependabot Bump Broke 34 of 39 Posts - Jeffrey Jose</title> <meta name="description" content="A major bump to marked changed every renderer method to take a token object instead of positional strings. The build kept exiting 0 while emitting the literal text [object Object] into 34 of 39 posts — and a missing curl flag nearly convinced me nothing was wrong." /> <meta property="og:title" content="[object Object]: How One Dependabot Bump Broke 34 of 39 Posts"> <meta property="og:description" content="A major bump to marked changed every renderer method to take a token object instead of positional strings. The build kept exiting 0 while emitting the literal text [object Object] into 34 of 39 posts — and a missing curl flag nearly convinced me nothing was wrong."> <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/object-object-marked-token-api"> <meta property="og:type" content="article"> <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/object-object-marked-token-api.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="[object Object]: How One Dependabot Bump Broke 34 of 39 Posts"> <meta name="twitter:description" content="A major bump to marked changed every renderer method to take a token object instead of positional strings. The build kept exiting 0 while emitting the literal text [object Object] into 34 of 39 posts — and a missing curl flag nearly convinced me nothing was wrong."> <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/object-object-marked-token-api.png"> <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" /> <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" /> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link
+href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@500;600;700;800&display=swap"
+rel="stylesheet"> <style>
+:root {
+--background: #09090b;
+--foreground: #fafafa;
+--primary: #1cc9a0;
+--primary-foreground: #fafafa;
+--primary-glow: #5eead4;
+--secondary: #18181b;
+--secondary-foreground: #fafafa;
+--muted: #18181b;
+--muted-foreground: #a1a1aa;
+--accent: #18181b;
+--accent-foreground: #fafafa;
+--border: #27272a;
+--input: #27272a;
+--font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+--font-heading: 'Syne', system-ui, sans-serif;
+--font-mono: ui-monospace, 'Menlo', monospace;
+--gradient-hero: linear-gradient(135deg, #09090b, #0c1f1a);
+--gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+--gradient-accent: linear-gradient(135deg, #1cc9a0, #22d3ee);
+--radius: 0.75rem;
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: var(--font-sans);
+background-color: var(--background);
+color: var(--foreground);
+line-height: 1.6;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+overflow-x: hidden;
+max-width: 100vw;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+font-family: var(--font-heading);
+font-weight: 700;
+line-height: 1.2;
+margin-bottom: 1rem;
+letter-spacing: -0.02em;
+}
+a {
+color: inherit;
+text-decoration: none;
+transition: color 0.2s ease;
+}
+.container {
+width: 100%;
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 1.5rem;
+}
+.panel-card {
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
+}
+.panel-card:hover {
+border-color: rgba(28, 201, 160, 0.35);
+}
+.glass {
+background: var(--secondary);
+border: 1px solid var(--border);
+}
+.glass-card {
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
+}
+.glass-card:hover {
+border-color: rgba(28, 201, 160, 0.35);
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: transparent;
+display: inline-block;
+}
+.bg-mesh {
+background-color: var(--background);
+}
+::-webkit-scrollbar {
+width: 8px;
+}
+::-webkit-scrollbar-track {
+background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+background: #3f3f46;
+border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #52525b;
+}
+.sr-only {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+margin: -1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border: 0;
+}
+</style> <style>
+body {
+padding-top: 100px;
+}
+.post-container {
+max-width: 800px;
+margin: 0 auto;
+padding: 2rem;
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+}
+.post-header {
+margin-bottom: 3rem;
+text-align: center;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+padding-bottom: 2rem;
+}
+.post-meta {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 1rem;
+margin-bottom: 1rem;
+font-size: 0.875rem;
+color: var(--muted-foreground);
+}
+.episode-badge {
+background: rgba(28, 201, 160, 0.12);
+color: var(--primary);
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
+font-family: var(--font-mono);
+font-weight: 600;
+font-size: 0.8rem;
+}
+.post-title {
+font-size: clamp(1.75rem, 4vw, 2.5rem);
+line-height: 1.15;
+margin-bottom: 1.5rem;
+color: var(--foreground);
+}
+.post-content {
+font-size: 1.125rem;
+line-height: 1.8;
+color: #d1d5db;
+word-break: break-word;
+}
+.post-content p {
+margin-bottom: 1.5rem;
+}
+.post-content h2 {
+font-size: 1.75rem;
+margin-top: 3rem;
+margin-bottom: 1.5rem;
+color: var(--foreground);
+}
+.post-content h3 {
+font-size: 1.5rem;
+margin-top: 2.5rem;
+margin-bottom: 1rem;
+color: var(--foreground);
+}
+.post-content ul,
+.post-content ol {
+margin-bottom: 1.5rem;
+padding-left: 1.5rem;
+}
+.post-content li {
+margin-bottom: 0.5rem;
+}
+.post-content a {
+color: var(--primary-glow);
+text-decoration: none;
+border-bottom: 1px solid rgba(28, 201, 160, 0.35);
+transition: all 0.2s;
+}
+.post-content a:hover {
+border-bottom-color: var(--primary);
+color: var(--primary);
+}
+.post-content blockquote {
+border-left: 4px solid var(--primary);
+padding-left: 1.5rem;
+margin: 2rem 0;
+font-style: italic;
+color: var(--muted-foreground);
+background: rgba(255, 255, 255, 0.03);
+padding: 1.5rem;
+border-radius: 0 0.5rem 0.5rem 0;
+}
+/* Inline code only — do not paint fenced blocks (Shiki owns those). */
+.post-content :not(pre) > code {
+font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+font-size: 0.9em;
+background: rgba(255, 255, 255, 0.1);
+padding: 0.2em 0.4em;
+border-radius: 0.25rem;
+color: #e2e8f0;
+}
+/* Fenced blocks: Shiki (One Dark Pro) owns token colors via inline styles */
+.post-content .code-block-wrap {
+position: relative;
+margin: 2rem -2rem;
+width: calc(100% + 4rem);
+border-radius: 0.5rem;
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.12);
+background: #282c34;
+box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.post-content .code-block-wrap .code-lang {
+position: absolute;
+top: 0.55rem;
+right: 0.75rem;
+z-index: 1;
+font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+font-size: 0.65rem;
+letter-spacing: 0.04em;
+text-transform: uppercase;
+color: rgba(171, 178, 191, 0.65);
+pointer-events: none;
+user-select: none;
+}
+.post-content pre,
+.post-content .code-block-wrap pre.shiki {
+background: #282c34;
+padding: 1.65rem 1.25rem 1.35rem;
+border-radius: 0.5rem;
+overflow-x: auto;
+margin: 2rem -2rem;
+border: 1px solid rgba(255, 255, 255, 0.1);
+width: calc(100% + 4rem);
+line-height: 1.55;
+}
+.post-content .code-block-wrap pre.shiki {
+margin: 0;
+width: 100%;
+border: none;
+border-radius: 0;
+background: transparent !important;
+}
+@media (max-width: 768px) {
+.post-content pre,
+.post-content .code-block-wrap {
+margin-left: -1rem;
+margin-right: -1rem;
+width: calc(100% + 2rem);
+border-radius: 0;
+}
+}
+.post-content pre code,
+.post-content .code-block-wrap pre.shiki code {
+background: none !important;
+padding: 0;
+font-size: 0.92rem;
+/* Never flatten Shiki token colors */
+color: inherit;
+}
+.post-content .shiki span {
+/* Inline token colors must win over any inherited prose color */
+-webkit-text-fill-color: currentColor;
+}
+/* Must be block: HTML minify collapses newlines between .line spans.
+inline-block + width:100% + leftover spaces keeps every line on one row. */
+.post-content .shiki .line {
+display: block;
+width: 100%;
+min-height: 1.35em;
+white-space: pre;
+}
+.post-content .shiki-fallback {
+margin: 0;
+width: 100%;
+border: none;
+border-radius: 0;
+color: #abb2bf;
+}
+.post-figure {
+margin: 2rem 0;
+border-radius: var(--radius);
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.08);
+background: rgba(255, 255, 255, 0.02);
+}
+.post-content img,
+.post-figure img {
+display: block;
+width: 100%;
+max-width: 100%;
+height: auto;
+margin: 0;
+border-radius: 0;
+box-shadow: none;
+}
+.post-figure img {
+aspect-ratio: auto;
+object-fit: contain;
+background: #0a0a0c;
+}
+.post-footer {
+margin-top: 4rem;
+padding-top: 2rem;
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--muted-foreground);
+font-size: 0.875rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 1rem;
+}
+.post-tags-footer {
+display: flex;
+gap: 0.5rem;
+flex-wrap: wrap;
+}
+.tag-pill {
+font-size: 0.75rem;
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
+background: rgba(255, 255, 255, 0.05);
+color: var(--muted-foreground);
+border: 1px solid rgba(255, 255, 255, 0.1);
+text-decoration: none;
+transition: border-color 0.2s, color 0.2s;
+}
+.tag-pill:hover {
+background: rgba(28, 201, 160, 0.1);
+color: var(--primary);
+border-color: rgba(28, 201, 160, 0.25);
+}
+/* Author card */
+.author-card {
+display: flex;
+align-items: center;
+gap: 1.25rem;
+margin-top: 3rem;
+padding: 1.5rem;
+background: var(--background);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+}
+.author-avatar-wrap {
+position: relative;
+flex-shrink: 0;
+width: 56px;
+height: 56px;
+}
+.author-avatar {
+width: 56px;
+height: 56px;
+border-radius: 50%;
+object-fit: cover;
+border: 2px solid rgba(28, 201, 160, 0.4);
+display: block;
+}
+.author-avatar-fallback {
+display: none;
+width: 56px;
+height: 56px;
+border-radius: 50%;
+align-items: center;
+justify-content: center;
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.1rem;
+color: var(--primary-foreground);
+background: var(--primary);
+border: 2px solid rgba(28, 201, 160, 0.4);
+}
+.author-avatar-wrap.is-fallback .author-avatar {
+display: none;
+}
+.author-avatar-wrap.is-fallback .author-avatar-fallback {
+display: flex;
+}
+.author-info {
+display: flex;
+flex-direction: column;
+gap: 0.25rem;
+}
+.author-name {
+font-family: var(--font-heading);
+font-weight: 600;
+color: var(--foreground);
+font-size: 1rem;
+}
+.author-bio {
+font-size: 0.85rem;
+color: var(--muted-foreground);
+line-height: 1.5;
+}
+.author-links {
+display: flex;
+gap: 0.75rem;
+margin-top: 0.25rem;
+}
+.author-links a {
+font-size: 0.8rem;
+color: var(--primary-glow);
+text-decoration: none;
+transition: color 0.2s;
+}
+.author-links a:hover {
+color: var(--primary);
+}
+/* Reading progress */
+.reading-progress {
+position: fixed;
+top: 0;
+left: 0;
+height: 3px;
+background: var(--primary);
+z-index: 2000;
+transition: width 0.1s ease;
+}
+/* Navigation */
+.post-navigation {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 1.5rem;
+margin-top: 3rem;
+}
+.nav-previous,
+.nav-next {
+padding: 1.5rem;
+display: flex;
+flex-direction: column;
+}
+.nav-previous a,
+.nav-next a {
+text-decoration: none;
+height: 100%;
+display: flex;
+flex-direction: column;
+}
+.nav-label {
+font-size: 0.75rem;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+color: var(--muted-foreground);
+margin-bottom: 0.5rem;
+}
+.nav-title {
+font-family: var(--font-heading);
+font-weight: 600;
+color: var(--foreground);
+font-size: 1.125rem;
+transition: color 0.2s;
+}
+.nav-previous:hover .nav-title,
+.nav-next:hover .nav-title {
+color: var(--primary-glow);
+}
+.nav-next {
+text-align: right;
+}
+@media (max-width: 768px) {
+.post-title {
+font-size: 2rem;
+}
+.post-navigation {
+grid-template-columns: 1fr;
+}
+.nav-next {
+text-align: left;
+}
+.post-container {
+padding: 1.5rem;
+}
+}
+/* Inline styles injected from frontmatter */
+{
+{
+inlineStyles
+}
+}
+</style> </head> <body class="bg-mesh"> <div class="reading-progress"></div> <style>
+/* Top Bar Header */
+.site-header {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+z-index: 1000;
+transition: all 0.3s ease;
+background: transparent;
+border-bottom: 1px solid transparent;
+}
+.site-header.scrolled {
+background: rgba(9, 9, 11, 0.92);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.header-inner {
+max-width: 1280px;
+margin: 0 auto;
+padding: 1rem 1.5rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+.site-logo {
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.25rem;
+color: var(--foreground);
+text-decoration: none;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: transparent;
+display: inline-block;
+}
+.site-nav {
+display: flex;
+gap: 2rem;
+}
+.nav-link {
+font-family: var(--font-sans);
+font-size: 0.875rem;
+font-weight: 500;
+color: var(--muted-foreground);
+text-decoration: none;
+transition: color 0.2s ease;
+position: relative;
+}
+.nav-link:hover {
+color: var(--primary-glow);
+}
+.nav-link.active {
+color: var(--foreground);
+}
+/* Mobile Menu */
+.mobile-menu-toggle {
+display: none;
+background: none;
+border: none;
+color: var(--foreground);
+cursor: pointer;
+padding: 0.5rem;
+}
+@media (max-width: 768px) {
+.site-nav {
+display: none;
+position: absolute;
+top: 100%;
+left: 0;
+right: 0;
+flex-direction: column;
+background: rgba(9, 9, 11, 0.98);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+padding: 1rem;
+gap: 1rem;
+align-items: center;
+}
+.site-nav.open {
+display: flex;
+animation: slideDown 0.3s ease-out forwards;
+}
+.mobile-menu-toggle {
+display: block;
+}
+}
+@keyframes slideDown {
+from {
+opacity: 0;
+transform: translateY(-10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+/* Search Button */
+.search-trigger {
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--muted-foreground);
+padding: 0.5rem 1rem;
+border-radius: 0.375rem;
+font-size: 0.875rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+transition: all 0.2s ease;
+}
+.search-trigger:hover {
+background: rgba(255, 255, 255, 0.1);
+color: var(--foreground);
+border-color: rgba(255, 255, 255, 0.2);
+}
+.search-text,
+.search-shortcut {
+display: none;
+}
+@media (min-width: 768px) {
+.search-text {
+display: inline;
+}
+.search-shortcut {
+display: inline;
+font-size: 0.75rem;
+opacity: 0.6;
+margin-left: 0.5rem;
+}
+}
+/* Search Modal */
+.search-modal-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(8px);
+z-index: 2000;
+align-items: flex-start;
+justify-content: center;
+padding-top: 100px;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+.search-modal-overlay.open {
+display: flex;
+opacity: 1;
+}
+.search-modal {
+background: #09090b;
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 1rem;
+width: 90%;
+max-width: 600px;
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+overflow: hidden;
+transform: scale(0.95);
+transition: transform 0.3s ease;
+}
+.search-modal-overlay.open .search-modal {
+transform: scale(1);
+}
+.search-input-container {
+padding: 1.5rem;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+display: flex;
+align-items: center;
+}
+.search-icon {
+color: var(--muted-foreground);
+margin-right: 1rem;
+}
+.search-input {
+background: transparent;
+border: none;
+color: var(--foreground);
+font-size: 1.125rem;
+width: 100%;
+outline: none;
+font-family: var(--font-sans);
+}
+.search-results {
+max-height: 400px;
+overflow-y: auto;
+padding: 0.5rem;
+}
+.search-result-item {
+display: block;
+padding: 1rem;
+text-decoration: none;
+color: var(--muted-foreground);
+border-radius: 0.5rem;
+transition: all 0.2s ease;
+margin-bottom: 0.25rem;
+}
+.search-result-item:hover {
+background: rgba(255, 255, 255, 0.05);
+color: var(--foreground);
+}
+.search-result-title {
+font-weight: 600;
+font-size: 1rem;
+color: var(--primary-glow);
+margin-bottom: 0.25rem;
+}
+.search-result-excerpt {
+font-size: 0.875rem;
+color: var(--muted-foreground);
+display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient: vertical;
+overflow: hidden;
+}
+</style> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <img src="/logo.svg" alt="JJ" width="32" height="32"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
+class="text-gradient-premium">Jose</span></span> </a> <nav class="site-nav"> <a href="/#hero" class="nav-link">Home</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/#skills" class="nav-link">Skills</a> <a href="/#experience" class="nav-link">Experience</a> <a href="/#education" class="nav-link">Education</a> <a href="/#contact" class="nav-link">Contact</a> <a href="/blog" class="nav-link active">Blog</a> <a href="/analytics.html" class="nav-link">Analytics</a> </nav> <div style="display: flex; align-items: center; gap: 1rem;"> <button class="search-trigger" onclick="openSearch()"> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut">⌘K</span> </button> <button class="mobile-menu-toggle" aria-label="Toggle menu"
+onclick="document.querySelector('.site-nav').classList.toggle('open')"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()"> <div class="search-modal"> <div class="search-input-container"> <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts..." id="searchInput" autocomplete="off"> </div> <div class="search-results" id="searchResults"> </div> </div> </div> <script>
+// Header Scroll Effect
+window.addEventListener('scroll', () => {
+const header = document.getElementById('siteHeader');
+if (window.scrollY > 20) {
+header.classList.add('scrolled');
+} else {
+header.classList.remove('scrolled');
+}
+});
+let searchIndex = [];
+let isSearchOpen = false;
+async function loadSearchIndex() {
+if (searchIndex.length > 0) return;
+try {
+const response = await fetch('/blog/search.json');
+searchIndex = await response.json();
+} catch (e) {
+console.error('Failed to load search index', e);
+}
+}
+function openSearch() {
+document.getElementById('searchModal').classList.add('open');
+document.getElementById('searchInput').focus();
+isSearchOpen = true;
+loadSearchIndex();
+document.body.style.overflow = 'hidden';
+}
+function closeSearch() {
+document.getElementById('searchModal').classList.remove('open');
+isSearchOpen = false;
+document.body.style.overflow = '';
+}
+function performSearch(query) {
+if (!query) {
+document.getElementById('searchResults').innerHTML = '';
+return;
+}
+const results = searchIndex.filter(post => {
+const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
+const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
+const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
+return titleMatch || descMatch || tagMatch;
+}).slice(0, 5); // Limit to 5 results
+const resultsHtml = results.map(post => `
+<a href="/blog/${post.slug}" class="search-result-item" onclick="closeSearch()"> <div class="search-result-title">${post.title}</div> <div class="search-result-excerpt">${post.description || ''}</div> </a>
+`).join('');
+document.getElementById('searchResults').innerHTML = results.length > 0
+? resultsHtml
+: '<div style="padding: 1rem; color: var(--muted-foreground); text-align: center;">No results found</div>';
+}
+document.getElementById('searchInput').addEventListener('input', (e) => {
+performSearch(e.target.value);
+});
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+e.preventDefault();
+if (isSearchOpen) closeSearch();
+else openSearch();
+}
+if (e.key === 'Escape' && isSearchOpen) {
+closeSearch();
+}
+});
+</script> <main class="container"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#034</span> <span>1 Aug 2026</span> <span>·</span> <span>11 min read</span> </div> <h1 class="post-title">[object Object]: How One Dependabot Bump Broke 34 of 39 Posts</h1> </header> <div class="post-content"> <p>Working log for this blog. <strong>Previous:</strong> <a href="/blog/two-month-outage-aiven-dns-and-jdbc-urls">The Two-Month Outage</a>.</p> <p>I published <a href="/blog/two-month-outage-aiven-dns-and-jdbc-urls">the outage post-mortem</a>, opened it to admire my work, and found this:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL</span></span> <span class="line"><span></span></span> <span class="line"><span>[object Object]</span></span> <span class="line"><span></span></span> <span class="line"><span>[object Object]</span></span> <span class="line"><span></span></span> <span class="line"><span>[object Object]</span></span></code></pre></div> <p>Every paragraph. Every heading. The title rendered fine, the syntax-highlighted code blocks rendered perfectly, and everything in between was the four most demoralising words in JavaScript.</p> <p>The reflex is to assume you broke the thing you just touched. That reflex was wrong, and checking it properly is most of this post.</p> <hr> <h2>First: measure the blast radius, not the symptom</h2> <p>Before touching a line of code I wanted one number: <strong>how many posts are affected?</strong> If it were only the new post, the cause was my Markdown. If it were all of them, the cause was the build.</p> <p>My first attempt to answer this was completely useless, and it is the most transferable lesson here:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">curl</span><span style="color:#D19A66"> -sS</span><span style="color:#98C379"> https://jeffreyjose07.github.io/blog/two-month-outage-aiven-dns-and-jdbc-urls</span><span style="color:#56B6C2"> \</span></span> <span class="line"><span style="color:#ABB2BF">  | </span><span style="color:#61AFEF">grep</span><span style="color:#D19A66"> -c</span><span style="color:#98C379"> "object Object"</span></span> <span class="line"><span style="color:#7F848E;font-style:italic"># 0</span></span></code></pre></div> <p>Zero. On a page I could see with my own eyes was broken. Two separate mistakes stacked:</p> <p><strong>Mistake one — no <code>-L</code>.</strong> This site is served from <code>jeffreyjose07.github.io</code> but redirects to the custom domain <a href="/blog/adding-custom-domain-jeffreyjose07-is-a-dev">added back in episode 016</a>. Without <code>-L</code>, <code>curl</code> dutifully returns the <strong>301 redirect stub</strong> — a near-empty body with no content in it at all. I was grepping a redirect notice and concluding the site was healthy.</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">curl</span><span style="color:#D19A66"> -sS</span><span style="color:#D19A66"> -o</span><span style="color:#98C379"> /dev/null</span><span style="color:#D19A66"> -w</span><span style="color:#98C379"> "%{redirect_url}\n"</span><span style="color:#98C379"> https://jeffreyjose07.github.io/blog/...</span></span> <span class="line"><span style="color:#7F848E;font-style:italic"># https://jeffreyjose07.is-a.dev/blog/...</span></span></code></pre></div> <p><strong>Mistake two — <code>grep -c</code> counts lines, not matches.</strong> The build minifies HTML onto essentially one line. Even after adding <code>-L</code>, <code>grep -c</code> returned <code>1</code> for a page containing ninety-one occurrences. The fix is <code>grep -o … | wc -l</code>:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">curl</span><span style="color:#D19A66"> -sSL</span><span style="color:#98C379"> "https://jeffreyjose07.is-a.dev/blog/</span><span style="color:#E06C75">$slug</span><span style="color:#98C379">"</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">grep</span><span style="color:#D19A66"> -o</span><span style="color:#98C379"> "object Object"</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">wc</span><span style="color:#D19A66"> -l</span></span></code></pre></div> <p>With both fixed, the real numbers arrived:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>building-truthmeter-ai...          200</span></span> <span class="line"><span>building-void-blocks...            186</span></span> <span class="line"><span>implementing-privacy-first...      161</span></span> <span class="line"><span>ai-as-learning-catalyst...         154</span></span> <span class="line"><span>deploying-a-chat-platform...       139</span></span> <span class="line"><span>...</span></span> <span class="line"><span>two-month-outage-...                91   ← the "new" post</span></span></code></pre></div> <p><strong>34 of 39 posts.</strong> My new post was not the worst offender — it was in the bottom half. This was a site-wide regression that had been live for who knows how long, and I only noticed because I happened to open a page right after publishing.</p> <blockquote> <p>A verification command that can return a false clean is worse than no verification. Both of my mistakes produced <em>reassuring</em> output.</p> </blockquote> <hr> <h2>The tell: what survived</h2> <p>Look closely at what was and was not broken, because the pattern names the culprit.</p> <p>Broken — ordinary prose:</p> <div class="code-block-wrap" data-lang="html"><span class="code-lang" aria-hidden="true">html</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">p</span><span style="color:#ABB2BF">>[object Object]&#x3C;/</span><span style="color:#E06C75">p</span><span style="color:#ABB2BF">></span></span></code></pre></div> <p>Not broken — fenced code blocks, fully syntax highlighted:</p> <div class="code-block-wrap" data-lang="html"><span class="code-lang" aria-hidden="true">html</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"code-block-wrap"</span><span style="color:#D19A66"> data-lang</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"yaml"</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">span</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"line"</span><span style="color:#ABB2BF">>&#x3C;</span><span style="color:#E06C75">span</span><span style="color:#D19A66"> style</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"color:#98C379"</span><span style="color:#ABB2BF">>HTTP 000  time=60.003420s&#x3C;/</span><span style="color:#E06C75">span</span><span style="color:#ABB2BF">>&#x3C;/</span><span style="color:#E06C75">span</span><span style="color:#ABB2BF">></span></span> <span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span></code></pre></div> <p>And then the genuinely diagnostic one, a heading:</p> <div class="code-block-wrap" data-lang="html"><span class="code-lang" aria-hidden="true">html</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">h2</span><span style="color:#ABB2BF">>[object Object]&#x3C;</span><span style="color:#E06C75">code</span><span style="color:#ABB2BF">>gh&#x3C;/</span><span style="color:#E06C75">code</span><span style="color:#ABB2BF">>&#x3C;/</span><span style="color:#E06C75">h2</span><span style="color:#ABB2BF">></span></span></code></pre></div> <p>That heading was <code>## Dating the outage with \</code>gh`<code>in Markdown. The inline</code><code>` element rendered <strong>correctly</strong>, sitting right next to a stringified object. So:</p> <ul> <li>The parser worked — it correctly identified a heading containing text plus inline code.</li> <li>The heading renderer worked — it emitted <code>&lt;h2&gt;</code>, and it correctly delegated to its children.</li> <li>The <code>codespan</code> renderer worked — <code>&lt;code&gt;gh&lt;/code&gt;</code> is perfect.</li> <li>Something handling <strong>plain text</strong> returned an object.</li> </ul> <p>Partial, structured corruption like that points at a <strong>leaf renderer</strong>, not at the parser and not at the Markdown source. If my frontmatter or content were malformed, I would expect broken <em>structure</em> — a missing heading, an unclosed tag, content in the wrong place. Instead the structure was flawless and only the leaves were wrong.</p> <hr> <h2>Root cause: marked v9 changed every renderer signature</h2> <p>The generator uses <a href="https://marked.js.org/">marked</a> with a few renderer overrides. Here is what <code>blog/scripts/build.js</code> had:</p> <div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E5C07B">markdown</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">use</span><span style="color:#ABB2BF">({</span></span> <span class="line"><span style="color:#E06C75">    renderer</span><span style="color:#ABB2BF">: {</span></span> <span class="line"><span style="color:#61AFEF">        text</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">text</span><span style="color:#ABB2BF">) {</span></span> <span class="line"><span style="color:#C678DD">            return</span><span style="color:#E5C07B"> colorizer</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">colorizeText</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">text</span><span style="color:#ABB2BF">);</span></span> <span class="line"><span style="color:#ABB2BF">        },</span></span> <span class="line"><span style="color:#61AFEF">        image</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">href</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">title</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">text</span><span style="color:#ABB2BF">) {</span></span> <span class="line"><span style="color:#C678DD">            const</span><span style="color:#E5C07B"> titleAttr</span><span style="color:#56B6C2"> =</span><span style="color:#E06C75"> title</span><span style="color:#C678DD"> ?</span><span style="color:#98C379"> ` title="</span><span style="color:#C678DD">${</span><span style="color:#E06C75">title</span><span style="color:#C678DD">}</span><span style="color:#98C379">"`</span><span style="color:#C678DD"> :</span><span style="color:#98C379"> ''</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#C678DD">            const</span><span style="color:#E5C07B"> alt</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">text</span><span style="color:#56B6C2"> ||</span><span style="color:#98C379"> ''</span><span style="color:#ABB2BF">).</span><span style="color:#61AFEF">replace</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">/"/</span><span style="color:#C678DD">g</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'&#x26;quot;'</span><span style="color:#ABB2BF">);</span></span> <span class="line"><span style="color:#C678DD">            return</span><span style="color:#98C379"> `&#x3C;figure class="post-figure">&#x3C;img src="</span><span style="color:#C678DD">${</span><span style="color:#E06C75">href</span><span style="color:#C678DD">}</span><span style="color:#98C379">" alt="</span><span style="color:#C678DD">${</span><span style="color:#E06C75">alt</span><span style="color:#C678DD">}</span><span style="color:#98C379">">&#x3C;/figure>`</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF">        },</span></span> <span class="line"><span style="color:#61AFEF">        paragraph</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">text</span><span style="color:#ABB2BF">) {</span></span> <span class="line"><span style="color:#C678DD">            return</span><span style="color:#98C379"> `&#x3C;p></span><span style="color:#C678DD">${</span><span style="color:#E06C75">text</span><span style="color:#C678DD">}</span><span style="color:#98C379">&#x3C;/p></span><span style="color:#56B6C2">\n</span><span style="color:#98C379">`</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF">        },</span></span> <span class="line"><span style="color:#ABB2BF">    },</span></span> <span class="line"><span style="color:#ABB2BF">});</span></span></code></pre></div> <p>That code is correct for marked v4. It is silently wrong for marked v9 and later.</p> <p><strong>Since marked v9, every renderer method receives a single token object instead of positional string arguments.</strong> The <code>paragraph</code> renderer no longer gets a rendered HTML string; it gets:</p> <div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">{ </span><span style="color:#E06C75">type</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'paragraph'</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">raw</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'...'</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">text</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'...'</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">tokens</span><span style="color:#ABB2BF">: [ </span><span style="color:#7F848E;font-style:italic">/* inline tokens */</span><span style="color:#ABB2BF"> ] }</span></span></code></pre></div> <p>Interpolating that object into a template literal invokes <code>Object.prototype.toString</code>, which returns exactly <code>[object Object]</code>.</p> <p>Note what <em>doesn't</em> happen: no exception, no warning, no type error. JavaScript will happily stringify any object into a template literal. The build ran to completion and exited 0.</p> <p>The trigger was a Dependabot commit:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>9537801  Bump marked, react-helmet-async, and tailwind-merge majors.</span></span></code></pre></div> <p><code>marked</code> went to <strong>18.0.7</strong>. The bump was merged, CI ran, CI passed, CI committed the regenerated HTML, and 34 posts quietly filled up with placeholder garbage.</p> <h3>Why fenced code was immune</h3> <p>Because it never goes through those overrides. Fenced blocks are handled by <code>marked-shiki</code>, registered as a <strong>separate extension</strong> with its own tokenizer and renderer:</p> <div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E5C07B">markdown</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">use</span><span style="color:#ABB2BF">(</span><span style="color:#61AFEF">markedShiki</span><span style="color:#ABB2BF">({</span></span> <span class="line"><span style="color:#61AFEF">    highlight</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">code</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">lang</span><span style="color:#ABB2BF">) { </span><span style="color:#C678DD">return</span><span style="color:#61AFEF"> highlightCode</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">code</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">lang</span><span style="color:#ABB2BF">); },</span></span> <span class="line"><span style="color:#ABB2BF">}));</span></span></code></pre></div> <p>That extension claims the <code>code</code> token before the default renderer sees it, so it was entirely unaffected by the signature change. This is precisely why the damage was easy to miss on a casual glance — the visually loud parts of a technical blog, the syntax-highlighted code, all looked immaculate.</p> <hr> <h2>The fix</h2> <div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">// NOTE: since marked v9 every renderer method receives a single *token*</span></span> <span class="line"><span style="color:#7F848E;font-style:italic">// object rather than positional string arguments. Destructuring the token</span></span> <span class="line"><span style="color:#7F848E;font-style:italic">// (or re-parsing its inline children) is mandatory — interpolating the</span></span> <span class="line"><span style="color:#7F848E;font-style:italic">// token itself renders the literal string "[object Object]".</span></span> <span class="line"><span style="color:#E5C07B">markdown</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">use</span><span style="color:#ABB2BF">({</span></span> <span class="line"><span style="color:#E06C75">    renderer</span><span style="color:#ABB2BF">: {</span></span> <span class="line"><span style="color:#61AFEF">        image</span><span style="color:#ABB2BF">({ </span><span style="color:#E06C75;font-style:italic">href</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">title</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">text</span><span style="color:#ABB2BF"> }) {</span></span> <span class="line"><span style="color:#C678DD">            const</span><span style="color:#E5C07B"> titleAttr</span><span style="color:#56B6C2"> =</span><span style="color:#E06C75"> title</span><span style="color:#C678DD"> ?</span><span style="color:#98C379"> ` title="</span><span style="color:#C678DD">${</span><span style="color:#E06C75">title</span><span style="color:#C678DD">}</span><span style="color:#98C379">"`</span><span style="color:#C678DD"> :</span><span style="color:#98C379"> ''</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#C678DD">            const</span><span style="color:#E5C07B"> alt</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">text</span><span style="color:#56B6C2"> ||</span><span style="color:#98C379"> ''</span><span style="color:#ABB2BF">).</span><span style="color:#61AFEF">replace</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">/"/</span><span style="color:#C678DD">g</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'&#x26;quot;'</span><span style="color:#ABB2BF">);</span></span> <span class="line"><span style="color:#C678DD">            return</span><span style="color:#98C379"> `&#x3C;figure class="post-figure">&#x3C;img src="</span><span style="color:#C678DD">${</span><span style="color:#E06C75">href</span><span style="color:#C678DD">}</span><span style="color:#98C379">" alt="</span><span style="color:#C678DD">${</span><span style="color:#E06C75">alt</span><span style="color:#C678DD">}</span><span style="color:#98C379">">&#x3C;/figure>`</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF">        },</span></span> <span class="line"><span style="color:#61AFEF">        paragraph</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">token</span><span style="color:#ABB2BF">) {</span></span> <span class="line"><span style="color:#C678DD">            const</span><span style="color:#E5C07B"> text</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> colorizer</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">colorizeText</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">this</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">parser</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">parseInline</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">token</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">tokens</span><span style="color:#ABB2BF">));</span></span> <span class="line"><span style="color:#C678DD">            if</span><span style="color:#ABB2BF"> (</span><span style="color:#61AFEF">String</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">text</span><span style="color:#ABB2BF">).</span><span style="color:#61AFEF">trim</span><span style="color:#ABB2BF">().</span><span style="color:#61AFEF">startsWith</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'&#x3C;figure class="post-figure">'</span><span style="color:#ABB2BF">)) {</span></span> <span class="line"><span style="color:#C678DD">                return</span><span style="color:#98C379"> `</span><span style="color:#C678DD">${</span><span style="color:#E06C75">text</span><span style="color:#C678DD">}</span><span style="color:#56B6C2">\n</span><span style="color:#98C379">`</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF">            }</span></span> <span class="line"><span style="color:#C678DD">            return</span><span style="color:#98C379"> `&#x3C;p></span><span style="color:#C678DD">${</span><span style="color:#E06C75">text</span><span style="color:#C678DD">}</span><span style="color:#98C379">&#x3C;/p></span><span style="color:#56B6C2">\n</span><span style="color:#98C379">`</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF">        },</span></span> <span class="line"><span style="color:#ABB2BF">    },</span></span> <span class="line"><span style="color:#ABB2BF">});</span></span></code></pre></div> <p>Three changes, one of which is a deletion:</p> <p><strong><code>image</code> — destructure the token.</strong> Mechanical. <code>image({ href, title, text })</code> reads almost identically to the old positional signature.</p> <p><strong><code>paragraph</code> — re-parse the inline children.</strong> The token carries unrendered child tokens in <code>token.tokens</code>. To turn those into HTML you call <code>this.parser.parseInline(token.tokens)</code>. The <code>this.parser</code> binding is available inside renderer methods precisely for this, which is why these must stay ordinary functions and not arrow functions — an arrow function would capture the wrong <code>this</code> and fail.</p> <p><strong><code>text</code> — deleted entirely.</strong> This one is worth dwelling on. The override existed to run prose through a semantic colorizer. Here is that colorizer:</p> <div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">class</span><span style="color:#E5C07B"> SemanticColorizer</span><span style="color:#ABB2BF"> {</span></span> <span class="line"><span style="color:#61AFEF">    colorizeText</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">text</span><span style="color:#ABB2BF">) {</span></span> <span class="line"><span style="color:#C678DD">        return</span><span style="color:#E06C75"> text</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF">    }</span></span> <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div> <p>It is an <strong>identity function</strong>. The semantic coloring documented at length in <code>BLOG.md</code> had been hollowed out at some earlier point, leaving a renderer override whose entire contribution was to intercept every text node and hand it back unchanged. After the marked upgrade its only remaining effect was to corrupt the output.</p> <p>Deleting it is strictly better than fixing it: marked's default <code>text</code> renderer also handles <strong>HTML escaping</strong>, which the override was bypassing. So removing dead code fixed the bug <em>and</em> closed an escaping gap.</p> <p>Result:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">affected</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">0 of 39</span></span></code></pre></div> <p>Then, after deploying, a sweep of every live URL rather than a spot check:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">for</span><span style="color:#E06C75"> s</span><span style="color:#C678DD"> in</span><span style="color:#ABB2BF"> $(</span><span style="color:#61AFEF">ls</span><span style="color:#D19A66"> -d</span><span style="color:#98C379"> public/blog/</span><span style="color:#E5C07B">*</span><span style="color:#98C379">/</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">xargs</span><span style="color:#D19A66"> -n1</span><span style="color:#98C379"> basename</span><span style="color:#ABB2BF">); </span><span style="color:#C678DD">do</span></span> <span class="line"><span style="color:#E06C75">  n</span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF">$(</span><span style="color:#61AFEF">curl</span><span style="color:#D19A66"> -sSL</span><span style="color:#98C379"> "https://jeffreyjose07.is-a.dev/blog/</span><span style="color:#E06C75">$s</span><span style="color:#98C379">"</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">grep</span><span style="color:#D19A66"> -o</span><span style="color:#98C379"> "object Object"</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">wc</span><span style="color:#D19A66"> -l</span><span style="color:#ABB2BF">)</span></span> <span class="line"><span style="color:#ABB2BF">  [ </span><span style="color:#98C379">"</span><span style="color:#E06C75">$n</span><span style="color:#98C379">"</span><span style="color:#56B6C2"> !=</span><span style="color:#98C379"> "0"</span><span style="color:#ABB2BF"> ] &#x26;&#x26; </span><span style="color:#56B6C2">echo</span><span style="color:#98C379"> "BROKEN (</span><span style="color:#E06C75">$n</span><span style="color:#98C379">): </span><span style="color:#E06C75">$s</span><span style="color:#98C379">"</span></span> <span class="line"><span style="color:#C678DD">done</span></span></code></pre></div> <p>42 pages, zero broken.</p> <hr> <h2>The bonus bug: a build that succeeds at doing nothing</h2> <p>While debugging I hit a second silent failure, unrelated but rhyming.</p> <p>Running the documented command produced no output whatsoever and exited 0:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">$</span><span style="color:#98C379"> node</span><span style="color:#98C379"> blog/scripts/build.js</span></span> <span class="line"><span style="color:#61AFEF">$</span><span style="color:#98C379"> echo</span><span style="color:#E5C07B"> $?</span></span> <span class="line"><span style="color:#61AFEF">0</span></span></code></pre></div> <p>No posts generated, no error, no log lines. The culprit is the standard ES-module "am I the entry point?" idiom at the bottom of the script:</p> <div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">if</span><span style="color:#ABB2BF"> (</span><span style="color:#C678DD">import</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">meta</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">url</span><span style="color:#56B6C2"> ===</span><span style="color:#98C379"> `file://</span><span style="color:#C678DD">${</span><span style="color:#E5C07B">process</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">argv</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">1</span><span style="color:#ABB2BF">]</span><span style="color:#C678DD">}</span><span style="color:#98C379">`</span><span style="color:#ABB2BF">) {</span></span> <span class="line"><span style="color:#61AFEF">    build</span><span style="color:#ABB2BF">();</span></span> <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div> <p>This compares a <strong>URL</strong> against a <strong>filesystem path</strong>. They are identical only when the path contains no characters requiring percent-encoding. My checkout happens to live in a directory with a space in its name, so:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>import.meta.url      → file:///Users/.../Jeffrey's%20Projects/.../build.js</span></span> <span class="line"><span>`file://${argv[1]}`  → file:///Users/.../Jeffrey's Projects/.../build.js</span></span></code></pre></div> <p><code>%20</code> versus a literal space. The comparison fails, <code>build()</code> is never called, the script exits cleanly having done nothing at all.</p> <p>It never affected production — GitHub Actions checks out to <code>/home/runner/work/...</code>, which has no spaces, so CI has always worked. It only bites locally, and only in a path with a space, which is exactly the kind of environment-dependent bug that gets dismissed as "works on my machine" in reverse.</p> <p>The correct comparison uses Node's own converter:</p> <div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> { </span><span style="color:#E06C75">pathToFileURL</span><span style="color:#ABB2BF"> } </span><span style="color:#C678DD">from</span><span style="color:#98C379"> 'node:url'</span><span style="color:#ABB2BF">;</span></span> <span class="line"></span> <span class="line"><span style="color:#C678DD">if</span><span style="color:#ABB2BF"> (</span><span style="color:#C678DD">import</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">meta</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">url</span><span style="color:#56B6C2"> ===</span><span style="color:#61AFEF"> pathToFileURL</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">process</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">argv</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">1</span><span style="color:#ABB2BF">]).</span><span style="color:#E06C75">href</span><span style="color:#ABB2BF">) {</span></span> <span class="line"><span style="color:#61AFEF">    build</span><span style="color:#ABB2BF">();</span></span> <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div> <p>As a workaround without touching the file, you can bypass the guard by importing the module and calling its export directly:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">node</span><span style="color:#D19A66"> -e</span><span style="color:#98C379"> "import(require('url').pathToFileURL('blog/scripts/build.js').href).then(m => m.build())"</span></span></code></pre></div> <hr> <h2>Lessons</h2> <p><strong>Exit code 0 is not a test.</strong> Both bugs in this post produced a successful build. One generated nothing; the other generated garbage. Neither threw. If your CI's only assertion is "the build command returned 0," it will cheerfully deploy either. A single grep for <code>[object Object]</code> in the generated output — three lines in a workflow — would have caught this on the very commit that introduced it.</p> <p><strong>Major bumps of a rendering library need output diffing, not just a green build.</strong> Dependabot did nothing wrong: it announced a major bump and the build passed. What was missing was any check on the <em>artifact</em>. For anything that transforms content, the meaningful regression test compares rendered output before and after, not the exit status.</p> <p><strong>Verify the verification.</strong> Two of my checks returned reassuring, wrong answers — <code>curl</code> without <code>-L</code> grepping a redirect stub, and <code>grep -c</code> counting lines in minified HTML. When a check tells you everything is fine and your eyes say otherwise, believe your eyes and go audit the check.</p> <p><strong>Measure the blast radius before diagnosing.</strong> "Is it one post or all of them?" cost one loop to answer and immediately eliminated my Markdown, my frontmatter, and the new post as suspects. Knowing 34 of 39 were affected pointed at shared infrastructure before I had read a single line of the build script.</p> <p><strong>Delete dead code when you find it.</strong> The <code>text</code> override was already pointless before the upgrade — a no-op wrapper around an identity function. Dead code is not inert. It sat there for months contributing nothing, then a dependency bump turned it into a site-wide outage.</p> <p>The blog renders again. And there is now a very short item on my list: add <code>grep -o &quot;object Object&quot;</code> as a failing assertion in <code>deploy.yml</code>, so the next time this class of bug appears, the build says so instead of shipping it.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-blog" class="tag neutral" data-tag="blog">blog</a>, <a href="/blog#tag-marked" class="tag neutral" data-tag="marked">marked</a>, <a href="/blog#tag-javascript" class="tag process" data-tag="javascript">javascript</a>, <a href="/blog#tag-dependabot" class="tag neutral" data-tag="dependabot">dependabot</a>, <a href="/blog#tag-debugging" class="tag neutral" data-tag="debugging">debugging</a>, <a href="/blog#tag-build-tools" class="tag neutral" data-tag="build-tools">build-tools</a>, <a href="/blog#tag-node" class="tag neutral" data-tag="node">node</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Senior backend engineer writing about Spring, distributed systems, and production debugging.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous panel-card"> <a href="/blog/two-month-outage-aiven-dns-and-jdbc-urls"> <span class="nav-label">← previous</span> <span class="nav-title">The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: color 0.2s, border-color 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
+Subscribe via RSS
+</a> </div> </main> <script>
+// Prevent scroll restoration but don't interfere with navigation
+if ('scrollRestoration' in history) {
+history.scrollRestoration = 'manual';
+}
+// Only scroll to top on actual page refresh (not navigation)
+window.addEventListener('load', () => {
+setTimeout(() => {
+window.scrollTo(0, 0);
+}, 0);
+});
+// Reading progress indicator
+window.addEventListener('scroll', () => {
+const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+const scrolled = (winScroll / height) * 100;
+document.querySelector('.reading-progress').style.width = scrolled + '%';
+});
+// Load view count from GoatCounter
+document.addEventListener('DOMContentLoaded', () => {
+loadViewCount();
+});
+function loadViewCount() {
+const path = window.location.pathname;
+const viewCountElement = document.getElementById('view-count');
+if (!viewCountElement) return;
+fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
+.then(response => {
+if (!response.ok) throw new Error('View count unavailable');
+return response.json();
+})
+.then(data => {
+const count = data.count ?? 0;
+viewCountElement.textContent = `${count.toLocaleString()} views`;
+viewCountElement.hidden = false;
+})
+.catch(() => {
+viewCountElement.hidden = true;
+});
+}
+/* Inline scripts injected from frontmatter */
+{ { inlineScripts } }
+</script> <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script> </body> </html>

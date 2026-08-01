@@ -1,5 +1,24 @@
 [
   {
+    "url": "/blog/object-object-marked-token-api",
+    "title": "[object Object]: How One Dependabot Bump Broke 34 of 39 Posts",
+    "episode": "034",
+    "date": "2026-08-01",
+    "tags": [
+      "blog",
+      "marked",
+      "javascript",
+      "dependabot",
+      "debugging",
+      "build-tools",
+      "node"
+    ],
+    "description": "A major bump to marked changed every renderer method to take a token object instead of positional strings. The build kept exiting 0 while emitting the literal text [object Object] into 34 of 39 posts — and a missing curl flag nearly convinced me nothing was wrong.",
+    "readingTime": 11,
+    "wordCount": 2300,
+    "slug": "object-object-marked-token-api"
+  },
+  {
     "url": "/blog/two-month-outage-aiven-dns-and-jdbc-urls",
     "title": "The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL",
     "episode": "033",
