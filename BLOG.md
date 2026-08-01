@@ -1,6 +1,11 @@
 # Blog Documentation
 
-This document explains how to create and manage blog posts using the automated blog system. The system transforms simple Markdown files into beautifully styled HTML pages with a terminal aesthetic and automatic color coding.
+This document explains how to create and manage blog posts using the automated blog system. The system transforms simple Markdown files into styled HTML pages with build-time syntax highlighting, generated thumbnails, tag filtering and RSS.
+
+> **Design note:** the blog uses the site's current design system — `Syne` headings,
+> `Plus Jakarta Sans` body, emerald teal accent (`#1cc9a0`), dark by default. The 90s
+> terminal aesthetic was replaced in episode 026; only the generated post thumbnails
+> still use the terminal motif.
 
 ## Quick Start
 
@@ -59,37 +64,24 @@ Content goes here with automatic color coding applied to technical terms.
 - `wordCount`: Word count for the post
 - `slug`: Custom URL slug (auto-generated from title if omitted)
 
-## Color Coding System
+## Styling: what actually happens to your prose
 
-The blog system automatically applies semantic color coding to technical terms:
+**Nothing automatic.** Earlier versions of this document described a semantic
+colour-coding system that highlighted technical terms (React, Spring Boot, Docker…)
+as you wrote them. **That system no longer exists.**
 
-### Color Meanings
-- **Green (#55ff55)**: Highlights, key concepts, success states
-- **Blue (#5588ff)**: Frameworks, architectural concepts, structure
-- **Orange (#ff8855)**: Warnings, dates, temporal information  
-- **Cyan (#55ffff)**: Links, interactive elements
-- **Magenta (#ff55ff)**: Tags, metadata, special labels
-- **Yellow (#ffff55)**: Code snippets, technical terms
+`SemanticColorizer.colorizeText()` in `blog/scripts/build.js` is an identity function
+that returns its input unchanged, and the `autoColorTerms` key older docs referred to
+does not exist in `blog/config.json` at all.
+Prose renders as plain Markdown against the site's theme:
 
-### Auto-Colored Terms
-The following terms are automatically colored when they appear in your posts:
+- Headings in `Syne`, body in `Plus Jakarta Sans`
+- Links and accents in emerald teal (`#1cc9a0`)
+- `inline code` in the mono stack
+- Fenced code blocks highlighted by **Shiki** at build time (see below)
 
-**Frameworks & Technologies:**
-- React, TypeScript, JavaScript → code color (yellow)
-- Spring Boot, API, architecture → framework color (blue) 
-- WebSocket, CI/CD, microservices → tag color (magenta)
-
-**Tools & Platforms:**
-- GitHub, Docker, testing → success color (green)
-- deployment, security, mobile → warning color (orange)
-- Claude Code, portfolio, blog → link/highlight colors
-
-**Design & Aesthetics:**
-- terminal, minimal → highlight color (green)
-- responsive, CSS → framework/tag colors
-- aesthetic → tag color (magenta)
-
-You can add more terms in `blog/config.json` under `autoColorTerms`.
+If you want a term emphasised, use normal Markdown — `**bold**`, `*italic*`, or
+`` `code` ``. Do not expect the build to colour it for you.
 
 ## Markdown Features
 
@@ -133,7 +125,8 @@ public void processBatchThenFail(String accountId, long amount) {
 
 Always set a language tag when you can (`java`, `bash`, `typescript`, `json`, `yaml`, `cpp`, …). Unlabeled fences are best-effort guessed (Java/TS/CSS/YAML/SQL/bash/…). Unknown tags load on demand from Shiki’s language bundle or fall back to plaintext. Aliases live in `blog/scripts/syntax-highlight.js`.
 
-Prose still gets the terminal semantic color spans; only **fenced** code uses Shiki.
+Only **fenced** code goes through Shiki. Prose is rendered as plain Markdown — see
+"Styling: what actually happens to your prose" above.
 
 ### Quotes
 ```markdown
@@ -273,29 +266,31 @@ npx serve public
 
 ## Advanced Configuration
 
-### Adding New Color Terms
-Edit `blog/config.json`:
-
-```json
-{
-  "autoColorTerms": {
-    "YourFramework": "framework",
-    "YourTool": "success",
-    "YourConcept": "highlight"
-  }
-}
-```
+### Changing Theme Colours
+The blog's palette lives in `blog/templates/styles.html` as CSS custom properties
+(`--primary: #1cc9a0`, `--primary-glow: #5eead4`, `--font-heading`, `--font-sans`).
+These intentionally mirror the React side's HSL tokens in `src/index.css`
+(`--primary: 162 75% 38%`). **Change both together** — the portfolio and blog are one
+identity, and letting them drift is what produced a light portfolio next to a dark
+blog for months.
 
 ### Customizing Templates
-- Modify `blog/templates/post.html` for individual posts
-- Modify `blog/templates/index.html` for the blog index
-- All existing terminal styling is preserved
+- `blog/templates/post.html` — individual posts
+- `blog/templates/index.html` — the blog index
+- `blog/templates/header.html` — shared nav (keep in sync with `navItems` in
+  `src/components/Navigation.tsx`; these are two hand-maintained copies)
+- `blog/templates/styles.html` — all blog CSS
 
 ### Build Script Customization
-The build script at `blog/scripts/build.js` can be modified to:
-- Add new automatic replacements
-- Integrate with other tools
-- Generate additional metadata
-- Support custom post types
+The build script at `blog/scripts/build.js` can be modified to add metadata, new
+output formats, or extra Markdown handling.
 
-Remember: the system is designed to be simple and maintainable while preserving the beautiful terminal aesthetic that makes the blog unique.
+**If you touch the `marked` renderer**, note that since marked v9 every renderer
+method receives a single *token object*, not positional strings. Interpolating the
+token directly emits the literal text `[object Object]`. Use
+`this.parser.parseInline(token.tokens)` for block renderers and destructure the token
+for inline ones. See episode 034 — this exact mistake broke 34 of 39 posts.
+
+CI guards against a recurrence: the **Verify blog output** step in
+`.github/workflows/deploy.yml` fails the build if any page renders a stringified
+token, or if no HTML is produced at all.

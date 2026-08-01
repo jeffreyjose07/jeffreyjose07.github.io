@@ -1,5 +1,22 @@
 # Project Roadmap: Content-Aware Terminal Thumbnails
 
+> ## ✅ COMPLETED — shipped, see episode 024 ("Automating Terminal-Style Thumbnails")
+>
+> This roadmap is **done** and kept as a historical record of the design decisions.
+> The implementation lives in `scripts/thumbnail-generator/` (`generate.js` +
+> `template.html`) and runs during the blog build; output goes to
+> `public/assets/thumbnails/<slug>.png` and is committed by CI.
+>
+> **Three details below are out of date and were deliberately left unedited, to
+> preserve the original record:**
+> - The palette specifies violet `#7c3aed` as "Site Primary". The site accent is now
+>   **emerald teal** (`#1cc9a0` / `hsl(162 75% 38%)`) — changed in episode 026.
+> - The typography section names `Outfit` and `Inter`. The site now uses **`Syne`**
+>   for headings and **`Plus Jakarta Sans`** for body.
+> - "Run generation script for all existing 24 posts" — there are now 35.
+>
+> Do not treat the colours in this file as the design system. See `CLAUDE.md`.
+
 **Goal:** Replace generic gradient thumbnails with "Terminal Screenshot" style images that communicate post content and align with the site's "Premium Dark" aesthetic.
 
 ## 1. Design Specification
@@ -70,22 +87,22 @@ We will generate images that look like a terminal window executing a command rel
 ## 5. Implementation Roadmap
 
 ### Phase 1: Setup & Tooling
-- [ ] Initialize `scripts/thumbnail-generator` with `puppeteer`.
-- [ ] Create `scripts/thumbnail-generator/template.html` with the basic terminal structure.
-- [ ] Configure `tsconfig.json` or script setup to run TS/JS modules.
+- [x] Initialize `scripts/thumbnail-generator` with `puppeteer`.
+- [x] Create `scripts/thumbnail-generator/template.html` with the basic terminal structure.
+- [x] Configure `tsconfig.json` or script setup to run TS/JS modules.
 
 ### Phase 2: Template Development
-- [ ] **Base Template:** Window frame, shadow, padding, scalable SVG controls.
-- [ ] **Content Modules:**
+- [x] **Base Template:** Window frame, shadow, padding, scalable SVG controls.
+- [x] **Content Modules:**
     -   `CommandOutput` (Standard shell interaction)
     -   `CodeSnippet` (Syntax highlighted code block)
     -   `ProgressBar` (For "Building..." or "Loading..." metaphors)
 
 ### Phase 3: Batch Generation
-- [ ] Create `scripts/thumbnail-generator/config.json` to map specific posts to specific commands (overriding defaults).
-- [ ] Run generation script for all existing 24 posts.
-- [ ] Save outputs to `public/assets/thumbnails/`.
+- [x] Create `scripts/thumbnail-generator/config.json` to map specific posts to specific commands (overriding defaults).
+- [x] Run generation script for all existing 24 posts.
+- [x] Save outputs to `public/assets/thumbnails/`.
 
 ### Phase 4: Integration
-- [ ] Update `blog/posts/*.md` frontmatter to point to new images (or standard naming convention).
-- [ ] Update `blog/templates/post.html` and `index.html` to render them.
+- [x] Update `blog/posts/*.md` frontmatter to point to new images (or standard naming convention).
+- [x] Update `blog/templates/post.html` and `index.html` to render them.

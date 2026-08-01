@@ -6,7 +6,7 @@ A modern, responsive portfolio website built with React and TypeScript, showcasi
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js **v20.19.0 or higher** (enforced by `engines` in `package.json`)
 - npm
 
 ### Installation
@@ -43,25 +43,39 @@ The built files will be in the `dist` directory.
 
 This repository contains both a modern portfolio site and a fully static blog:
 
-- **Portfolio**: Built with React, TypeScript, Vite, and Tailwind CSS. Features include responsive layout, dark/light mode, animated UI, and interactive sections for experience, education, and skills.
-- **Blog**: Markdown-based posts are located in `blog/posts/`. The blog is built using a custom Node.js script that converts Markdown to HTML, applies semantic coloring, and generates archive, navigation, and RSS pages. Blog templates use embedded CSS for styling.
+- **Portfolio**: Built with React, TypeScript, Vite, and Tailwind CSS. Dark by default with a light toggle, responsive layout, and sections for experience, projects, skills and education. Project cards link to the blog posts written about them.
+- **Blog**: Markdown posts in `blog/posts/`, named `###-slug.md`. A custom Node.js script converts them to static HTML, highlights fenced code with **Shiki** (`one-dark-pro`), and generates the index, archive, sitemap, `posts.json` and RSS. Blog templates carry their own embedded CSS mirroring the React theme tokens.
+
+## Design System
+
+- **Headings**: `Syne` · **Body**: `Plus Jakarta Sans` · **Code**: system mono
+- **Accent**: emerald teal — `hsl(162 75% 38%)` light / `hsl(162 75% 46%)` dark
+  (`src/index.css`), mirrored as `#1cc9a0` in `blog/templates/styles.html`
+- **Theme**: dark default, light toggle, system preference respected
+
+An earlier 90s terminal aesthetic was replaced in episode 026. Older blog posts still
+describe it — they are dated records, not current documentation.
 
 ## Blog Workflow
 
-- To add a new blog post, create a Markdown file in `blog/posts/` with the appropriate frontmatter (title, date, etc.).
-- The build script (`blog/scripts/build.js`) will automatically process all posts, generate HTML, and update the archive and RSS feed.
-- All blog headings, blockquotes, and links retain their original capitalization from Markdown (no forced lowercase).
+- To add a post, create `blog/posts/###-slug.md` with frontmatter (title, date, tags,
+  description). Use the next sequential episode number.
+- Commit **the Markdown only**. CI runs the build and commits the generated HTML and
+  thumbnails itself, so committing local build output races it.
+- Test locally with `node blog/scripts/build.js` before pushing.
 
 ## Automated CI/CD
 
-Deployment is managed by a multi-stage GitHub Actions workflow:
+A single GitHub Actions job, `build-and-deploy` in `.github/workflows/deploy.yml`:
 
-1. **build-blog**: Detects changes to blog content and builds the blog if necessary.
-2. **commit-blog**: If new blog HTML is generated, commits it back to the repository.
-3. **build-portfolio**: Always builds the portfolio site after blog processing.
-4. **deploy**: Uploads the built site to GitHub Pages.
+1. Detects whether `blog/{posts,templates,scripts,config.json}` changed.
+2. Builds the blog if so (`npm run build:blog`).
+3. **Verifies the output** — fails if no HTML was produced, or if any page contains a
+   stringified renderer token. A green exit code alone is not treated as proof.
+4. Commits generated `public/blog/` and `public/assets/thumbnails/` back to the branch.
+5. Builds the portfolio and deploys to GitHub Pages.
 
-**Any change to either the portfolio or the blog will trigger a full rebuild and redeploy.**
+**Any change to either the portfolio or the blog triggers a full rebuild and redeploy.**
 
 ## Technologies Used
 
@@ -72,16 +86,20 @@ Deployment is managed by a multi-stage GitHub Actions workflow:
 - **shadcn/ui** - UI components
 - **Lucide React** - Icons
 - **Node.js** - Blog build scripts
-- **Marked** - Markdown to HTML conversion for blog
+- **Marked + marked-shiki** - Markdown to HTML with build-time syntax highlighting
+- **Shiki** - VS Code TextMate grammars, `one-dark-pro` theme
+- **Puppeteer** - Terminal-style post thumbnail generation
 
 ## Features
 
 - Responsive design that works on all devices
-- Dark/light theme toggle
-- Interactive sections for experience, education, and skills
-- Contact form
-- Modern UI with smooth animations
-- Static blog with semantic highlighting, archive, and RSS feed
+- Dark by default, with a light theme toggle
+- Recent blog posts surfaced on the homepage (`RecentWriting`)
+- Project cards linking to the long-form write-ups behind them
+- Contact form (EmailJS — see `EMAILJS_SETUP.md`)
+- Privacy-friendly analytics (GoatCounter — see `ANALYTICS.md`)
+- Static blog with Shiki syntax highlighting, tag filtering, search, archive,
+  sitemap and RSS feed
 
 ## Deployment
 

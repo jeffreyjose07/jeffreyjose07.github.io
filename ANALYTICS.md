@@ -8,6 +8,12 @@
 - **Cost**: FREE (donation-supported)
 - **Script Size**: ~3.5KB (privacy-friendly)
 
+### Where the Dashboard Is Linked
+`/analytics.html` is reachable from the **site footer** (`src/components/Footer.tsx`)
+and from `/analytics-privacy.html`. It was removed from the blog's primary navigation
+when that was trimmed to four items (Home · Projects · Blog · Contact) — the page is
+still live, just no longer in the top nav.
+
 ### Tracking Locations
 - ✅ Blog posts (`/blog/templates/post.html`)
 - ✅ Blog index (`/blog/templates/index.html`) 
@@ -52,7 +58,7 @@ fetch('/api/goatcounter-proxy/stats/hits/{path}')
   .then(data => updateViewCount(data.count));
 ```
 
-### Display Format (Terminal Aesthetic)
+### Display Format (proposed)
 ```
 📊 analytics: 1,234 total views · 567 unique visitors
 👀 this post: 89 views · 45 unique
@@ -101,7 +107,7 @@ fetch('/api/goatcounter-proxy/stats/hits/{path}')
 - [ ] Generate GoatCounter API key
 - [ ] Modify build script to fetch view counts
 - [ ] Add view count display to templates
-- [ ] Style view counts for terminal aesthetic
+- [ ] Style view counts to match the current design system (see `CLAUDE.md`)
 
 ### Phase 3: Advanced Features (Future)
 - [ ] Real-time view count updates

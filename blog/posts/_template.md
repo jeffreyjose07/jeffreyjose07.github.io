@@ -7,15 +7,17 @@ readingTime: 3
 wordCount: 500
 ---
 
-Your first paragraph starts here. The first letter will be automatically styled in green. You can write naturally and the build system will automatically apply color coding to technical terms.
+Your first paragraph starts here. Write naturally — prose is rendered as plain
+Markdown against the site theme. There is no automatic colour coding of technical
+terms; use `**bold**`, `*italic*` or `` `code` `` when you want emphasis.
 
 ## section headings
 
-Section headings (h2) will appear in blue. Use lowercase for consistency with the terminal aesthetic.
+Section headings (h2) render in `Syne`. Sentence case reads best.
 
 ### subsection headings
 
-Subsection headings (h3) will appear in magenta.
+Subsection headings (h3) are smaller, same family.
 
 ## text formatting
 
@@ -47,27 +49,42 @@ function example() {
 }
 ```
 
-## automatic color coding
+## syntax highlighting
 
-The system automatically applies colors to technical terms:
+Fenced code blocks are highlighted at build time by Shiki using the `one-dark-pro`
+theme. Always tag the language:
 
-- React, TypeScript, JavaScript -> code color (yellow)
-- Spring Boot, API, architecture -> framework color (blue)
-- GitHub, Docker, testing -> success color (green)
-- deployment, security, mobile -> warning color (orange)
-- WebSocket, CI/CD, microservices -> tag color (magenta)
-- Claude Code, portfolio, blog -> link/highlight colors
+```java
+@Transactional
+public void transfer(String from, String to, long amount) {
+    // highlighted with the same grammars VS Code uses
+}
+```
+
+Unlabelled fences are guessed; unknown languages fall back to plaintext.
 
 ## quotes and emphasis
 
 > Block quotes can be used for important callouts or philosophical reflections.
 
-The build system maintains the existential, terminal aesthetic while making technical content accessible and beautiful.
-
 ## technical sections
 
-When writing about complex topics, the auto-coloring helps readers distinguish between different types of concepts. For example:
+When writing about complex topics, do the emphasis yourself — the build will not add
+it for you:
 
-The **React** application uses **TypeScript** for type safety, deploys via **GitHub Actions** to **GitHub Pages**, and implements **WebSocket** connections for real-time communication. The **architecture** follows **microservices** patterns with comprehensive **testing** and **CI/CD** pipelines.
+The **React** application uses `TypeScript` for type safety, deploys via GitHub
+Actions to GitHub Pages, and implements WebSocket connections for real-time
+communication.
 
-Notice how each technical term gets appropriately colored based on its semantic meaning.
+Tables work too, and are often the clearest way to present a comparison:
+
+| Consumer | Format |
+| --- | --- |
+| Spring `DATABASE_URL` | `jdbc:postgresql://…` |
+| `psql` | `postgres://…` |
+
+## before you publish
+
+- Name the file `###-descriptive-title.md` with the next episode number
+- Commit **the Markdown only** — CI builds and commits the HTML and thumbnail
+- Test locally first: `node blog/scripts/build.js`
