@@ -56,17 +56,20 @@ async function initMarkdown() {
     });
 
     // Prose coloring + image/paragraph tweaks (does not touch fenced code)
+    //
+    // NOTE: since marked v9 every renderer method receives a single *token*
+    // object rather than positional string arguments. Destructuring the token
+    // (or re-parsing its inline children) is mandatory — interpolating the
+    // token itself renders the literal string "[object Object]".
     markdown.use({
         renderer: {
-            text(text) {
-                return colorizer.colorizeText(text);
-            },
-            image(href, title, text) {
+            image({ href, title, text }) {
                 const titleAttr = title ? ` title="${title}"` : '';
                 const alt = (text || '').replace(/"/g, '&quot;');
                 return `<figure class="post-figure"><img src="${href}" alt="${alt}" loading="lazy" decoding="async"${titleAttr}></figure>`;
             },
-            paragraph(text) {
+            paragraph(token) {
+                const text = colorizer.colorizeText(this.parser.parseInline(token.tokens));
                 if (String(text).trim().startsWith('<figure class="post-figure">')) {
                     return `${text}\n`;
                 }
