@@ -1,5 +1,26 @@
 [
   {
+    "url": "/blog/two-month-outage-aiven-dns-and-jdbc-urls",
+    "title": "The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL",
+    "episode": "033",
+    "date": "2026-08-01",
+    "tags": [
+      "scalable-chat-platform",
+      "postgresql",
+      "aiven",
+      "render",
+      "spring-boot",
+      "incident",
+      "github-actions",
+      "debugging",
+      "deployment"
+    ],
+    "description": "scalable-chat-platform was down for two months and I did not notice. A free-tier Postgres powered off, its DNS record vanished, and a servlet filter took the whole app down with it — including the health endpoint that was supposed to tell me.",
+    "readingTime": 14,
+    "wordCount": 2900,
+    "slug": "two-month-outage-aiven-dns-and-jdbc-urls"
+  },
+  {
     "url": "/blog/spring-hikari-hogging-and-optimistic-locking",
     "title": "HikariCP Exhaustion, Connection Hogging, and Optimistic Locking",
     "episode": "032",
