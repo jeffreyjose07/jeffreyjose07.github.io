@@ -259,21 +259,35 @@ ls -la public/blog/
 **Build timeouts**: Optimize large posts or images
 **GitHub permissions**: Ensure GITHUB_TOKEN has write access
 
+### Build Guarantees
+
+Three invariants the build enforces, each of which was violated in production
+before it was checked:
+
+1. **Deterministic output.** Two consecutive builds are byte-identical, and a
+   local build matches a CI build exactly. Generators sort copies rather than
+   the shared array, and no artifact carries a wall-clock timestamp.
+2. **Validated frontmatter.** Missing fields, unquoted dates, slug collisions
+   and episode-number gaps fail the build rather than shipping.
+3. **Every advertised artifact exists.** `feed.xml` is generated on every build
+   and committed. It is advertised from every page, so it cannot be optional.
+
+`lastmod` in the sitemap comes from the last git commit touching each post's
+Markdown, so it needs full history — CI checks out with `fetch-depth: 0`.
+
 ### Future Enhancements
 
 **Planned Features:**
-- Image optimization and lazy loading
-- RSS feed generation
-- Search functionality
+- Image optimization
 - Post series/collections
-- Comment system integration
-- Syntax highlighting for code blocks
+- Full-text search index (`search.json` currently carries metadata only)
 
 **Architectural Improvements:**
 - TypeScript conversion for type safety
-- Plugin system for extensibility
-- Build caching for large blogs
-- Preview/draft functionality
+- Incremental rebuilds (currently a full rebuild, ~4s for 36 posts)
+- Replace the regex HTML minifier — it collapses the newlines between Shiki's
+  `.line` spans, which only renders correctly because `post.html` sets
+  `display: block` on them
 
 ## Security Considerations
 

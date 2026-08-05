@@ -54,15 +54,41 @@ Content goes here with automatic color coding applied to technical terms.
 ```
 
 ### Required Fields
+
+The build **fails** if any of these are missing or malformed — it will not ship a
+page with `undefined` in its meta description.
+
 - `title`: The title of your blog post
-- `date`: Publication date in YYYY-MM-DD format
+- `date`: Publication date, **quoted**, in `YYYY-MM-DD` format. Unquoted YAML
+  parses as a Date object and formats differently — the validator rejects it.
+- `description`: Brief description for SEO, previews and the RSS `<description>`
+- `tags`: Non-empty array of tags for categorization
+
+The filename's episode prefix must also match its sort position (`012-` must be
+the 13th post). Episode numbers are derived from position, so a gap would
+silently renumber every later post.
 
 ### Optional Fields
-- `tags`: Array of tags for categorization
-- `description`: Brief description for SEO and previews
-- `readingTime`: Estimated reading time in minutes
-- `wordCount`: Word count for the post
-- `slug`: Custom URL slug (auto-generated from title if omitted)
+- `readingTime`: Estimated reading time in minutes (computed if omitted)
+- `wordCount`: Word count for the post (computed if omitted)
+- `slug`: Custom URL slug (auto-generated from the title if omitted)
+- `draft`: `true` keeps the post out of published builds. It still renders
+  locally so you can preview it, and it does not consume an episode number for
+  anything already published.
+
+### URLs and renaming
+
+Slugs are generated from the title, capped at 60 characters and cut on a word
+boundary. **Changing a published title changes its URL.** After any title or
+slug change, run:
+
+```bash
+npm run blog:redirects
+```
+
+That records the old URL in `blog/redirects.json`, and the build emits a
+redirect stub at the old path so inbound links keep working. CI fails if the
+file is out of date.
 
 ## Styling: what actually happens to your prose
 

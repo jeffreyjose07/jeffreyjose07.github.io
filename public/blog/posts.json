@@ -1,5 +1,24 @@
 [
   {
+    "url": "/blog/four-reasonable-decisions-and-a-dead-feed",
+    "title": "Four Reasonable Decisions and a Dead Feed",
+    "episode": "036",
+    "date": "2026-08-05",
+    "tags": [
+      "meta",
+      "blog",
+      "rss",
+      "seo",
+      "static-site-generator",
+      "build-systems",
+      "ci"
+    ],
+    "description": "Every page on this blog advertised an RSS feed that returned 404. No single line of code was wrong — four independently sensible decisions composed into a file that existed only inside a CI runner. Plus what Hugo, Astro and Eleventy do differently.",
+    "readingTime": 10,
+    "wordCount": 1870,
+    "slug": "four-reasonable-decisions-and-a-dead-feed"
+  },
+  {
     "url": "/blog/documentation-that-outlived-its-code",
     "title": "Documentation That Outlived Its Code",
     "episode": "035",
@@ -149,7 +168,7 @@
     "slug": "proving-spring-internals-with-tests"
   },
   {
-    "url": "/blog/hardening-the-chat-platform-deps-deep-health-and-c",
+    "url": "/blog/hardening-the-chat-platform-deps-deep-health-and-ci-pings",
     "title": "Hardening the Chat Platform: Deps, Deep Health, and CI Pings",
     "episode": "027",
     "date": "2026-05-27",
@@ -164,7 +183,7 @@
     "description": "Merged five Dependabot frontend PRs, fixed React 19 + Docker builds, opened actuator health for probes, and added caching and rate limits—then moved scheduled pings into the app repo so nothing doubles up.",
     "readingTime": 8,
     "wordCount": 1100,
-    "slug": "hardening-the-chat-platform-deps-deep-health-and-c"
+    "slug": "hardening-the-chat-platform-deps-deep-health-and-ci-pings"
   },
   {
     "url": "/blog/redesigning-the-portfolio-teal-fonts-and-timelines",
@@ -185,7 +204,7 @@
     "slug": "redesigning-the-portfolio-teal-fonts-and-timelines"
   },
   {
-    "url": "/blog/optimizing-performance-and-pagination-a-deep-dive",
+    "url": "/blog/optimizing-performance-and-pagination-a-deep-dive-into-web",
     "title": "Optimizing Performance and Pagination: A Deep Dive into Web Vitals",
     "episode": "025",
     "date": "2025-12-17",
@@ -199,7 +218,7 @@
     "description": "How I refactored the blog's pagination system for better SEO, optimized image loading strategies to boost Core Web Vitals, and fixed critical accessibility issues.",
     "readingTime": 6,
     "wordCount": 1200,
-    "slug": "optimizing-performance-and-pagination-a-deep-dive"
+    "slug": "optimizing-performance-and-pagination-a-deep-dive-into-web"
   },
   {
     "url": "/blog/automating-terminal-style-thumbnails",
@@ -218,7 +237,7 @@
     "slug": "automating-terminal-style-thumbnails"
   },
   {
-    "url": "/blog/refining-navigation-and-branding-a-journey-to-cons",
+    "url": "/blog/refining-navigation-and-branding-a-journey-to-consistency",
     "title": "Refining Navigation and Branding: A Journey to Consistency",
     "episode": "023",
     "date": "2025-11-30",
@@ -232,7 +251,7 @@
     "description": "How I unified the navigation experience across my portfolio, blog, and games, and refined the 'JJ' logo for better visibility.",
     "readingTime": 5,
     "wordCount": 800,
-    "slug": "refining-navigation-and-branding-a-journey-to-cons"
+    "slug": "refining-navigation-and-branding-a-journey-to-consistency"
   },
   {
     "url": "/blog/optimizing-blog-interactivity-and-ux",
@@ -251,7 +270,7 @@
     "slug": "optimizing-blog-interactivity-and-ux"
   },
   {
-    "url": "/blog/building-truthmeter-ai-measuring-the-real-impact-o",
+    "url": "/blog/building-truthmeter-ai-measuring-the-real-impact-of-ai",
     "title": "Building TruthMeter AI: Measuring the Real Impact of AI Coding Assistants",
     "episode": "021",
     "date": "2025-11-28",
@@ -266,10 +285,10 @@
     "description": "The complete journey of building a VS Code extension that measures actual AI assistant productivity using peer-reviewed research - from initial concept to 145+ tests and production release",
     "readingTime": 20,
     "wordCount": 4500,
-    "slug": "building-truthmeter-ai-measuring-the-real-impact-o"
+    "slug": "building-truthmeter-ai-measuring-the-real-impact-of-ai"
   },
   {
-    "url": "/blog/enhancing-game-ui-mobile-responsiveness-and-termin",
+    "url": "/blog/enhancing-game-ui-mobile-responsiveness-and-terminal",
     "title": "Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics",
     "episode": "020",
     "date": "2025-11-28",
@@ -283,7 +302,7 @@
     "description": "Deep dive into fixing mobile UI issues and enhancing dropdown styling for terminal-themed games",
     "readingTime": 8,
     "wordCount": 1800,
-    "slug": "enhancing-game-ui-mobile-responsiveness-and-termin"
+    "slug": "enhancing-game-ui-mobile-responsiveness-and-terminal"
   },
   {
     "url": "/blog/building-a-secure-password-reset-flow",
@@ -318,7 +337,7 @@
     "slug": "adding-interactive-scripts-to-blog-posts"
   },
   {
-    "url": "/blog/solving-adjacent-increasing-subarrays-from-naive-t",
+    "url": "/blog/solving-adjacent-increasing-subarrays-from-naive-to-optimal",
     "title": "Solving Adjacent Increasing Subarrays: From Naive to Optimal",
     "episode": "017",
     "date": "2025-01-26",
@@ -332,7 +351,7 @@
     "description": "A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization",
     "readingTime": 10,
     "wordCount": 2000,
-    "slug": "solving-adjacent-increasing-subarrays-from-naive-t"
+    "slug": "solving-adjacent-increasing-subarrays-from-naive-to-optimal"
   },
   {
     "url": "/blog/adding-custom-domain-jeffreyjose07is-adev",
@@ -351,7 +370,7 @@
     "slug": "adding-custom-domain-jeffreyjose07is-adev"
   },
   {
-    "url": "/blog/building-a-secure-snake-game-with-terminal-aesthet",
+    "url": "/blog/building-a-secure-snake-game-with-terminal-aesthetic",
     "title": "Building a Secure Snake Game with Terminal Aesthetic",
     "episode": "015",
     "date": "2025-09-02",
@@ -365,10 +384,10 @@
     "description": "How we built a security-hardened Snake game with terminal aesthetic styling and integrated it into the portfolio",
     "readingTime": 8,
     "wordCount": 1600,
-    "slug": "building-a-secure-snake-game-with-terminal-aesthet"
+    "slug": "building-a-secure-snake-game-with-terminal-aesthetic"
   },
   {
-    "url": "/blog/from-neon-to-supabase-to-aiven-a-postgresql-migrat",
+    "url": "/blog/from-neon-to-supabase-to-aiven-a-postgresql-migration",
     "title": "From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey",
     "episode": "014",
     "date": "2025-08-28",
@@ -385,10 +404,10 @@
     "description": "A technical journey through multiple PostgreSQL providers due to Neon's 50-hour weekly limit, failed Supabase migration, and successful Aiven implementation",
     "readingTime": 8,
     "wordCount": 1800,
-    "slug": "from-neon-to-supabase-to-aiven-a-postgresql-migrat"
+    "slug": "from-neon-to-supabase-to-aiven-a-postgresql-migration"
   },
   {
-    "url": "/blog/migrating-from-render-to-neon-postgresql-lessons-f",
+    "url": "/blog/migrating-from-render-to-neon-postgresql-lessons-from-a",
     "title": "Migrating from Render to Neon PostgreSQL: Lessons from a Zero-Downtime Database Migration",
     "episode": "013",
     "date": "2025-01-18",
@@ -405,10 +424,10 @@
     "description": "A detailed walkthrough of migrating a production chat platform from Render PostgreSQL to Neon, including challenges faced, solutions implemented, and performance improvements achieved.",
     "readingTime": 7,
     "wordCount": 1379,
-    "slug": "migrating-from-render-to-neon-postgresql-lessons-f"
+    "slug": "migrating-from-render-to-neon-postgresql-lessons-from-a"
   },
   {
-    "url": "/blog/implementing-privacy-first-analytics-from-research",
+    "url": "/blog/implementing-privacy-first-analytics-from-research-to",
     "title": "Implementing Privacy-First Analytics: From Research to GoatCounter",
     "episode": "012",
     "date": "2025-01-13",
@@ -422,7 +441,7 @@
     "description": "A comprehensive guide to implementing privacy-friendly analytics across portfolio and blog - from researching solutions to deploying GoatCounter with future API integration plans.",
     "readingTime": 6,
     "wordCount": 1266,
-    "slug": "implementing-privacy-first-analytics-from-research"
+    "slug": "implementing-privacy-first-analytics-from-research-to"
   },
   {
     "url": "/blog/debugging-cross-repository-workflows",
@@ -477,7 +496,7 @@
     "slug": "deploying-a-chat-platform-to-render"
   },
   {
-    "url": "/blog/ai-as-learning-catalyst-how-to-gain-skills-without",
+    "url": "/blog/ai-as-learning-catalyst-how-to-gain-skills-without-losing",
     "title": "AI as Learning Catalyst: How to Gain Skills Without Losing Competence",
     "episode": "008",
     "date": "2025-01-25",
@@ -490,7 +509,7 @@
     "description": "how artificial intelligence can democratize skill acquisition without creating cognitive dependency - if you use it strategically",
     "readingTime": 13,
     "wordCount": 2540,
-    "slug": "ai-as-learning-catalyst-how-to-gain-skills-without"
+    "slug": "ai-as-learning-catalyst-how-to-gain-skills-without-losing"
   },
   {
     "url": "/blog/bugfixes-and-lessons-learned",

@@ -1,10 +1,40 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import crypto from 'crypto';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+/**
+ * Records the inputs each PNG was rendered from. Existence alone is not a valid
+ * cache key: editing a post's title or description used to leave the old
+ * thumbnail in place forever, because the only check was `fs.existsSync`.
+ */
+const MANIFEST_PATH = path.join(__dirname, '../../public/assets/thumbnails/.manifest.json');
+
+function readManifest() {
+    try {
+        return JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
+    } catch {
+        return {};
+    }
+}
+
+/** Hash of everything that affects the rendered image, template included. */
+function thumbnailFingerprint(post, templateContent) {
+    return crypto
+        .createHash('sha256')
+        .update(JSON.stringify({
+            title: post.title,
+            description: post.description ?? '',
+            tags: post.tags ?? [],
+            template: templateContent,
+        }))
+        .digest('hex')
+        .slice(0, 16);
+}
 
 const blogConfigPath = path.join(__dirname, '../../blog/config.json');
 const blogConfig = JSON.parse(fs.readFileSync(blogConfigPath, 'utf8'));
@@ -97,29 +127,41 @@ function getTerminalContent(postTitle, postTags, postDescription) {
 async function generateThumbnails(posts) {
     if (!posts || posts.length === 0) return;
 
-    console.log(`🚀 Starting batch thumbnail generation for ${posts.length} posts...`);
-    const browser = await puppeteer.launch({ 
+    const templatePath = path.join(__dirname, 'template.html');
+    const templateContent = fs.readFileSync(templatePath, 'utf8');
+    const manifest = readManifest();
+
+    // Decide the work list *before* launching a browser. The staleness check used
+    // to live inside the render loop, so every build paid for a full Chromium
+    // launch — several seconds in CI — even when all 36 thumbnails were current.
+    const stale = posts.filter(post => {
+        const key = path.basename(post.outputPath);
+        const fingerprint = thumbnailFingerprint(post, templateContent);
+        const unchanged = manifest[key] === fingerprint && fs.existsSync(post.outputPath);
+        if (!unchanged) post._fingerprint = fingerprint;
+        return !unchanged;
+    });
+
+    if (stale.length === 0) {
+        console.log(`🖼️  Thumbnails up to date (${posts.length} posts) — skipping browser launch`);
+        return;
+    }
+
+    console.log(`🖼️  Rendering ${stale.length} of ${posts.length} thumbnail(s)...`);
+    const browser = await puppeteer.launch({
         headless: 'new',
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
-    
+
     try {
         const page = await browser.newPage();
         await page.setViewport({ width: 1200, height: 630 });
-        
-        const templatePath = path.join(__dirname, 'template.html');
-        const templateContent = fs.readFileSync(templatePath, 'utf8');
 
-        for (const post of posts) {
+        for (const post of stale) {
             const { title, tags, description, outputPath } = post;
-            
-            if (fs.existsSync(outputPath)) {
-                console.log(`Skipping: ${title} (thumbnail already exists)`);
-                continue;
-            }
 
             console.log(`Generating: ${title}`);
-            
+
             const windowTitle = `~/blog/posts/${title.toLowerCase().replace(/\s+/g, '-').substring(0, 30)}...`;
             const terminalContent = getTerminalContent(title, tags, description);
 
@@ -134,13 +176,25 @@ async function generateThumbnails(posts) {
             }
 
             await page.screenshot({ path: outputPath, fullPage: false });
+            manifest[path.basename(outputPath)] = post._fingerprint;
         }
-    } catch (error) {
-        console.error('Error in batch generation:', error);
     } finally {
         await browser.close();
-        console.log('✨ Batch generation complete!');
     }
+
+    // Drop entries for thumbnails that no longer belong to any post, so a renamed
+    // title does not leave its fingerprint behind forever.
+    const liveKeys = new Set(posts.map(p => path.basename(p.outputPath)));
+    for (const key of Object.keys(manifest)) {
+        if (!liveKeys.has(key)) delete manifest[key];
+    }
+
+    fs.mkdirSync(path.dirname(MANIFEST_PATH), { recursive: true });
+    fs.writeFileSync(
+        MANIFEST_PATH,
+        JSON.stringify(Object.fromEntries(Object.entries(manifest).sort(([a], [b]) => a.localeCompare(b))), null, 2) + '\n',
+    );
+    console.log('✨ Batch generation complete!');
 }
 
 // Wrapper for single generation (legacy support)
@@ -153,8 +207,12 @@ async function generateThumbnail(postTitle, postTags, postDescription, outputPat
     }]);
 }
 
-// Example usage (for testing)
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Example usage (for testing).
+// Compare URL-to-URL: `file://${process.argv[1]}` leaves the path unencoded
+// while import.meta.url percent-encodes it, so any checkout under a directory
+// with a space in its name never matched. Same trap that made build.js a silent
+// no-op before episode 034.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     const testPosts = [
         {
             title: "Building a Scalable Chat Platform with Claude",

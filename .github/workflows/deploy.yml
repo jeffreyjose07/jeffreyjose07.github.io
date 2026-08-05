@@ -44,7 +44,7 @@ jobs:
     - name: Check for blog changes
       id: blog-changes
       run: |
-        if git diff --name-only HEAD~1 HEAD | grep -E '^blog/(posts|templates|scripts|config\.json)' > /dev/null 2>&1 || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+        if git diff --name-only HEAD~1 HEAD | grep -E '^blog/(posts|templates|scripts|config\.json|redirects\.json)' > /dev/null 2>&1 || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
           echo "blog_changed=true" >> $GITHUB_OUTPUT
           echo "📝 Blog content changes detected or manual trigger"
         else
@@ -52,10 +52,16 @@ jobs:
           echo "📝 No blog content changes detected"
         fi
     
+    # redirects.json is the record of retired post URLs. If a title changed and
+    # nobody reran the generator, the old URL would 404 instead of forwarding.
+    - name: Check redirect map is current
+      if: steps.blog-changes.outputs.blog_changed == 'true'
+      run: npm run blog:redirects:check
+
     - name: Build blog
       if: steps.blog-changes.outputs.blog_changed == 'true'
       run: |
-        echo "🚀 Building blog with semantic coloring..."
+        echo "🚀 Building blog..."
         npm run build:blog
         echo "✅ Blog build completed"
 
@@ -88,7 +94,34 @@ jobs:
           exit 1
         fi
 
-        echo "✅ Verified $(find public/blog -name 'index.html' | wc -l | tr -d ' ') pages, no stringified objects"
+        # The feed 404'd in production for months: it was generated only under CI
+        # and gitignored, so it never got committed and any deploy that skipped
+        # the blog build shipped without it — while every page advertised it.
+        if [ ! -s public/blog/feed.xml ]; then
+          echo "::error::public/blog/feed.xml missing or empty — every page links to it."
+          exit 1
+        fi
+        python3 -c "import xml.etree.ElementTree as ET; ET.parse('public/blog/feed.xml')" \
+          || { echo "::error::feed.xml is not well-formed XML."; exit 1; }
+
+        # A feed carrying whole documents instead of article bodies is the old bug.
+        if grep -qi '<!DOCTYPE html>' public/blog/feed.xml; then
+          echo "::error::feed.xml embeds full HTML documents; content:encoded must carry the article body only."
+          exit 1
+        fi
+
+        # Rebuilding must be a no-op when nothing changed. Anything else means a
+        # clock or iteration-order dependency crept back in, and every CI run
+        # would commit phantom diffs.
+        BEFORE=$(find public/blog -type f | sort | xargs shasum | shasum)
+        SKIP_THUMBNAILS=true npm run build:blog >/dev/null 2>&1
+        AFTER=$(find public/blog -type f | sort | xargs shasum | shasum)
+        if [ "$BEFORE" != "$AFTER" ]; then
+          echo "::error::Blog build is not deterministic — a second run changed the output."
+          exit 1
+        fi
+
+        echo "✅ Verified $(find public/blog -name 'index.html' | wc -l | tr -d ' ') pages, valid feed, deterministic rebuild"
 
     - name: Check for generated blog files
       if: steps.blog-changes.outputs.blog_changed == 'true'
@@ -163,5 +196,5 @@ jobs:
           echo "ℹ️ PR build: blog HTML committed back to branch; Pages deploy skipped until merge to main."
         fi
         if [ "${{ steps.blog-changes.outputs.blog_changed }}" == "true" ]; then
-          echo "📝 Blog has been updated with semantic coloring"
+          echo "📝 Blog rebuilt: pages, feed.xml, sitemap.xml, archive and redirects"
         fi

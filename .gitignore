@@ -193,5 +193,10 @@ dist
 
 # Vercel
 .vercel
-public/blog/feed.xml
+
+# NOTE: public/blog/feed.xml was ignored here. Combined with CI-only generation
+# it meant the feed was never committed, so any deploy whose commit did not
+# touch blog/ shipped without it — and /blog/feed.xml 404'd in production while
+# every page advertised it. The feed is a published artifact: keep it tracked.
+
 .playwright-mcp/

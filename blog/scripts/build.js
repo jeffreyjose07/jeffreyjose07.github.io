@@ -2,6 +2,8 @@
 
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
+import { execFileSync } from 'child_process';
 import { Marked } from 'marked';
 import markedShiki from 'marked-shiki';
 import matter from 'gray-matter';
@@ -22,6 +24,18 @@ const POSTS_DIR = path.join(__dirname, '../posts');
 const TEMPLATES_DIR = path.join(__dirname, '../templates');
 const OUTPUT_DIR = path.join(__dirname, '../../public/blog');
 const THUMBNAILS_DIR = path.join(__dirname, '../../public/assets/thumbnails');
+const REDIRECTS_PATH = path.join(__dirname, '../redirects.json');
+const REPO_ROOT = path.join(__dirname, '../..');
+
+/** Canonical origin. The apex github.io host 301s here, so every absolute URL must use it. */
+const SITE_URL = 'https://jeffreyjose07.is-a.dev';
+
+/**
+ * Drafts are visible locally and dropped from published builds — Eleventy's
+ * preprocessor convention. `BLOG_INCLUDE_DRAFTS=true` forces them back in.
+ */
+const IS_CI = process.env.GITHUB_ACTIONS === 'true' || process.env.CI === 'true';
+const INCLUDE_DRAFTS = process.env.BLOG_INCLUDE_DRAFTS === 'true' || !IS_CI;
 
 // Load configuration
 const config = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
@@ -101,25 +115,48 @@ function syncProfileImage() {
 }
 
 // Utility functions
+
+/** Longest slug we will emit. Cut lands on a word boundary, never mid-word. */
+const SLUG_MAX_LENGTH = 60;
+
+function normalizeSlugSource(title) {
+    return title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')     // Remove special chars except spaces and hyphens
+        .replace(/\s+/g, '-')             // Convert spaces to hyphens
+        .replace(/-+/g, '-');             // Multiple hyphens to single
+}
+
+/**
+ * The slug algorithm as it stood through episode 035: a hard `substring(0, 50)`.
+ * It sliced 12 of 36 titles mid-word ("...terminal-aesthet"). Retained *only* so
+ * `npm run blog:redirects` can recompute the historical URLs it produced — those
+ * paths are live and carry inbound links. Never call this to mint a new slug.
+ */
+function createLegacySlug(title, customSlug) {
+    if (customSlug) {
+        return customSlug.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-');
+    }
+    return normalizeSlugSource(title)
+        .substring(0, 50)
+        .replace(/-$/, '');
+}
+
 function createCleanSlug(title, customSlug) {
     // Use custom slug if provided in frontmatter
     if (customSlug) {
         return customSlug.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-');
     }
 
-    // Generate clean slug from title
-    return title
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')     // Remove special chars except spaces and hyphens
-        .replace(/\s+/g, '-')             // Convert spaces to hyphens
-        .replace(/-+/g, '-')              // Multiple hyphens to single
-        .substring(0, 50)                 // Max 50 characters
-        .replace(/-$/, '');               // Remove trailing hyphen
-}
+    const full = normalizeSlugSource(title);
+    if (full.length <= SLUG_MAX_LENGTH) return full.replace(/-$/, '');
 
-// Legacy function for backward compatibility
-function slugify(text) {
-    return createCleanSlug(text);
+    // Back off to the last complete word inside the budget rather than slicing a
+    // word in half. Falls back to the hard cut only for a single absurdly long word.
+    const clipped = full.substring(0, SLUG_MAX_LENGTH);
+    const lastBoundary = clipped.lastIndexOf('-');
+    const slug = lastBoundary > 0 ? clipped.substring(0, lastBoundary) : clipped;
+    return slug.replace(/-$/, '');
 }
 
 function formatDate(dateString) {
@@ -144,6 +181,116 @@ function estimateReadingTime(text) {
 
 function countWords(text) {
     return text.split(/\s+/).length;
+}
+
+/** Escape for HTML *attribute* / text context. Titles carry quotes and ampersands. */
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+/**
+ * String.replace treats `$&`, `$1`, `$'` in the *replacement* as capture-group
+ * refs. A title containing `$&` would corrupt the page. Passing a function opts
+ * out of that substitution entirely.
+ */
+function injectAll(template, replacements) {
+    let out = template;
+    for (const [token, value] of Object.entries(replacements)) {
+        out = out.replace(new RegExp(`{{\\s*${token}\\s*}}`, 'g'), () => String(value ?? ''));
+    }
+    return out;
+}
+
+/**
+ * Last commit date touching a file, as YYYY-MM-DD — Hugo's `enableGitInfo`
+ * approach. Stamping the *build* date instead makes every rebuild rewrite the
+ * sitemap and teaches crawlers that our lastmod is noise.
+ *
+ * Requires full history: a shallow CI clone reports the clone commit for every
+ * file. deploy.yml already sets fetch-depth: 0.
+ */
+const gitDateCache = new Map();
+function gitLastModified(relPath) {
+    if (gitDateCache.has(relPath)) return gitDateCache.get(relPath);
+    let result = null;
+    try {
+        const out = execFileSync('git', ['log', '-1', '--format=%cs', '--', relPath], {
+            cwd: REPO_ROOT,
+            encoding: 'utf8',
+            stdio: ['ignore', 'pipe', 'ignore'],
+        }).trim();
+        if (/^\d{4}-\d{2}-\d{2}$/.test(out)) result = out;
+    } catch {
+        result = null; // not a git checkout, or file never committed
+    }
+    gitDateCache.set(relPath, result);
+    return result;
+}
+
+/**
+ * Fail the build on malformed frontmatter instead of shipping `undefined` into
+ * meta tags — the guarantee Astro's content collections give via Zod schemas.
+ * Returns validated records; throws with every problem at once.
+ */
+function validatePosts(entries) {
+    const errors = [];
+    const warnings = [];
+    const slugOwners = new Map();
+
+    for (const { file, frontmatter, index } of entries) {
+        const where = `blog/posts/${file}`;
+
+        for (const field of ['title', 'date', 'description']) {
+            if (!frontmatter[field] || String(frontmatter[field]).trim() === '') {
+                errors.push(`${where}: missing required frontmatter "${field}"`);
+            }
+        }
+        if (!Array.isArray(frontmatter.tags) || frontmatter.tags.length === 0) {
+            errors.push(`${where}: "tags" must be a non-empty array`);
+        }
+
+        // gray-matter turns unquoted YAML dates into Date objects, which format
+        // differently than the quoted strings every existing post uses.
+        const rawDate = frontmatter.date;
+        if (rawDate instanceof Date) {
+            errors.push(`${where}: quote the date ("YYYY-MM-DD") — unquoted YAML parses it as a Date`);
+        } else if (rawDate && !/^\d{4}-\d{2}-\d{2}$/.test(String(rawDate).trim())) {
+            errors.push(`${where}: date "${rawDate}" is not YYYY-MM-DD`);
+        }
+
+        // Episode numbers are the post's public identity (#012 is cited in prose
+        // and in URLs elsewhere). They are derived from sort position, so a gap or
+        // duplicate in the filename prefixes silently renumbers every later post.
+        const prefix = /^(\d{3})-/.exec(file);
+        if (!prefix) {
+            errors.push(`${where}: filename must start with a zero-padded episode number, e.g. 036-`);
+        } else if (Number(prefix[1]) !== index) {
+            errors.push(
+                `${where}: filename prefix ${prefix[1]} but sort position ${String(index).padStart(3, '0')} — ` +
+                `renumbering would change published episode numbers`,
+            );
+        }
+
+        if (frontmatter.title) {
+            const slug = createCleanSlug(frontmatter.title, frontmatter.slug);
+            if (slugOwners.has(slug)) {
+                errors.push(`${where}: slug "${slug}" already used by ${slugOwners.get(slug)}`);
+            }
+            slugOwners.set(slug, where);
+        }
+    }
+
+    if (warnings.length) {
+        warnings.forEach(w => console.warn(`⚠️  ${w}`));
+    }
+    if (errors.length) {
+        throw new Error(`Frontmatter validation failed:\n  - ${errors.join('\n  - ')}`);
+    }
 }
 
 // Load template files
@@ -201,27 +348,32 @@ async function processPost(filename, episodeNumber, allPosts = []) {
 
     // Load and populate template
     const template = loadTemplate('post');
-    const html = template
-        .replace(/{{title}}/g, frontmatter.title)
-        .replace(/{{episodeNumber}}/g, episodeNumber.toString().padStart(3, '0'))
-        .replace(/{{date}}/g, formatDate(frontmatter.date))
-        .replace(/{{description}}/g, frontmatter.description || '')
-        .replace(/{{content}}/g, () => htmlContent)
-        .replace(/{{wordCount}}/g, wordCount)
-        .replace(/{{readingTime}}/g, readingTime)
-        .replace(/{{tagsFormatted}}/g, tagsFormatted)
-        .replace(/{{navigation}}/g, navigationHtml)
-        .replace(/{{slug}}/g, slug)
-        .replace(/{{thumbnail}}/g, thumbnail)
-        .replace(/{{githubUrl}}/g, config.social.github)
-        .replace(/{{linkedinUrl}}/g, config.social.linkedin)
-        .replace(/{{twitterUrl}}/g, config.social.twitter)
-        .replace(/{{emailUrl}}/g, config.social.email)
-        .replace(/{{resumeUrl}}/g, config.resumeUrl)
-        .replace(/{{inlineStyles}}/g, () => inlineStyles)
-        .replace(/{{inlineScripts}}/g, () => inlineScripts)
-        .replace(/{{siteHeader}}/g, siteHeader)
-        .replace(/{{styles}}/g, styles);
+    const html = injectAll(template, {
+        // Plain text — escaped, because titles carry quotes, ampersands and colons
+        // and these land in <title> and meta content attributes.
+        title: escapeHtml(frontmatter.title),
+        description: escapeHtml(frontmatter.description || ''),
+        // Pre-rendered HTML — must not be escaped
+        content: htmlContent,
+        tagsFormatted,
+        navigation: navigationHtml,
+        inlineStyles,
+        inlineScripts,
+        siteHeader,
+        styles,
+        // Scalars and URLs
+        episodeNumber: episodeNumber.toString().padStart(3, '0'),
+        date: formatDate(frontmatter.date),
+        wordCount,
+        readingTime,
+        slug,
+        thumbnail,
+        githubUrl: config.social.github,
+        linkedinUrl: config.social.linkedin,
+        twitterUrl: config.social.twitter,
+        emailUrl: config.social.email,
+        resumeUrl: config.resumeUrl,
+    });
 
     // Create output directory
     const outputDir = path.join(OUTPUT_DIR, slug);
@@ -242,7 +394,12 @@ async function processPost(filename, episodeNumber, allPosts = []) {
         tags: frontmatter.tags || [],
         readingTime,
         wordCount,
-        thumbnail
+        thumbnail,
+        sourceFile: `blog/posts/${filename}`,
+        // Kept in memory for the feed. Previously the RSS generator re-read the
+        // built page off disk and shoved the entire document — <head>, inline
+        // <style>, nav, footer, scripts — into <content:encoded>.
+        bodyHtml: htmlContent,
     };
 }
 
@@ -285,8 +442,10 @@ function generateIndex(posts) {
         return `            <button class="tag-filter ${tagColorCategory}" data-tag="${tag}">${tag}</button>`;
     }).join('\n');
 
-    // Sort posts by episode number (descending for newest first)
-    const sortedPosts = posts.sort((a, b) => b.episodeNumber - a.episodeNumber);
+    // Sort a *copy*. Sorting `posts` in place made each generator depend on
+    // whichever one ran before it — and since the feed only ran in CI, the
+    // archive and sitemap came out in a different order locally than in CI.
+    const sortedPosts = [...posts].sort((a, b) => b.episodeNumber - a.episodeNumber);
     const totalPages = Math.ceil(sortedPosts.length / POSTS_PER_PAGE);
 
     for (let i = 0; i < totalPages; i++) {
@@ -304,7 +463,7 @@ function generateIndex(posts) {
             if (post.thumbnail) {
                 const thumbSrc = post.thumbnail.startsWith('http') || post.thumbnail.startsWith('/') ? post.thumbnail : `/blog/${post.thumbnail}`;
                 thumbnailHtml = `<div class="post-thumbnail">
-                    <img src="${thumbSrc}" alt="${post.title}" loading="${loadingAttr}" width="400" height="225">
+                    <img src="${thumbSrc}" alt="${escapeHtml(post.title)}" loading="${loadingAttr}" width="400" height="225">
                 </div>`;
             } else {
                 // Generate a deterministic gradient based on episode number
@@ -314,7 +473,7 @@ function generateIndex(posts) {
                 </div>`;
             }
 
-            return `            <div class="post-item panel-card" data-tags="${tagsAttr}">
+            return `            <div class="post-item panel-card" data-tags="${escapeHtml(tagsAttr)}">
                 <a href="/blog/${post.slug}">
                     ${thumbnailHtml}
                     <div class="post-content-wrapper">
@@ -322,10 +481,10 @@ function generateIndex(posts) {
                             <span class="episode-number">#${episodeNum}</span>
                             <span class="date">${formatDate(post.date)}</span>
                         </div>
-                        <h3 class="post-title">${post.title}</h3>
-                        <p class="post-description">${post.description}</p>
+                        <h3 class="post-title">${escapeHtml(post.title)}</h3>
+                        <p class="post-description">${escapeHtml(post.description)}</p>
                         <div class="post-tags">
-                            ${post.tags.map(tag => `<span class="tag-pill">${tag}</span>`).join('')}
+                            ${post.tags.map(tag => `<span class="tag-pill">${escapeHtml(tag)}</span>`).join('')}
                         </div>
                     </div>
                 </a>
@@ -347,22 +506,27 @@ function generateIndex(posts) {
         }
         paginationHtml += '</div>';
 
-        const html = template
-            .replace(/{{title}}/g, config.title)
-            .replace(/{{description}}/g, config.description)
-            .replace(/{{tagFilters}}/g, tagFiltersHtml)
-            .replace(/{{posts}}/g, postsHtml)
-            .replace(/{{totalPosts}}/g, posts.length)
-            .replace(/{{pagination}}/g, paginationHtml) // Add pagination placeholder
-            .replace(/{{\s*allPostsData\s*}}/g, JSON.stringify(sortedPosts)) // Embed all posts data for client-side filtering
-            .replace(/{{githubUrl}}/g, config.social.github)
-            .replace(/{{linkedinUrl}}/g, config.social.linkedin)
-            .replace(/{{twitterUrl}}/g, config.social.twitter)
-            .replace(/{{emailUrl}}/g, config.social.email)
-            .replace(/{{emailUrl}}/g, config.social.email)
-            .replace(/{{resumeUrl}}/g, config.resumeUrl)
-            .replace(/{{siteHeader}}/g, siteHeader)
-            .replace(/{{styles}}/g, styles);
+        // Strip the in-memory article HTML before embedding — it is only needed
+        // by the feed, and inlining 36 rendered posts would balloon every index page.
+        const clientPosts = sortedPosts.map(({ bodyHtml, sourceFile, ...rest }) => rest);
+
+        const html = injectAll(template, {
+            title: escapeHtml(config.title),
+            description: escapeHtml(config.description),
+            tagFilters: tagFiltersHtml,
+            posts: postsHtml,
+            totalPosts: posts.length,
+            pagination: paginationHtml,
+            // `</script>` inside embedded JSON closes the host <script> element early.
+            allPostsData: JSON.stringify(clientPosts).replace(/</g, '\\u003c'),
+            githubUrl: config.social.github,
+            linkedinUrl: config.social.linkedin,
+            twitterUrl: config.social.twitter,
+            emailUrl: config.social.email,
+            resumeUrl: config.resumeUrl,
+            siteHeader,
+            styles,
+        });
 
         if (i === 0) {
              fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), html);
@@ -376,66 +540,89 @@ function generateIndex(posts) {
     }
 }
 
+/** Number of items carried in the feed. Full bodies, so keep the file well under 1 MB. */
+const FEED_ITEM_COUNT = 15;
+
+function escapeXml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+/** CDATA cannot contain `]]>`; split the sequence across two sections. */
+function cdata(value) {
+    return `<![CDATA[${String(value ?? '').replace(/]]>/g, ']]]]><![CDATA[>')}]]>`;
+}
+
+/**
+ * Feed readers resolve relative URLs inconsistently, so ship absolute ones.
+ * Rewrites root-relative src/href only — protocol-relative and absolute URLs
+ * and in-page anchors are left alone.
+ */
+function absolutizeUrls(html) {
+    return String(html).replace(
+        /(\s(?:src|href)=")(\/(?!\/)[^"]*)"/g,
+        (_match, attr, urlPath) => `${attr}${SITE_URL}${urlPath}"`,
+    );
+}
+
 // Generate RSS feed
 function generateRSSfeed(posts) {
-    const sortedPosts = posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-    const latestPosts = sortedPosts.slice(0, 10); // Only include latest 10 posts
+    const sortedPosts = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const latestPosts = sortedPosts.slice(0, FEED_ITEM_COUNT);
+
+    // RSS <author> must be an email address, optionally followed by a name in
+    // parentheses. config.social.email is a mailto: URL, so strip the scheme.
+    const authorEmail = String(config.social.email || '').replace(/^mailto:/, '');
 
     const rssItems = latestPosts.map(post => {
-        // Try to get the full HTML content for each post
-        let htmlContent = '';
-        try {
-            const postPath = path.join(OUTPUT_DIR, post.slug, 'index.html');
-            if (fs.existsSync(postPath)) {
-                htmlContent = fs.readFileSync(postPath, 'utf8');
-                // Optionally, extract only the <article>...</article> or main content if desired
-            }
-        } catch (e) {
-            htmlContent = '';
-        }
         const pubDate = new Date(post.date).toUTCString();
-        const postUrl = `https://jeffreyjose07.is-a.dev/blog/${post.slug}`;
-        const author = post.author || (config.authorEmail ? `${config.authorEmail} (${config.author})` : config.author) || '';
+        const postUrl = `${SITE_URL}/blog/${post.slug}`;
         const tags = post.tags || [];
-        // Try to get image from frontmatter or first image in content (if available)
-        let imageUrl = '';
-        if (post.image) {
-            imageUrl = post.image.startsWith('http') ? post.image : `https://jeffreyjose07.is-a.dev/blog/${post.image}`;
-        }
-        // Optionally, try to extract from post.content if desired
-        // const imageMatch = post.content && post.content.match(/<img[^>]+src=["']([^"'>]+)["']/);
-        // if (imageMatch) imageUrl = imageMatch[1];
-        // Provide full HTML content if available
-        const contentEncoded = htmlContent ? `<![CDATA[${htmlContent}]]>` : '';
+        const thumbUrl = post.thumbnail
+            ? (post.thumbnail.startsWith('http') ? post.thumbnail : `${SITE_URL}${post.thumbnail}`)
+            : '';
+
+        // The article body only — not the surrounding page. Feed readers strip
+        // <head>/<style>/<script> anyway, so shipping the whole document just
+        // bloated the feed and leaked the site chrome into every reader.
+        const body = absolutizeUrls(post.bodyHtml || '');
+
         return `    <item>
-      <title><![CDATA[${post.title}]]></title>
-      <description><![CDATA[${post.description || ''}]]></description>
-      <link>${postUrl}</link>
-      <guid isPermaLink="true">${postUrl}</guid>
+      <title>${cdata(post.title)}</title>
+      <description>${cdata(post.description || '')}</description>
+      <link>${escapeXml(postUrl)}</link>
+      <guid isPermaLink="true">${escapeXml(postUrl)}</guid>
       <pubDate>${pubDate}</pubDate>
-      <author>${author}</author>
-      <dc:creator>${config.author}</dc:creator>
-${tags.map(tag => `      <category><![CDATA[${tag}]]></category>`).join('\n')}
-${imageUrl ? `      <media:thumbnail url="${imageUrl}" />` : ''}
-      <content:encoded>${contentEncoded}</content:encoded>
+${authorEmail ? `      <author>${escapeXml(`${authorEmail} (${config.author})`)}</author>\n` : ''}      <dc:creator>${cdata(config.author)}</dc:creator>
+${tags.map(tag => `      <category>${cdata(tag)}</category>`).join('\n')}
+${thumbUrl ? `      <media:thumbnail url="${escapeXml(thumbUrl)}" />\n` : ''}      <content:encoded>${cdata(body)}</content:encoded>
     </item>`;
     }).join('\n');
 
+    // Derived from content, not from the clock. A wall-clock lastBuildDate made
+    // the committed feed churn on every single build.
+    const newestPostDate = latestPosts.length
+        ? new Date(latestPosts[0].date).toUTCString()
+        : new Date(0).toUTCString();
+
     const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" 
-    xmlns:atom="http://www.w3.org/2005/Atom" 
-    xmlns:content="http://purl.org/rss/1.0/modules/content/" 
-    xmlns:dc="http://purl.org/dc/elements/1.1/" 
+<rss version="2.0"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:content="http://purl.org/rss/1.0/modules/content/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
-    <title>${config.title} - ${config.author}</title>
-    <description>${config.description}</description>
-    <link>https://jeffreyjose07.is-a.dev/blog</link>
-    <atom:link href="https://jeffreyjose07.is-a.dev/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <title>${escapeXml(`${config.title} - ${config.author}`)}</title>
+    <description>${escapeXml(config.description)}</description>
+    <link>${SITE_URL}/blog</link>
+    <atom:link href="${SITE_URL}/blog/feed.xml" rel="self" type="application/rss+xml"/>
     <language>en-us</language>
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <lastBuildDate>${newestPostDate}</lastBuildDate>
     <generator>Custom Node.js Blog Builder</generator>
-    <copyright>${config.copyright || `Copyright ${new Date().getFullYear()} ${config.author}`}</copyright>
+    <copyright>${escapeXml(config.copyright || `Copyright ${new Date(newestPostDate).getFullYear()} ${config.author}`)}</copyright>
 ${rssItems}
   </channel>
 </rss>`;
@@ -443,40 +630,55 @@ ${rssItems}
     fs.writeFileSync(path.join(OUTPUT_DIR, 'feed.xml'), rssXml);
 }
 
-// Generate sitemap.xml
+/**
+ * Generate sitemap.xml.
+ *
+ * `lastmod` comes from the last git commit that touched the post's Markdown,
+ * falling back to the frontmatter date. It used to be the *build* date for the
+ * static pages, so every rebuild rewrote the file and told crawlers four pages
+ * had changed when nothing had. Google only honours lastmod when it is
+ * verifiably accurate, so a date that moves on every build is worse than none.
+ *
+ * `changefreq` and `priority` are omitted deliberately: Google ignores both.
+ */
 function generateSitemap(posts) {
-    const baseUrl = 'https://jeffreyjose07.is-a.dev';
-    const currentDate = new Date().toISOString().split('T')[0];
+    // Adding a post changes the index, the archive and the homepage's recent-writing
+    // list, so they legitimately share the newest post's date.
+    const newestPostDate = posts
+        .map(p => postLastModified(p))
+        .sort()
+        .pop() || new Date().toISOString().split('T')[0];
 
-    // Static pages
     const staticPages = [
-        { url: `${baseUrl}/`, priority: '1.0', changefreq: 'monthly' },
-        { url: `${baseUrl}/blog/`, priority: '0.9', changefreq: 'weekly' },
-        { url: `${baseUrl}/blog/archive.html`, priority: '0.8', changefreq: 'weekly' },
-        { url: `${baseUrl}/blog/feed.xml`, priority: '0.7', changefreq: 'daily' }
+        { url: `${SITE_URL}/`, lastmod: newestPostDate },
+        { url: `${SITE_URL}/blog/`, lastmod: newestPostDate },
+        { url: `${SITE_URL}/blog/archive.html`, lastmod: newestPostDate },
     ];
 
-    // Blog posts
-    const postUrls = posts.map(post => ({
-        url: `${baseUrl}/blog/${post.slug}`,
-        lastmod: new Date(post.date).toISOString().split('T')[0],
-        priority: '0.8',
-        changefreq: 'monthly'
-    }));
+    const postUrls = [...posts]
+        .sort((a, b) => a.episodeNumber - b.episodeNumber)
+        .map(post => ({
+            url: `${SITE_URL}/blog/${post.slug}`,
+            lastmod: postLastModified(post),
+        }));
 
     const allUrls = [...staticPages, ...postUrls];
 
     const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${allUrls.map(page => `  <url>
-    <loc>${page.url}</loc>
-    <lastmod>${page.lastmod || currentDate}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
+    <loc>${escapeXml(page.url)}</loc>
+    <lastmod>${page.lastmod}</lastmod>
   </url>`).join('\n')}
 </urlset>`;
 
     fs.writeFileSync(path.join(OUTPUT_DIR, 'sitemap.xml'), sitemapXml);
+}
+
+/** Git commit date for the post source, falling back to its published date. */
+function postLastModified(post) {
+    const fromGit = post.sourceFile ? gitLastModified(post.sourceFile) : null;
+    return fromGit || new Date(post.date).toISOString().split('T')[0];
 }
 
 // Generate posts.json for analytics consumption
@@ -501,15 +703,18 @@ function generatePostsJson(posts) {
     const postsJson = JSON.stringify(postsData, null, 2);
     fs.writeFileSync(path.join(OUTPUT_DIR, 'posts.json'), postsJson);
 
-    // Generate search index for client-side search
-    const searchIndex = posts.map(post => ({
-        title: post.title,
-        slug: post.slug,
-        description: post.description,
-        tags: post.tags,
-        date: post.date,
-        content: "" // We don't include full content to keep index small, can be added if needed
-    }));
+    // Search index, in the same order, so a rebuild with no content change is a
+    // no-op diff. It previously followed whatever order the last generator left.
+    const searchIndex = [...posts]
+        .sort((a, b) => b.episodeNumber - a.episodeNumber)
+        .map(post => ({
+            title: post.title,
+            slug: post.slug,
+            description: post.description,
+            tags: post.tags,
+            date: post.date,
+            content: "" // We don't include full content to keep index small, can be added if needed
+        }));
     fs.writeFileSync(path.join(OUTPUT_DIR, 'search.json'), JSON.stringify(searchIndex));
 }
 
@@ -540,7 +745,7 @@ function generateArchive(posts) {
                 <a href="/blog/${post.slug}" style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <span class="post-number" style="color: var(--primary); margin-right: 10px;">#${episodeNum}</span>
-                        <span class="post-title">${post.title}</span>
+                        <span class="post-title">${escapeHtml(post.title)}</span>
                     </div>
                     <span class="post-date" style="font-size: 0.9em; color: var(--muted-foreground);">${formatDate(post.date)}</span>
                 </a>
@@ -556,19 +761,122 @@ ${postsHtml}
     }).join('\n');
 
     // Populate template
-    const html = template
-        .replace(/{{archiveContent}}/g, yearSectionsHtml)
-        .replace(/{{totalPosts}}/g, posts.length)
-        .replace(/{{githubUrl}}/g, config.social.github)
-        .replace(/{{linkedinUrl}}/g, config.social.linkedin)
-        .replace(/{{twitterUrl}}/g, config.social.twitter)
-        .replace(/{{emailUrl}}/g, config.social.email)
-        .replace(/{{resumeUrl}}/g, config.resumeUrl)
-        .replace(/{{siteHeader}}/g, siteHeader)
-        .replace(/{{styles}}/g, styles);
+    const html = injectAll(template, {
+        archiveContent: yearSectionsHtml,
+        totalPosts: posts.length,
+        githubUrl: config.social.github,
+        linkedinUrl: config.social.linkedin,
+        twitterUrl: config.social.twitter,
+        emailUrl: config.social.email,
+        resumeUrl: config.resumeUrl,
+        siteHeader,
+        styles,
+    });
 
     // Write archive file
     fs.writeFileSync(path.join(OUTPUT_DIR, 'archive.html'), html);
+}
+
+/**
+ * Emit a stub at every retired URL.
+ *
+ * GitHub Pages serves static files only — there is no 301. A meta refresh plus
+ * a canonical link is the best available substitute: browsers follow it and
+ * search engines treat the canonical as the authority. `blog/redirects.json`
+ * is the durable record, so a future slug change appends rather than replaces.
+ */
+function generateRedirects(posts) {
+    if (!fs.existsSync(REDIRECTS_PATH)) return 0;
+
+    const redirects = JSON.parse(fs.readFileSync(REDIRECTS_PATH, 'utf8'));
+    const liveSlugs = new Set(posts.map(p => p.slug));
+    let written = 0;
+
+    for (const [from, to] of Object.entries(redirects)) {
+        if (from === to) continue;
+        if (!liveSlugs.has(to)) {
+            console.warn(`⚠️  redirect ${from} → ${to} points at a slug no post owns; skipping`);
+            continue;
+        }
+        if (liveSlugs.has(from)) {
+            console.warn(`⚠️  redirect source ${from} is also a live post slug; skipping`);
+            continue;
+        }
+
+        const target = `/blog/${to}`;
+        const dir = path.join(OUTPUT_DIR, from);
+        fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(path.join(dir, 'index.html'), `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Redirecting…</title>
+<link rel="canonical" href="${SITE_URL}${target}">
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url=${target}">
+</head>
+<body>
+<p>This post moved to <a href="${target}">${escapeHtml(target)}</a>.</p>
+<script>location.replace(${JSON.stringify(target)});</script>
+</body>
+</html>
+`);
+        written++;
+    }
+    return written;
+}
+
+/** Asset directories under public/blog/ that no post owns and must survive. */
+const OUTPUT_KEEP_DIRS = new Set(['page', 'audio', 'images']);
+
+/**
+ * Remove build leftovers from public/blog/ — most importantly a draft that was
+ * rendered by a local build and would otherwise stay published.
+ *
+ * Only *untracked* directories are deleted. A committed directory is a URL that
+ * has been served before and may have inbound links; those must be retired
+ * through blog/redirects.json, never silently removed. (An earlier version of
+ * this function deleted by name alone and took out five live pages and an
+ * images/ asset folder on its first run.)
+ */
+function pruneOrphanedOutput(posts, redirectSources) {
+    const keep = new Set([...OUTPUT_KEEP_DIRS, ...posts.map(p => p.slug), ...redirectSources]);
+    const candidates = fs.readdirSync(OUTPUT_DIR, { withFileTypes: true })
+        .filter(entry => entry.isDirectory() && !keep.has(entry.name))
+        .map(entry => entry.name);
+
+    if (candidates.length === 0) return 0;
+
+    let tracked = new Set();
+    try {
+        const out = execFileSync('git', ['ls-files', '--', 'public/blog/'], {
+            cwd: REPO_ROOT,
+            encoding: 'utf8',
+            stdio: ['ignore', 'pipe', 'ignore'],
+        });
+        tracked = new Set(
+            out.split('\n')
+                .map(line => /^public\/blog\/([^/]+)\//.exec(line.trim()))
+                .filter(Boolean)
+                .map(match => match[1]),
+        );
+    } catch {
+        // Not a git checkout — refuse to delete anything we cannot verify.
+        console.warn('⚠️  Skipping orphan prune: git is unavailable, cannot tell build leftovers from published URLs');
+        return 0;
+    }
+
+    let removed = 0;
+    for (const name of candidates) {
+        if (tracked.has(name)) {
+            console.warn(`⚠️  ${name}/ is published but no post or redirect owns it — add it to blog/redirects.json`);
+            continue;
+        }
+        fs.rmSync(path.join(OUTPUT_DIR, name), { recursive: true, force: true });
+        console.log(`🧹 Removed build leftover: ${name}/`);
+        removed++;
+    }
+    return removed;
 }
 
 // Main build function
@@ -578,37 +886,52 @@ async function build() {
     await initMarkdown();
 
     // Get all markdown files (excluding template)
-    const files = fs.readdirSync(POSTS_DIR)
+    const allFiles = fs.readdirSync(POSTS_DIR)
         .filter(file => file.endsWith('.md') && !file.startsWith('_'))
         .sort(); // Sort to ensure consistent episode numbering
 
-    if (files.length === 0) {
+    if (allFiles.length === 0) {
         console.log('📝 No blog posts found to build.');
         return;
     }
 
-    // First pass: create post metadata for navigation
-    const posts = [];
-    files.forEach((file, index) => {
-        const episodeNumber = index; // Start from 000
-        const filePath = path.join(POSTS_DIR, file);
-        const fileContent = fs.readFileSync(filePath, 'utf8');
-        const { data: frontmatter } = matter(fileContent);
-
-        posts.push({
-            episodeNumber,
-            title: frontmatter.title,
-            slug: createCleanSlug(frontmatter.title, frontmatter.slug),
-            date: frontmatter.date,
-            description: frontmatter.description,
-            tags: frontmatter.tags || []
-        });
+    // Read frontmatter once; every later stage reuses it.
+    const parsed = allFiles.map((file, index) => {
+        const { data: frontmatter } = matter(fs.readFileSync(path.join(POSTS_DIR, file), 'utf8'));
+        return { file, frontmatter, index };
     });
+
+    // Validate before writing anything. A build that ships `undefined` into a
+    // meta description is worse than a build that refuses to run.
+    validatePosts(parsed);
+    console.log(`✅ Validated frontmatter for ${parsed.length} posts`);
+
+    // Drafts are dropped from published builds but kept locally. Episode numbers
+    // come from position in the *full* list, so drafting a post never renumbers
+    // the ones already published.
+    const drafts = parsed.filter(p => p.frontmatter.draft === true);
+    const included = INCLUDE_DRAFTS ? parsed : parsed.filter(p => p.frontmatter.draft !== true);
+    if (drafts.length) {
+        console.log(INCLUDE_DRAFTS
+            ? `📝 Including ${drafts.length} draft(s) — local build`
+            : `🚫 Excluding ${drafts.length} draft(s) from the published build`);
+    }
+
+    const files = included.map(p => p.file);
+
+    // First pass: create post metadata for navigation
+    const posts = included.map(({ file, frontmatter, index }) => ({
+        episodeNumber: index, // Start from 000, keyed to position in the full list
+        title: frontmatter.title,
+        slug: createCleanSlug(frontmatter.title, frontmatter.slug),
+        date: frontmatter.date,
+        description: frontmatter.description,
+        tags: frontmatter.tags || [],
+        sourceFile: `blog/posts/${file}`,
+    }));
 
     // Generate thumbnails
     if (process.env.SKIP_THUMBNAILS !== 'true') {
-        console.log('🖼️ Generating terminal thumbnails...');
-
         // Ensure thumbnails directory exists
         if (!fs.existsSync(THUMBNAILS_DIR)) {
             fs.mkdirSync(THUMBNAILS_DIR, { recursive: true });
@@ -618,17 +941,20 @@ async function build() {
             title: post.title,
             tags: post.tags,
             description: post.description,
-            outputPath: path.join(THUMBNAILS_DIR, `${post.slug}.png`)
+            outputPath: path.join(THUMBNAILS_DIR, `${post.slug}.png`),
         }));
 
         const { generateThumbnails } = await import('../../scripts/thumbnail-generator/generate.js');
         await generateThumbnails(thumbnailPosts);
     }
 
-    // Second pass: process each post with navigation context
+    // Second pass: process each post with navigation context.
+    // `index` walks the included list; `episodeNumber` comes from the post's
+    // position in the *full* list, so the two diverge once a draft is skipped.
+    const failures = [];
     for (let index = 0; index < files.length; index++) {
         const file = files[index];
-        const episodeNumber = index;
+        const episodeNumber = posts[index].episodeNumber;
         console.log(`📄 Processing ${file} as episode ${episodeNumber.toString().padStart(3, '0')}...`);
 
         try {
@@ -639,7 +965,15 @@ async function build() {
         } catch (error) {
             console.error(`❌ Error processing ${file}:`, error.message);
             console.error(error.stack);
+            failures.push(`${file}: ${error.message}`);
         }
+    }
+
+    // A post that threw leaves a metadata-only stub in `posts` — it would still
+    // be listed on the index and in the feed, linking to a page that was never
+    // written. Previously the build logged the error and exited 0.
+    if (failures.length) {
+        throw new Error(`${failures.length} post(s) failed to render:\n  - ${failures.join('\n  - ')}`);
     }
 
     // Generate index page
@@ -647,14 +981,22 @@ async function build() {
     generateIndex(posts);
     console.log('✅ Generated blog index.html with tag filters');
 
-    // Only generate RSS feed during CI (GitHub Actions or CI env variable)
-    if (process.env.GITHUB_ACTIONS === 'true' || process.env.CI === 'true') {
-        console.log('📡 Generating RSS feed (CI detected)...');
-        generateRSSfeed(posts);
-        console.log('✅ Generated feed.xml');
-    } else {
-        console.log('ℹ️ Skipping RSS feed generation (not running in CI).');
-    }
+    // The feed is a published artifact like any other page. Gating it on CI meant
+    // a local build could never reproduce what shipped — and, combined with a
+    // .gitignore entry, meant it silently vanished from deploys that skipped the
+    // blog build. It 404'd in production for exactly that reason.
+    console.log('📡 Generating RSS feed...');
+    generateRSSfeed(posts);
+    console.log('✅ Generated feed.xml');
+
+    // Retired URLs → stubs pointing at the current slug
+    const redirectSources = fs.existsSync(REDIRECTS_PATH)
+        ? Object.keys(JSON.parse(fs.readFileSync(REDIRECTS_PATH, 'utf8')))
+        : [];
+    const redirectCount = generateRedirects(posts);
+    if (redirectCount) console.log(`↪️  Generated ${redirectCount} redirect stub(s)`);
+
+    pruneOrphanedOutput(posts, redirectSources);
 
     // Generate archive page
     console.log('📚 Generating archive page...');
@@ -708,8 +1050,11 @@ async function build() {
 // unencoded, while import.meta.url percent-encodes it — so any checkout in a
 // directory containing a space (or #, ?, %) failed this test, and the script
 // exited 0 having built nothing at all.
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+// `process.argv[1]` is undefined under `node -e` / `node --eval`, where
+// pathToFileURL throws — which made this module impossible to import from a
+// one-liner. Guard before converting.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     build();
 }
 
-export { build };
+export { build, createCleanSlug, createLegacySlug, POSTS_DIR, REDIRECTS_PATH };
