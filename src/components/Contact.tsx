@@ -114,9 +114,9 @@ const Contact = () => {
                   <Mail className="h-4 w-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
                     Email
-                  </h4>
+                  </h3>
                   <a
                     href="mailto:jeffreyjose.k@gmail.com"
                     className="text-lg font-medium hover:text-primary transition-colors"
@@ -131,9 +131,9 @@ const Contact = () => {
                   <Phone className="h-4 w-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
                     Phone
-                  </h4>
+                  </h3>
                   <span className="text-lg font-medium">+91 95677 61105</span>
                 </div>
               </div>
@@ -143,9 +143,9 @@ const Contact = () => {
                   <MapPin className="h-4 w-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
                     Location
-                  </h4>
+                  </h3>
                   <span className="text-lg font-medium">Bengaluru, India</span>
                 </div>
               </div>

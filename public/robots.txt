@@ -1,24 +1,8 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
+# Everything here is public and crawlable.
 User-agent: *
 Allow: /
 
-# Sitemaps
-# Must be the canonical host. This previously pointed at jeffreyjose07.github.io,
-# which 301s here — so the declared host did not match the host of any URL inside
-# the file, which is a cross-domain sitemap and is not accepted without verifying
-# both properties.
+# Sitemap must name the canonical host — the URLs inside it are all on
+# is-a.dev, and a sitemap declared on a different host is treated as
+# cross-domain and ignored.
 Sitemap: https://jeffreyjose07.is-a.dev/sitemap.xml
-
-# Crawl-delay
-Crawl-delay: 1

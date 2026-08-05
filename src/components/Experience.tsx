@@ -76,7 +76,9 @@ function TimelineEntry({ exp }: { exp: (typeof experiences)[0] }) {
         <span className="text-sm font-medium text-muted-foreground text-right leading-tight">
           {exp.period}
         </span>
-        <span className="text-xs text-muted-foreground/60 text-right mt-1">{exp.location}</span>
+        {/* Full opacity: muted-foreground at /60 measured 3.40:1 on the dark
+            background and failed WCAG AA. At full strength it is 7.77:1. */}
+        <span className="text-xs text-muted-foreground text-right mt-1">{exp.location}</span>
         <div className="absolute -right-[4.5px] top-1.5 w-2.5 h-2.5 rounded-full bg-primary ring-4 ring-background" />
       </div>
 

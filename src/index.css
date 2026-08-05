@@ -33,7 +33,12 @@ html {
 
     /* Primary - Emerald Teal */
     --primary: 162 75% 38%;
-    --primary-foreground: 0 0% 98%;
+    /* Near-black, not white. Near-white on the teal --primary measured 2.85:1
+       in light mode and 1.96:1 in dark — both fail WCAG AA on every primary
+       button. Darkening --primary instead would have fixed the buttons but
+       changed the accent in 66 other places and desynced the blog. Flipping
+       only the text gives 6.69:1 light / 9.73:1 dark with the brand intact. */
+    --primary-foreground: 240 10% 3.9%;
     --primary-glow: 162 75% 52%;
 
     /* Secondary - Cool Gray */
@@ -84,7 +89,12 @@ html {
     --popover-foreground: 0 0% 98%;
 
     --primary: 162 75% 46%;
-    --primary-foreground: 0 0% 98%;
+    /* Near-black, not white. Near-white on the teal --primary measured 2.85:1
+       in light mode and 1.96:1 in dark — both fail WCAG AA on every primary
+       button. Darkening --primary instead would have fixed the buttons but
+       changed the accent in 66 other places and desynced the blog. Flipping
+       only the text gives 6.69:1 light / 9.73:1 dark with the brand intact. */
+    --primary-foreground: 240 10% 3.9%;
     --primary-glow: 162 75% 60%;
 
     --secondary: 240 3.7% 15.9%;

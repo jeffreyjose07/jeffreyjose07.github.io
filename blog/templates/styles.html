@@ -11,7 +11,9 @@
         --foreground: #fafafa;
 
         --primary: #1cc9a0;
-        --primary-foreground: #fafafa;
+        /* Mirrors --primary-foreground in src/index.css. Near-black on teal:
+           white failed WCAG AA contrast on every primary surface. */
+        --primary-foreground: #09090b;
         --primary-glow: #5eead4;
 
         --secondary: #18181b;

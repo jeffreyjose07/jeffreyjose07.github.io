@@ -35,13 +35,17 @@ const Index = () => {
         />
       </Helmet>
       <Navigation />
-      <Hero />
-      <RecentWriting />
-      <Experience />
-      <Skills />
-      <Projects />
-      <Education />
-      <Contact />
+      {/* Screen readers use the main landmark to skip past the nav straight to
+          content. Everything between the nav and the footer belongs to it. */}
+      <main id="main">
+        <Hero />
+        <RecentWriting />
+        <Experience />
+        <Skills />
+        <Projects />
+        <Education />
+        <Contact />
+      </main>
       <Footer />
     </div>
   );

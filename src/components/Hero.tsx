@@ -1,7 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Download, ArrowRight, Mail } from "lucide-react";
-import profileImage from "@/assets/jeffrey-profile.jpg";
+// 384px WebP: the avatar renders at 160px CSS max (sm:w-40), so this covers 2x
+// displays. The 592px JPEG it replaced was 86 KiB for a 160px slot — the single
+// largest asset on the page. The JPEG is still the source of record and is what
+// the blog build copies to public/ for post author cards.
+import profileImage from "@/assets/jeffrey-profile.webp";
 import { socialLinks } from "@/data/socials";
 
 const Hero = () => {

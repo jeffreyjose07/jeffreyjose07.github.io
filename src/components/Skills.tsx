@@ -77,9 +77,9 @@ export default function Skills() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {skillCategories.map((cat, i) => (
               <div key={i}>
-                <h4 className="text-sm font-semibold uppercase tracking-wider text-primary mb-3">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-primary mb-3">
                   {cat.title}
-                </h4>
+                </h3>
                 <ul className="space-y-1.5 text-sm text-muted-foreground">
                   {cat.skills.map((skill, j) => (
                     <li key={j}>{skill}</li>
