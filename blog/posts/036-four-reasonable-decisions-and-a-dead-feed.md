@@ -15,9 +15,10 @@ tags:
 description:
   "Every page on this blog advertised an RSS feed that returned 404. No single line of
   code was wrong — four independently sensible decisions composed into a file that
-  existed only inside a CI runner. Plus what Hugo, Astro and Eleventy do differently."
-readingTime: 10
-wordCount: 1870
+  existed only inside a CI runner. Plus a cross-domain sitemap, a verification file an
+  SPA can fake, and what Hugo, Astro and Eleventy do differently."
+readingTime: 12
+wordCount: 2376
 ---
 
 Working log for this blog. **Previous:** [Documentation That Outlived Its Code](/blog/documentation-that-outlived-its-code).
@@ -262,6 +263,60 @@ CI    run 3: 6f2d1e27367c73695160baea06902053a0c26b1a
 ```
 
 That single property would have caught the wall-clock `lastmod`, the mutated shared array, and the local/CI divergence — three of the bugs in this post — without my knowing any of them existed. It's the cheapest test in the whole build.
+
+## The sitemap nobody could read
+
+Having made the sitemap honest, the obvious next step was to submit it to Search Console. That turned up one more instance of the same pattern — a file correctly generated, correctly served, and pointed at from the wrong place.
+
+`robots.txt` said this:
+
+```
+Sitemap: https://jeffreyjose07.github.io/blog/sitemap.xml
+```
+
+Every URL inside that sitemap is on `jeffreyjose07.is-a.dev`. The apex `github.io` host 301s here, so the declared location and the contents disagreed about which site they described.
+
+That isn't cosmetic. A sitemap may only list URLs on the host that serves it; when the two differ it's a **cross-domain sitemap**, and it's ignored unless both properties are verified and cross-submission is configured. So the one discovery mechanism that works without any manual submission was pointing crawlers at a file they would then decline to use.
+
+Two changes: point `robots.txt` at the canonical host, and write the sitemap to `/sitemap.xml` as well as `/blog/sitemap.xml`. The root path is where crawlers and tooling probe by default. The `/blog/` copy stays because it's already indexed — same generator, same bytes.
+
+The manual route has also quietly changed. Google [deprecated the sitemaps ping endpoint](https://developers.google.com/search/blog/2023/06/sitemaps-lastmod-ping) in 2023, and `google.com/ping?sitemap=` now returns 404. If you have a `postbuild` script still calling it, it isn't submitting anything. `robots.txt` and Search Console are the only two mechanisms left.
+
+## The SPA that verifies everything
+
+Search Console verification for a URL-prefix property means hosting a file at a path Google names, containing a string Google names. It looks trivial. For a single-page app it is a trap.
+
+This site's build ends with:
+
+```json
+"build": "vite build && cp dist/index.html dist/404.html"
+```
+
+That's what makes client-side routing work on GitHub Pages: any unknown path returns the app shell so React Router can take over. Which means a request for a file that *isn't there* returns **HTTP 200 with a complete HTML document**. Not a 404. A confident, successful-looking page.
+
+So the check that matters isn't "does the URL return 200" — it will, whether or not the file exists. It's whether the response is the file:
+
+```bash
+curl -sL -o /dev/null -w "HTTP %{http_code}  %{size_download}b\n" \
+  https://jeffreyjose07.is-a.dev/googlea374c01db1a7aeca.html
+# HTTP 200  53b
+
+curl -sL https://jeffreyjose07.is-a.dev/googlea374c01db1a7aeca.html \
+  | grep -c "<!DOCTYPE html>"
+# 0
+```
+
+53 raw bytes and zero doctypes. Had the file been misplaced, the first command would still have printed `200` — just with a few kilobytes of app shell — and verification would have failed with a "content doesn't match" error pointing at nothing obviously wrong.
+
+Same lesson as the feed, one layer out: a 200 is not evidence that the thing you asked for is what came back.
+
+Submitted, and the number is the point:
+
+```
+/sitemap.xml    Status: Success    Discovered pages: 40
+```
+
+40 is exactly what `grep -c "<loc>"` reported against the live file. When the artifact and the consumer agree on a count, the pipeline is intact end to end — which is a better result than "Success" on its own, because "Success" is just another green light.
 
 Two episodes ago I was auditing docs that outlived their code. The build system had the same disease, one layer down: it *said* it produced a feed, a sitemap, a search index. Two of those three were lying, and the exit code was 0 the entire time.
 

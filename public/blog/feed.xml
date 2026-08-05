@@ -15,7 +15,7 @@
     <copyright>Copyright 2026 Jeffrey Jose</copyright>
     <item>
       <title><![CDATA[Four Reasonable Decisions and a Dead Feed]]></title>
-      <description><![CDATA[Every page on this blog advertised an RSS feed that returned 404. No single line of code was wrong — four independently sensible decisions composed into a file that existed only inside a CI runner. Plus what Hugo, Astro and Eleventy do differently.]]></description>
+      <description><![CDATA[Every page on this blog advertised an RSS feed that returned 404. No single line of code was wrong — four independently sensible decisions composed into a file that existed only inside a CI runner. Plus a cross-domain sitemap, a verification file an SPA can fake, and what Hugo, Astro and Eleventy do differently.]]></description>
       <link>https://jeffreyjose07.is-a.dev/blog/four-reasonable-decisions-and-a-dead-feed</link>
       <guid isPermaLink="true">https://jeffreyjose07.is-a.dev/blog/four-reasonable-decisions-and-a-dead-feed</guid>
       <pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate>
@@ -171,6 +171,36 @@
 <span class="line"><span>CI    run 3: 6f2d1e27367c73695160baea06902053a0c26b1a</span></span></code></pre></div>
 
 <p>That single property would have caught the wall-clock <code>lastmod</code>, the mutated shared array, and the local/CI divergence — three of the bugs in this post — without my knowing any of them existed. It&#39;s the cheapest test in the whole build.</p>
+<h2>The sitemap nobody could read</h2>
+<p>Having made the sitemap honest, the obvious next step was to submit it to Search Console. That turned up one more instance of the same pattern — a file correctly generated, correctly served, and pointed at from the wrong place.</p>
+<p><code>robots.txt</code> said this:</p>
+<div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">Sitemap</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">https://jeffreyjose07.github.io/blog/sitemap.xml</span></span></code></pre></div>
+
+<p>Every URL inside that sitemap is on <code>jeffreyjose07.is-a.dev</code>. The apex <code>github.io</code> host 301s here, so the declared location and the contents disagreed about which site they described.</p>
+<p>That isn&#39;t cosmetic. A sitemap may only list URLs on the host that serves it; when the two differ it&#39;s a <strong>cross-domain sitemap</strong>, and it&#39;s ignored unless both properties are verified and cross-submission is configured. So the one discovery mechanism that works without any manual submission was pointing crawlers at a file they would then decline to use.</p>
+<p>Two changes: point <code>robots.txt</code> at the canonical host, and write the sitemap to <code>/sitemap.xml</code> as well as <code>/blog/sitemap.xml</code>. The root path is where crawlers and tooling probe by default. The <code>/blog/</code> copy stays because it&#39;s already indexed — same generator, same bytes.</p>
+<p>The manual route has also quietly changed. Google <a href="https://developers.google.com/search/blog/2023/06/sitemaps-lastmod-ping">deprecated the sitemaps ping endpoint</a> in 2023, and <code>google.com/ping?sitemap=</code> now returns 404. If you have a <code>postbuild</code> script still calling it, it isn&#39;t submitting anything. <code>robots.txt</code> and Search Console are the only two mechanisms left.</p>
+<h2>The SPA that verifies everything</h2>
+<p>Search Console verification for a URL-prefix property means hosting a file at a path Google names, containing a string Google names. It looks trivial. For a single-page app it is a trap.</p>
+<p>This site&#39;s build ends with:</p>
+<div class="code-block-wrap" data-lang="json"><span class="code-lang" aria-hidden="true">json</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#98C379">"build"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"vite build &#x26;&#x26; cp dist/index.html dist/404.html"</span></span></code></pre></div>
+
+<p>That&#39;s what makes client-side routing work on GitHub Pages: any unknown path returns the app shell so React Router can take over. Which means a request for a file that <em>isn&#39;t there</em> returns <strong>HTTP 200 with a complete HTML document</strong>. Not a 404. A confident, successful-looking page.</p>
+<p>So the check that matters isn&#39;t &quot;does the URL return 200&quot; — it will, whether or not the file exists. It&#39;s whether the response is the file:</p>
+<div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">curl</span><span style="color:#D19A66"> -sL</span><span style="color:#D19A66"> -o</span><span style="color:#98C379"> /dev/null</span><span style="color:#D19A66"> -w</span><span style="color:#98C379"> "HTTP %{http_code}  %{size_download}b\n"</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#98C379">  https://jeffreyjose07.is-a.dev/googlea374c01db1a7aeca.html</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># HTTP 200  53b</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#61AFEF">curl</span><span style="color:#D19A66"> -sL</span><span style="color:#98C379"> https://jeffreyjose07.is-a.dev/googlea374c01db1a7aeca.html</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#ABB2BF">  | </span><span style="color:#61AFEF">grep</span><span style="color:#D19A66"> -c</span><span style="color:#98C379"> "&#x3C;!DOCTYPE html>"</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 0</span></span></code></pre></div>
+
+<p>53 raw bytes and zero doctypes. Had the file been misplaced, the first command would still have printed <code>200</code> — just with a few kilobytes of app shell — and verification would have failed with a &quot;content doesn&#39;t match&quot; error pointing at nothing obviously wrong.</p>
+<p>Same lesson as the feed, one layer out: a 200 is not evidence that the thing you asked for is what came back.</p>
+<p>Submitted, and the number is the point:</p>
+<div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>/sitemap.xml    Status: Success    Discovered pages: 40</span></span></code></pre></div>
+
+<p>40 is exactly what <code>grep -c &quot;&lt;loc&gt;&quot;</code> reported against the live file. When the artifact and the consumer agree on a count, the pipeline is intact end to end — which is a better result than &quot;Success&quot; on its own, because &quot;Success&quot; is just another green light.</p>
 <p>Two episodes ago I was auditing docs that outlived their code. The build system had the same disease, one layer down: it <em>said</em> it produced a feed, a sitemap, a search index. Two of those three were lying, and the exit code was 0 the entire time.</p>
 <p>Green builds are not evidence. Assert on the artifact.</p>
 ]]></content:encoded>

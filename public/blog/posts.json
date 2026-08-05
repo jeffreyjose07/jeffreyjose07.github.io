@@ -13,9 +13,9 @@
       "build-systems",
       "ci"
     ],
-    "description": "Every page on this blog advertised an RSS feed that returned 404. No single line of code was wrong — four independently sensible decisions composed into a file that existed only inside a CI runner. Plus what Hugo, Astro and Eleventy do differently.",
-    "readingTime": 10,
-    "wordCount": 1870,
+    "description": "Every page on this blog advertised an RSS feed that returned 404. No single line of code was wrong — four independently sensible decisions composed into a file that existed only inside a CI runner. Plus a cross-domain sitemap, a verification file an SPA can fake, and what Hugo, Astro and Eleventy do differently.",
+    "readingTime": 12,
+    "wordCount": 2376,
     "slug": "four-reasonable-decisions-and-a-dead-feed"
   },
   {
