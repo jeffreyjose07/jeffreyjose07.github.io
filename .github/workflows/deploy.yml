@@ -170,6 +170,13 @@ jobs:
         echo "🚀 Building portfolio website..."
         npm run build
         echo "✅ Portfolio build completed"
+
+    # `npm run build` prerenders the homepage. A prerender can look perfect in the
+    # HTML and still be wrong: the first version here shipped 4 posts of markup
+    # with a 37-post seed, so React swapped in a different list on boot. This
+    # loads the built page with JS off and again with JS on and compares.
+    - name: Verify prerendered homepage
+      run: npm run verify:prerender
     
     # Only publish GitHub Pages from main (not from PR builds)
     - name: Setup Pages

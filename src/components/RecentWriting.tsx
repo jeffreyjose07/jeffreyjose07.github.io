@@ -35,11 +35,35 @@ const byMostRecent = (a: BlogPost, b: BlogPost) =>
  * generates on every deploy, so this stays current without a second source of
  * truth.
  */
+/**
+ * Posts baked into the page by the prerender step (`scripts/prerender.js`).
+ *
+ * Without this the component would render nothing on the client's first pass —
+ * `posts` starts empty and the early return below hides the whole section — so
+ * the prerendered markup would flash out of existence the moment React boots
+ * and back in when the fetch resolved. Seeding makes the first client render
+ * match the HTML that was shipped, and skips the request entirely.
+ */
+const seededPosts = (): BlogPost[] => {
+  if (typeof window === "undefined") return [];
+  const seeded = (window as { __RECENT_POSTS__?: BlogPost[] }).__RECENT_POSTS__;
+  if (!Array.isArray(seeded)) return [];
+  // Sorted and sliced here as well as in the fetch path, so this component
+  // stays the only place that decides order and count. The prerender seeds an
+  // already-trimmed list; re-applying is idempotent and means a seed carrying
+  // the full posts.json can never render 37 entries where 4 belong.
+  return [...seeded].sort(byMostRecent).slice(0, POST_COUNT);
+};
+
 const RecentWriting = () => {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>(seededPosts);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
+    // Already have what the page was built with; don't re-fetch on every load.
+    // Reads the seed rather than `posts` so the effect keeps an empty dep list.
+    if (seededPosts().length > 0) return;
+
     let cancelled = false;
 
     fetch("/blog/posts.json")
