@@ -354,6 +354,49 @@
   }
 
 </style>
+<script>
+  /*
+   * Follow the portfolio's theme.
+   *
+   * This page is loaded in an <iframe> from /play/snake, so it is a separate
+   * document: the `.dark` class next-themes sets on the parent's <html> can
+   * never reach this one. Without this the game was pinned to the light
+   * defaults in :root — a near-white #f8fafc background inside a dark-by-default
+   * site — and the site's toggle had no way to affect it.
+   *
+   * The iframe is same-origin, so it shares localStorage with the parent, and
+   * next-themes stores the choice under the default key "theme". Reading it
+   * here is the same trick the Void Blocks page already uses. The `storage`
+   * event fires in *other* same-origin documents, so toggling the theme in the
+   * portfolio updates the game live.
+   *
+   * Runs synchronously in <head> so the correct background is set before first
+   * paint rather than flashing white.
+   */
+  (function () {
+    var media = window.matchMedia('(prefers-color-scheme: dark)');
+
+    function resolve() {
+      var stored;
+      try { stored = localStorage.getItem('theme'); } catch (e) { stored = null; }
+      if (stored === 'dark' || stored === 'light') return stored;
+      // No explicit choice: match the portfolio, which defaults to dark.
+      if (!stored) return 'dark';
+      return media.matches ? 'dark' : 'light'; // stored === 'system'
+    }
+
+    function apply(theme) {
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+    }
+
+    apply(resolve());
+
+    window.addEventListener('storage', function (e) {
+      if (e.key === 'theme') apply(resolve());
+    });
+    media.addEventListener('change', function () { apply(resolve()); });
+  })();
+</script>
 </head>
 <body>
   <div class="header">
