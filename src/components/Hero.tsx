@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
 import { Download, ArrowRight, Mail } from "lucide-react";
 // 384px WebP: the avatar renders at 160px CSS max (sm:w-40), so this covers 2x
 // displays. The 592px JPEG it replaced was 86 KiB for a 160px slot — the single
@@ -16,20 +16,24 @@ const Hero = () => {
     >
       <div className="container mx-auto px-4 sm:px-6 text-center relative z-10 max-w-5xl">
         <div className="mb-10">
-          <Avatar className="w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-8 ring-1 ring-border">
-            <AvatarImage
-              src={profileImage}
-              alt="Jeffrey Jose"
-              className="object-cover"
-              width={160}
-              height={160}
-              loading="eager"
-              fetchPriority="high"
-            />
-            <AvatarFallback className="text-3xl sm:text-4xl font-bold bg-primary text-primary-foreground">
-              JJ
-            </AvatarFallback>
-          </Avatar>
+          {/* A plain <img>, not Radix's Avatar.
+              Radix renders AvatarImage as null until the image reports loaded,
+              so the prerendered HTML (captured after load) contained an <img>
+              that React's first hydration pass did not — a structural mismatch
+              that dropped the entire root back to client rendering. The loading
+              state machine bought nothing here: this photo always exists and is
+              eagerly fetched. `fetchpriority` is lowercase because React 18
+              does not recognise the camelCase prop. */}
+          <img
+            src={profileImage}
+            alt="Jeffrey Jose"
+            className="w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-8 ring-1 ring-border rounded-full object-cover"
+            width={160}
+            height={160}
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
         </div>
 
         <h1 className="text-6xl sm:text-7xl md:text-8xl font-heading font-bold mb-6 tracking-tight">

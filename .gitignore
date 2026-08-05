@@ -200,3 +200,6 @@ dist
 # every page advertised it. The feed is a published artifact: keep it tracked.
 
 .playwright-mcp/
+
+# Build-time prerender harness output (never deployed)
+dist-prerender/

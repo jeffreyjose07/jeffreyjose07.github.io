@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>prerender harness</title>
+  </head>
+  <body>
+    <!--
+      Build-time harness for scripts/prerender.js. Loads the app and renders it
+      to a string through React's own serializer, so the output is byte-exactly
+      what hydration expects. Built to dist-prerender/ and never deployed.
+    -->
+    <div id="root"></div>
+    <script type="module" src="/src/entry-prerender.tsx"></script>
+  </body>
+</html>

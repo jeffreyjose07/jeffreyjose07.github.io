@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 
-interface BlogPost {
+export interface BlogPost {
   url: string;
   title: string;
   episode: string;
@@ -44,6 +44,14 @@ const byMostRecent = (a: BlogPost, b: BlogPost) =>
  * and back in when the fetch resolved. Seeding makes the first client render
  * match the HTML that was shipped, and skips the request entirely.
  */
+/**
+ * The exact subset this component renders. Exported so the prerender seeds the
+ * same list the component would compute — a seed of a different length renders
+ * a different number of rows than the prerendered markup contains.
+ */
+export const selectRecentPosts = (all: BlogPost[]): BlogPost[] =>
+  [...all].sort(byMostRecent).slice(0, POST_COUNT);
+
 const seededPosts = (): BlogPost[] => {
   if (typeof window === "undefined") return [];
   const seeded = (window as { __RECENT_POSTS__?: BlogPost[] }).__RECENT_POSTS__;

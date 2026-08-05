@@ -10,8 +10,7 @@ import Logo from "./Logo";
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme, setTheme } = useTheme();
 
   const navItems = [
     { label: "Home", href: "/#hero" },
@@ -32,10 +31,6 @@ const Navigation = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    setMounted(true);
   }, []);
 
   const handleNavClick = (href: string, external?: boolean) => {
@@ -119,22 +114,24 @@ const Navigation = () => {
             <GamesDropdown isScrolled={true} gameItems={gameItems} />
           </div>
 
-          {/* Desktop Theme Toggle */}
-          {mounted && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="ml-2 rounded-md hover:bg-transparent hover:text-primary transition-colors duration-200"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? (
-                <Sun size={20} className="text-yellow-400 hover:text-yellow-300 transition-colors" />
-              ) : (
-                <Moon size={20} className="text-slate-700 hover:text-slate-900 transition-colors" />
-              )}
-            </Button>
-          )}
+          {/* Desktop Theme Toggle.
+              Always rendered, with the icon chosen by CSS from the `.dark`
+              class rather than by a render-time branch. Gating this on a
+              `mounted` flag meant the button was absent on React's first pass
+              but present in the prerendered HTML — a structural hydration
+              mismatch that dropped the whole root back to client rendering. */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            className="ml-2 rounded-md hover:bg-transparent hover:text-primary transition-colors duration-200"
+            aria-label="Toggle theme"
+          >
+            <span className="relative block h-5 w-5">
+              <Sun size={20} className="absolute inset-0 scale-0 text-yellow-400 transition-transform hover:text-yellow-300 dark:scale-100" />
+              <Moon size={20} className="absolute inset-0 scale-100 text-slate-700 transition-transform hover:text-slate-900 dark:scale-0" />
+            </span>
+          </Button>
         </div>
 
         {/* Mobile controls */}
@@ -142,11 +139,14 @@ const Navigation = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
             className="rounded-md hover:bg-white/10"
             aria-label="Toggle theme"
           >
-            {mounted && theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+            <span className="relative block h-5 w-5">
+              <Sun size={20} className="absolute inset-0 scale-0 transition-transform dark:scale-100" />
+              <Moon size={20} className="absolute inset-0 scale-100 transition-transform dark:scale-0" />
+            </span>
           </Button>
 
           <Button

@@ -3,21 +3,20 @@
  * Prerender the homepage to static HTML.
  *
  * The site is a client-rendered SPA, so `dist/index.html` shipped an empty
- * `<div id="root">`. Nothing was painted until React had been fetched, parsed
- * and executed — Lighthouse measured 2.9 s LCP on throttled mobile, of which
- * 2,330 ms was "element render delay" with a time-to-first-byte of 0 ms. The
- * network was never the problem; the blank shell was.
+ * `<div id="root">`. Nothing painted until React had been fetched, parsed and
+ * executed — Lighthouse measured LCP 2.9 s on throttled mobile, of which
+ * 2,320 ms was "element render delay" against a 0 ms time to first byte. The
+ * network was never the bottleneck; the blank shell was.
  *
- * This loads the built site in headless Chrome, waits for it to settle, and
- * writes the resulting DOM back over `dist/index.html`. The first paint is then
- * real content straight from the HTML.
+ * The markup comes from React's own `renderToString`, via a build-time harness
+ * (prerender.html → src/entry-prerender.tsx) loaded in headless Chrome. It is
+ * then hydrated by main.tsx, which is what makes the early paint count: LCP is
+ * the *latest* contentful paint, so if React discarded this markup and rendered
+ * its own, the metric would just move to whenever React finished booting.
  *
- * Deliberately NOT hydration. `main.tsx` still calls `createRoot().render()`,
- * so React discards this markup and renders its own on boot. That costs a
- * redundant render but avoids every hydration-mismatch failure mode, and the
- * swap is invisible because the seeded data makes React's first render
- * identical to what was prerendered. Fixing FCP/LCP does not require
- * hydration — it only requires that something meaningful is in the HTML.
+ * Rendering through React — rather than screenshotting the DOM — is what makes
+ * hydration succeed. See src/entry-prerender.tsx for the three mismatch classes
+ * a DOM capture cannot avoid.
  *
  * Only `/` is prerendered. `dist/404.html` must stay the empty shell: it is the
  * SPA fallback for every other route, and baking the homepage into it would
@@ -31,7 +30,9 @@ import { fileURLToPath, pathToFileURL } from 'url';
 import puppeteer from 'puppeteer';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DIST = path.join(__dirname, '../dist');
+const REPO = path.join(__dirname, '..');
+const DIST = path.join(REPO, 'dist');
+const HARNESS = path.join(REPO, 'dist-prerender');
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -51,31 +52,26 @@ const MIME = {
   '.pdf': 'application/pdf',
 };
 
-/** Serve dist/ exactly as GitHub Pages would, including the SPA fallback. */
+/**
+ * Serve the harness overlaid on dist/, so the harness page can fetch
+ * /blog/posts.json and its own bundle from one origin.
+ */
 function startServer() {
   const server = http.createServer((req, res) => {
     const urlPath = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
-    let filePath = path.join(DIST, urlPath);
 
-    // Reject traversal outside dist/
-    if (!filePath.startsWith(DIST)) {
-      res.writeHead(403).end();
-      return;
-    }
-
-    if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-      filePath = path.join(filePath, 'index.html');
-    }
-    if (!fs.existsSync(filePath)) {
-      filePath = path.join(DIST, '404.html');
-      if (!fs.existsSync(filePath)) {
-        res.writeHead(404).end();
+    for (const base of [HARNESS, DIST]) {
+      const candidate = path.join(base, urlPath);
+      if (!candidate.startsWith(base)) continue;
+      if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+        res.writeHead(200, {
+          'Content-Type': MIME[path.extname(candidate)] || 'application/octet-stream',
+        });
+        fs.createReadStream(candidate).pipe(res);
         return;
       }
     }
-
-    res.writeHead(200, { 'Content-Type': MIME[path.extname(filePath)] || 'application/octet-stream' });
-    fs.createReadStream(filePath).pipe(res);
+    res.writeHead(404).end();
   });
 
   return new Promise((resolve) => {
@@ -88,6 +84,15 @@ async function prerender() {
   if (!fs.existsSync(indexPath)) {
     throw new Error('dist/index.html not found — run `vite build` first.');
   }
+  if (!fs.existsSync(path.join(HARNESS, 'prerender.html'))) {
+    throw new Error('dist-prerender/ not found — run `npm run build:prerender-harness` first.');
+  }
+
+  const shell = fs.readFileSync(indexPath, 'utf8');
+  const ROOT_DIV = '<div id="root"></div>';
+  if (!shell.includes(ROOT_DIV)) {
+    throw new Error(`Could not find ${ROOT_DIV} in dist/index.html — nothing to prerender into.`);
+  }
 
   const { server, port } = await startServer();
   const browser = await puppeteer.launch({
@@ -98,10 +103,10 @@ async function prerender() {
   try {
     const page = await browser.newPage();
 
-    // Don't bill a pageview to GoatCounter on every deploy, and don't make the
-    // build depend on Google Fonts being reachable.
-    // Stubbed, not aborted: an abort surfaces as a page error and would trip the
-    // error check below on every run.
+    // Stubbed rather than aborted: an abort logs "Failed to load resource",
+    // which is indistinguishable from a genuinely missing asset. Blocked so the
+    // build neither bills a GoatCounter pageview on every deploy nor depends on
+    // Google Fonts being reachable.
     await page.setRequestInterception(true);
     page.on('request', (req) => {
       const url = req.url();
@@ -114,59 +119,47 @@ async function prerender() {
       req.continue();
     });
 
-    const errors = [];
-    page.on('pageerror', (err) => errors.push(String(err)));
+    const pageErrors = [];
+    page.on('pageerror', (err) => pageErrors.push(String(err)));
 
-    await page.goto(`http://127.0.0.1:${port}/`, { waitUntil: 'networkidle0', timeout: 60_000 });
+    await page.goto(`http://127.0.0.1:${port}/prerender.html`, {
+      waitUntil: 'networkidle0',
+      timeout: 60_000,
+    });
+    await page.waitForFunction('window.__PRERENDER_DONE__ === true', { timeout: 60_000 });
 
-    // The hero is the LCP element; the writing list is the async one. Waiting on
-    // both means we never capture a half-populated page.
-    await page.waitForSelector('#hero', { timeout: 30_000 });
-    await page.waitForSelector('#writing li', { timeout: 30_000 });
+    const error = await page.evaluate(() => window.__PRERENDER_ERROR__);
+    if (error) throw new Error(`Harness failed:\n${error}`);
+    if (pageErrors.length) {
+      throw new Error(`Page errors during prerender:\n  - ${pageErrors.join('\n  - ')}`);
+    }
 
-    if (errors.length) {
-      throw new Error(`Page errors during prerender:\n  - ${errors.join('\n  - ')}`);
+    const result = await page.evaluate(() => window.__PRERENDER__);
+    if (!result?.html) throw new Error('Harness produced no HTML.');
+
+    const { html, posts } = result;
+
+    // Sanity-check that the render is not an empty shell in disguise.
+    if (!html.includes('id="hero"')) {
+      throw new Error('Prerendered HTML has no #hero section — the app did not render.');
     }
 
     // Seed the data the client would otherwise fetch, so React's first render
-    // matches this markup instead of blanking the section out.
-    //
-    // Trimmed to the same handful the component shows. Seeding the raw file
-    // shipped all 37 posts against 4 rows of prerendered markup — React would
-    // then render 37, which is the exact mismatch this seed exists to prevent.
-    // RecentWriting re-sorts and re-slices defensively, so this only has to be
-    // small and correct, not authoritative.
-    const POST_COUNT = 4;
-    const allPosts = await page.evaluate(async () => {
-      const res = await fetch('/blog/posts.json');
-      return res.json();
-    });
-    const posts = [...allPosts]
-      .sort((a, b) => b.date.localeCompare(a.date) || Number(b.episode) - Number(a.episode))
-      .slice(0, POST_COUNT);
-
-    const renderedCount = await page.$$eval('#writing li', (els) => els.length);
-    if (renderedCount !== posts.length) {
-      throw new Error(
-        `Seed/markup mismatch: prerendered ${renderedCount} posts but seeding ${posts.length}. ` +
-        `React would re-render a different list on boot.`,
-      );
-    }
-
-    const html = await page.evaluate(() => document.documentElement.outerHTML);
-
-    // Injected into <head> so it is defined before the module script in <body>
-    // executes. `<` is escaped because `</script>` inside JSON would close the
-    // element early.
+    // matches this markup rather than blanking the writing section out and
+    // refilling it. `<` is escaped because `</script>` inside JSON would close
+    // the element early.
     const seed = `<script>window.__RECENT_POSTS__=${JSON.stringify(posts).replace(/</g, '\\u003c')}</script>`;
-    const withSeed = html.replace('</head>', `${seed}</head>`);
-    if (withSeed === html) throw new Error('Could not inject seed: no </head> in prerendered output.');
 
-    const output = `<!DOCTYPE html>\n${withSeed}\n`;
-    const before = fs.statSync(indexPath).size;
+    const output = shell
+      .replace('</head>', `${seed}</head>`)
+      .replace(ROOT_DIV, `<div id="root">${html}</div>`);
+
     fs.writeFileSync(indexPath, output);
 
-    console.log(`✅ Prerendered / — ${(before / 1024).toFixed(1)} KB shell → ${(output.length / 1024).toFixed(1)} KB static`);
+    console.log(
+      `✅ Prerendered / via renderToString — ${(shell.length / 1024).toFixed(1)} KB shell → ` +
+      `${(output.length / 1024).toFixed(1)} KB static`,
+    );
     console.log(`   Seeded ${posts.length} posts; 404.html left as the SPA fallback.`);
   } finally {
     await browser.close();
