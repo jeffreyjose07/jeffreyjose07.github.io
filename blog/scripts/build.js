@@ -672,7 +672,11 @@ ${allUrls.map(page => `  <url>
   </url>`).join('\n')}
 </urlset>`;
 
+    // Written to both the conventional root path — where crawlers and tooling
+    // probe by default, and what robots.txt now declares — and the historical
+    // /blog/ path, which is already indexed and may have been submitted.
     fs.writeFileSync(path.join(OUTPUT_DIR, 'sitemap.xml'), sitemapXml);
+    fs.writeFileSync(path.join(OUTPUT_DIR, '..', 'sitemap.xml'), sitemapXml);
 }
 
 /** Git commit date for the post source, falling back to its published date. */

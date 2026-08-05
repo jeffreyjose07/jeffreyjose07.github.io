@@ -14,7 +14,11 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://jeffreyjose07.github.io/blog/sitemap.xml
+# Must be the canonical host. This previously pointed at jeffreyjose07.github.io,
+# which 301s here — so the declared host did not match the host of any URL inside
+# the file, which is a cross-domain sitemap and is not accepted without verifying
+# both properties.
+Sitemap: https://jeffreyjose07.is-a.dev/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1
