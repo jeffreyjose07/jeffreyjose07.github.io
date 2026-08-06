@@ -117,6 +117,56 @@ async function verify() {
 
     console.log(`  static HTML : ${staticPosts} posts, hero ${staticHero ? 'present' : 'MISSING'}`);
     console.log(`  after boot  : ${bootedPosts} posts, ${postsJsonRequests} posts.json request(s), ${mainCount} <main>`);
+    await page.close();
+
+    // 3. Hydrate from other timezones.
+    //
+    // This check exists because the one above missed a live failure completely.
+    // Post dates were rendered with `new Date(iso).toLocaleDateString()`, which
+    // turns a calendar date into a UTC instant and formats it in the viewer's
+    // zone. The homepage is prerendered in CI under UTC, so every visitor west
+    // of Greenwich saw the previous day — a text mismatch that failed hydration
+    // (React #425) and dropped the whole root back to client rendering.
+    //
+    // It was invisible from IST, where UTC midnight is the same calendar day,
+    // so a verifier running only in the machine's own timezone passed while the
+    // site was broken for the Americas. Anything clock- or locale-dependent in a
+    // render has to be checked from more than one clock.
+    const TIMEZONES = ['UTC', 'America/Los_Angeles', 'Pacific/Auckland'];
+    const perZone = [];
+
+    for (const timeZone of TIMEZONES) {
+      const zonePage = await browser.newPage();
+      const zoneErrors = [];
+      zonePage.on('pageerror', (e) => zoneErrors.push(String(e)));
+      await zonePage.setRequestInterception(true);
+      zonePage.on('request', (r) => {
+        const u = r.url();
+        if (u.includes('gc.zgo.at') || u.includes('fonts.g')) {
+          return r.respond({ status: 200, contentType: 'text/plain', body: '' });
+        }
+        r.continue();
+      });
+
+      const session = await zonePage.createCDPSession();
+      await session.send('Emulation.setTimezoneOverride', { timezoneId: timeZone });
+
+      await zonePage.goto(`http://127.0.0.1:${port}/`, { waitUntil: 'networkidle0' });
+      await new Promise((r) => setTimeout(r, 1000));
+
+      const zonePosts = await zonePage.$$eval('#writing li', (e) => e.length).catch(() => 0);
+      if (zoneErrors.length) {
+        const codes = [...new Set(zoneErrors.map((e) => (e.match(/#\d+/) || ['error'])[0]))].join(', ');
+        failures.push(`Hydration fails in ${timeZone} (${codes}) — a render depends on the viewer's clock or locale.`);
+      }
+      if (zonePosts !== staticPosts) {
+        failures.push(`Post count in ${timeZone} is ${zonePosts}, expected ${staticPosts}.`);
+      }
+      perZone.push(`${timeZone}:${zoneErrors.length ? 'FAIL' : 'ok'}`);
+      await zonePage.close();
+    }
+
+    console.log(`  timezones   : ${perZone.join('  ')}`);
   } finally {
     await browser.close();
     server.close();

@@ -56,7 +56,11 @@ const Footer = () => {
         </div>
 
         <div className="mt-8 pt-6 border-t border-border text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Jeffrey Jose. All rights reserved.</p>
+          {/* Frozen at build time — see vite.build-constants.ts. Reading the
+              clock here would render a different year than the prerendered
+              HTML from 1 January until the next deploy. The `typeof` guard
+              keeps this safe if a build path omits the define. */}
+          <p>&copy; {typeof __BUILD_YEAR__ === "number" ? __BUILD_YEAR__ : new Date().getFullYear()} Jeffrey Jose. All rights reserved.</p>
         </div>
       </div>
     </footer>

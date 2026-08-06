@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import { buildConstants } from "./vite.build-constants";
 
 /**
  * Build-time-only bundle for the prerender harness (see prerender.html and
@@ -15,6 +16,8 @@ export default defineConfig({
   base: "/",
   publicDir: false,
   plugins: [react()],
+  // Must match vite.config.ts — see vite.build-constants.ts.
+  define: buildConstants,
   resolve: {
     alias: { "@": path.resolve(import.meta.dirname, "./src") },
   },

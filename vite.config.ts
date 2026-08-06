@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import { buildConstants } from "./vite.build-constants";
 
 const REACT_VENDOR = new Set(["react", "react-dom", "react-router", "react-router-dom"]);
 const UI_VENDOR_PREFIXES = [
@@ -36,6 +37,9 @@ export default defineConfig({
   // Configure static file serving to handle blog routes
   publicDir: "public",
   plugins: [react()],
+  // Must match vite.prerender.config.ts — the harness renders the same
+  // components, so a differing constant becomes a hydration mismatch.
+  define: buildConstants,
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),

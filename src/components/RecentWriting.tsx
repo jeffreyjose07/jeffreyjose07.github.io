@@ -26,6 +26,31 @@ const byMostRecent = (a: BlogPost, b: BlogPost) =>
   b.date.localeCompare(a.date) ||
   Number(b.episode) - Number(a.episode);
 
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/**
+ * Format a `YYYY-MM-DD` post date without going through a Date object.
+ *
+ * `new Date("2026-08-05")` is parsed as an *instant* — UTC midnight — and
+ * `toLocaleDateString` then renders it in the viewer's timezone. The homepage is
+ * prerendered in CI under UTC, so anyone west of Greenwich rendered the previous
+ * day: "4 Aug 2026" against the "5 Aug 2026" baked into the HTML. That is a text
+ * mismatch, which fails hydration (React #425) and drops the whole root back to
+ * client rendering, taking the prerender's benefit with it.
+ *
+ * It was invisible from IST, where UTC midnight is still the same calendar day,
+ * and fired for every visitor in the Americas.
+ *
+ * A post date is a calendar date, not a moment in time, so it must be formatted
+ * as one. Output matches the previous en-GB "d MMM yyyy" exactly.
+ */
+const formatPostDate = (iso: string): string => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso).trim());
+  if (!match) return String(iso);
+  const [, year, month, day] = match;
+  return `${Number(day)} ${MONTHS[Number(month) - 1]} ${year}`;
+};
+
 /**
  * Surfaces the most recent long-form posts on the front page.
  *
@@ -116,13 +141,7 @@ const RecentWriting = () => {
               >
                 <div className="flex flex-wrap items-center gap-3 mb-2 text-sm text-muted-foreground">
                   <span className="font-mono text-primary">#{post.episode}</span>
-                  <span>
-                    {new Date(post.date).toLocaleDateString("en-GB", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </span>
+                  <span>{formatPostDate(post.date)}</span>
                   <span aria-hidden="true">·</span>
                   <span>{post.readingTime} min read</span>
                 </div>
