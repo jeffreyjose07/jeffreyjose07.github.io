@@ -234,6 +234,69 @@ html {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Scroll-driven reveals.
+
+   Sections and cards fade and rise slightly as they scroll into view. Written
+   with native CSS scroll timelines rather than a motion library, so this costs
+   zero JavaScript — which matters here: the homepage is prerendered and
+   hydrated, and every byte of JS on that path is a hydration surface and a
+   delay before the page is interactive.
+
+   Three guards, all load-bearing:
+
+   1. `prefers-reduced-motion: no-preference` — the `reduce` block further down
+      only clamps animation-duration, which a scroll-driven animation ignores
+      entirely: its progress comes from the timeline, not the clock. Without
+      this wrapper, reduced-motion users would still see everything move.
+
+   2. `@supports (animation-timeline: view())` — Firefox still ships this behind
+      a flag (~84% global support, not yet Baseline). The guard must wrap the
+      `animation` shorthand too: without support, `animation: reveal linear both`
+      would degrade into a *time-based* animation and flash the content in.
+      Inside the guard, unsupported browsers simply render everything visible.
+
+   3. Only `opacity` and `transform` are animated — compositor-only properties,
+      so this cannot cause layout shift. CLS stays 0.
+
+   The hero is deliberately excluded: it holds the LCP element, and starting it
+   at opacity 0 would push Largest Contentful Paint out by exactly the amount of
+   scroll needed to reveal it.
+   --------------------------------------------------------------------------- */
+
+@keyframes reveal-on-scroll {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* Only elements SHORTER than the viewport may use an `entry` range.
+       `entry` completes when the subject has *fully* entered the viewport, so
+       progress advances at viewportHeight / elementHeight — on a full section
+       (py-24 plus content, routinely taller than the screen) that leaves the
+       content sitting at low opacity while you are trying to read it. Measured:
+       #contact stayed at opacity 0 even after scrollIntoView().
+
+       Headings and cards are comfortably under a screen tall, so they reach
+       100% almost as soon as they appear. Each gets its own timeline, so cards
+       cascade naturally without hand-tuned stagger delays. */
+    main > section:not(#hero) h2,
+    #writing li,
+    #projects .group {
+      animation: reveal-on-scroll linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+  }
+}
+
 /* Respect user's reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   *,
