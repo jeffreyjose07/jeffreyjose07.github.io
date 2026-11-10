@@ -20,8 +20,8 @@ description:
   service down anyway. Meanwhile GitHub disabled the whole workflow for repository inactivity
   on day 62 — an inactivity shutdown one layer up — and the API half never ran at all because
   its secret was never set."
-readingTime: 16
-wordCount: 3300
+readingTime: 18
+wordCount: 3655
 ---
 
 Working log for [scalable-chat-platform](https://github.com/jeffreyjose07/scalable-chat-platform). **Previous:** [The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL](/blog/two-month-outage-aiven-dns-and-jdbc-urls).
@@ -185,7 +185,7 @@ The 90-day row is this post's own lesson wearing better clothes. An agent whose 
 
 ## Where it actually stands
 
-Not fixed. The database is genuinely back — `state: RUNNING`, one node `running`, `pg_version` 15.19, and a fresh backup at 14:37 today. The backup list is its own little tell:
+The database is genuinely back — `state: RUNNING`, one node `running`, `pg_version` 15.19, and a fresh backup at 14:37 today. The backup list is its own little tell:
 
 ```
 2026-09-13_03-54   42885294
@@ -195,18 +195,46 @@ Not fixed. The database is genuinely back — `state: RUNNING`, one node `runnin
 
 Two days in September, then a 57-day hole, then today. Backups stop when the VMs stop; the gap is the outage, recorded in a field nobody thinks to read.
 
-The app in front of it, though, is down:
+### The correction: the app was asleep, not dead
+
+I first published this section saying the app was down, on this evidence:
 
 ```bash
 curl -sS --max-time 120 -w "HTTP=%{http_code} time=%{time_total}s\n" \
   https://scalable-chat-platform.onrender.com/api/health/status
 ```
 
-The first request returned **zero bytes after 75 seconds**; the second returned **HTTP 502 in 9.3 seconds**. Episode 033 built the taxonomy for exactly this: zero bytes after a long timeout means nothing upstream accepted the connection, and a fast 502 is Render's own page for a container that died. The first request woke something; the second got the corpse.
+The first request returned zero bytes after 75 seconds; the second returned HTTP 502 in 9.3 seconds. Episode 033 built a taxonomy for exactly that — zero bytes means nothing upstream accepted the connection, a fast 502 is Render's own page for a container that died — so I wrote that the first request woke something and the second got the corpse, and I blamed the boot dependency.
 
-So the database being reachable is necessary and not sufficient. The app still carries the boot dependency I identified in August and never fixed — `ddl-auto: update` makes Hibernate connect during startup, so any container that tried to boot while the database was off crashed, and nothing redeploys it when the database returns. The agent solves the database's inactivity problem. It does not solve the app's inability to survive the database being gone, which is the thing that turns a six-day power-off into a fifty-three-day outage.
+That was wrong, and the Render logs say so plainly. Every boot in them completes:
 
-That is the next piece of work, and it is a code change rather than a configuration one.
+```
+Started ChatPlatformApplication in 157.503 seconds
+Started ChatPlatformApplication in 80.699 seconds
+Started ChatPlatformApplication in 82.792 seconds
+```
+
+No exception, no stack trace. The app boots fine. What I measured was a **cold start on a free instance**, and the dashboard explains why: the service runs on Render's **Free** plan, which spins down after roughly fifteen minutes without traffic — so `render.yaml`'s `plan: starter` is still fiction, exactly as episode 033 found. Laid against my own requests:
+
+| Time | Event |
+| --- | --- |
+| 14:36:47 | boot Started (157s); browser traffic at 14:37 |
+| 14:51:47 | last scheduler log, then silence |
+| ~14:52 | spun down — last real traffic 14:37, plus fifteen minutes |
+| 15:04:56 | **my curl wakes it** → boot Started 80.7s later |
+| 15:06:26 | `Instance restarted` |
+| 15:15:23 | `Instance restarted` |
+| 15:31 | `HTTP 200` in 5.1s |
+
+My probe was the thing that woke it. The zero bytes was an eighty-second boot in progress; the 502 was Render answering while that boot still ran. Nothing had died. As of this edit the app is fully healthy — `HTTP 200` in 0.19s, all three dependencies `UP`, Redis at **66ms** against the 4301ms I measured in August.
+
+The symmetry with episode 033 is the part worth keeping. That post warned that a 45-second probe timeout against a 45-to-60-second cold start "produces failures that are indistinguishable from a real outage — which is precisely how a genuine outage hid in plain sight." Startup has since grown to 80–157 seconds. I wrote that warning down, published it, and then walked into it from the other direction: in 033 a real outage hid behind cold starts, and here a cold start impersonated an outage.
+
+Two things in that table remain real problems. The restarts at 15:06 and 15:15 are genuine and I **cannot** attribute them — an OOM kill and a Render-initiated recycle look identical from inside the container, and `-XX:MaxRAMPercentage=75.0` asks for a 384 MB heap inside a 512 MB instance, leaving very little for metaspace, code cache and thread stacks. Separately, Render's **Health Check Path is still empty**, three months after episode 033 called setting it "the single highest-value change on this list." Nothing probes the app, so a failed boot is never caught and a deploy is marked Live regardless.
+
+The boot dependency I blamed is still a real design flaw — `ddl-auto: update` makes Hibernate connect during startup, so a container booting while the database is off cannot start. It just wasn't what I was looking at. Nor is it idle: the commit Render currently has live is `eb20ccd`, the August keepalive experiment itself. Nothing has deployed since, because auto-deploy fires on commit and there have been no commits.
+
+That is the next piece of work, and most of it turns out to be configuration rather than code — the opposite of what I claimed when I first published this.
 
 ## Lessons
 
@@ -215,6 +243,8 @@ That is the next piece of work, and it is a code change rather than a configurat
 **Ask what the idle policy is of the thing you use to defeat an idle policy.** Free tiers compose, and so do their timers. A scheduled GitHub Action guarding a free database is two inactivity clocks in series, and the shorter one wins.
 
 **A keepalive you cannot measure is a belief.** I shipped a write ping, never checked whether it ran, and would have gone on believing it worked. The event log settled in one call what three months of run history could not.
+
+**On a free tier, a cold start and a corpse are the same observation.** Zero bytes then a fast 502 is what a dead container looks like, and also what an eighty-second boot looks like from outside. Only the platform's own logs separate them — and a probe against a service that spins down changes the state it is measuring, so the first request is never evidence about what was there before it.
 
 **Move the watchdog outside the thing it watches, and prefer the control plane.** The agent's advantage is not that it is cleverer. It lives somewhere that does not go idle and talks to an API that answers when every VM is gone.
 
