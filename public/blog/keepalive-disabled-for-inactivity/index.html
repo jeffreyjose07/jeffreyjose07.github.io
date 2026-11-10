@@ -1,0 +1,840 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>The Keepalive That Was Disabled for Inactivity - Jeffrey Jose</title> <meta name="description" content="In August I shipped a workflow to stop Aiven powering off my free Postgres. The event log says it lost: the write ping ran every six hours for twelve days and Aiven powered the service down anyway. Meanwhile GitHub disabled the whole workflow for repository inactivity on day 62 — an inactivity shutdown one layer up — and the API half never ran at all because its secret was never set." /> <meta property="og:title" content="The Keepalive That Was Disabled for Inactivity"> <meta property="og:description" content="In August I shipped a workflow to stop Aiven powering off my free Postgres. The event log says it lost: the write ping ran every six hours for twelve days and Aiven powered the service down anyway. Meanwhile GitHub disabled the whole workflow for repository inactivity on day 62 — an inactivity shutdown one layer up — and the API half never ran at all because its secret was never set."> <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/keepalive-disabled-for-inactivity"> <meta property="og:type" content="article"> <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/keepalive-disabled-for-inactivity.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="The Keepalive That Was Disabled for Inactivity"> <meta name="twitter:description" content="In August I shipped a workflow to stop Aiven powering off my free Postgres. The event log says it lost: the write ping ran every six hours for twelve days and Aiven powered the service down anyway. Meanwhile GitHub disabled the whole workflow for repository inactivity on day 62 — an inactivity shutdown one layer up — and the API half never ran at all because its secret was never set."> <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/keepalive-disabled-for-inactivity.png"> <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" /> <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" /> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link
+href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@500;600;700;800&display=swap"
+rel="stylesheet"> <style>
+:root {
+--background: #09090b;
+--foreground: #fafafa;
+--primary: #1cc9a0;
+/* Mirrors --primary-foreground in src/index.css. Near-black on teal:
+white failed WCAG AA contrast on every primary surface. */
+--primary-foreground: #09090b;
+--primary-glow: #5eead4;
+--secondary: #18181b;
+--secondary-foreground: #fafafa;
+--muted: #18181b;
+--muted-foreground: #a1a1aa;
+--accent: #18181b;
+--accent-foreground: #fafafa;
+--border: #27272a;
+--input: #27272a;
+--font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+--font-heading: 'Syne', system-ui, sans-serif;
+--font-mono: ui-monospace, 'Menlo', monospace;
+--gradient-hero: linear-gradient(135deg, #09090b, #0c1f1a);
+--gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+--gradient-accent: linear-gradient(135deg, #1cc9a0, #22d3ee);
+--radius: 0.75rem;
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: var(--font-sans);
+background-color: var(--background);
+color: var(--foreground);
+line-height: 1.6;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+overflow-x: hidden;
+max-width: 100vw;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+font-family: var(--font-heading);
+font-weight: 700;
+line-height: 1.2;
+margin-bottom: 1rem;
+letter-spacing: -0.02em;
+}
+a {
+color: inherit;
+text-decoration: none;
+transition: color 0.2s ease;
+}
+.container {
+width: 100%;
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 1.5rem;
+}
+.panel-card {
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
+}
+.panel-card:hover {
+border-color: rgba(28, 201, 160, 0.35);
+}
+.glass {
+background: var(--secondary);
+border: 1px solid var(--border);
+}
+.glass-card {
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
+}
+.glass-card:hover {
+border-color: rgba(28, 201, 160, 0.35);
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: transparent;
+display: inline-block;
+}
+.bg-mesh {
+background-color: var(--background);
+}
+::-webkit-scrollbar {
+width: 8px;
+}
+::-webkit-scrollbar-track {
+background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+background: #3f3f46;
+border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #52525b;
+}
+.sr-only {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+margin: -1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border: 0;
+}
+</style> <style>
+body {
+padding-top: 100px;
+}
+.post-container {
+max-width: 800px;
+margin: 0 auto;
+padding: 2rem;
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+}
+.post-header {
+margin-bottom: 3rem;
+text-align: center;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+padding-bottom: 2rem;
+}
+.post-meta {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 1rem;
+margin-bottom: 1rem;
+font-size: 0.875rem;
+color: var(--muted-foreground);
+}
+.episode-badge {
+background: rgba(28, 201, 160, 0.12);
+color: var(--primary);
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
+font-family: var(--font-mono);
+font-weight: 600;
+font-size: 0.8rem;
+}
+.post-title {
+font-size: clamp(1.75rem, 4vw, 2.5rem);
+line-height: 1.15;
+margin-bottom: 1.5rem;
+color: var(--foreground);
+}
+.post-content {
+font-size: 1.125rem;
+line-height: 1.8;
+color: #d1d5db;
+word-break: break-word;
+}
+.post-content p {
+margin-bottom: 1.5rem;
+}
+.post-content h2 {
+font-size: 1.75rem;
+margin-top: 3rem;
+margin-bottom: 1.5rem;
+color: var(--foreground);
+}
+.post-content h3 {
+font-size: 1.5rem;
+margin-top: 2.5rem;
+margin-bottom: 1rem;
+color: var(--foreground);
+}
+.post-content ul,
+.post-content ol {
+margin-bottom: 1.5rem;
+padding-left: 1.5rem;
+}
+.post-content li {
+margin-bottom: 0.5rem;
+}
+.post-content a {
+color: var(--primary-glow);
+text-decoration: none;
+border-bottom: 1px solid rgba(28, 201, 160, 0.35);
+transition: all 0.2s;
+}
+.post-content a:hover {
+border-bottom-color: var(--primary);
+color: var(--primary);
+}
+.post-content blockquote {
+border-left: 4px solid var(--primary);
+padding-left: 1.5rem;
+margin: 2rem 0;
+font-style: italic;
+color: var(--muted-foreground);
+background: rgba(255, 255, 255, 0.03);
+padding: 1.5rem;
+border-radius: 0 0.5rem 0.5rem 0;
+}
+/* Inline code only — do not paint fenced blocks (Shiki owns those). */
+.post-content :not(pre) > code {
+font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+font-size: 0.9em;
+background: rgba(255, 255, 255, 0.1);
+padding: 0.2em 0.4em;
+border-radius: 0.25rem;
+color: #e2e8f0;
+}
+/* Fenced blocks: Shiki (One Dark Pro) owns token colors via inline styles */
+.post-content .code-block-wrap {
+position: relative;
+margin: 2rem -2rem;
+width: calc(100% + 4rem);
+border-radius: 0.5rem;
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.12);
+background: #282c34;
+box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.post-content .code-block-wrap .code-lang {
+position: absolute;
+top: 0.55rem;
+right: 0.75rem;
+z-index: 1;
+font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+font-size: 0.65rem;
+letter-spacing: 0.04em;
+text-transform: uppercase;
+color: rgba(171, 178, 191, 0.65);
+pointer-events: none;
+user-select: none;
+}
+.post-content pre,
+.post-content .code-block-wrap pre.shiki {
+background: #282c34;
+padding: 1.65rem 1.25rem 1.35rem;
+border-radius: 0.5rem;
+overflow-x: auto;
+margin: 2rem -2rem;
+border: 1px solid rgba(255, 255, 255, 0.1);
+width: calc(100% + 4rem);
+line-height: 1.55;
+}
+.post-content .code-block-wrap pre.shiki {
+margin: 0;
+width: 100%;
+border: none;
+border-radius: 0;
+background: transparent !important;
+}
+@media (max-width: 768px) {
+.post-content pre,
+.post-content .code-block-wrap {
+margin-left: -1rem;
+margin-right: -1rem;
+width: calc(100% + 2rem);
+border-radius: 0;
+}
+}
+.post-content pre code,
+.post-content .code-block-wrap pre.shiki code {
+background: none !important;
+padding: 0;
+font-size: 0.92rem;
+/* Never flatten Shiki token colors */
+color: inherit;
+}
+.post-content .shiki span {
+/* Inline token colors must win over any inherited prose color */
+-webkit-text-fill-color: currentColor;
+}
+/* Must be block: HTML minify collapses newlines between .line spans.
+inline-block + width:100% + leftover spaces keeps every line on one row. */
+.post-content .shiki .line {
+display: block;
+width: 100%;
+min-height: 1.35em;
+white-space: pre;
+}
+.post-content .shiki-fallback {
+margin: 0;
+width: 100%;
+border: none;
+border-radius: 0;
+color: #abb2bf;
+}
+.post-figure {
+margin: 2rem 0;
+border-radius: var(--radius);
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.08);
+background: rgba(255, 255, 255, 0.02);
+}
+.post-content img,
+.post-figure img {
+display: block;
+width: 100%;
+max-width: 100%;
+height: auto;
+margin: 0;
+border-radius: 0;
+box-shadow: none;
+}
+.post-figure img {
+aspect-ratio: auto;
+object-fit: contain;
+background: #0a0a0c;
+}
+.post-footer {
+margin-top: 4rem;
+padding-top: 2rem;
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--muted-foreground);
+font-size: 0.875rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 1rem;
+}
+.post-tags-footer {
+display: flex;
+gap: 0.5rem;
+flex-wrap: wrap;
+}
+.tag-pill {
+font-size: 0.75rem;
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
+background: rgba(255, 255, 255, 0.05);
+color: var(--muted-foreground);
+border: 1px solid rgba(255, 255, 255, 0.1);
+text-decoration: none;
+transition: border-color 0.2s, color 0.2s;
+}
+.tag-pill:hover {
+background: rgba(28, 201, 160, 0.1);
+color: var(--primary);
+border-color: rgba(28, 201, 160, 0.25);
+}
+/* Author card */
+.author-card {
+display: flex;
+align-items: center;
+gap: 1.25rem;
+margin-top: 3rem;
+padding: 1.5rem;
+background: var(--background);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+}
+.author-avatar-wrap {
+position: relative;
+flex-shrink: 0;
+width: 56px;
+height: 56px;
+}
+.author-avatar {
+width: 56px;
+height: 56px;
+border-radius: 50%;
+object-fit: cover;
+border: 2px solid rgba(28, 201, 160, 0.4);
+display: block;
+}
+.author-avatar-fallback {
+display: none;
+width: 56px;
+height: 56px;
+border-radius: 50%;
+align-items: center;
+justify-content: center;
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.1rem;
+color: var(--primary-foreground);
+background: var(--primary);
+border: 2px solid rgba(28, 201, 160, 0.4);
+}
+.author-avatar-wrap.is-fallback .author-avatar {
+display: none;
+}
+.author-avatar-wrap.is-fallback .author-avatar-fallback {
+display: flex;
+}
+.author-info {
+display: flex;
+flex-direction: column;
+gap: 0.25rem;
+}
+.author-name {
+font-family: var(--font-heading);
+font-weight: 600;
+color: var(--foreground);
+font-size: 1rem;
+}
+.author-bio {
+font-size: 0.85rem;
+color: var(--muted-foreground);
+line-height: 1.5;
+}
+.author-links {
+display: flex;
+gap: 0.75rem;
+margin-top: 0.25rem;
+}
+.author-links a {
+font-size: 0.8rem;
+color: var(--primary-glow);
+text-decoration: none;
+transition: color 0.2s;
+}
+.author-links a:hover {
+color: var(--primary);
+}
+/* Reading progress */
+.reading-progress {
+position: fixed;
+top: 0;
+left: 0;
+height: 3px;
+background: var(--primary);
+z-index: 2000;
+transition: width 0.1s ease;
+}
+/* Navigation */
+.post-navigation {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 1.5rem;
+margin-top: 3rem;
+}
+.nav-previous,
+.nav-next {
+padding: 1.5rem;
+display: flex;
+flex-direction: column;
+}
+.nav-previous a,
+.nav-next a {
+text-decoration: none;
+height: 100%;
+display: flex;
+flex-direction: column;
+}
+.nav-label {
+font-size: 0.75rem;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+color: var(--muted-foreground);
+margin-bottom: 0.5rem;
+}
+.nav-title {
+font-family: var(--font-heading);
+font-weight: 600;
+color: var(--foreground);
+font-size: 1.125rem;
+transition: color 0.2s;
+}
+.nav-previous:hover .nav-title,
+.nav-next:hover .nav-title {
+color: var(--primary-glow);
+}
+.nav-next {
+text-align: right;
+}
+@media (max-width: 768px) {
+.post-title {
+font-size: 2rem;
+}
+.post-navigation {
+grid-template-columns: 1fr;
+}
+.nav-next {
+text-align: left;
+}
+.post-container {
+padding: 1.5rem;
+}
+}
+/* Inline styles injected from frontmatter */
+{
+{
+inlineStyles
+}
+}
+</style> </head> <body class="bg-mesh"> <div class="reading-progress"></div> <style>
+/* Top Bar Header */
+.site-header {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+z-index: 1000;
+transition: all 0.3s ease;
+background: transparent;
+border-bottom: 1px solid transparent;
+}
+.site-header.scrolled {
+background: rgba(9, 9, 11, 0.92);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.header-inner {
+max-width: 1280px;
+margin: 0 auto;
+padding: 1rem 1.5rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+.site-logo {
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.25rem;
+color: var(--foreground);
+text-decoration: none;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: transparent;
+display: inline-block;
+}
+.site-nav {
+display: flex;
+gap: 2rem;
+}
+.nav-link {
+font-family: var(--font-sans);
+font-size: 0.875rem;
+font-weight: 500;
+color: var(--muted-foreground);
+text-decoration: none;
+transition: color 0.2s ease;
+position: relative;
+}
+.nav-link:hover {
+color: var(--primary-glow);
+}
+.nav-link.active {
+color: var(--foreground);
+}
+/* Mobile Menu */
+.mobile-menu-toggle {
+display: none;
+background: none;
+border: none;
+color: var(--foreground);
+cursor: pointer;
+padding: 0.5rem;
+}
+@media (max-width: 768px) {
+.site-nav {
+display: none;
+position: absolute;
+top: 100%;
+left: 0;
+right: 0;
+flex-direction: column;
+background: rgba(9, 9, 11, 0.98);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+padding: 1rem;
+gap: 1rem;
+align-items: center;
+}
+.site-nav.open {
+display: flex;
+animation: slideDown 0.3s ease-out forwards;
+}
+.mobile-menu-toggle {
+display: block;
+}
+}
+@keyframes slideDown {
+from {
+opacity: 0;
+transform: translateY(-10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+/* Search Button */
+.search-trigger {
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--muted-foreground);
+padding: 0.5rem 1rem;
+border-radius: 0.375rem;
+font-size: 0.875rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+transition: all 0.2s ease;
+}
+.search-trigger:hover {
+background: rgba(255, 255, 255, 0.1);
+color: var(--foreground);
+border-color: rgba(255, 255, 255, 0.2);
+}
+.search-text,
+.search-shortcut {
+display: none;
+}
+@media (min-width: 768px) {
+.search-text {
+display: inline;
+}
+.search-shortcut {
+display: inline;
+font-size: 0.75rem;
+opacity: 0.6;
+margin-left: 0.5rem;
+}
+}
+/* Search Modal */
+.search-modal-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(8px);
+z-index: 2000;
+align-items: flex-start;
+justify-content: center;
+padding-top: 100px;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+.search-modal-overlay.open {
+display: flex;
+opacity: 1;
+}
+.search-modal {
+background: #09090b;
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 1rem;
+width: 90%;
+max-width: 600px;
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+overflow: hidden;
+transform: scale(0.95);
+transition: transform 0.3s ease;
+}
+.search-modal-overlay.open .search-modal {
+transform: scale(1);
+}
+.search-input-container {
+padding: 1.5rem;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+display: flex;
+align-items: center;
+}
+.search-icon {
+color: var(--muted-foreground);
+margin-right: 1rem;
+}
+.search-input {
+background: transparent;
+border: none;
+color: var(--foreground);
+font-size: 1.125rem;
+width: 100%;
+outline: none;
+font-family: var(--font-sans);
+}
+.search-results {
+max-height: 400px;
+overflow-y: auto;
+padding: 0.5rem;
+}
+.search-result-item {
+display: block;
+padding: 1rem;
+text-decoration: none;
+color: var(--muted-foreground);
+border-radius: 0.5rem;
+transition: all 0.2s ease;
+margin-bottom: 0.25rem;
+}
+.search-result-item:hover {
+background: rgba(255, 255, 255, 0.05);
+color: var(--foreground);
+}
+.search-result-title {
+font-weight: 600;
+font-size: 1rem;
+color: var(--primary-glow);
+margin-bottom: 0.25rem;
+}
+.search-result-excerpt {
+font-size: 0.875rem;
+color: var(--muted-foreground);
+display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient: vertical;
+overflow: hidden;
+}
+</style> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <img src="/logo.svg" alt="JJ" width="32" height="32"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
+class="text-gradient-premium">Jose</span></span> </a> <nav class="site-nav"> <a href="/#hero" class="nav-link">Home</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/blog" class="nav-link active">Blog</a> <a href="/#contact" class="nav-link">Contact</a> </nav> <div style="display: flex; align-items: center; gap: 1rem;"> <button class="search-trigger" onclick="openSearch()"> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut">⌘K</span> </button> <button class="mobile-menu-toggle" aria-label="Toggle menu"
+onclick="document.querySelector('.site-nav').classList.toggle('open')"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()"> <div class="search-modal"> <div class="search-input-container"> <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts..." id="searchInput" autocomplete="off"> </div> <div class="search-results" id="searchResults"> </div> </div> </div> <script>
+// Header Scroll Effect
+window.addEventListener('scroll', () => {
+const header = document.getElementById('siteHeader');
+if (window.scrollY > 20) {
+header.classList.add('scrolled');
+} else {
+header.classList.remove('scrolled');
+}
+});
+let searchIndex = [];
+let isSearchOpen = false;
+async function loadSearchIndex() {
+if (searchIndex.length > 0) return;
+try {
+const response = await fetch('/blog/search.json');
+searchIndex = await response.json();
+} catch (e) {
+console.error('Failed to load search index', e);
+}
+}
+function openSearch() {
+document.getElementById('searchModal').classList.add('open');
+document.getElementById('searchInput').focus();
+isSearchOpen = true;
+loadSearchIndex();
+document.body.style.overflow = 'hidden';
+}
+function closeSearch() {
+document.getElementById('searchModal').classList.remove('open');
+isSearchOpen = false;
+document.body.style.overflow = '';
+}
+function performSearch(query) {
+if (!query) {
+document.getElementById('searchResults').innerHTML = '';
+return;
+}
+const results = searchIndex.filter(post => {
+const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
+const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
+const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
+return titleMatch || descMatch || tagMatch;
+}).slice(0, 5); // Limit to 5 results
+const resultsHtml = results.map(post => `
+<a href="/blog/${post.slug}" class="search-result-item" onclick="closeSearch()"> <div class="search-result-title">${post.title}</div> <div class="search-result-excerpt">${post.description || ''}</div> </a>
+`).join('');
+document.getElementById('searchResults').innerHTML = results.length > 0
+? resultsHtml
+: '<div style="padding: 1rem; color: var(--muted-foreground); text-align: center;">No results found</div>';
+}
+document.getElementById('searchInput').addEventListener('input', (e) => {
+performSearch(e.target.value);
+});
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+e.preventDefault();
+if (isSearchOpen) closeSearch();
+else openSearch();
+}
+if (e.key === 'Escape' && isSearchOpen) {
+closeSearch();
+}
+});
+</script> <main class="container"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#037</span> <span>10 Nov 2026</span> <span>·</span> <span>16 min read</span> </div> <h1 class="post-title">The Keepalive That Was Disabled for Inactivity</h1> </header> <div class="post-content"> <p>Working log for <a href="https://github.com/jeffreyjose07/scalable-chat-platform">scalable-chat-platform</a>. <strong>Previous:</strong> <a href="/blog/two-month-outage-aiven-dns-and-jdbc-urls">The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL</a>.</p> <p>Episode 033 ended on a confident note. The app was up, the keep-alive was green, and I wrote that the health endpoint was &quot;once again the first place I will look — assuming, this time, that something tells me to look.&quot;</p> <p>Nothing told me to look. I went looking anyway, three months later. The fix I shipped in August had failed, and it failed in a more interesting way than &quot;it didn&#39;t run&quot;: one half never ran at all, the other half ran perfectly and was beaten anyway, and the thing meant to supervise both was switched off by GitHub for inactivity.</p> <p>Then I connected Aiven&#39;s management API and found out the outage I wrote about in episode 033 was the <em>second</em> one.</p> <hr> <h2>The scoreboard, and why it lies</h2> <p>In August I replaced a read-only <code>SELECT now();</code> ping with a workflow testing two hypotheses about what Aiven counts as &quot;activity.&quot; Then I pushed it and stopped thinking about it. Three months of run history:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">gh</span><span style="color:#98C379"> run</span><span style="color:#98C379"> list</span><span style="color:#D19A66"> --workflow=keep-postgres-alive.yml</span><span style="color:#D19A66"> --limit</span><span style="color:#D19A66"> 400</span><span style="color:#56B6C2"> \</span></span> <span class="line"><span style="color:#D19A66">  --json</span><span style="color:#98C379"> conclusion</span><span style="color:#D19A66"> -q</span><span style="color:#98C379"> '.[].conclusion'</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">sort</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">uniq</span><span style="color:#D19A66"> -c</span></span></code></pre></div> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span> 256 failure</span></span> <span class="line"><span>  25 success</span></span></code></pre></div> <p>Every one of those 25 successes is in the first week of August, and the last is on <strong>2026-08-07</strong>. My first reading was the obvious one: it went red when the database died and never recovered.</p> <p>That reading is wrong, and the way it is wrong is the most useful thing in this post. The job was red for three months because of a <em>missing secret in its first step</em>, not because the database was unreachable. For long stretches inside those 256 failures, the part I actually cared about was working fine. A red job conclusion told me nothing, and I had trained myself to read it as if it told me everything.</p> <h2>Hypothesis A never ran, not once</h2> <p>The first hypothesis was that Aiven&#39;s notion of activity concerns the <em>platform</em>, not the database — the warning email says free services are powered off if &quot;they or the Aiven platform aren&#39;t actively used,&quot; and the remedy it prescribes is logging into the Console. An authenticated API call was the closest programmatic stand-in, and I thought it the stronger bet.</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">AIVEN_API_TOKEN</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#7F848E;font-style:italic">##[error]Set repository secret AIVEN_API_TOKEN (Aiven Console -> User profile -> Tokens).</span></span></code></pre></div> <p>Empty, on every run from August to October. The half of the experiment I considered most likely to be the answer <strong>never executed a single time</strong>, and I have no data about it whatsoever.</p> <p>That is a design fault rather than an oversight. I wrote a step that fails loudly without a secret, handed over an instruction to create that secret, and built nothing that would notice if it never happened. In a run history, &quot;never ran&quot; and &quot;ran and failed&quot; render identically — both are a red X. I had 256 of them and could not distinguish the two states without opening a log.</p> <p><strong>An unset secret is an untested hypothesis wearing a failure&#39;s clothes.</strong> Worse: here it was also a <em>successful</em> hypothesis wearing a failure&#39;s clothes, because it masked this.</p> <h2>Hypothesis B ran correctly for twelve days and lost</h2> <p>The second hypothesis was that a genuine write might register where a read did not — <code>INSERT … ON CONFLICT DO UPDATE</code>, generating WAL and advancing the transaction id. I verified the SQL against a throwaway Postgres before shipping, and in my first pass at this post I wrote that it &quot;could never have worked,&quot; reasoning that a powered-off service has no DNS record, so the write could never land.</p> <p>That is true of <em>recovery</em> and irrelevant to <em>prevention</em>. Here is a run from 5 September:</p> <div class="code-block-wrap" data-lang="sql"><span class="code-lang" aria-hidden="true">sql</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">INSERT INTO</span><span style="color:#ABB2BF"> keepalive_ping </span><span style="color:#C678DD">AS</span><span style="color:#ABB2BF"> k (id, last_ping, ping_count)</span></span> <span class="line"><span style="color:#C678DD">        SET</span><span style="color:#ABB2BF"> last_ping  </span><span style="color:#56B6C2">=</span><span style="color:#C678DD"> now</span><span style="color:#ABB2BF">(),</span></span> <span class="line"><span style="color:#ABB2BF">            ping_count </span><span style="color:#56B6C2">=</span><span style="color:#D19A66"> k</span><span style="color:#ABB2BF">.</span><span style="color:#D19A66">ping_count</span><span style="color:#ABB2BF"> + </span><span style="color:#D19A66">1</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF"> id |           last_ping           | ping_count</span></span></code></pre></div> <p>The write landed. It kept landing, every six hours. And the Aiven event log records what happened next:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#98C379">2026-09-02T15:37:11Z  jeffreyjose.k@gmail.com  Powered on the service</span></span> <span class="line"><span style="color:#98C379">2026-09-14T23:26:58Z  Aiven Automation         Powered down the free service due to inactivity</span></span></code></pre></div> <p>Twelve days of a WAL-generating write every six hours, and Aiven powered the service down <strong>for inactivity</strong>. The same thing had already happened in August: powered on the 15th, write ping running the whole time, powered down on the 24th.</p> <p>So hypothesis B is not untested and not unworkable. It is <strong>falsified</strong>. Writing to a free Aiven Postgres on a six-hour cadence does not stop Aiven from deciding the service is inactive. Whatever that automation measures, it is not transactions.</p> <p>This is a better outcome than the one in my draft. &quot;Could never have worked&quot; is an argument. &quot;Ran for twelve days and the service was powered off anyway&quot; is a result.</p> <h2>The event log is the only honest history</h2> <p>Episode 033&#39;s closing lesson was <em>check the platform, not your config</em>. I had been reconstructing this incident from GitHub Actions logs and <code>dig</code>. One call to Aiven&#39;s event log replaced all of it:</p> <table> <thead> <tr> <th>Powered on (actor)</th> <th>Powered down by Aiven</th> <th>Days up</th> <th>Keepalive in place</th> </tr> </thead> <tbody><tr> <td>—</td> <td>2026-03-07</td> <td>—</td> <td>none</td> </tr> <tr> <td>2026-05-19 (me)</td> <td>2026-05-24</td> <td>5</td> <td>none</td> </tr> <tr> <td>2026-05-27 (me)</td> <td>2026-06-09</td> <td>13</td> <td>none</td> </tr> <tr> <td>2026-08-01 (me)</td> <td>2026-08-07</td> <td>6</td> <td>read-only <code>SELECT</code></td> </tr> <tr> <td>2026-08-15 (me)</td> <td>2026-08-24</td> <td>9</td> <td>WAL write</td> </tr> <tr> <td>2026-09-02 (me)</td> <td>2026-09-14</td> <td>12</td> <td>WAL write</td> </tr> <tr> <td>2026-11-10 (me)</td> <td>—</td> <td>—</td> <td>Aiven agent</td> </tr> </tbody></table> <p>Four things fall out of that table.</p> <p><strong>Every power-on in eight months was manual.</strong> Six of them, all with my address in the <code>actor</code> field. Every power-down was <code>Aiven Automation</code>, every one citing inactivity. Nothing I have ever built has recovered this database. I have been the recovery mechanism, running on an interval of &quot;whenever I happen to notice,&quot; which the table measures at between five days and two and a half months.</p> <p><strong>There is no fixed threshold.</strong> Five, thirteen, six, nine, twelve days. In August I listed &quot;the exact inactivity threshold&quot; as the key missing number and assumed it was a constant I hadn&#39;t found. It isn&#39;t a constant. Aiven&#39;s own free-tier documentation declines to give a figure, and the event log shows why — the interval varies by a factor of nearly three.</p> <p><strong>The keepalive cannot be credited with the variation.</strong> The write-ping windows are the two longest of the four short ones (9 and 12 days), which looks encouraging until you notice that a window with no keepalive at all ran 13 days. With n=5 and a spread of 5–13, the variance swallows any effect. I can say the write ping did not prevent the power-off. I cannot say it did nothing, and I am not going to pretend otherwise.</p> <p><strong>Episode 033 documented the wrong outage.</strong> That post was about a two-month blackout, which the log dates to 2026-06-09 → 2026-08-01, fifty-three days. Directly above it sits <strong>2026-03-07 → 2026-05-19: seventy-three days</strong>, twenty days longer, which I never knew about and which no post of mine mentions. I wrote three thousand words about my worst outage while a worse one sat one row up in a log I hadn&#39;t thought to read.</p> <h2>The finding: the monitor was disabled for inactivity</h2> <p>The run history stops on 2026-10-16. Not a failure — it simply stops, 25 days before I went looking.</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">gh</span><span style="color:#98C379"> workflow</span><span style="color:#98C379"> list</span><span style="color:#D19A66"> --all</span><span style="color:#D19A66"> --json</span><span style="color:#98C379"> name,state</span><span style="color:#D19A66"> -q</span><span style="color:#98C379"> '.[] | "\(.state)  \(.name)"'</span></span></code></pre></div> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>active                Frontend CI</span></span> <span class="line"><span>disabled_inactivity   Keep Postgres Alive</span></span> <span class="line"><span>disabled_inactivity   Keep Redis Alive</span></span> <span class="line"><span>disabled_inactivity   Ping app health</span></span> <span class="line"><span>active                Dependabot Updates</span></span></code></pre></div> <p><code>disabled_inactivity</code>. GitHub disables scheduled workflows in repositories with no activity for 60 days. My last commit was the keepalive experiment itself, on 2026-08-15 — and Aug 15 to Oct 16 is <strong>62 days</strong>. The rule fired almost exactly on schedule.</p> <p>So the chain reads: the free Postgres powers off because nothing used it for long enough, and the GitHub Action built specifically to prevent that is switched off because nobody committed to its repository for long enough. <strong>The watchdog was killed by the same kind of timer it was built to defeat, one layer up.</strong></p> <p>Neither policy is a bug. Nobody should burn cloud capacity on abandoned projects, and a cron job firing forever against a repo its owner forgot is exactly the waste GitHub&#39;s rule exists to stop. The failure is in the composition: I built a free-tier guard on top of a free tier and never asked what <em>its</em> idle policy was.</p> <p>One more detail in that output. <code>Frontend CI</code> and <code>Dependabot Updates</code> are still <code>active</code> — event-triggered workflows are unaffected, only <code>schedule:</code> gets disabled. Every alarm I had was on a schedule. They all went quiet together, which is the worst possible correlation for a set of supposedly independent alarms.</p> <h2>What an Aiven managed agent changes</h2> <p>The fix now in place is an Aiven <strong>managed agent</strong> — <code>postgres-health-monitor</code>, running <code>gemini-3.8-flash</code> hourly, inside the Aiven project itself. <a href="https://aiven.io/docs/tools/agents">Managed Agents</a> is in limited availability; you request access per project and enable it once approved. Its instructions tell it to enumerate services, inspect health and node state, and restart any PostgreSQL service failing three consecutive health checks, with guardrails against destructive actions.</p> <p>The important thing about it is not the model and not the remediation logic. It is the <strong>address</strong>.</p> <p>Every previous version of this guard lived somewhere that could go idle: a GitHub Actions schedule in a repository I might not commit to, pinging a database that might not exist. The agent lives on Aiven&#39;s side of the boundary. It has no repository to go quiet, and crucially it does not need the database to be reachable to do its job — it talks to the management API, which answers whether or not any VMs exist. Both August hypotheses failed on placement rather than logic. This one is placed correctly, and placement is the thing that was actually wrong.</p> <h3>My prediction, written down to be falsified</h3> <p><strong>The restart branch will rarely or never fire, and the agent will work anyway.</strong></p> <p>An agent that runs hourly and calls the management API to list projects and inspect services is, every hour, <em>using the Aiven platform</em>. That is hypothesis A — the one whose secret I never set — finally running in production, by accident, on someone else&#39;s infrastructure. The remediation is the headline feature; the heartbeat is the mechanism.</p> <p>Note what the table above says about this: today&#39;s power-on at 14:29 was mine, not the agent&#39;s. The agent is minutes old and has recovered nothing yet. In eight months of event log there is not one automated recovery of any kind. So this prediction is live, and the event log is exactly where it will be settled — the next <code>service_poweron</code> row will name either <code>Aiven Automation</code>, the agent, or me.</p> <h2>Four things in those instructions worth a second look</h2> <p>I read the agent&#39;s system instructions against Aiven&#39;s documentation. Four mismatches, worst first.</p> <p><strong>The remediation verb may not match the failure mode.</strong> The instructions say to &quot;initiate a service restart.&quot; Aiven&#39;s <a href="https://aiven.io/docs/platform/concepts/service-power-cycle">power cycle documentation</a> describes three operations on this axis — power off, power on, delete — and restart is not among them. A powered-off service has had its VMs <em>removed from the cloud</em>; there is no process to restart. Recovery is <code>avn service update SERVICE_NAME --power-on</code>, which creates new VMs and restores from the latest backup, and can take &quot;from a few minutes to a few hours.&quot; If the agent&#39;s tool surface offers a restart but not a power-on, the one scenario I built it for is the one scenario it cannot fix. And the event log confirms the state it will actually encounter is <code>service_poweroff</code>, not a sick node.</p> <p><strong>A powered-off service may not fail a health check — it has no health to check.</strong> The trigger is &quot;three consecutive health check failures.&quot; A service with no nodes doesn&#39;t report failing nodes; <code>aiven_service_get</code> returns a <code>state</code>. Mine currently reads <code>RUNNING</code> with one node <code>running</code>. Powered off, there is nothing to fail three times. The condition worth watching is <code>state != RUNNING</code>, which is simpler and strictly more reliable than counting failures.</p> <p><strong>The 403 is about the agent&#39;s identity, not yours.</strong> The permissions error reads <code>user_role_not_allowed_to_perform_operation</code>, which sounds like it refers to you. It doesn&#39;t. <a href="https://aiven.io/docs/tools/agents/permissions">Agents get their own Aiven identity</a> — &quot;the agent uses this identity, not yours&quot; — with its own MCP role: read-only, read-write, or full access. Read-write explicitly cannot create or delete services; changing service configuration needs full access. A power-on is a service update. So an agent under-privileged enough to be refused the event log is very likely under-privileged enough to be refused the power-on, and it would discover that at the worst possible moment. That is a role to fix in the integration settings, not a prompt to reword. For contrast, my own membership on this project reads <code>admin</code> — which is why the same event-log call that 403&#39;d for the agent returned twelve rows for me.</p> <p><strong>A system instruction is not a constraint.</strong> The 404 came from calling <code>/v1/project/chat-platform</code> when the project is <code>chat-platform-db</code>. The usual reading is that the model shortened a name from conversational context. What makes it interesting is that the instructions <em>already forbid this</em>, in as many words: &quot;Dont ask the user which project to use — call the Aiven project-listing tool to resolve it yourself.&quot; The instruction to look it up rather than guess was present, and it guessed anyway. Prompt text expresses a preference. If a value must be correct, pin it literally or make the lookup the only path to it. <code>aiven_project_list</code> returns exactly one project here, so there was never anything to guess.</p> <h2>Three expiry timers, stacked</h2> <p>The agent is a better design than mine. It also sits on three clocks, and I would rather write them down now than rediscover them in a log:</p> <table> <thead> <tr> <th>Clock</th> <th>Length</th> <th>What happens</th> </tr> </thead> <tbody><tr> <td>Agent MCP token</td> <td>90 days</td> <td>Aiven-managed and not viewable; renewed by reconnecting MCP for the agent</td> </tr> <tr> <td>Platform trial</td> <td>30 days remaining</td> <td>$50 of credits, against <strong>non-free</strong> plans only</td> </tr> <tr> <td>Powered-off service</td> <td>180 days</td> <td>Service is deleted automatically</td> </tr> </tbody></table> <p>The second row has a wrinkle worth stating plainly, because I assumed otherwise before checking. <code>aiven_service_get</code> reports this service as <code>plan: free-1-1gb</code>, <code>plan_price_usd: 0</code>. The trial credits apply to non-free plans, so they are not protecting this database and the free-tier power-off policy applies in full. The trial is not a reprieve.</p> <p>The 90-day row is this post&#39;s own lesson wearing better clothes. An agent whose credential silently expires in 90 days is a workflow that silently disables in 62. The failure mode is identical: the guard stops, nothing announces it, and the thing it guarded is fine right up until it isn&#39;t. I don&#39;t have a clean answer for that. The honest version is that every free or trial tier in this chain has an idle or expiry policy, each longer than my attention span and shorter than forever, and the only durable fix is the one I keep declining to buy.</p> <h2>Where it actually stands</h2> <p>Not fixed. The database is genuinely back — <code>state: RUNNING</code>, one node <code>running</code>, <code>pg_version</code> 15.19, and a fresh backup at 14:37 today. The backup list is its own little tell:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>2026-09-13_03-54   42885294</span></span> <span class="line"><span>2026-09-14_03-54   42936494</span></span> <span class="line"><span>2026-11-10_14-37   42956974</span></span></code></pre></div> <p>Two days in September, then a 57-day hole, then today. Backups stop when the VMs stop; the gap is the outage, recorded in a field nobody thinks to read.</p> <p>The app in front of it, though, is down:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">curl</span><span style="color:#D19A66"> -sS</span><span style="color:#D19A66"> --max-time</span><span style="color:#D19A66"> 120</span><span style="color:#D19A66"> -w</span><span style="color:#98C379"> "HTTP=%{http_code} time=%{time_total}s\n"</span><span style="color:#56B6C2"> \</span></span> <span class="line"><span style="color:#98C379">  https://scalable-chat-platform.onrender.com/api/health/status</span></span></code></pre></div> <p>The first request returned <strong>zero bytes after 75 seconds</strong>; the second returned <strong>HTTP 502 in 9.3 seconds</strong>. Episode 033 built the taxonomy for exactly this: zero bytes after a long timeout means nothing upstream accepted the connection, and a fast 502 is Render&#39;s own page for a container that died. The first request woke something; the second got the corpse.</p> <p>So the database being reachable is necessary and not sufficient. The app still carries the boot dependency I identified in August and never fixed — <code>ddl-auto: update</code> makes Hibernate connect during startup, so any container that tried to boot while the database was off crashed, and nothing redeploys it when the database returns. The agent solves the database&#39;s inactivity problem. It does not solve the app&#39;s inability to survive the database being gone, which is the thing that turns a six-day power-off into a fifty-three-day outage.</p> <p>That is the next piece of work, and it is a code change rather than a configuration one.</p> <h2>Lessons</h2> <p><strong>A red check is not a signal, it is a prompt to read a log.</strong> 256 failures encoded at least three distinct states — secret missing, host unresolvable, and write succeeding while a sibling step failed — and the dashboard rendered all three identically. If a step can fail for a reason that isn&#39;t the thing you&#39;re monitoring, it will, and it will hide the thing you&#39;re monitoring.</p> <p><strong>Ask what the idle policy is of the thing you use to defeat an idle policy.</strong> Free tiers compose, and so do their timers. A scheduled GitHub Action guarding a free database is two inactivity clocks in series, and the shorter one wins.</p> <p><strong>A keepalive you cannot measure is a belief.</strong> I shipped a write ping, never checked whether it ran, and would have gone on believing it worked. The event log settled in one call what three months of run history could not.</p> <p><strong>Move the watchdog outside the thing it watches, and prefer the control plane.</strong> The agent&#39;s advantage is not that it is cleverer. It lives somewhere that does not go idle and talks to an API that answers when every VM is gone.</p> <p><strong>A system instruction is a preference, not a constraint.</strong> The agent&#39;s own prompt told it to look the project name up instead of guessing. It guessed. Anything that must be correct should not depend on a model choosing to comply.</p> <p><strong>Read the vendor&#39;s verbs.</strong> &quot;Restart&quot; and &quot;power on&quot; sound interchangeable and are not: one acts on a running process, the other rebuilds VMs from backup and can take hours. Remediation has to name the operation the platform actually implements.</p> <p><strong>Check the platform, not your config — and then check the parts of the platform you didn&#39;t think to ask about.</strong> I ended episode 033 on the first half of that and still managed to miss a seventy-three-day outage sitting one row above the one I wrote about. <code>render.yaml</code> still says <code>plan: starter</code>. The event log, the workflow states, and the backup list tell the truth.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-scalable-chat-platform" class="tag neutral" data-tag="scalable-chat-platform">scalable-chat-platform</a>, <a href="/blog#tag-aiven" class="tag neutral" data-tag="aiven">aiven</a>, <a href="/blog#tag-postgresql" class="tag neutral" data-tag="postgresql">postgresql</a>, <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a>, <a href="/blog#tag-ai-agents" class="tag neutral" data-tag="ai-agents">ai-agents</a>, <a href="/blog#tag-mcp" class="tag neutral" data-tag="mcp">mcp</a>, <a href="/blog#tag-monitoring" class="tag neutral" data-tag="monitoring">monitoring</a>, <a href="/blog#tag-incident" class="tag neutral" data-tag="incident">incident</a>, <a href="/blog#tag-free-tier" class="tag neutral" data-tag="free-tier">free-tier</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Senior backend engineer writing about Spring, distributed systems, and production debugging.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous panel-card"> <a href="/blog/four-reasonable-decisions-and-a-dead-feed"> <span class="nav-label">← previous</span> <span class="nav-title">Four Reasonable Decisions and a Dead Feed</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: color 0.2s, border-color 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
+Subscribe via RSS
+</a> </div> </main> <script>
+// Prevent scroll restoration but don't interfere with navigation
+if ('scrollRestoration' in history) {
+history.scrollRestoration = 'manual';
+}
+// Only scroll to top on actual page refresh (not navigation)
+window.addEventListener('load', () => {
+setTimeout(() => {
+window.scrollTo(0, 0);
+}, 0);
+});
+// Reading progress indicator
+window.addEventListener('scroll', () => {
+const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+const scrolled = (winScroll / height) * 100;
+document.querySelector('.reading-progress').style.width = scrolled + '%';
+});
+// Load view count from GoatCounter
+document.addEventListener('DOMContentLoaded', () => {
+loadViewCount();
+});
+function loadViewCount() {
+const path = window.location.pathname;
+const viewCountElement = document.getElementById('view-count');
+if (!viewCountElement) return;
+fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
+.then(response => {
+if (!response.ok) throw new Error('View count unavailable');
+return response.json();
+})
+.then(data => {
+const count = data.count ?? 0;
+viewCountElement.textContent = `${count.toLocaleString()} views`;
+viewCountElement.hidden = false;
+})
+.catch(() => {
+viewCountElement.hidden = true;
+});
+}
+/* Inline scripts injected from frontmatter */
+{ { inlineScripts } }
+</script> <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script> </body> </html>

@@ -1,5 +1,26 @@
 [
   {
+    "url": "/blog/keepalive-disabled-for-inactivity",
+    "title": "The Keepalive That Was Disabled for Inactivity",
+    "episode": "037",
+    "date": "2026-11-10",
+    "tags": [
+      "scalable-chat-platform",
+      "aiven",
+      "postgresql",
+      "github-actions",
+      "ai-agents",
+      "mcp",
+      "monitoring",
+      "incident",
+      "free-tier"
+    ],
+    "description": "In August I shipped a workflow to stop Aiven powering off my free Postgres. The event log says it lost: the write ping ran every six hours for twelve days and Aiven powered the service down anyway. Meanwhile GitHub disabled the whole workflow for repository inactivity on day 62 — an inactivity shutdown one layer up — and the API half never ran at all because its secret was never set.",
+    "readingTime": 16,
+    "wordCount": 3300,
+    "slug": "keepalive-disabled-for-inactivity"
+  },
+  {
     "url": "/blog/four-reasonable-decisions-and-a-dead-feed",
     "title": "Four Reasonable Decisions and a Dead Feed",
     "episode": "036",

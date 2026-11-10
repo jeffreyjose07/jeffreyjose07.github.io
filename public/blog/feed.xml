@@ -10,9 +10,204 @@
     <link>https://jeffreyjose07.is-a.dev/blog</link>
     <atom:link href="https://jeffreyjose07.is-a.dev/blog/feed.xml" rel="self" type="application/rss+xml"/>
     <language>en-us</language>
-    <lastBuildDate>Wed, 05 Aug 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 10 Nov 2026 00:00:00 GMT</lastBuildDate>
     <generator>Custom Node.js Blog Builder</generator>
     <copyright>Copyright 2026 Jeffrey Jose</copyright>
+    <item>
+      <title><![CDATA[The Keepalive That Was Disabled for Inactivity]]></title>
+      <description><![CDATA[In August I shipped a workflow to stop Aiven powering off my free Postgres. The event log says it lost: the write ping ran every six hours for twelve days and Aiven powered the service down anyway. Meanwhile GitHub disabled the whole workflow for repository inactivity on day 62 — an inactivity shutdown one layer up — and the API half never ran at all because its secret was never set.]]></description>
+      <link>https://jeffreyjose07.is-a.dev/blog/keepalive-disabled-for-inactivity</link>
+      <guid isPermaLink="true">https://jeffreyjose07.is-a.dev/blog/keepalive-disabled-for-inactivity</guid>
+      <pubDate>Tue, 10 Nov 2026 00:00:00 GMT</pubDate>
+      <author>jeffrey.jose07@gmail.com (Jeffrey Jose)</author>
+      <dc:creator><![CDATA[Jeffrey Jose]]></dc:creator>
+      <category><![CDATA[scalable-chat-platform]]></category>
+      <category><![CDATA[aiven]]></category>
+      <category><![CDATA[postgresql]]></category>
+      <category><![CDATA[github-actions]]></category>
+      <category><![CDATA[ai-agents]]></category>
+      <category><![CDATA[mcp]]></category>
+      <category><![CDATA[monitoring]]></category>
+      <category><![CDATA[incident]]></category>
+      <category><![CDATA[free-tier]]></category>
+      <media:thumbnail url="https://jeffreyjose07.is-a.dev/assets/thumbnails/keepalive-disabled-for-inactivity.png" />
+      <content:encoded><![CDATA[<p>Working log for <a href="https://github.com/jeffreyjose07/scalable-chat-platform">scalable-chat-platform</a>. <strong>Previous:</strong> <a href="https://jeffreyjose07.is-a.dev/blog/two-month-outage-aiven-dns-and-jdbc-urls">The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL</a>.</p>
+<p>Episode 033 ended on a confident note. The app was up, the keep-alive was green, and I wrote that the health endpoint was &quot;once again the first place I will look — assuming, this time, that something tells me to look.&quot;</p>
+<p>Nothing told me to look. I went looking anyway, three months later. The fix I shipped in August had failed, and it failed in a more interesting way than &quot;it didn&#39;t run&quot;: one half never ran at all, the other half ran perfectly and was beaten anyway, and the thing meant to supervise both was switched off by GitHub for inactivity.</p>
+<p>Then I connected Aiven&#39;s management API and found out the outage I wrote about in episode 033 was the <em>second</em> one.</p>
+<hr>
+<h2>The scoreboard, and why it lies</h2>
+<p>In August I replaced a read-only <code>SELECT now();</code> ping with a workflow testing two hypotheses about what Aiven counts as &quot;activity.&quot; Then I pushed it and stopped thinking about it. Three months of run history:</p>
+<div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">gh</span><span style="color:#98C379"> run</span><span style="color:#98C379"> list</span><span style="color:#D19A66"> --workflow=keep-postgres-alive.yml</span><span style="color:#D19A66"> --limit</span><span style="color:#D19A66"> 400</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#D19A66">  --json</span><span style="color:#98C379"> conclusion</span><span style="color:#D19A66"> -q</span><span style="color:#98C379"> '.[].conclusion'</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">sort</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">uniq</span><span style="color:#D19A66"> -c</span></span></code></pre></div>
+
+<div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span> 256 failure</span></span>
+<span class="line"><span>  25 success</span></span></code></pre></div>
+
+<p>Every one of those 25 successes is in the first week of August, and the last is on <strong>2026-08-07</strong>. My first reading was the obvious one: it went red when the database died and never recovered.</p>
+<p>That reading is wrong, and the way it is wrong is the most useful thing in this post. The job was red for three months because of a <em>missing secret in its first step</em>, not because the database was unreachable. For long stretches inside those 256 failures, the part I actually cared about was working fine. A red job conclusion told me nothing, and I had trained myself to read it as if it told me everything.</p>
+<h2>Hypothesis A never ran, not once</h2>
+<p>The first hypothesis was that Aiven&#39;s notion of activity concerns the <em>platform</em>, not the database — the warning email says free services are powered off if &quot;they or the Aiven platform aren&#39;t actively used,&quot; and the remedy it prescribes is logging into the Console. An authenticated API call was the closest programmatic stand-in, and I thought it the stronger bet.</p>
+<div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">AIVEN_API_TOKEN</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">##[error]Set repository secret AIVEN_API_TOKEN (Aiven Console -> User profile -> Tokens).</span></span></code></pre></div>
+
+<p>Empty, on every run from August to October. The half of the experiment I considered most likely to be the answer <strong>never executed a single time</strong>, and I have no data about it whatsoever.</p>
+<p>That is a design fault rather than an oversight. I wrote a step that fails loudly without a secret, handed over an instruction to create that secret, and built nothing that would notice if it never happened. In a run history, &quot;never ran&quot; and &quot;ran and failed&quot; render identically — both are a red X. I had 256 of them and could not distinguish the two states without opening a log.</p>
+<p><strong>An unset secret is an untested hypothesis wearing a failure&#39;s clothes.</strong> Worse: here it was also a <em>successful</em> hypothesis wearing a failure&#39;s clothes, because it masked this.</p>
+<h2>Hypothesis B ran correctly for twelve days and lost</h2>
+<p>The second hypothesis was that a genuine write might register where a read did not — <code>INSERT … ON CONFLICT DO UPDATE</code>, generating WAL and advancing the transaction id. I verified the SQL against a throwaway Postgres before shipping, and in my first pass at this post I wrote that it &quot;could never have worked,&quot; reasoning that a powered-off service has no DNS record, so the write could never land.</p>
+<p>That is true of <em>recovery</em> and irrelevant to <em>prevention</em>. Here is a run from 5 September:</p>
+<div class="code-block-wrap" data-lang="sql"><span class="code-lang" aria-hidden="true">sql</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">INSERT INTO</span><span style="color:#ABB2BF"> keepalive_ping </span><span style="color:#C678DD">AS</span><span style="color:#ABB2BF"> k (id, last_ping, ping_count)</span></span>
+<span class="line"><span style="color:#C678DD">        SET</span><span style="color:#ABB2BF"> last_ping  </span><span style="color:#56B6C2">=</span><span style="color:#C678DD"> now</span><span style="color:#ABB2BF">(),</span></span>
+<span class="line"><span style="color:#ABB2BF">            ping_count </span><span style="color:#56B6C2">=</span><span style="color:#D19A66"> k</span><span style="color:#ABB2BF">.</span><span style="color:#D19A66">ping_count</span><span style="color:#ABB2BF"> + </span><span style="color:#D19A66">1</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF"> id |           last_ping           | ping_count</span></span></code></pre></div>
+
+<p>The write landed. It kept landing, every six hours. And the Aiven event log records what happened next:</p>
+<div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#98C379">2026-09-02T15:37:11Z  jeffreyjose.k@gmail.com  Powered on the service</span></span>
+<span class="line"><span style="color:#98C379">2026-09-14T23:26:58Z  Aiven Automation         Powered down the free service due to inactivity</span></span></code></pre></div>
+
+<p>Twelve days of a WAL-generating write every six hours, and Aiven powered the service down <strong>for inactivity</strong>. The same thing had already happened in August: powered on the 15th, write ping running the whole time, powered down on the 24th.</p>
+<p>So hypothesis B is not untested and not unworkable. It is <strong>falsified</strong>. Writing to a free Aiven Postgres on a six-hour cadence does not stop Aiven from deciding the service is inactive. Whatever that automation measures, it is not transactions.</p>
+<p>This is a better outcome than the one in my draft. &quot;Could never have worked&quot; is an argument. &quot;Ran for twelve days and the service was powered off anyway&quot; is a result.</p>
+<h2>The event log is the only honest history</h2>
+<p>Episode 033&#39;s closing lesson was <em>check the platform, not your config</em>. I had been reconstructing this incident from GitHub Actions logs and <code>dig</code>. One call to Aiven&#39;s event log replaced all of it:</p>
+<table>
+<thead>
+<tr>
+<th>Powered on (actor)</th>
+<th>Powered down by Aiven</th>
+<th>Days up</th>
+<th>Keepalive in place</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>—</td>
+<td>2026-03-07</td>
+<td>—</td>
+<td>none</td>
+</tr>
+<tr>
+<td>2026-05-19 (me)</td>
+<td>2026-05-24</td>
+<td>5</td>
+<td>none</td>
+</tr>
+<tr>
+<td>2026-05-27 (me)</td>
+<td>2026-06-09</td>
+<td>13</td>
+<td>none</td>
+</tr>
+<tr>
+<td>2026-08-01 (me)</td>
+<td>2026-08-07</td>
+<td>6</td>
+<td>read-only <code>SELECT</code></td>
+</tr>
+<tr>
+<td>2026-08-15 (me)</td>
+<td>2026-08-24</td>
+<td>9</td>
+<td>WAL write</td>
+</tr>
+<tr>
+<td>2026-09-02 (me)</td>
+<td>2026-09-14</td>
+<td>12</td>
+<td>WAL write</td>
+</tr>
+<tr>
+<td>2026-11-10 (me)</td>
+<td>—</td>
+<td>—</td>
+<td>Aiven agent</td>
+</tr>
+</tbody></table>
+<p>Four things fall out of that table.</p>
+<p><strong>Every power-on in eight months was manual.</strong> Six of them, all with my address in the <code>actor</code> field. Every power-down was <code>Aiven Automation</code>, every one citing inactivity. Nothing I have ever built has recovered this database. I have been the recovery mechanism, running on an interval of &quot;whenever I happen to notice,&quot; which the table measures at between five days and two and a half months.</p>
+<p><strong>There is no fixed threshold.</strong> Five, thirteen, six, nine, twelve days. In August I listed &quot;the exact inactivity threshold&quot; as the key missing number and assumed it was a constant I hadn&#39;t found. It isn&#39;t a constant. Aiven&#39;s own free-tier documentation declines to give a figure, and the event log shows why — the interval varies by a factor of nearly three.</p>
+<p><strong>The keepalive cannot be credited with the variation.</strong> The write-ping windows are the two longest of the four short ones (9 and 12 days), which looks encouraging until you notice that a window with no keepalive at all ran 13 days. With n=5 and a spread of 5–13, the variance swallows any effect. I can say the write ping did not prevent the power-off. I cannot say it did nothing, and I am not going to pretend otherwise.</p>
+<p><strong>Episode 033 documented the wrong outage.</strong> That post was about a two-month blackout, which the log dates to 2026-06-09 → 2026-08-01, fifty-three days. Directly above it sits <strong>2026-03-07 → 2026-05-19: seventy-three days</strong>, twenty days longer, which I never knew about and which no post of mine mentions. I wrote three thousand words about my worst outage while a worse one sat one row up in a log I hadn&#39;t thought to read.</p>
+<h2>The finding: the monitor was disabled for inactivity</h2>
+<p>The run history stops on 2026-10-16. Not a failure — it simply stops, 25 days before I went looking.</p>
+<div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">gh</span><span style="color:#98C379"> workflow</span><span style="color:#98C379"> list</span><span style="color:#D19A66"> --all</span><span style="color:#D19A66"> --json</span><span style="color:#98C379"> name,state</span><span style="color:#D19A66"> -q</span><span style="color:#98C379"> '.[] | "\(.state)  \(.name)"'</span></span></code></pre></div>
+
+<div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>active                Frontend CI</span></span>
+<span class="line"><span>disabled_inactivity   Keep Postgres Alive</span></span>
+<span class="line"><span>disabled_inactivity   Keep Redis Alive</span></span>
+<span class="line"><span>disabled_inactivity   Ping app health</span></span>
+<span class="line"><span>active                Dependabot Updates</span></span></code></pre></div>
+
+<p><code>disabled_inactivity</code>. GitHub disables scheduled workflows in repositories with no activity for 60 days. My last commit was the keepalive experiment itself, on 2026-08-15 — and Aug 15 to Oct 16 is <strong>62 days</strong>. The rule fired almost exactly on schedule.</p>
+<p>So the chain reads: the free Postgres powers off because nothing used it for long enough, and the GitHub Action built specifically to prevent that is switched off because nobody committed to its repository for long enough. <strong>The watchdog was killed by the same kind of timer it was built to defeat, one layer up.</strong></p>
+<p>Neither policy is a bug. Nobody should burn cloud capacity on abandoned projects, and a cron job firing forever against a repo its owner forgot is exactly the waste GitHub&#39;s rule exists to stop. The failure is in the composition: I built a free-tier guard on top of a free tier and never asked what <em>its</em> idle policy was.</p>
+<p>One more detail in that output. <code>Frontend CI</code> and <code>Dependabot Updates</code> are still <code>active</code> — event-triggered workflows are unaffected, only <code>schedule:</code> gets disabled. Every alarm I had was on a schedule. They all went quiet together, which is the worst possible correlation for a set of supposedly independent alarms.</p>
+<h2>What an Aiven managed agent changes</h2>
+<p>The fix now in place is an Aiven <strong>managed agent</strong> — <code>postgres-health-monitor</code>, running <code>gemini-3.8-flash</code> hourly, inside the Aiven project itself. <a href="https://aiven.io/docs/tools/agents">Managed Agents</a> is in limited availability; you request access per project and enable it once approved. Its instructions tell it to enumerate services, inspect health and node state, and restart any PostgreSQL service failing three consecutive health checks, with guardrails against destructive actions.</p>
+<p>The important thing about it is not the model and not the remediation logic. It is the <strong>address</strong>.</p>
+<p>Every previous version of this guard lived somewhere that could go idle: a GitHub Actions schedule in a repository I might not commit to, pinging a database that might not exist. The agent lives on Aiven&#39;s side of the boundary. It has no repository to go quiet, and crucially it does not need the database to be reachable to do its job — it talks to the management API, which answers whether or not any VMs exist. Both August hypotheses failed on placement rather than logic. This one is placed correctly, and placement is the thing that was actually wrong.</p>
+<h3>My prediction, written down to be falsified</h3>
+<p><strong>The restart branch will rarely or never fire, and the agent will work anyway.</strong></p>
+<p>An agent that runs hourly and calls the management API to list projects and inspect services is, every hour, <em>using the Aiven platform</em>. That is hypothesis A — the one whose secret I never set — finally running in production, by accident, on someone else&#39;s infrastructure. The remediation is the headline feature; the heartbeat is the mechanism.</p>
+<p>Note what the table above says about this: today&#39;s power-on at 14:29 was mine, not the agent&#39;s. The agent is minutes old and has recovered nothing yet. In eight months of event log there is not one automated recovery of any kind. So this prediction is live, and the event log is exactly where it will be settled — the next <code>service_poweron</code> row will name either <code>Aiven Automation</code>, the agent, or me.</p>
+<h2>Four things in those instructions worth a second look</h2>
+<p>I read the agent&#39;s system instructions against Aiven&#39;s documentation. Four mismatches, worst first.</p>
+<p><strong>The remediation verb may not match the failure mode.</strong> The instructions say to &quot;initiate a service restart.&quot; Aiven&#39;s <a href="https://aiven.io/docs/platform/concepts/service-power-cycle">power cycle documentation</a> describes three operations on this axis — power off, power on, delete — and restart is not among them. A powered-off service has had its VMs <em>removed from the cloud</em>; there is no process to restart. Recovery is <code>avn service update SERVICE_NAME --power-on</code>, which creates new VMs and restores from the latest backup, and can take &quot;from a few minutes to a few hours.&quot; If the agent&#39;s tool surface offers a restart but not a power-on, the one scenario I built it for is the one scenario it cannot fix. And the event log confirms the state it will actually encounter is <code>service_poweroff</code>, not a sick node.</p>
+<p><strong>A powered-off service may not fail a health check — it has no health to check.</strong> The trigger is &quot;three consecutive health check failures.&quot; A service with no nodes doesn&#39;t report failing nodes; <code>aiven_service_get</code> returns a <code>state</code>. Mine currently reads <code>RUNNING</code> with one node <code>running</code>. Powered off, there is nothing to fail three times. The condition worth watching is <code>state != RUNNING</code>, which is simpler and strictly more reliable than counting failures.</p>
+<p><strong>The 403 is about the agent&#39;s identity, not yours.</strong> The permissions error reads <code>user_role_not_allowed_to_perform_operation</code>, which sounds like it refers to you. It doesn&#39;t. <a href="https://aiven.io/docs/tools/agents/permissions">Agents get their own Aiven identity</a> — &quot;the agent uses this identity, not yours&quot; — with its own MCP role: read-only, read-write, or full access. Read-write explicitly cannot create or delete services; changing service configuration needs full access. A power-on is a service update. So an agent under-privileged enough to be refused the event log is very likely under-privileged enough to be refused the power-on, and it would discover that at the worst possible moment. That is a role to fix in the integration settings, not a prompt to reword. For contrast, my own membership on this project reads <code>admin</code> — which is why the same event-log call that 403&#39;d for the agent returned twelve rows for me.</p>
+<p><strong>A system instruction is not a constraint.</strong> The 404 came from calling <code>/v1/project/chat-platform</code> when the project is <code>chat-platform-db</code>. The usual reading is that the model shortened a name from conversational context. What makes it interesting is that the instructions <em>already forbid this</em>, in as many words: &quot;Dont ask the user which project to use — call the Aiven project-listing tool to resolve it yourself.&quot; The instruction to look it up rather than guess was present, and it guessed anyway. Prompt text expresses a preference. If a value must be correct, pin it literally or make the lookup the only path to it. <code>aiven_project_list</code> returns exactly one project here, so there was never anything to guess.</p>
+<h2>Three expiry timers, stacked</h2>
+<p>The agent is a better design than mine. It also sits on three clocks, and I would rather write them down now than rediscover them in a log:</p>
+<table>
+<thead>
+<tr>
+<th>Clock</th>
+<th>Length</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Agent MCP token</td>
+<td>90 days</td>
+<td>Aiven-managed and not viewable; renewed by reconnecting MCP for the agent</td>
+</tr>
+<tr>
+<td>Platform trial</td>
+<td>30 days remaining</td>
+<td>$50 of credits, against <strong>non-free</strong> plans only</td>
+</tr>
+<tr>
+<td>Powered-off service</td>
+<td>180 days</td>
+<td>Service is deleted automatically</td>
+</tr>
+</tbody></table>
+<p>The second row has a wrinkle worth stating plainly, because I assumed otherwise before checking. <code>aiven_service_get</code> reports this service as <code>plan: free-1-1gb</code>, <code>plan_price_usd: 0</code>. The trial credits apply to non-free plans, so they are not protecting this database and the free-tier power-off policy applies in full. The trial is not a reprieve.</p>
+<p>The 90-day row is this post&#39;s own lesson wearing better clothes. An agent whose credential silently expires in 90 days is a workflow that silently disables in 62. The failure mode is identical: the guard stops, nothing announces it, and the thing it guarded is fine right up until it isn&#39;t. I don&#39;t have a clean answer for that. The honest version is that every free or trial tier in this chain has an idle or expiry policy, each longer than my attention span and shorter than forever, and the only durable fix is the one I keep declining to buy.</p>
+<h2>Where it actually stands</h2>
+<p>Not fixed. The database is genuinely back — <code>state: RUNNING</code>, one node <code>running</code>, <code>pg_version</code> 15.19, and a fresh backup at 14:37 today. The backup list is its own little tell:</p>
+<div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>2026-09-13_03-54   42885294</span></span>
+<span class="line"><span>2026-09-14_03-54   42936494</span></span>
+<span class="line"><span>2026-11-10_14-37   42956974</span></span></code></pre></div>
+
+<p>Two days in September, then a 57-day hole, then today. Backups stop when the VMs stop; the gap is the outage, recorded in a field nobody thinks to read.</p>
+<p>The app in front of it, though, is down:</p>
+<div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">curl</span><span style="color:#D19A66"> -sS</span><span style="color:#D19A66"> --max-time</span><span style="color:#D19A66"> 120</span><span style="color:#D19A66"> -w</span><span style="color:#98C379"> "HTTP=%{http_code} time=%{time_total}s\n"</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#98C379">  https://scalable-chat-platform.onrender.com/api/health/status</span></span></code></pre></div>
+
+<p>The first request returned <strong>zero bytes after 75 seconds</strong>; the second returned <strong>HTTP 502 in 9.3 seconds</strong>. Episode 033 built the taxonomy for exactly this: zero bytes after a long timeout means nothing upstream accepted the connection, and a fast 502 is Render&#39;s own page for a container that died. The first request woke something; the second got the corpse.</p>
+<p>So the database being reachable is necessary and not sufficient. The app still carries the boot dependency I identified in August and never fixed — <code>ddl-auto: update</code> makes Hibernate connect during startup, so any container that tried to boot while the database was off crashed, and nothing redeploys it when the database returns. The agent solves the database&#39;s inactivity problem. It does not solve the app&#39;s inability to survive the database being gone, which is the thing that turns a six-day power-off into a fifty-three-day outage.</p>
+<p>That is the next piece of work, and it is a code change rather than a configuration one.</p>
+<h2>Lessons</h2>
+<p><strong>A red check is not a signal, it is a prompt to read a log.</strong> 256 failures encoded at least three distinct states — secret missing, host unresolvable, and write succeeding while a sibling step failed — and the dashboard rendered all three identically. If a step can fail for a reason that isn&#39;t the thing you&#39;re monitoring, it will, and it will hide the thing you&#39;re monitoring.</p>
+<p><strong>Ask what the idle policy is of the thing you use to defeat an idle policy.</strong> Free tiers compose, and so do their timers. A scheduled GitHub Action guarding a free database is two inactivity clocks in series, and the shorter one wins.</p>
+<p><strong>A keepalive you cannot measure is a belief.</strong> I shipped a write ping, never checked whether it ran, and would have gone on believing it worked. The event log settled in one call what three months of run history could not.</p>
+<p><strong>Move the watchdog outside the thing it watches, and prefer the control plane.</strong> The agent&#39;s advantage is not that it is cleverer. It lives somewhere that does not go idle and talks to an API that answers when every VM is gone.</p>
+<p><strong>A system instruction is a preference, not a constraint.</strong> The agent&#39;s own prompt told it to look the project name up instead of guessing. It guessed. Anything that must be correct should not depend on a model choosing to comply.</p>
+<p><strong>Read the vendor&#39;s verbs.</strong> &quot;Restart&quot; and &quot;power on&quot; sound interchangeable and are not: one acts on a running process, the other rebuilds VMs from backup and can take hours. Remediation has to name the operation the platform actually implements.</p>
+<p><strong>Check the platform, not your config — and then check the parts of the platform you didn&#39;t think to ask about.</strong> I ended episode 033 on the first half of that and still managed to miss a seventy-three-day outage sitting one row above the one I wrote about. <code>render.yaml</code> still says <code>plan: starter</code>. The event log, the workflow states, and the backup list tell the truth.</p>
+]]></content:encoded>
+    </item>
     <item>
       <title><![CDATA[Four Reasonable Decisions and a Dead Feed]]></title>
       <description><![CDATA[Every page on this blog advertised an RSS feed that returned 404. No single line of code was wrong — four independently sensible decisions composed into a file that existed only inside a CI runner. Plus a cross-domain sitemap, a verification file an SPA can fake, and what Hugo, Astro and Eleventy do differently.]]></description>
@@ -1955,65 +2150,6 @@
 <p>With the critical bugs squashed, I was able to re-enable the retro animations (like the &quot;digital rain&quot; effect) and the subtle sound effects that give this blog its unique cyberpunk aesthetic.</p>
 <h2>Conclusion</h2>
 <p>These updates highlight the importance of balancing aesthetic features with core usability. While animations are fun, they should never come at the cost of content accessibility. And sometimes, the trickiest bugs are hidden in the simplest places—like a few extra spaces in a template placeholder.</p>
-]]></content:encoded>
-    </item>
-    <item>
-      <title><![CDATA[Refining Navigation and Branding: A Journey to Consistency]]></title>
-      <description><![CDATA[How I unified the navigation experience across my portfolio, blog, and games, and refined the 'JJ' logo for better visibility.]]></description>
-      <link>https://jeffreyjose07.is-a.dev/blog/refining-navigation-and-branding-a-journey-to-consistency</link>
-      <guid isPermaLink="true">https://jeffreyjose07.is-a.dev/blog/refining-navigation-and-branding-a-journey-to-consistency</guid>
-      <pubDate>Sun, 30 Nov 2025 00:00:00 GMT</pubDate>
-      <author>jeffrey.jose07@gmail.com (Jeffrey Jose)</author>
-      <dc:creator><![CDATA[Jeffrey Jose]]></dc:creator>
-      <category><![CDATA[design]]></category>
-      <category><![CDATA[branding]]></category>
-      <category><![CDATA[ux]]></category>
-      <category><![CDATA[frontend]]></category>
-      <category><![CDATA[css]]></category>
-      <media:thumbnail url="https://jeffreyjose07.is-a.dev/assets/thumbnails/refining-navigation-and-branding-a-journey-to-consistency.png" />
-      <content:encoded><![CDATA[<p>Consistency is key in design. When I looked at my portfolio, I realized that while individual sections looked great, the overall experience felt disjointed. The blog had a different header than the main site, the games had their own unique navigation, and the logo—while cool—wasn&#39;t as visible as I wanted it to be.</p>
-<p>Today, I embarked on a mission to unify the branding and navigation across the entire <code>jeffreyjose07.github.io</code> ecosystem. Here&#39;s how I did it.</p>
-<h2>The &quot;JJ&quot; Monogram</h2>
-<p>The first step was to refine the logo. I wanted something bold, geometric, and instantly recognizable. The previous iteration was a bit too subtle.</p>
-<p>I iterated on a design featuring two thick, rounded J&#39;s. To add a bit of dynamism, I made the left &#39;J&#39; start slightly higher than the right one, and added a distinct dot on the right side. This created a balanced yet energetic monogram that works perfectly as a favicon and a header logo.</p>
-<div class="code-block-wrap" data-lang="xml"><span class="code-lang" aria-hidden="true">xml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">svg</span><span style="color:#D19A66"> xmlns</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"http://www.w3.org/2000/svg"</span><span style="color:#D19A66"> viewBox</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"0 0 512 512"</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">defs</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">linearGradient</span><span style="color:#D19A66"> id</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"grad"</span><span style="color:#D19A66"> x1</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"0%"</span><span style="color:#D19A66"> y1</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"0%"</span><span style="color:#D19A66"> x2</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"100%"</span><span style="color:#D19A66"> y2</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"100%"</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">stop</span><span style="color:#D19A66"> offset</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"0%"</span><span style="color:#D19A66"> style</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"stop-color:#7c3aed;stop-opacity:1"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">      &#x3C;</span><span style="color:#E06C75">stop</span><span style="color:#D19A66"> offset</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"100%"</span><span style="color:#D19A66"> style</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"stop-color:#3b82f6;stop-opacity:1"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">    &#x3C;/</span><span style="color:#E06C75">linearGradient</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;/</span><span style="color:#E06C75">defs</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">  &#x3C;!-- Left J --></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">path</span><span style="color:#D19A66"> d</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"M180 120 V340 A60 60 0 0 1 60 340"</span><span style="color:#ABB2BF"> </span></span>
-<span class="line"><span style="color:#D19A66">        fill</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"none"</span><span style="color:#D19A66"> stroke</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"url(#grad)"</span><span style="color:#D19A66"> stroke-width</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"80"</span><span style="color:#D19A66"> stroke-linecap</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"round"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">  &#x3C;!-- Right J --></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">path</span><span style="color:#D19A66"> d</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"M332 172 V340 A60 60 0 0 1 212 340"</span><span style="color:#ABB2BF"> </span></span>
-<span class="line"><span style="color:#D19A66">        fill</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"none"</span><span style="color:#D19A66"> stroke</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"url(#grad)"</span><span style="color:#D19A66"> stroke-width</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"80"</span><span style="color:#D19A66"> stroke-linecap</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"round"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">  &#x3C;!-- Dot --></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">circle</span><span style="color:#D19A66"> cx</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"420"</span><span style="color:#D19A66"> cy</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"340"</span><span style="color:#D19A66"> r</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"40"</span><span style="color:#D19A66"> fill</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"url(#grad)"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">svg</span><span style="color:#ABB2BF">></span></span></code></pre></div>
-
-<p>With the new SVG in hand, I regenerated all the favicons—ICO, PNGs, and the Apple Touch Icon—ensuring that the site looks sharp on every device, from a 4K monitor to an iPhone home screen.</p>
-<h2>Unifying the Navigation</h2>
-<p>The biggest challenge was the navigation. My portfolio used a sleek &quot;Top Bar&quot; style, but the blog was still using an older &quot;Floating Pill&quot; design. Worse, the blog had a bug where duplicate menus would sometimes appear.</p>
-<h3>The &quot;Top Bar&quot; Standard</h3>
-<p>I decided to standardize on the &quot;Top Bar&quot; design. It&#39;s clean, professional, and provides easy access to all sections of the site without intruding on the content.</p>
-<p>I updated <code>src/components/Navigation.tsx</code> to solidify this style for the main React app. Then, I turned my attention to the static parts of the site.</p>
-<h3>Fixing the Blog</h3>
-<p>The blog is statically generated using a custom Node.js script. I had to dive into <code>blog/templates/header.html</code> and completely rewrite the CSS and HTML to match the React component.</p>
-<p><strong>Key Changes:</strong></p>
-<ol>
-<li><strong>Fixed Positioning:</strong> Moved from <code>top: 1.5rem</code> to <code>top: 0</code> with <code>width: 100%</code>.</li>
-<li><strong>Backdrop Filter:</strong> Added a blur effect that activates on scroll, giving it that premium glassmorphism look.</li>
-<li><strong>Responsive Design:</strong> Ensured the mobile menu works seamlessly with the new layout.</li>
-</ol>
-<h3>Updating the Games</h3>
-<p>My games—Snake and Void Blocks—are standalone HTML pages. They also needed to join the family. I updated their headers to include the new logo and the standard Top Bar navigation. Now, whether you&#39;re playing a game, reading a blog post, or checking out my projects, the navigation remains consistent.</p>
-<h2>The Result</h2>
-<p>The result is a cohesive, polished experience. The new logo pops, the navigation feels familiar no matter where you are, and the site feels more like a single, unified product rather than a collection of disparate pages.</p>
-<p>It&#39;s a small detail, but in UI/UX, details are everything.</p>
-<hr>
-<p><em>Check out the new logo in the header above!</em></p>
 ]]></content:encoded>
     </item>
   </channel>
