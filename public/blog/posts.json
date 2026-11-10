@@ -16,8 +16,8 @@
       "free-tier"
     ],
     "description": "In August I shipped a workflow to stop Aiven powering off my free Postgres. The event log says it lost: the write ping ran every six hours for twelve days and Aiven powered the service down anyway. Meanwhile GitHub disabled the whole workflow for repository inactivity on day 62 — an inactivity shutdown one layer up — and the API half never ran at all because its secret was never set.",
-    "readingTime": 16,
-    "wordCount": 3300,
+    "readingTime": 18,
+    "wordCount": 3655,
     "slug": "keepalive-disabled-for-inactivity"
   },
   {

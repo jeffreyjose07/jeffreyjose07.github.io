@@ -185,23 +185,70 @@
 <p>The second row has a wrinkle worth stating plainly, because I assumed otherwise before checking. <code>aiven_service_get</code> reports this service as <code>plan: free-1-1gb</code>, <code>plan_price_usd: 0</code>. The trial credits apply to non-free plans, so they are not protecting this database and the free-tier power-off policy applies in full. The trial is not a reprieve.</p>
 <p>The 90-day row is this post&#39;s own lesson wearing better clothes. An agent whose credential silently expires in 90 days is a workflow that silently disables in 62. The failure mode is identical: the guard stops, nothing announces it, and the thing it guarded is fine right up until it isn&#39;t. I don&#39;t have a clean answer for that. The honest version is that every free or trial tier in this chain has an idle or expiry policy, each longer than my attention span and shorter than forever, and the only durable fix is the one I keep declining to buy.</p>
 <h2>Where it actually stands</h2>
-<p>Not fixed. The database is genuinely back — <code>state: RUNNING</code>, one node <code>running</code>, <code>pg_version</code> 15.19, and a fresh backup at 14:37 today. The backup list is its own little tell:</p>
+<p>The database is genuinely back — <code>state: RUNNING</code>, one node <code>running</code>, <code>pg_version</code> 15.19, and a fresh backup at 14:37 today. The backup list is its own little tell:</p>
 <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>2026-09-13_03-54   42885294</span></span>
 <span class="line"><span>2026-09-14_03-54   42936494</span></span>
 <span class="line"><span>2026-11-10_14-37   42956974</span></span></code></pre></div>
 
 <p>Two days in September, then a 57-day hole, then today. Backups stop when the VMs stop; the gap is the outage, recorded in a field nobody thinks to read.</p>
-<p>The app in front of it, though, is down:</p>
+<h3>The correction: the app was asleep, not dead</h3>
+<p>I first published this section saying the app was down, on this evidence:</p>
 <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">curl</span><span style="color:#D19A66"> -sS</span><span style="color:#D19A66"> --max-time</span><span style="color:#D19A66"> 120</span><span style="color:#D19A66"> -w</span><span style="color:#98C379"> "HTTP=%{http_code} time=%{time_total}s\n"</span><span style="color:#56B6C2"> \</span></span>
 <span class="line"><span style="color:#98C379">  https://scalable-chat-platform.onrender.com/api/health/status</span></span></code></pre></div>
 
-<p>The first request returned <strong>zero bytes after 75 seconds</strong>; the second returned <strong>HTTP 502 in 9.3 seconds</strong>. Episode 033 built the taxonomy for exactly this: zero bytes after a long timeout means nothing upstream accepted the connection, and a fast 502 is Render&#39;s own page for a container that died. The first request woke something; the second got the corpse.</p>
-<p>So the database being reachable is necessary and not sufficient. The app still carries the boot dependency I identified in August and never fixed — <code>ddl-auto: update</code> makes Hibernate connect during startup, so any container that tried to boot while the database was off crashed, and nothing redeploys it when the database returns. The agent solves the database&#39;s inactivity problem. It does not solve the app&#39;s inability to survive the database being gone, which is the thing that turns a six-day power-off into a fifty-three-day outage.</p>
-<p>That is the next piece of work, and it is a code change rather than a configuration one.</p>
+<p>The first request returned zero bytes after 75 seconds; the second returned HTTP 502 in 9.3 seconds. Episode 033 built a taxonomy for exactly that — zero bytes means nothing upstream accepted the connection, a fast 502 is Render&#39;s own page for a container that died — so I wrote that the first request woke something and the second got the corpse, and I blamed the boot dependency.</p>
+<p>That was wrong, and the Render logs say so plainly. Every boot in them completes:</p>
+<div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>Started ChatPlatformApplication in 157.503 seconds</span></span>
+<span class="line"><span>Started ChatPlatformApplication in 80.699 seconds</span></span>
+<span class="line"><span>Started ChatPlatformApplication in 82.792 seconds</span></span></code></pre></div>
+
+<p>No exception, no stack trace. The app boots fine. What I measured was a <strong>cold start on a free instance</strong>, and the dashboard explains why: the service runs on Render&#39;s <strong>Free</strong> plan, which spins down after roughly fifteen minutes without traffic — so <code>render.yaml</code>&#39;s <code>plan: starter</code> is still fiction, exactly as episode 033 found. Laid against my own requests:</p>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Event</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>14:36:47</td>
+<td>boot Started (157s); browser traffic at 14:37</td>
+</tr>
+<tr>
+<td>14:51:47</td>
+<td>last scheduler log, then silence</td>
+</tr>
+<tr>
+<td>~14:52</td>
+<td>spun down — last real traffic 14:37, plus fifteen minutes</td>
+</tr>
+<tr>
+<td>15:04:56</td>
+<td><strong>my curl wakes it</strong> → boot Started 80.7s later</td>
+</tr>
+<tr>
+<td>15:06:26</td>
+<td><code>Instance restarted</code></td>
+</tr>
+<tr>
+<td>15:15:23</td>
+<td><code>Instance restarted</code></td>
+</tr>
+<tr>
+<td>15:31</td>
+<td><code>HTTP 200</code> in 5.1s</td>
+</tr>
+</tbody></table>
+<p>My probe was the thing that woke it. The zero bytes was an eighty-second boot in progress; the 502 was Render answering while that boot still ran. Nothing had died. As of this edit the app is fully healthy — <code>HTTP 200</code> in 0.19s, all three dependencies <code>UP</code>, Redis at <strong>66ms</strong> against the 4301ms I measured in August.</p>
+<p>The symmetry with episode 033 is the part worth keeping. That post warned that a 45-second probe timeout against a 45-to-60-second cold start &quot;produces failures that are indistinguishable from a real outage — which is precisely how a genuine outage hid in plain sight.&quot; Startup has since grown to 80–157 seconds. I wrote that warning down, published it, and then walked into it from the other direction: in 033 a real outage hid behind cold starts, and here a cold start impersonated an outage.</p>
+<p>Two things in that table remain real problems. The restarts at 15:06 and 15:15 are genuine and I <strong>cannot</strong> attribute them — an OOM kill and a Render-initiated recycle look identical from inside the container, and <code>-XX:MaxRAMPercentage=75.0</code> asks for a 384 MB heap inside a 512 MB instance, leaving very little for metaspace, code cache and thread stacks. Separately, Render&#39;s <strong>Health Check Path is still empty</strong>, three months after episode 033 called setting it &quot;the single highest-value change on this list.&quot; Nothing probes the app, so a failed boot is never caught and a deploy is marked Live regardless.</p>
+<p>The boot dependency I blamed is still a real design flaw — <code>ddl-auto: update</code> makes Hibernate connect during startup, so a container booting while the database is off cannot start. It just wasn&#39;t what I was looking at. Nor is it idle: the commit Render currently has live is <code>eb20ccd</code>, the August keepalive experiment itself. Nothing has deployed since, because auto-deploy fires on commit and there have been no commits.</p>
+<p>That is the next piece of work, and most of it turns out to be configuration rather than code — the opposite of what I claimed when I first published this.</p>
 <h2>Lessons</h2>
 <p><strong>A red check is not a signal, it is a prompt to read a log.</strong> 256 failures encoded at least three distinct states — secret missing, host unresolvable, and write succeeding while a sibling step failed — and the dashboard rendered all three identically. If a step can fail for a reason that isn&#39;t the thing you&#39;re monitoring, it will, and it will hide the thing you&#39;re monitoring.</p>
 <p><strong>Ask what the idle policy is of the thing you use to defeat an idle policy.</strong> Free tiers compose, and so do their timers. A scheduled GitHub Action guarding a free database is two inactivity clocks in series, and the shorter one wins.</p>
 <p><strong>A keepalive you cannot measure is a belief.</strong> I shipped a write ping, never checked whether it ran, and would have gone on believing it worked. The event log settled in one call what three months of run history could not.</p>
+<p><strong>On a free tier, a cold start and a corpse are the same observation.</strong> Zero bytes then a fast 502 is what a dead container looks like, and also what an eighty-second boot looks like from outside. Only the platform&#39;s own logs separate them — and a probe against a service that spins down changes the state it is measuring, so the first request is never evidence about what was there before it.</p>
 <p><strong>Move the watchdog outside the thing it watches, and prefer the control plane.</strong> The agent&#39;s advantage is not that it is cleverer. It lives somewhere that does not go idle and talks to an API that answers when every VM is gone.</p>
 <p><strong>A system instruction is a preference, not a constraint.</strong> The agent&#39;s own prompt told it to look the project name up instead of guessing. It guessed. Anything that must be correct should not depend on a model choosing to comply.</p>
 <p><strong>Read the vendor&#39;s verbs.</strong> &quot;Restart&quot; and &quot;power on&quot; sound interchangeable and are not: one acts on a running process, the other rebuilds VMs from backup and can take hours. Remediation has to name the operation the platform actually implements.</p>
