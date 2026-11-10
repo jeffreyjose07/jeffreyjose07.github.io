@@ -265,6 +265,8 @@ Even when forced into migration, having a systematic approach prevents data loss
 ### 4. validate data integrity
 Always run comprehensive validation queries post-migration to ensure data consistency.
 
+Row counts and spot-check queries only prove the *data* arrived. Once you have validated the database migration, don't overlook application-level testing—check out this [pre-launch testing guide](https://kuberns.com/blogs/test-web-app-before-going-live/) for a comprehensive checklist covering build and configuration, critical user journeys, integrations, monitoring and recovery.
+
 ### 5. monitor performance metrics
 Track query performance before and after migration to validate improvements.
 
