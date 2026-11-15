@@ -1,6 +1,6 @@
 import { renderToString } from "react-dom/server.browser";
 import App from "./App.tsx";
-import { selectRecentPosts, type BlogPost } from "./components/RecentWriting.tsx";
+import { selectRecentPosts, type BlogPost } from "./lib/recentPosts.ts";
 import "./index.css";
 
 /**

@@ -12,7 +12,7 @@ const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
 
-  const navItems = [
+  const navItems: { label: string; href: string; external?: boolean }[] = [
     { label: "Home", href: "/#hero" },
     { label: "Projects", href: "/#projects" },
     { label: "Blog", href: "/blog", external: true },
@@ -102,7 +102,7 @@ const Navigation = () => {
               href={item.href}
               onClick={(e) => {
                 e.preventDefault();
-                handleNavClick(item.href, (item as any).external);
+                handleNavClick(item.href, item.external);
               }}
               className="px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 hover:bg-accent hover:text-primary"
             >

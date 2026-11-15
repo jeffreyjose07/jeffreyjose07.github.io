@@ -1,30 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
-
-export interface BlogPost {
-  url: string;
-  title: string;
-  episode: string;
-  date: string;
-  tags: string[];
-  description: string;
-  readingTime: number;
-  slug: string;
-}
-
-const POST_COUNT = 4;
-
-/**
- * Newest first: by date, then by episode number.
- *
- * The episode tiebreak matters — posts are frequently published on the same day
- * (033, 034 and 035 all carry 2026-08-01), and comparing dates alone leaves those
- * in whatever order posts.json happens to use. Episode number is the real
- * publication order, so it decides ties rather than relying on sort stability.
- */
-const byMostRecent = (a: BlogPost, b: BlogPost) =>
-  b.date.localeCompare(a.date) ||
-  Number(b.episode) - Number(a.episode);
+import { selectRecentPosts, type BlogPost } from "@/lib/recentPosts";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -52,15 +28,6 @@ const formatPostDate = (iso: string): string => {
 };
 
 /**
- * Surfaces the most recent long-form posts on the front page.
- *
- * The writing is the strongest evidence of how I work — real incidents,
- * measurements and post-mortems — so it should not sit one click away behind a
- * nav link. Data comes from public/blog/posts.json, which the blog build
- * generates on every deploy, so this stays current without a second source of
- * truth.
- */
-/**
  * Posts baked into the page by the prerender step (`scripts/prerender.js`).
  *
  * Without this the component would render nothing on the client's first pass —
@@ -69,14 +36,6 @@ const formatPostDate = (iso: string): string => {
  * and back in when the fetch resolved. Seeding makes the first client render
  * match the HTML that was shipped, and skips the request entirely.
  */
-/**
- * The exact subset this component renders. Exported so the prerender seeds the
- * same list the component would compute — a seed of a different length renders
- * a different number of rows than the prerendered markup contains.
- */
-export const selectRecentPosts = (all: BlogPost[]): BlogPost[] =>
-  [...all].sort(byMostRecent).slice(0, POST_COUNT);
-
 const seededPosts = (): BlogPost[] => {
   if (typeof window === "undefined") return [];
   const seeded = (window as { __RECENT_POSTS__?: BlogPost[] }).__RECENT_POSTS__;
@@ -85,9 +44,18 @@ const seededPosts = (): BlogPost[] => {
   // stays the only place that decides order and count. The prerender seeds an
   // already-trimmed list; re-applying is idempotent and means a seed carrying
   // the full posts.json can never render 37 entries where 4 belong.
-  return [...seeded].sort(byMostRecent).slice(0, POST_COUNT);
+  return selectRecentPosts(seeded);
 };
 
+/**
+ * Surfaces the most recent long-form posts on the front page.
+ *
+ * The writing is the strongest evidence of how I work — real incidents,
+ * measurements and post-mortems — so it should not sit one click away behind a
+ * nav link. Data comes from public/blog/posts.json, which the blog build
+ * generates on every deploy, so this stays current without a second source of
+ * truth.
+ */
 const RecentWriting = () => {
   const [posts, setPosts] = useState<BlogPost[]>(seededPosts);
   const [failed, setFailed] = useState(false);
@@ -106,8 +74,7 @@ const RecentWriting = () => {
       })
       .then((data: BlogPost[]) => {
         if (cancelled) return;
-        const sorted = [...data].sort(byMostRecent);
-        setPosts(sorted.slice(0, POST_COUNT));
+        setPosts(selectRecentPosts(data));
       })
       .catch(() => {
         if (!cancelled) setFailed(true);
