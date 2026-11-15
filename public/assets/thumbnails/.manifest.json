@@ -36,5 +36,7 @@
   "spring-hikari-hogging-and-optimistic-locking.png": "0a916dc06bc677e9",
   "spring-proxies-and-self-invocation.png": "c7e45764038da9df",
   "spring-threadlocals-and-async.png": "34a4958f3a09a4e3",
+  "truthmeter-v2-counting-only-what-git-records.png": "cde0ecdad2f05702",
+  "tuning-a-fire-tv-and-two-phones-over-adb.png": "b1ccb4c0596be8a3",
   "two-month-outage-aiven-dns-and-jdbc-urls.png": "1e125bdaa8ecbd82"
 }

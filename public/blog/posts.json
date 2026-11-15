@@ -1,5 +1,47 @@
 [
   {
+    "url": "/blog/tuning-a-fire-tv-and-two-phones-over-adb",
+    "title": "Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings",
+    "episode": "039",
+    "date": "2026-11-15",
+    "tags": [
+      "android",
+      "adb",
+      "fire-tv",
+      "debloat",
+      "performance",
+      "dns",
+      "battery",
+      "ai-agents",
+      "homelab"
+    ],
+    "description": "One evening, three devices, all over Wi-Fi ADB. I disabled 15 preinstalled apps on a 2 GB Fire TV, measured a DNS ad-blocker and rejected it, checked my phone's battery wear and my wife's Pixel for malware. Every change was reversible. The only thing that broke was the setting I thought was safest: animator_duration_scale, which left the TV's Settings tile dead after a reboot.",
+    "readingTime": 11,
+    "wordCount": 2124,
+    "slug": "tuning-a-fire-tv-and-two-phones-over-adb"
+  },
+  {
+    "url": "/blog/truthmeter-v2-counting-only-what-git-records",
+    "title": "TruthMeter 2.0: Deleting the Guesswork and Counting Only What Git Records",
+    "episode": "038",
+    "date": "2026-11-15",
+    "tags": [
+      "truthmeter-ai",
+      "typescript",
+      "vscode",
+      "git",
+      "ai-agents",
+      "metrics",
+      "testing",
+      "github-actions",
+      "developer-tools"
+    ],
+    "description": "A year after shipping TruthMeter AI, I opened it again and found its core number meant nothing: any paste, any autocomplete and any file containing console.error counted as 'AI'. Version 2 deletes 19,000 lines and measures only verifiable evidence: co-author trailers, git blame survival, fix-within-72h and opt-in agent session logs. It is also the first release published to the Marketplace with no stored token.",
+    "readingTime": 13,
+    "wordCount": 2568,
+    "slug": "truthmeter-v2-counting-only-what-git-records"
+  },
+  {
     "url": "/blog/keepalive-disabled-for-inactivity",
     "title": "The Keepalive That Was Disabled for Inactivity",
     "episode": "037",

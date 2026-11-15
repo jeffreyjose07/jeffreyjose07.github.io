@@ -1,0 +1,840 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings - Jeffrey Jose</title> <meta name="description" content="One evening, three devices, all over Wi-Fi ADB. I disabled 15 preinstalled apps on a 2 GB Fire TV, measured a DNS ad-blocker and rejected it, checked my phone&#39;s battery wear and my wife&#39;s Pixel for malware. Every change was reversible. The only thing that broke was the setting I thought was safest: animator_duration_scale, which left the TV&#39;s Settings tile dead after a reboot." /> <meta property="og:title" content="Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings"> <meta property="og:description" content="One evening, three devices, all over Wi-Fi ADB. I disabled 15 preinstalled apps on a 2 GB Fire TV, measured a DNS ad-blocker and rejected it, checked my phone&#39;s battery wear and my wife&#39;s Pixel for malware. Every change was reversible. The only thing that broke was the setting I thought was safest: animator_duration_scale, which left the TV&#39;s Settings tile dead after a reboot."> <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/tuning-a-fire-tv-and-two-phones-over-adb"> <meta property="og:type" content="article"> <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/tuning-a-fire-tv-and-two-phones-over-adb.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings"> <meta name="twitter:description" content="One evening, three devices, all over Wi-Fi ADB. I disabled 15 preinstalled apps on a 2 GB Fire TV, measured a DNS ad-blocker and rejected it, checked my phone&#39;s battery wear and my wife&#39;s Pixel for malware. Every change was reversible. The only thing that broke was the setting I thought was safest: animator_duration_scale, which left the TV&#39;s Settings tile dead after a reboot."> <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/tuning-a-fire-tv-and-two-phones-over-adb.png"> <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" /> <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" /> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link
+href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@500;600;700;800&display=swap"
+rel="stylesheet"> <style>
+:root {
+--background: #09090b;
+--foreground: #fafafa;
+--primary: #1cc9a0;
+/* Mirrors --primary-foreground in src/index.css. Near-black on teal:
+white failed WCAG AA contrast on every primary surface. */
+--primary-foreground: #09090b;
+--primary-glow: #5eead4;
+--secondary: #18181b;
+--secondary-foreground: #fafafa;
+--muted: #18181b;
+--muted-foreground: #a1a1aa;
+--accent: #18181b;
+--accent-foreground: #fafafa;
+--border: #27272a;
+--input: #27272a;
+--font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+--font-heading: 'Syne', system-ui, sans-serif;
+--font-mono: ui-monospace, 'Menlo', monospace;
+--gradient-hero: linear-gradient(135deg, #09090b, #0c1f1a);
+--gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+--gradient-accent: linear-gradient(135deg, #1cc9a0, #22d3ee);
+--radius: 0.75rem;
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: var(--font-sans);
+background-color: var(--background);
+color: var(--foreground);
+line-height: 1.6;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+overflow-x: hidden;
+max-width: 100vw;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+font-family: var(--font-heading);
+font-weight: 700;
+line-height: 1.2;
+margin-bottom: 1rem;
+letter-spacing: -0.02em;
+}
+a {
+color: inherit;
+text-decoration: none;
+transition: color 0.2s ease;
+}
+.container {
+width: 100%;
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 1.5rem;
+}
+.panel-card {
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
+}
+.panel-card:hover {
+border-color: rgba(28, 201, 160, 0.35);
+}
+.glass {
+background: var(--secondary);
+border: 1px solid var(--border);
+}
+.glass-card {
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+transition: border-color 0.2s ease;
+}
+.glass-card:hover {
+border-color: rgba(28, 201, 160, 0.35);
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: transparent;
+display: inline-block;
+}
+.bg-mesh {
+background-color: var(--background);
+}
+::-webkit-scrollbar {
+width: 8px;
+}
+::-webkit-scrollbar-track {
+background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+background: #3f3f46;
+border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #52525b;
+}
+.sr-only {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+margin: -1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border: 0;
+}
+</style> <style>
+body {
+padding-top: 100px;
+}
+.post-container {
+max-width: 800px;
+margin: 0 auto;
+padding: 2rem;
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+}
+.post-header {
+margin-bottom: 3rem;
+text-align: center;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+padding-bottom: 2rem;
+}
+.post-meta {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 1rem;
+margin-bottom: 1rem;
+font-size: 0.875rem;
+color: var(--muted-foreground);
+}
+.episode-badge {
+background: rgba(28, 201, 160, 0.12);
+color: var(--primary);
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
+font-family: var(--font-mono);
+font-weight: 600;
+font-size: 0.8rem;
+}
+.post-title {
+font-size: clamp(1.75rem, 4vw, 2.5rem);
+line-height: 1.15;
+margin-bottom: 1.5rem;
+color: var(--foreground);
+}
+.post-content {
+font-size: 1.125rem;
+line-height: 1.8;
+color: #d1d5db;
+word-break: break-word;
+}
+.post-content p {
+margin-bottom: 1.5rem;
+}
+.post-content h2 {
+font-size: 1.75rem;
+margin-top: 3rem;
+margin-bottom: 1.5rem;
+color: var(--foreground);
+}
+.post-content h3 {
+font-size: 1.5rem;
+margin-top: 2.5rem;
+margin-bottom: 1rem;
+color: var(--foreground);
+}
+.post-content ul,
+.post-content ol {
+margin-bottom: 1.5rem;
+padding-left: 1.5rem;
+}
+.post-content li {
+margin-bottom: 0.5rem;
+}
+.post-content a {
+color: var(--primary-glow);
+text-decoration: none;
+border-bottom: 1px solid rgba(28, 201, 160, 0.35);
+transition: all 0.2s;
+}
+.post-content a:hover {
+border-bottom-color: var(--primary);
+color: var(--primary);
+}
+.post-content blockquote {
+border-left: 4px solid var(--primary);
+padding-left: 1.5rem;
+margin: 2rem 0;
+font-style: italic;
+color: var(--muted-foreground);
+background: rgba(255, 255, 255, 0.03);
+padding: 1.5rem;
+border-radius: 0 0.5rem 0.5rem 0;
+}
+/* Inline code only — do not paint fenced blocks (Shiki owns those). */
+.post-content :not(pre) > code {
+font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+font-size: 0.9em;
+background: rgba(255, 255, 255, 0.1);
+padding: 0.2em 0.4em;
+border-radius: 0.25rem;
+color: #e2e8f0;
+}
+/* Fenced blocks: Shiki (One Dark Pro) owns token colors via inline styles */
+.post-content .code-block-wrap {
+position: relative;
+margin: 2rem -2rem;
+width: calc(100% + 4rem);
+border-radius: 0.5rem;
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.12);
+background: #282c34;
+box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.post-content .code-block-wrap .code-lang {
+position: absolute;
+top: 0.55rem;
+right: 0.75rem;
+z-index: 1;
+font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+font-size: 0.65rem;
+letter-spacing: 0.04em;
+text-transform: uppercase;
+color: rgba(171, 178, 191, 0.65);
+pointer-events: none;
+user-select: none;
+}
+.post-content pre,
+.post-content .code-block-wrap pre.shiki {
+background: #282c34;
+padding: 1.65rem 1.25rem 1.35rem;
+border-radius: 0.5rem;
+overflow-x: auto;
+margin: 2rem -2rem;
+border: 1px solid rgba(255, 255, 255, 0.1);
+width: calc(100% + 4rem);
+line-height: 1.55;
+}
+.post-content .code-block-wrap pre.shiki {
+margin: 0;
+width: 100%;
+border: none;
+border-radius: 0;
+background: transparent !important;
+}
+@media (max-width: 768px) {
+.post-content pre,
+.post-content .code-block-wrap {
+margin-left: -1rem;
+margin-right: -1rem;
+width: calc(100% + 2rem);
+border-radius: 0;
+}
+}
+.post-content pre code,
+.post-content .code-block-wrap pre.shiki code {
+background: none !important;
+padding: 0;
+font-size: 0.92rem;
+/* Never flatten Shiki token colors */
+color: inherit;
+}
+.post-content .shiki span {
+/* Inline token colors must win over any inherited prose color */
+-webkit-text-fill-color: currentColor;
+}
+/* Must be block: HTML minify collapses newlines between .line spans.
+inline-block + width:100% + leftover spaces keeps every line on one row. */
+.post-content .shiki .line {
+display: block;
+width: 100%;
+min-height: 1.35em;
+white-space: pre;
+}
+.post-content .shiki-fallback {
+margin: 0;
+width: 100%;
+border: none;
+border-radius: 0;
+color: #abb2bf;
+}
+.post-figure {
+margin: 2rem 0;
+border-radius: var(--radius);
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.08);
+background: rgba(255, 255, 255, 0.02);
+}
+.post-content img,
+.post-figure img {
+display: block;
+width: 100%;
+max-width: 100%;
+height: auto;
+margin: 0;
+border-radius: 0;
+box-shadow: none;
+}
+.post-figure img {
+aspect-ratio: auto;
+object-fit: contain;
+background: #0a0a0c;
+}
+.post-footer {
+margin-top: 4rem;
+padding-top: 2rem;
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--muted-foreground);
+font-size: 0.875rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 1rem;
+}
+.post-tags-footer {
+display: flex;
+gap: 0.5rem;
+flex-wrap: wrap;
+}
+.tag-pill {
+font-size: 0.75rem;
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
+background: rgba(255, 255, 255, 0.05);
+color: var(--muted-foreground);
+border: 1px solid rgba(255, 255, 255, 0.1);
+text-decoration: none;
+transition: border-color 0.2s, color 0.2s;
+}
+.tag-pill:hover {
+background: rgba(28, 201, 160, 0.1);
+color: var(--primary);
+border-color: rgba(28, 201, 160, 0.25);
+}
+/* Author card */
+.author-card {
+display: flex;
+align-items: center;
+gap: 1.25rem;
+margin-top: 3rem;
+padding: 1.5rem;
+background: var(--background);
+border: 1px solid var(--border);
+border-radius: 0.5rem;
+}
+.author-avatar-wrap {
+position: relative;
+flex-shrink: 0;
+width: 56px;
+height: 56px;
+}
+.author-avatar {
+width: 56px;
+height: 56px;
+border-radius: 50%;
+object-fit: cover;
+border: 2px solid rgba(28, 201, 160, 0.4);
+display: block;
+}
+.author-avatar-fallback {
+display: none;
+width: 56px;
+height: 56px;
+border-radius: 50%;
+align-items: center;
+justify-content: center;
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.1rem;
+color: var(--primary-foreground);
+background: var(--primary);
+border: 2px solid rgba(28, 201, 160, 0.4);
+}
+.author-avatar-wrap.is-fallback .author-avatar {
+display: none;
+}
+.author-avatar-wrap.is-fallback .author-avatar-fallback {
+display: flex;
+}
+.author-info {
+display: flex;
+flex-direction: column;
+gap: 0.25rem;
+}
+.author-name {
+font-family: var(--font-heading);
+font-weight: 600;
+color: var(--foreground);
+font-size: 1rem;
+}
+.author-bio {
+font-size: 0.85rem;
+color: var(--muted-foreground);
+line-height: 1.5;
+}
+.author-links {
+display: flex;
+gap: 0.75rem;
+margin-top: 0.25rem;
+}
+.author-links a {
+font-size: 0.8rem;
+color: var(--primary-glow);
+text-decoration: none;
+transition: color 0.2s;
+}
+.author-links a:hover {
+color: var(--primary);
+}
+/* Reading progress */
+.reading-progress {
+position: fixed;
+top: 0;
+left: 0;
+height: 3px;
+background: var(--primary);
+z-index: 2000;
+transition: width 0.1s ease;
+}
+/* Navigation */
+.post-navigation {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 1.5rem;
+margin-top: 3rem;
+}
+.nav-previous,
+.nav-next {
+padding: 1.5rem;
+display: flex;
+flex-direction: column;
+}
+.nav-previous a,
+.nav-next a {
+text-decoration: none;
+height: 100%;
+display: flex;
+flex-direction: column;
+}
+.nav-label {
+font-size: 0.75rem;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+color: var(--muted-foreground);
+margin-bottom: 0.5rem;
+}
+.nav-title {
+font-family: var(--font-heading);
+font-weight: 600;
+color: var(--foreground);
+font-size: 1.125rem;
+transition: color 0.2s;
+}
+.nav-previous:hover .nav-title,
+.nav-next:hover .nav-title {
+color: var(--primary-glow);
+}
+.nav-next {
+text-align: right;
+}
+@media (max-width: 768px) {
+.post-title {
+font-size: 2rem;
+}
+.post-navigation {
+grid-template-columns: 1fr;
+}
+.nav-next {
+text-align: left;
+}
+.post-container {
+padding: 1.5rem;
+}
+}
+/* Inline styles injected from frontmatter */
+{
+{
+inlineStyles
+}
+}
+</style> </head> <body class="bg-mesh"> <div class="reading-progress"></div> <style>
+/* Top Bar Header */
+.site-header {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+z-index: 1000;
+transition: all 0.3s ease;
+background: transparent;
+border-bottom: 1px solid transparent;
+}
+.site-header.scrolled {
+background: rgba(9, 9, 11, 0.92);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.header-inner {
+max-width: 1280px;
+margin: 0 auto;
+padding: 1rem 1.5rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+.site-logo {
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.25rem;
+color: var(--foreground);
+text-decoration: none;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: transparent;
+display: inline-block;
+}
+.site-nav {
+display: flex;
+gap: 2rem;
+}
+.nav-link {
+font-family: var(--font-sans);
+font-size: 0.875rem;
+font-weight: 500;
+color: var(--muted-foreground);
+text-decoration: none;
+transition: color 0.2s ease;
+position: relative;
+}
+.nav-link:hover {
+color: var(--primary-glow);
+}
+.nav-link.active {
+color: var(--foreground);
+}
+/* Mobile Menu */
+.mobile-menu-toggle {
+display: none;
+background: none;
+border: none;
+color: var(--foreground);
+cursor: pointer;
+padding: 0.5rem;
+}
+@media (max-width: 768px) {
+.site-nav {
+display: none;
+position: absolute;
+top: 100%;
+left: 0;
+right: 0;
+flex-direction: column;
+background: rgba(9, 9, 11, 0.98);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+padding: 1rem;
+gap: 1rem;
+align-items: center;
+}
+.site-nav.open {
+display: flex;
+animation: slideDown 0.3s ease-out forwards;
+}
+.mobile-menu-toggle {
+display: block;
+}
+}
+@keyframes slideDown {
+from {
+opacity: 0;
+transform: translateY(-10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+/* Search Button */
+.search-trigger {
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--muted-foreground);
+padding: 0.5rem 1rem;
+border-radius: 0.375rem;
+font-size: 0.875rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+transition: all 0.2s ease;
+}
+.search-trigger:hover {
+background: rgba(255, 255, 255, 0.1);
+color: var(--foreground);
+border-color: rgba(255, 255, 255, 0.2);
+}
+.search-text,
+.search-shortcut {
+display: none;
+}
+@media (min-width: 768px) {
+.search-text {
+display: inline;
+}
+.search-shortcut {
+display: inline;
+font-size: 0.75rem;
+opacity: 0.6;
+margin-left: 0.5rem;
+}
+}
+/* Search Modal */
+.search-modal-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(8px);
+z-index: 2000;
+align-items: flex-start;
+justify-content: center;
+padding-top: 100px;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+.search-modal-overlay.open {
+display: flex;
+opacity: 1;
+}
+.search-modal {
+background: #09090b;
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 1rem;
+width: 90%;
+max-width: 600px;
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+overflow: hidden;
+transform: scale(0.95);
+transition: transform 0.3s ease;
+}
+.search-modal-overlay.open .search-modal {
+transform: scale(1);
+}
+.search-input-container {
+padding: 1.5rem;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+display: flex;
+align-items: center;
+}
+.search-icon {
+color: var(--muted-foreground);
+margin-right: 1rem;
+}
+.search-input {
+background: transparent;
+border: none;
+color: var(--foreground);
+font-size: 1.125rem;
+width: 100%;
+outline: none;
+font-family: var(--font-sans);
+}
+.search-results {
+max-height: 400px;
+overflow-y: auto;
+padding: 0.5rem;
+}
+.search-result-item {
+display: block;
+padding: 1rem;
+text-decoration: none;
+color: var(--muted-foreground);
+border-radius: 0.5rem;
+transition: all 0.2s ease;
+margin-bottom: 0.25rem;
+}
+.search-result-item:hover {
+background: rgba(255, 255, 255, 0.05);
+color: var(--foreground);
+}
+.search-result-title {
+font-weight: 600;
+font-size: 1rem;
+color: var(--primary-glow);
+margin-bottom: 0.25rem;
+}
+.search-result-excerpt {
+font-size: 0.875rem;
+color: var(--muted-foreground);
+display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient: vertical;
+overflow: hidden;
+}
+</style> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <img src="/logo.svg" alt="JJ" width="32" height="32"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
+class="text-gradient-premium">Jose</span></span> </a> <nav class="site-nav"> <a href="/#hero" class="nav-link">Home</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/blog" class="nav-link active">Blog</a> <a href="/#contact" class="nav-link">Contact</a> </nav> <div style="display: flex; align-items: center; gap: 1rem;"> <button class="search-trigger" onclick="openSearch()"> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut">⌘K</span> </button> <button class="mobile-menu-toggle" aria-label="Toggle menu"
+onclick="document.querySelector('.site-nav').classList.toggle('open')"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()"> <div class="search-modal"> <div class="search-input-container"> <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts..." id="searchInput" autocomplete="off"> </div> <div class="search-results" id="searchResults"> </div> </div> </div> <script>
+// Header Scroll Effect
+window.addEventListener('scroll', () => {
+const header = document.getElementById('siteHeader');
+if (window.scrollY > 20) {
+header.classList.add('scrolled');
+} else {
+header.classList.remove('scrolled');
+}
+});
+let searchIndex = [];
+let isSearchOpen = false;
+async function loadSearchIndex() {
+if (searchIndex.length > 0) return;
+try {
+const response = await fetch('/blog/search.json');
+searchIndex = await response.json();
+} catch (e) {
+console.error('Failed to load search index', e);
+}
+}
+function openSearch() {
+document.getElementById('searchModal').classList.add('open');
+document.getElementById('searchInput').focus();
+isSearchOpen = true;
+loadSearchIndex();
+document.body.style.overflow = 'hidden';
+}
+function closeSearch() {
+document.getElementById('searchModal').classList.remove('open');
+isSearchOpen = false;
+document.body.style.overflow = '';
+}
+function performSearch(query) {
+if (!query) {
+document.getElementById('searchResults').innerHTML = '';
+return;
+}
+const results = searchIndex.filter(post => {
+const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
+const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
+const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
+return titleMatch || descMatch || tagMatch;
+}).slice(0, 5); // Limit to 5 results
+const resultsHtml = results.map(post => `
+<a href="/blog/${post.slug}" class="search-result-item" onclick="closeSearch()"> <div class="search-result-title">${post.title}</div> <div class="search-result-excerpt">${post.description || ''}</div> </a>
+`).join('');
+document.getElementById('searchResults').innerHTML = results.length > 0
+? resultsHtml
+: '<div style="padding: 1rem; color: var(--muted-foreground); text-align: center;">No results found</div>';
+}
+document.getElementById('searchInput').addEventListener('input', (e) => {
+performSearch(e.target.value);
+});
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+e.preventDefault();
+if (isSearchOpen) closeSearch();
+else openSearch();
+}
+if (e.key === 'Escape' && isSearchOpen) {
+closeSearch();
+}
+});
+</script> <main class="container"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#039</span> <span>15 Nov 2026</span> <span>·</span> <span>11 min read</span> </div> <h1 class="post-title">Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings</h1> </header> <div class="post-content"> <p>Our living room TV is a 43-inch Xiaomi FX Pro, Fire TV Edition. It runs Fire OS 8.1.8.5 (Android 11 underneath) on four Cortex-A55 cores with 2 GB of RAM. Menus lag, apps cold-start slowly, and the home screen is a wall of promoted tiles.</p> <p>I spent an evening on it and on two phones, my Nothing Phone (2) and my wife&#39;s Pixel 7a, using nothing but <code>adb</code> from a Mac over Wi-Fi. Claude Code drove most of the commands while I made the decisions. It turned out that matters for one of the lessons.</p> <p>The device changes were small. The process, and the one thing that went wrong, are worth writing down.</p> <hr> <h2>Rules before commands</h2> <p>Before the first command, I set three rules:</p> <ol> <li><strong>Disable, never uninstall.</strong> <code>pm disable-user --user 0 &lt;package&gt;</code> stops an app from running or appearing without deleting it. <code>pm enable</code> brings it back in a second. On the Fire TV, which is not rootable on this firmware, a mistake with a system package could otherwise mean a factory reset.</li> <li><strong>Write the undo before the change.</strong> Every disabled package went into a timestamped log, and a restore script that re-enabled everything existed before the first package was disabled.</li> <li><strong>One change, then check.</strong> Disable one package, press Home over ADB, and confirm the launcher came back.</li> </ol> <p>And a list of packages never to touch, whatever they look like: <code>tv.launcher</code>, <code>firehomestarter</code>, <code>venezia</code> (the Appstore), <code>tv.livetv</code>, anything in <code>tv.settings.*</code>, <code>tv.ime</code> (the on-screen keyboard), <code>webview.chromium</code>, the <code>alexa*</code> packages, and anything with <code>ota</code> in its name. Disabling the wrong one of those gives you a blank home screen and no keyboard to fix it with.</p> <h2>Connecting</h2> <p>On the Fire TV, ADB over the network is a toggle under <strong>Device &amp; Software → Developer Options</strong>, and it listens on port 5555:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> connect</span><span style="color:#ABB2BF"> &#x3C;</span><span style="color:#98C379">tv-i</span><span style="color:#ABB2BF">p></span><span style="color:#98C379">:5555</span></span> <span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> devices</span><span style="color:#D19A66"> -l</span></span></code></pre></div> <p>Phones on Android 11+ use <strong>wireless debugging</strong> instead, which needs a one-time pairing. The phone shows a pairing port and a six-digit code. After pairing it advertises itself over mDNS on a <strong>random</strong> port that changes whenever wireless debugging restarts:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> pair</span><span style="color:#ABB2BF"> &#x3C;</span><span style="color:#98C379">phone-i</span><span style="color:#ABB2BF">p></span><span style="color:#98C379">:</span><span style="color:#ABB2BF">&#x3C;</span><span style="color:#98C379">pairing-por</span><span style="color:#ABB2BF">t> &#x3C;</span><span style="color:#98C379">cod</span><span style="color:#ABB2BF">e></span></span> <span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> mdns</span><span style="color:#98C379"> services</span><span style="color:#7F848E;font-style:italic">          # find the current connect port</span></span> <span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> connect</span><span style="color:#ABB2BF"> &#x3C;</span><span style="color:#98C379">phone-i</span><span style="color:#ABB2BF">p></span><span style="color:#98C379">:</span><span style="color:#ABB2BF">&#x3C;</span><span style="color:#98C379">connect-por</span><span style="color:#ABB2BF">t></span></span></code></pre></div> <p>One trap cost a few minutes on the Pixel: the pairing dialog has to <strong>stay open on the phone&#39;s screen</strong> until <code>adb pair</code> finishes. If it closes, from a screen timeout or switching apps, pairing fails with an unhelpful <code>protocol fault</code>.</p> <h2>The Fire TV: 15 packages</h2> <p>I listed every enabled package, sorted out what was what, and disabled them one at a time with the Home check after each:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">r</span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF">$(</span><span style="color:#61AFEF">adb</span><span style="color:#D19A66"> -s</span><span style="color:#E06C75"> $S</span><span style="color:#98C379"> shell</span><span style="color:#98C379"> pm</span><span style="color:#98C379"> disable-user</span><span style="color:#D19A66"> --user</span><span style="color:#D19A66"> 0</span><span style="color:#E06C75"> $p</span><span style="color:#ABB2BF"> 2>&#x26;1 | </span><span style="color:#61AFEF">tr</span><span style="color:#D19A66"> -d</span><span style="color:#98C379"> '\r'</span><span style="color:#ABB2BF">)</span></span> <span class="line"><span style="color:#61AFEF">adb</span><span style="color:#D19A66"> -s</span><span style="color:#E06C75"> $S</span><span style="color:#98C379"> shell</span><span style="color:#98C379"> input</span><span style="color:#98C379"> keyevent</span><span style="color:#98C379"> KEYCODE_HOME</span><span style="color:#ABB2BF">; </span><span style="color:#61AFEF">sleep</span><span style="color:#D19A66"> 3</span></span> <span class="line"><span style="color:#61AFEF">adb</span><span style="color:#D19A66"> -s</span><span style="color:#E06C75"> $S</span><span style="color:#98C379"> shell</span><span style="color:#98C379"> dumpsys</span><span style="color:#98C379"> activity</span><span style="color:#98C379"> activities</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">grep</span><span style="color:#D19A66"> -m1</span><span style="color:#98C379"> mResumedActivity</span></span></code></pre></div> <p>The first batch was twelve packages: Amazon miniTV, the shopping app, the game hub, the music and photos apps (<code>bueller.*</code>), the store-display demo content, two onboarding tutorials, a browser for casting web pages, ZEE5, <code>sneakpeek</code> (preview autoplay on the home row) and <code>tv.acr</code>.</p> <p><code>tv.acr</code> is the one I most wanted gone. ACR stands for automatic content recognition: on smart TVs it is the component that fingerprints what is on screen so viewing can be identified. The TV&#39;s ad settings were already all off. The package was still installed.</p> <p>A second batch took out three more preinstalled streaming apps: Dailymotion, Fawesome and Mi TV+. SonyLIV looked just as preinstalled but stayed, because we actually use it. The TV&#39;s usage stats had no entries for any of the four, so &quot;unused&quot; was my claim to make, not something the device could tell me. <strong>A device can show you what&#39;s installed, but only you know what you use.</strong></p> <h2>Animation scales, and the setting that broke Settings</h2> <p>Android has three animation speed settings: <code>window_animation_scale</code>, <code>transition_animation_scale</code> and <code>animator_duration_scale</code>. Setting them to 0.5 halves animation time, and the UI feels much quicker. On phones it&#39;s the standard first tweak. It changes nothing about how fast the device works, only how long it spends animating.</p> <p>I set all three to 0.5 and read them back. The home screen felt noticeably quicker.</p> <p>Then we restarted the TV, and the <strong>Settings tile did nothing</strong>. You could select it, press OK, and nothing opened.</p> <p>I had just disabled twelve system-adjacent packages, so everyone, me and the agent included, suspected the packages. That theory looked good: some Fire OS components only show their dependencies at boot, and the Home check had only proven that the launcher could draw itself on an already-running system. A reboot rebuilds everything, and a missing content provider could plausibly block Settings. The plan became to re-enable all twelve and add them back one at a time with a reboot in between.</p> <p>The system log disagreed before we got that far. The launcher was logging that it was <strong>finishing an activity &quot;to prevent stuck menu&quot;</strong>. The launcher&#39;s slide-out menu waits for its open animation to finish before taking focus. With the animator running at half duration, that handshake no longer happened at the moment the launcher expected, so the menu gave up and closed every time.</p> <p>Setting one value back fixed it:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> shell</span><span style="color:#98C379"> settings</span><span style="color:#98C379"> put</span><span style="color:#98C379"> global</span><span style="color:#98C379"> animator_duration_scale</span><span style="color:#D19A66"> 1.0</span></span></code></pre></div> <p>On the next click, Settings opened, with <code>MainSettingsActivity</code> displayed in 211 ms. The twelve packages stayed disabled, and window and transition scales stayed at 0.5. Those two only affect how the system animates windows. <code>animator_duration_scale</code> changes the timing of every app&#39;s internal animations, including the launcher&#39;s, so it can break an app whose code depends on that timing.</p> <p>Three things I took from this:</p> <ul> <li><strong>My check tested the wrong state.</strong> &quot;Press Home and see the launcher&quot; verifies a system that is already running. The bug only appeared when the launcher started fresh and read the new setting at startup. A change that a process reads at startup needs a restart to test.</li> <li><strong>I suspected the riskiest-looking change and ignored the one I thought was harmless.</strong> Animation scale is a tweak every Android guide recommends. Disabling system packages sounds dangerous. The actual cause was the harmless-looking one.</li> <li><strong>The logs beat the theory.</strong> The package theory was reasonable and would have cost an hour of reboots. <code>logcat</code> had the answer immediately.</li> </ul> <h2>Did it help?</h2> <p>Free memory went from <strong>621 MB</strong> before the changes to about <strong>710–740 MB</strong> after a restart.</p> <p>That comparison isn&#39;t fair, and I&#39;m not going to claim the difference. The 621 MB was measured after the TV had been on for a long time. The later readings came minutes after a fresh boot, and any Android device has more free memory just after booting. I didn&#39;t take a clean baseline after a reboot before changing anything, so I can&#39;t separate the effect of disabling apps from the effect of restarting.</p> <p>What I can say: the home row no longer autoplays previews, ACR is gone, the app list is shorter, and with window and transition animations at 0.5 the UI feels faster. Whether it <em>is</em> faster I didn&#39;t measure, and that&#39;s the honest answer.</p> <h2>The ad blocker I didn&#39;t keep</h2> <p>The remaining annoyance was the promoted tiles on the home screen. Without root, the one practical lever is DNS: Android 9+ supports <strong>Private DNS</strong> (DNS-over-TLS on port 853), configurable per device without touching the router, so the TV could resolve through an ad-blocking resolver like AdGuard DNS.</p> <p>Before committing to it, I measured lookups both ways from the TV:</p> <table> <thead> <tr> <th>Lookup</th> <th>Router DNS</th> <th>AdGuard DNS</th> </tr> </thead> <tbody><tr> <td>Netflix, YouTube</td> <td>6 ms</td> <td>~44 ms</td> </tr> <tr> <td>Hotstar, SonyLIV</td> <td>6 ms</td> <td>114–130 ms</td> </tr> <tr> <td>Amazon Prime Video</td> <td>6 ms</td> <td><strong>764 ms</strong></td> </tr> </tbody></table> <p>Slower lookups are an annoyance on app launch. The second problem was worse. CDNs pick which video server to send you to based on <strong>where your DNS resolver is</strong>. Through the router, Hotstar&#39;s video edge was <strong>9 ms</strong> away. Through AdGuard, which had no resolver in the country at the time, Hotstar sent the TV to an edge <strong>43 ms</strong> away, almost five times farther, for every video segment of every stream.</p> <p>That&#39;s a bad trade for the TV: the home-screen ads are static tiles that no longer autoplay or personalise. Free, ad-supported streams can also refuse to play when their ad server doesn&#39;t resolve. I rolled it back and left DNS on the router.</p> <h2>My phone: the number that actually matters</h2> <p>The Nothing Phone (2) didn&#39;t need speeding up. Its animations were already at 0.5, including the animator, which works fine on the phone. Nothing OS ships with very little bloat. So I checked battery health instead:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> shell</span><span style="color:#98C379"> dumpsys</span><span style="color:#98C379"> batterystats</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">grep</span><span style="color:#D19A66"> -E</span><span style="color:#98C379"> 'Estimated battery capacity|Last learned battery capacity'</span></span></code></pre></div> <p>The battery&#39;s learned capacity was <strong>3,592 mAh</strong> against a design capacity of <strong>4,700 mAh</strong>, about <strong>76%</strong> after roughly three years. Replacement is usually recommended somewhere around 70–80%. That one number explained the phone&#39;s shorter days better than any tweak could, and it means slowing further wear (charging to 80%, Android&#39;s adaptive charging) is worth more than anything else.</p> <p>I also uninstalled 14 apps that I named myself from the list, with <code>adb uninstall --user 0</code>, and logged each one with its Play Store link. My rule here was strict: only apps I named. A long list of other candidates was left alone, including several multi-gigabyte ones, because large isn&#39;t the same as unused.</p> <p>The phone also has a managed work profile, a second Android user. Nothing in it was touched or listed. <code>pm list users</code> shows it exists, and that was all I needed to know.</p> <h2>My wife&#39;s Pixel: the problem was storage</h2> <p>Her Pixel 7a felt slow, and the cause was obvious within a minute: <strong>97 of 110 GB used</strong>. Videos took 27.5 GB, photos 22.7 GB, YouTube downloads 11 GB and app caches 6.9 GB. A phone that is nearly full has less room to work with, and no animation setting will change that.</p> <p>The only change I made was animations to 0.5. Clearing caches would have been safe, since cache is data apps can rebuild, but she said not now. Which apps or videos to delete is her decision, not mine and not the agent&#39;s, so nothing was removed.</p> <p>What I did do was check it for malware, because when a phone feels slow the next question is usually whether something is wrong with it:</p> <ul> <li><strong>Where apps came from.</strong> Every user app&#39;s installer was listed with <code>pm list packages -3 -i</code>, to spot anything not installed from the Play Store.</li> <li><strong>Play Protect</strong> was on.</li> <li><strong>Verified boot</strong> was green, the bootloader locked, no <code>su</code> binary, and the security patch level was from October 2026. Malware that could hide from the other checks would normally have to modify the system, and that would turn verified boot orange or red.</li> <li><strong>The permissions malware uses:</strong> accessibility services, notification listeners, device admins, draw-over-other-apps, usage access, always-on VPN, the default SMS app and user-installed CA certificates. Each was listed and checked.</li> </ul> <p>It was clean. The phone is just nearly full.</p> <h2>Close the doors</h2> <p>ADB over Wi-Fi is a remote control for a device. Anything paired can install apps, read storage and send input over the network. When the work was done, every device got it switched off again:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">adb</span><span style="color:#D19A66"> -s</span><span style="color:#E06C75"> $TV</span><span style="color:#98C379">    shell</span><span style="color:#98C379"> settings</span><span style="color:#98C379"> put</span><span style="color:#98C379"> global</span><span style="color:#98C379"> adb_enabled</span><span style="color:#D19A66"> 0</span><span style="color:#7F848E;font-style:italic">       # Fire TV</span></span> <span class="line"><span style="color:#61AFEF">adb</span><span style="color:#D19A66"> -s</span><span style="color:#E06C75"> $PHONE</span><span style="color:#98C379"> shell</span><span style="color:#98C379"> settings</span><span style="color:#98C379"> put</span><span style="color:#98C379"> global</span><span style="color:#98C379"> adb_wifi_enabled</span><span style="color:#D19A66"> 0</span><span style="color:#7F848E;font-style:italic">  # phones</span></span></code></pre></div> <p>Then I confirmed that the TV&#39;s port 5555 was closed and that neither phone was still advertising wireless debugging over mDNS. Android revokes a paired computer after seven days without a connection anyway, but there&#39;s no reason to leave it open for seven days.</p> <h2>What I&#39;d keep</h2> <ul> <li><strong>Disable instead of uninstall, and write the restore script first.</strong> It cost nothing and meant every decision could be reversed in seconds.</li> <li><strong>Test a change in the state it takes effect in.</strong> If a setting is read at startup, restart the device to test it.</li> <li><strong>Measure before adding a &quot;fix&quot;.</strong> The DNS blocker sounded like a clear win until it sent every Hotstar segment five times farther.</li> <li><strong>Find the actual problem.</strong> The TV needed less running in the background. My phone needed a battery. My wife&#39;s phone needed space. One fixed list of tweaks would have missed two of the three.</li> <li><strong>Use an agent for commands, not decisions.</strong> It ran every command, read every log and kept the restore script current. Which apps go, and on whose phone, stayed decisions for the people who own the devices.</li> </ul> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-android" class="tag neutral" data-tag="android">android</a>, <a href="/blog#tag-adb" class="tag neutral" data-tag="adb">adb</a>, <a href="/blog#tag-fire-tv" class="tag neutral" data-tag="fire-tv">fire-tv</a>, <a href="/blog#tag-debloat" class="tag neutral" data-tag="debloat">debloat</a>, <a href="/blog#tag-performance" class="tag neutral" data-tag="performance">performance</a>, <a href="/blog#tag-dns" class="tag neutral" data-tag="dns">dns</a>, <a href="/blog#tag-battery" class="tag neutral" data-tag="battery">battery</a>, <a href="/blog#tag-ai-agents" class="tag neutral" data-tag="ai-agents">ai-agents</a>, <a href="/blog#tag-homelab" class="tag neutral" data-tag="homelab">homelab</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Senior backend engineer writing about Spring, distributed systems, and production debugging.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous panel-card"> <a href="/blog/truthmeter-v2-counting-only-what-git-records"> <span class="nav-label">← previous</span> <span class="nav-title">TruthMeter 2.0: Deleting the Guesswork and Counting Only What Git Records</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: color 0.2s, border-color 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
+Subscribe via RSS
+</a> </div> </main> <script>
+// Prevent scroll restoration but don't interfere with navigation
+if ('scrollRestoration' in history) {
+history.scrollRestoration = 'manual';
+}
+// Only scroll to top on actual page refresh (not navigation)
+window.addEventListener('load', () => {
+setTimeout(() => {
+window.scrollTo(0, 0);
+}, 0);
+});
+// Reading progress indicator
+window.addEventListener('scroll', () => {
+const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+const scrolled = (winScroll / height) * 100;
+document.querySelector('.reading-progress').style.width = scrolled + '%';
+});
+// Load view count from GoatCounter
+document.addEventListener('DOMContentLoaded', () => {
+loadViewCount();
+});
+function loadViewCount() {
+const path = window.location.pathname;
+const viewCountElement = document.getElementById('view-count');
+if (!viewCountElement) return;
+fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
+.then(response => {
+if (!response.ok) throw new Error('View count unavailable');
+return response.json();
+})
+.then(data => {
+const count = data.count ?? 0;
+viewCountElement.textContent = `${count.toLocaleString()} views`;
+viewCountElement.hidden = false;
+})
+.catch(() => {
+viewCountElement.hidden = true;
+});
+}
+/* Inline scripts injected from frontmatter */
+{ { inlineScripts } }
+</script> <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script> </body> </html>

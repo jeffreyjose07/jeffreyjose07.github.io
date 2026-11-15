@@ -10,9 +10,339 @@
     <link>https://jeffreyjose07.is-a.dev/blog</link>
     <atom:link href="https://jeffreyjose07.is-a.dev/blog/feed.xml" rel="self" type="application/rss+xml"/>
     <language>en-us</language>
-    <lastBuildDate>Tue, 10 Nov 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 15 Nov 2026 00:00:00 GMT</lastBuildDate>
     <generator>Custom Node.js Blog Builder</generator>
     <copyright>Copyright 2026 Jeffrey Jose</copyright>
+    <item>
+      <title><![CDATA[TruthMeter 2.0: Deleting the Guesswork and Counting Only What Git Records]]></title>
+      <description><![CDATA[A year after shipping TruthMeter AI, I opened it again and found its core number meant nothing: any paste, any autocomplete and any file containing console.error counted as 'AI'. Version 2 deletes 19,000 lines and measures only verifiable evidence: co-author trailers, git blame survival, fix-within-72h and opt-in agent session logs. It is also the first release published to the Marketplace with no stored token.]]></description>
+      <link>https://jeffreyjose07.is-a.dev/blog/truthmeter-v2-counting-only-what-git-records</link>
+      <guid isPermaLink="true">https://jeffreyjose07.is-a.dev/blog/truthmeter-v2-counting-only-what-git-records</guid>
+      <pubDate>Sun, 15 Nov 2026 00:00:00 GMT</pubDate>
+      <author>jeffrey.jose07@gmail.com (Jeffrey Jose)</author>
+      <dc:creator><![CDATA[Jeffrey Jose]]></dc:creator>
+      <category><![CDATA[truthmeter-ai]]></category>
+      <category><![CDATA[typescript]]></category>
+      <category><![CDATA[vscode]]></category>
+      <category><![CDATA[git]]></category>
+      <category><![CDATA[ai-agents]]></category>
+      <category><![CDATA[metrics]]></category>
+      <category><![CDATA[testing]]></category>
+      <category><![CDATA[github-actions]]></category>
+      <category><![CDATA[developer-tools]]></category>
+      <media:thumbnail url="https://jeffreyjose07.is-a.dev/assets/thumbnails/truthmeter-v2-counting-only-what-git-records.png" />
+      <content:encoded><![CDATA[<p>Working log for <a href="https://github.com/jeffreyjose07/truthmeterai">truthmeterai</a>. <strong>Previous:</strong> <a href="https://jeffreyjose07.is-a.dev/blog/building-truthmeter-ai-measuring-the-real-impact-o">Building TruthMeter AI: Measuring the Real Impact of AI Coding Assistants</a>.</p>
+<p>Episode 021 opened by complaining that AI vendors publish misleading metrics. &quot;95% acceptance rate&quot; means nothing if developers rewrite what they accept. I built TruthMeter to measure the real thing instead, wrote 4,500 words about it, and shipped it with 145 passing tests.</p>
+<p>A year later I opened it again to update its dependencies. Before touching <code>package.json</code> I read the function every number in the extension depended on. It was producing exactly the kind of number that post complained about.</p>
+<p>This is the story of version 2: what was wrong, what replaced it, and what the replacement says about this blog&#39;s own repository.</p>
+<hr>
+<h2>The function everything rested on</h2>
+<p>Every metric in v1 started from one question: was this edit made by an AI? VS Code has no API for that, so v1 guessed. This is the code from episode 021, unchanged:</p>
+<div class="code-block-wrap" data-lang="typescript"><span class="code-lang" aria-hidden="true">typescript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">private</span><span style="color:#61AFEF"> isAIGenerated</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">change</span><span style="color:#ABB2BF">: </span><span style="color:#E06C75">TextDocumentChangeEvent</span><span style="color:#ABB2BF">): </span><span style="color:#E06C75">boolean</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> text</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> change</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">document</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">getText</span><span style="color:#ABB2BF">();</span></span>
+<span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> insertedLength</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> change</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">contentChanges</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">0</span><span style="color:#ABB2BF">]?.</span><span style="color:#E5C07B">text</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">length</span><span style="color:#56B6C2"> ||</span><span style="color:#D19A66"> 0</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  // Heuristic 1: Large text insertions (>100 chars at once)</span></span>
+<span class="line"><span style="color:#C678DD">  if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">insertedLength</span><span style="color:#56B6C2"> ></span><span style="color:#D19A66"> 100</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">return</span><span style="color:#D19A66"> true</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  // Heuristic 2: Pattern matching for AI signatures</span></span>
+<span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> aiPatterns</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> [</span></span>
+<span class="line"><span style="color:#E06C75">    /</span><span style="color:#56B6C2">\/\/</span><span style="color:#E06C75"> TODO: Implement/</span><span style="color:#C678DD">gi</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#E06C75">    /function\s</span><span style="color:#D19A66">+</span><span style="color:#E06C75">\w</span><span style="color:#D19A66">+</span><span style="color:#56B6C2">\(</span><span style="color:#D19A66">[</span><span style="color:#ABB2BF">^</span><span style="color:#D19A66">)]*</span><span style="color:#56B6C2">\)</span><span style="color:#E06C75">\s</span><span style="color:#D19A66">*</span><span style="color:#E06C75">{\s</span><span style="color:#D19A66">*</span><span style="color:#56B6C2">\/\/</span><span style="color:#E06C75"> Implementation/</span><span style="color:#C678DD">gi</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#E06C75">    /catch\s</span><span style="color:#D19A66">*</span><span style="color:#56B6C2">\(</span><span style="color:#D19A66">[</span><span style="color:#ABB2BF">^</span><span style="color:#D19A66">)]+</span><span style="color:#56B6C2">\)</span><span style="color:#E06C75">\s</span><span style="color:#D19A66">*</span><span style="color:#E06C75">{\s</span><span style="color:#D19A66">*</span><span style="color:#E06C75">console</span><span style="color:#56B6C2">\.</span><span style="color:#E06C75">error/</span><span style="color:#C678DD">gi</span></span>
+<span class="line"><span style="color:#ABB2BF">  ];</span></span>
+<span class="line"><span style="color:#C678DD">  if</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">aiPatterns</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">some</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">pattern</span><span style="color:#C678DD"> =></span><span style="color:#E5C07B"> pattern</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">test</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">text</span><span style="color:#ABB2BF">))) </span><span style="color:#C678DD">return</span><span style="color:#D19A66"> true</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">  // Heuristic 3: Rapid successive changes (AI streaming)</span></span>
+<span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> timeSinceLastChange</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> Date</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">now</span><span style="color:#ABB2BF">() </span><span style="color:#56B6C2">-</span><span style="color:#E5C07B"> this</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">lastChangeTime</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#C678DD">  if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">timeSinceLastChange</span><span style="color:#56B6C2"> &#x3C;</span><span style="color:#D19A66"> 100</span><span style="color:#56B6C2"> &#x26;&#x26;</span><span style="color:#E06C75"> insertedLength</span><span style="color:#56B6C2"> ></span><span style="color:#D19A66"> 20</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">return</span><span style="color:#D19A66"> true</span><span style="color:#ABB2BF">;</span></span></code></pre></div>
+
+<p>Read each heuristic as a test with false positives:</p>
+<ul>
+<li><strong>Heuristic 1</strong> counts any insertion over 100 characters. That includes pasting from Stack Overflow, pasting your own code from another file, and <code>git checkout</code> rewriting a buffer. A paste is not an AI.</li>
+<li><strong>Heuristic 2</strong> is worse than it looks. <code>text</code> is <code>document.getText()</code>, the <strong>whole file</strong>, not the inserted text. Once a file contains one <code>catch (e) { console.error</code>, every edit you make to that file counts as AI-generated, including typing a single character.</li>
+<li><strong>Heuristic 3</strong> treats two changes less than 100 ms apart as AI streaming. Accepting an IntelliSense suggestion, expanding a snippet and format-on-save all do that.</li>
+</ul>
+<p>Everything else sat on top: churn, the &quot;AI share&quot; percentage, the ROI dashboard that turned hours into rupees. The research figures the post quoted were real. They were being multiplied by a number that meant nothing.</p>
+<p>The 145 tests did not catch any of this, and they could not have. They checked that the heuristics returned what the heuristics were written to return. No test asked whether a paste is an AI. <strong>A test suite can only confirm a definition. It cannot tell you the definition is wrong.</strong></p>
+<h2>The rule for version 2</h2>
+<p>One constraint decided everything else: <strong>count only what is recorded somewhere you can verify.</strong> If TruthMeter says a commit is AI-written, you can open the commit and see why. Where no evidence exists, the extension says it doesn&#39;t know instead of guessing.</p>
+<p>That ruled out keystroke timing and pattern matching completely. What is left are four sources of evidence, each of which you can check yourself:</p>
+<ol>
+<li><strong>Attribution in git history.</strong> Co-author trailers, agent bot authors and tool footers.</li>
+<li><strong>Line survival.</strong> <code>git blame</code> at HEAD shows how much of that code still exists.</li>
+<li><strong>Fix within 72 hours.</strong> How often a commit is followed by a fix or revert touching the same files.</li>
+<li><strong>Agent session logs</strong>, opt-in. Claude Code and Codex record every file they edit, locally.</li>
+</ol>
+<p>The rewrite deleted 18,957 lines and added 6,221. Webpack, husky, nyc, the ROI calculator, the keystroke tracker and three planning documents for features that never shipped are all gone. The extension now has zero runtime dependencies and bundles to <strong>32 KB</strong> with esbuild. v1 was 2 MB.</p>
+<figure class="post-figure"><img src="https://jeffreyjose07.is-a.dev/blog/images/truthmeter-v2-dashboard.png" alt="The TruthMeter 2.0 dashboard" loading="lazy" decoding="async"></figure>
+<h2>Attribution: who says a commit was AI-written</h2>
+<p>AI coding tools increasingly sign their work. Claude Code adds <code>Co-Authored-By: Claude … &lt;noreply@anthropic.com&gt;</code> and a &quot;Generated with Claude Code&quot; footer. GitHub&#39;s coding agent commits as <code>copilot-swe-agent[bot]</code>. Jules commits as <code>google-labs-jules[bot]</code>. Cursor, Codex, Aider, Devin, Windsurf and Amazon Q all leave something similar.</p>
+<p>Matching those looks trivial, but it isn&#39;t, because these tools have human names. A rule as loose as <code>/claude/i</code> on the co-author line flags a painter:</p>
+<div class="code-block-wrap" data-lang="typescript"><span class="code-lang" aria-hidden="true">typescript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">it</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'does not flag a human co-author named Claude'</span><span style="color:#ABB2BF">, () </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#E5C07B">    assert</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">strictEqual</span><span style="color:#ABB2BF">(</span><span style="color:#61AFEF">classifyCommit</span><span style="color:#ABB2BF">(</span><span style="color:#61AFEF">human</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'docs</span><span style="color:#56B6C2">\n\n</span><span style="color:#98C379">Co-authored-by: Claude Monet &#x3C;claude@monet.fr>'</span><span style="color:#ABB2BF">)), </span><span style="color:#D19A66">undefined</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">});</span></span></code></pre></div>
+
+<p>Jules Verne and Devin Smith had the same problem. The final rules anchor on something no human contributor would have: an <code>@anthropic.com</code> address or a model name for Claude, the <code>google-labs-jules</code> bot identity for Jules, <code>devin-ai-integration</code> or a Cognition address for Devin. Each signal also carries a <strong>confidence</strong>. A Copilot co-author trailer is marked <em>medium</em>, because it says Copilot was involved without saying how much of the commit it wrote. A bot author is <em>high</em>: the bot made the commit.</p>
+<p>Rules are checked in a fixed order: custom rules from your settings, then agent authors, then trailers, then footers. A team that tags commits <code>[ai-assisted]</code> can add that as a rule without waiting for me. An invalid regex in a custom rule is skipped instead of crashing the analysis, and there is a test for that too.</p>
+<h2>Survival: is the code still there?</h2>
+<p>GitClear&#39;s churn research is the reason this matters. A commit is easy to count. What is still in the codebase weeks later tells you whether the commit was any good.</p>
+<p>TruthMeter runs <code>git blame --line-porcelain -w HEAD</code> across the files those commits touched and counts how many current lines each commit still owns. Three details turned out to matter:</p>
+<ul>
+<li><strong>Only mature commits count.</strong> Code written yesterday has had no time to be rewritten, so including it inflates survival. By default a commit must be 14 days old, and the dashboard shows newer commits as &quot;too recent&quot; instead of as 100%.</li>
+<li><strong>The denominator is measurable lines.</strong> If a file was deleted, its lines count as gone. If blame was skipped for a file, because of the 400-file cap on huge repos, its lines are dropped from both sides instead of being counted as lost.</li>
+<li><strong>Lock files and build output are excluded.</strong> A <code>package-lock.json</code> change can add 5,000 lines. Without the exclusion one dependency bump would outweigh a month of real work.</li>
+</ul>
+<p><code>-w</code> matters too: without it, a reformat that only changes whitespace hands every line to whoever ran the formatter.</p>
+<h2>Fix within 72 hours, and the files everything touches</h2>
+<p>The second quality signal is how often a commit is followed, within three days, by a <code>fix:</code> or revert that touches the same files. It is cheap to compute and easy to explain.</p>
+<p>On the first runs against real repositories the fix rate came out far too high. The cause was <code>package.json</code>. Nearly every commit touches it, nearly every fix touches it, so every commit &quot;shared a file&quot; with a later fix. <code>README.md</code> and <code>CHANGELOG.md</code> did the same thing. These hub files (manifests, READMEs, changelogs, <code>.gitignore</code>) are now ignored when looking for shared files, and the rate dropped to something believable.</p>
+<p>Rates are also withheld when either group has fewer than five mature commits. A 0% or 100% from two commits is noise presented with a percentage sign.</p>
+<h2>Agent logs: the commits that don&#39;t say so</h2>
+<p>Trailers only work if they are kept. Plenty of people turn them off, and some repositories forbid them outright. Agents still leave a record locally, though:</p>
+<ul>
+<li><strong>Claude Code</strong> writes JSONL transcripts to <code>~/.claude/projects/</code>. Every <code>Edit</code>, <code>Write</code> and <code>MultiEdit</code> tool call includes the absolute <code>file_path</code> and a timestamp.</li>
+<li><strong>Codex</strong> writes sessions to <code>~/.codex/sessions/</code>. Its <code>apply_patch</code> calls contain <code>*** Update File:</code> headers, and the session metadata records the working directory.</li>
+</ul>
+<p>With logs enabled, TruthMeter finds commits with no trailer whose files an agent edited in the 24 hours before the commit. They stay in the &quot;other&quot; group, since an agent editing a file doesn&#39;t prove it wrote the commit. The dashboard reports how many there are, as a warning that the AI share is probably understated.</p>
+<p>This is <strong>off by default</strong> and turning it on asks for explicit consent. TruthMeter reads only file paths and timestamps inside the current workspace, never prompts or code, and nothing leaves the machine. Session logs are private data even when they are on your own disk.</p>
+<h2>What it says about this blog</h2>
+<p>The first repository I pointed it at, after its own, was this one. Over the last year:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Commits</td>
+<td>173</td>
+</tr>
+<tr>
+<td>AI-attributed by trailer</td>
+<td>23</td>
+</tr>
+<tr>
+<td>No trailer, but Claude Code edited their files within 24 h</td>
+<td><strong>18</strong></td>
+</tr>
+</tbody></table>
+<p>The 18 are not a bug. This repository&#39;s <code>CLAUDE.md</code> forbids AI co-author trailers, and a git hook rejects them. TruthMeter has never seen that file. It found the gap from the session logs alone, and it reported those 18 as &quot;other&quot; with a caveat that the true AI share is higher. Counting both, at least 41 of 173 commits, about a quarter, had an agent involved.</p>
+<p>Then a result I almost put in the wrong section. AI-attributed lines here survive at <strong>67%</strong>, other lines at <strong>38%</strong>. It reads like a headline: AI code lasts longer than mine.</p>
+<p>It doesn&#39;t mean that. The &quot;other&quot; group contains the <code>auto: rebuild blog</code> commits that CI makes after every post. Those commits regenerate HTML in <code>public/blog/</code>, and the next rebuild rewrites much of it again. Generated output that gets regenerated on every deploy is about the least durable code possible, and it is all on the human side of the comparison. TruthMeter excludes <code>dist/</code>, <code>build/</code> and <code>out/</code> but not <code>public/blog/</code>, and it does not separate bot commits from human ones yet.</p>
+<p>So the honest reading is that this comparison is confounded, and the tool did not warn me about it. That is the next feature: treat commits by CI bots as their own group. I would rather publish that than the 67%.</p>
+<p>On TruthMeter&#39;s own repository the answer is simpler: 5 of 5 commits are AI-attributed. I wrote v2 with Claude Code, and the commits say so.</p>
+<h2>Testing against git instead of against itself</h2>
+<p>v1&#39;s tests mocked git and checked the heuristics against themselves. v2&#39;s main integration test builds a real repository in a temp directory and back-dates every commit with <code>GIT_AUTHOR_DATE</code> and <code>GIT_COMMITTER_DATE</code>:</p>
+<ul>
+<li>six AI commits 35 to 40 days old, ten lines each</li>
+<li>six human commits alongside them</li>
+<li>a human <code>fix:</code> one hour after AI commit #3, changing one of its lines</li>
+<li>a refactor 20 days ago that rewrites five lines in three of the AI files, plus a 500-line lock file</li>
+<li>one AI commit two days old</li>
+</ul>
+<p>That scenario has answers you can work out on paper before running anything. 60 AI lines are in mature commits, 15 are rewritten by the refactor and one by the fix, so survival must be exactly <strong>44/60</strong>. One of six mature AI commits was fixed within 72 hours, so the fix rate must be exactly <strong>1/6</strong>. Human lines must total 80, not 580, because the lock file is excluded. The test asserts those numbers. A heuristic can&#39;t pass a test like that by agreeing with itself.</p>
+<p>The end-to-end suite launches real VS Code twice in CI, version 1.90 (the minimum supported) and the current stable, opens the same fixture repo and checks the commands, status bar and dashboard. That caught a problem no unit test would: mocha 12 is ESM-only, and VS Code 1.90&#39;s extension host loads tests with <code>require()</code>, so the whole suite died with <code>ERR_REQUIRE_ESM</code> before running one test. Mocha is pinned to 11, with a note in the repo saying why.</p>
+<p>Building the webview turned up one more gotcha. The dashboard&#39;s comparison bars are sized with inline <code>style=&quot;&quot;</code> attributes. If a nonce is present in <code>style-src</code>, browsers <strong>ignore</strong> <code>&#39;unsafe-inline&#39;</code>, so those attributes would be silently blocked. The fix is to use the nonce only for scripts and leave <code>style-src</code> with <code>&#39;unsafe-inline&#39;</code> and no nonce.</p>
+<h2>Publishing in late 2026</h2>
+<p>The release workflow is the part of the project that changed most underneath me. Microsoft is retiring global Azure DevOps personal access tokens, and on <strong>1 December 2026</strong> they stop working for Marketplace publishing. The <code>VSCE_PAT</code> secret this repo had used since 2025 has two weeks left.</p>
+<p>The replacement is <strong>trusted publishing</strong>: GitHub Actions requests a short-lived OIDC token for the workflow run, and the Marketplace exchanges it for a publish credential, but only after checking the token&#39;s claims against a policy you set on the publisher page: repository owner, repository and workflow filename. Nothing long-lived is stored anywhere.</p>
+<p>I shipped 2.0.0 with both paths, OIDC first and the PAT as a fallback. The OIDC step failed with:</p>
+<div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>The token could not be exchanged for the specified publisher.</span></span></code></pre></div>
+
+<p>That was expected. No policy existed yet, so the PAT fallback published 2.0.0. After adding the policy (<code>jeffreyjose07</code> / <code>truthmeterai</code> / <code>publish.yml</code>), I tagged 2.0.1 and the run went:</p>
+<div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>success  Publish to VS Code Marketplace (OIDC trusted publishing)</span></span>
+<span class="line"><span>skipped  Publish to VS Code Marketplace (PAT fallback, works until 2026-12-01)</span></span>
+<span class="line"><span>success  Publish to Open VSX</span></span></code></pre></div>
+
+<p>Then I deleted the fallback and the secret. Leaving it would have been worse than useless. The OIDC step had <code>continue-on-error: true</code> so the fallback could run, which means a broken policy would have fallen through to an expired token. The run would fail with a confusing 401 from the wrong step instead of the real error.</p>
+<p>Two more details. The policy records GitHub&#39;s <strong>numeric</strong> IDs for the owner and repository next to their names, so someone who claims the name <code>jeffreyjose07/truthmeterai</code> after a rename can&#39;t publish as me. And Open VSX, which serves Cursor, Windsurf and VSCodium, still uses a token and a different publisher ID. The workflow rewrites the <code>publisher</code> field with <code>jq</code>, packages a second VSIX and publishes it.</p>
+<h2>By the numbers</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>v1 (Nov 2025)</th>
+<th>v2 (Nov 2026)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Source lines (excluding tests)</td>
+<td>~5,000</td>
+<td>1,452</td>
+</tr>
+<tr>
+<td>Runtime dependencies</td>
+<td>8</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Bundle</td>
+<td>2 MB</td>
+<td>32 KB</td>
+</tr>
+<tr>
+<td>Tests</td>
+<td>145, checking heuristics against themselves</td>
+<td>32, against real git and real VS Code</td>
+</tr>
+<tr>
+<td>What &quot;AI&quot; means</td>
+<td>a guess from paste size, regex and timing</td>
+<td>a commit that records it</td>
+</tr>
+<tr>
+<td>Marketplace publishing</td>
+<td>stored PAT</td>
+<td>OIDC, no stored secret</td>
+</tr>
+<tr>
+<td>Time to analyse a repo</td>
+<td>—</td>
+<td>1–2 s</td>
+</tr>
+</tbody></table>
+<p>Fewer tests and less code, but it measures something real now.</p>
+<h2>What I&#39;d tell myself a year ago</h2>
+<p>The pitch was right. Vendor metrics are misleading, and churn and survival matter more than acceptance rates. My mistake was rebuilding the vendors&#39; problem one level down: I needed a number, there was no honest way to get it, so I made one up and wrote thorough tests for it.</p>
+<p>v2 often says less. A repo with no trailers and no agent logs shows zero AI-attributed commits and an offer to turn on session evidence, instead of a confident 37%. That is a less impressive dashboard. It is also the first version I&#39;d trust with a decision.</p>
+<p>The extension is on the <a href="https://marketplace.visualstudio.com/items?itemName=JeffreyJose.truthmeter-ai">VS Code Marketplace</a> and <a href="https://open-vsx.org/extension/jeffreyjose07/truthmeter-ai">Open VSX</a>. The v1 settings (<code>aiMetrics.*</code>) were removed rather than migrated. They configured features that no longer exist, and the changelog says so.</p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title><![CDATA[Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings]]></title>
+      <description><![CDATA[One evening, three devices, all over Wi-Fi ADB. I disabled 15 preinstalled apps on a 2 GB Fire TV, measured a DNS ad-blocker and rejected it, checked my phone's battery wear and my wife's Pixel for malware. Every change was reversible. The only thing that broke was the setting I thought was safest: animator_duration_scale, which left the TV's Settings tile dead after a reboot.]]></description>
+      <link>https://jeffreyjose07.is-a.dev/blog/tuning-a-fire-tv-and-two-phones-over-adb</link>
+      <guid isPermaLink="true">https://jeffreyjose07.is-a.dev/blog/tuning-a-fire-tv-and-two-phones-over-adb</guid>
+      <pubDate>Sun, 15 Nov 2026 00:00:00 GMT</pubDate>
+      <author>jeffrey.jose07@gmail.com (Jeffrey Jose)</author>
+      <dc:creator><![CDATA[Jeffrey Jose]]></dc:creator>
+      <category><![CDATA[android]]></category>
+      <category><![CDATA[adb]]></category>
+      <category><![CDATA[fire-tv]]></category>
+      <category><![CDATA[debloat]]></category>
+      <category><![CDATA[performance]]></category>
+      <category><![CDATA[dns]]></category>
+      <category><![CDATA[battery]]></category>
+      <category><![CDATA[ai-agents]]></category>
+      <category><![CDATA[homelab]]></category>
+      <media:thumbnail url="https://jeffreyjose07.is-a.dev/assets/thumbnails/tuning-a-fire-tv-and-two-phones-over-adb.png" />
+      <content:encoded><![CDATA[<p>Our living room TV is a 43-inch Xiaomi FX Pro, Fire TV Edition. It runs Fire OS 8.1.8.5 (Android 11 underneath) on four Cortex-A55 cores with 2 GB of RAM. Menus lag, apps cold-start slowly, and the home screen is a wall of promoted tiles.</p>
+<p>I spent an evening on it and on two phones, my Nothing Phone (2) and my wife&#39;s Pixel 7a, using nothing but <code>adb</code> from a Mac over Wi-Fi. Claude Code drove most of the commands while I made the decisions. It turned out that matters for one of the lessons.</p>
+<p>The device changes were small. The process, and the one thing that went wrong, are worth writing down.</p>
+<hr>
+<h2>Rules before commands</h2>
+<p>Before the first command, I set three rules:</p>
+<ol>
+<li><strong>Disable, never uninstall.</strong> <code>pm disable-user --user 0 &lt;package&gt;</code> stops an app from running or appearing without deleting it. <code>pm enable</code> brings it back in a second. On the Fire TV, which is not rootable on this firmware, a mistake with a system package could otherwise mean a factory reset.</li>
+<li><strong>Write the undo before the change.</strong> Every disabled package went into a timestamped log, and a restore script that re-enabled everything existed before the first package was disabled.</li>
+<li><strong>One change, then check.</strong> Disable one package, press Home over ADB, and confirm the launcher came back.</li>
+</ol>
+<p>And a list of packages never to touch, whatever they look like: <code>tv.launcher</code>, <code>firehomestarter</code>, <code>venezia</code> (the Appstore), <code>tv.livetv</code>, anything in <code>tv.settings.*</code>, <code>tv.ime</code> (the on-screen keyboard), <code>webview.chromium</code>, the <code>alexa*</code> packages, and anything with <code>ota</code> in its name. Disabling the wrong one of those gives you a blank home screen and no keyboard to fix it with.</p>
+<h2>Connecting</h2>
+<p>On the Fire TV, ADB over the network is a toggle under <strong>Device &amp; Software → Developer Options</strong>, and it listens on port 5555:</p>
+<div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> connect</span><span style="color:#ABB2BF"> &#x3C;</span><span style="color:#98C379">tv-i</span><span style="color:#ABB2BF">p></span><span style="color:#98C379">:5555</span></span>
+<span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> devices</span><span style="color:#D19A66"> -l</span></span></code></pre></div>
+
+<p>Phones on Android 11+ use <strong>wireless debugging</strong> instead, which needs a one-time pairing. The phone shows a pairing port and a six-digit code. After pairing it advertises itself over mDNS on a <strong>random</strong> port that changes whenever wireless debugging restarts:</p>
+<div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> pair</span><span style="color:#ABB2BF"> &#x3C;</span><span style="color:#98C379">phone-i</span><span style="color:#ABB2BF">p></span><span style="color:#98C379">:</span><span style="color:#ABB2BF">&#x3C;</span><span style="color:#98C379">pairing-por</span><span style="color:#ABB2BF">t> &#x3C;</span><span style="color:#98C379">cod</span><span style="color:#ABB2BF">e></span></span>
+<span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> mdns</span><span style="color:#98C379"> services</span><span style="color:#7F848E;font-style:italic">          # find the current connect port</span></span>
+<span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> connect</span><span style="color:#ABB2BF"> &#x3C;</span><span style="color:#98C379">phone-i</span><span style="color:#ABB2BF">p></span><span style="color:#98C379">:</span><span style="color:#ABB2BF">&#x3C;</span><span style="color:#98C379">connect-por</span><span style="color:#ABB2BF">t></span></span></code></pre></div>
+
+<p>One trap cost a few minutes on the Pixel: the pairing dialog has to <strong>stay open on the phone&#39;s screen</strong> until <code>adb pair</code> finishes. If it closes, from a screen timeout or switching apps, pairing fails with an unhelpful <code>protocol fault</code>.</p>
+<h2>The Fire TV: 15 packages</h2>
+<p>I listed every enabled package, sorted out what was what, and disabled them one at a time with the Home check after each:</p>
+<div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">r</span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF">$(</span><span style="color:#61AFEF">adb</span><span style="color:#D19A66"> -s</span><span style="color:#E06C75"> $S</span><span style="color:#98C379"> shell</span><span style="color:#98C379"> pm</span><span style="color:#98C379"> disable-user</span><span style="color:#D19A66"> --user</span><span style="color:#D19A66"> 0</span><span style="color:#E06C75"> $p</span><span style="color:#ABB2BF"> 2>&#x26;1 | </span><span style="color:#61AFEF">tr</span><span style="color:#D19A66"> -d</span><span style="color:#98C379"> '\r'</span><span style="color:#ABB2BF">)</span></span>
+<span class="line"><span style="color:#61AFEF">adb</span><span style="color:#D19A66"> -s</span><span style="color:#E06C75"> $S</span><span style="color:#98C379"> shell</span><span style="color:#98C379"> input</span><span style="color:#98C379"> keyevent</span><span style="color:#98C379"> KEYCODE_HOME</span><span style="color:#ABB2BF">; </span><span style="color:#61AFEF">sleep</span><span style="color:#D19A66"> 3</span></span>
+<span class="line"><span style="color:#61AFEF">adb</span><span style="color:#D19A66"> -s</span><span style="color:#E06C75"> $S</span><span style="color:#98C379"> shell</span><span style="color:#98C379"> dumpsys</span><span style="color:#98C379"> activity</span><span style="color:#98C379"> activities</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">grep</span><span style="color:#D19A66"> -m1</span><span style="color:#98C379"> mResumedActivity</span></span></code></pre></div>
+
+<p>The first batch was twelve packages: Amazon miniTV, the shopping app, the game hub, the music and photos apps (<code>bueller.*</code>), the store-display demo content, two onboarding tutorials, a browser for casting web pages, ZEE5, <code>sneakpeek</code> (preview autoplay on the home row) and <code>tv.acr</code>.</p>
+<p><code>tv.acr</code> is the one I most wanted gone. ACR stands for automatic content recognition: on smart TVs it is the component that fingerprints what is on screen so viewing can be identified. The TV&#39;s ad settings were already all off. The package was still installed.</p>
+<p>A second batch took out three more preinstalled streaming apps: Dailymotion, Fawesome and Mi TV+. SonyLIV looked just as preinstalled but stayed, because we actually use it. The TV&#39;s usage stats had no entries for any of the four, so &quot;unused&quot; was my claim to make, not something the device could tell me. <strong>A device can show you what&#39;s installed, but only you know what you use.</strong></p>
+<h2>Animation scales, and the setting that broke Settings</h2>
+<p>Android has three animation speed settings: <code>window_animation_scale</code>, <code>transition_animation_scale</code> and <code>animator_duration_scale</code>. Setting them to 0.5 halves animation time, and the UI feels much quicker. On phones it&#39;s the standard first tweak. It changes nothing about how fast the device works, only how long it spends animating.</p>
+<p>I set all three to 0.5 and read them back. The home screen felt noticeably quicker.</p>
+<p>Then we restarted the TV, and the <strong>Settings tile did nothing</strong>. You could select it, press OK, and nothing opened.</p>
+<p>I had just disabled twelve system-adjacent packages, so everyone, me and the agent included, suspected the packages. That theory looked good: some Fire OS components only show their dependencies at boot, and the Home check had only proven that the launcher could draw itself on an already-running system. A reboot rebuilds everything, and a missing content provider could plausibly block Settings. The plan became to re-enable all twelve and add them back one at a time with a reboot in between.</p>
+<p>The system log disagreed before we got that far. The launcher was logging that it was <strong>finishing an activity &quot;to prevent stuck menu&quot;</strong>. The launcher&#39;s slide-out menu waits for its open animation to finish before taking focus. With the animator running at half duration, that handshake no longer happened at the moment the launcher expected, so the menu gave up and closed every time.</p>
+<p>Setting one value back fixed it:</p>
+<div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> shell</span><span style="color:#98C379"> settings</span><span style="color:#98C379"> put</span><span style="color:#98C379"> global</span><span style="color:#98C379"> animator_duration_scale</span><span style="color:#D19A66"> 1.0</span></span></code></pre></div>
+
+<p>On the next click, Settings opened, with <code>MainSettingsActivity</code> displayed in 211 ms. The twelve packages stayed disabled, and window and transition scales stayed at 0.5. Those two only affect how the system animates windows. <code>animator_duration_scale</code> changes the timing of every app&#39;s internal animations, including the launcher&#39;s, so it can break an app whose code depends on that timing.</p>
+<p>Three things I took from this:</p>
+<ul>
+<li><strong>My check tested the wrong state.</strong> &quot;Press Home and see the launcher&quot; verifies a system that is already running. The bug only appeared when the launcher started fresh and read the new setting at startup. A change that a process reads at startup needs a restart to test.</li>
+<li><strong>I suspected the riskiest-looking change and ignored the one I thought was harmless.</strong> Animation scale is a tweak every Android guide recommends. Disabling system packages sounds dangerous. The actual cause was the harmless-looking one.</li>
+<li><strong>The logs beat the theory.</strong> The package theory was reasonable and would have cost an hour of reboots. <code>logcat</code> had the answer immediately.</li>
+</ul>
+<h2>Did it help?</h2>
+<p>Free memory went from <strong>621 MB</strong> before the changes to about <strong>710–740 MB</strong> after a restart.</p>
+<p>That comparison isn&#39;t fair, and I&#39;m not going to claim the difference. The 621 MB was measured after the TV had been on for a long time. The later readings came minutes after a fresh boot, and any Android device has more free memory just after booting. I didn&#39;t take a clean baseline after a reboot before changing anything, so I can&#39;t separate the effect of disabling apps from the effect of restarting.</p>
+<p>What I can say: the home row no longer autoplays previews, ACR is gone, the app list is shorter, and with window and transition animations at 0.5 the UI feels faster. Whether it <em>is</em> faster I didn&#39;t measure, and that&#39;s the honest answer.</p>
+<h2>The ad blocker I didn&#39;t keep</h2>
+<p>The remaining annoyance was the promoted tiles on the home screen. Without root, the one practical lever is DNS: Android 9+ supports <strong>Private DNS</strong> (DNS-over-TLS on port 853), configurable per device without touching the router, so the TV could resolve through an ad-blocking resolver like AdGuard DNS.</p>
+<p>Before committing to it, I measured lookups both ways from the TV:</p>
+<table>
+<thead>
+<tr>
+<th>Lookup</th>
+<th>Router DNS</th>
+<th>AdGuard DNS</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Netflix, YouTube</td>
+<td>6 ms</td>
+<td>~44 ms</td>
+</tr>
+<tr>
+<td>Hotstar, SonyLIV</td>
+<td>6 ms</td>
+<td>114–130 ms</td>
+</tr>
+<tr>
+<td>Amazon Prime Video</td>
+<td>6 ms</td>
+<td><strong>764 ms</strong></td>
+</tr>
+</tbody></table>
+<p>Slower lookups are an annoyance on app launch. The second problem was worse. CDNs pick which video server to send you to based on <strong>where your DNS resolver is</strong>. Through the router, Hotstar&#39;s video edge was <strong>9 ms</strong> away. Through AdGuard, which had no resolver in the country at the time, Hotstar sent the TV to an edge <strong>43 ms</strong> away, almost five times farther, for every video segment of every stream.</p>
+<p>That&#39;s a bad trade for the TV: the home-screen ads are static tiles that no longer autoplay or personalise. Free, ad-supported streams can also refuse to play when their ad server doesn&#39;t resolve. I rolled it back and left DNS on the router.</p>
+<h2>My phone: the number that actually matters</h2>
+<p>The Nothing Phone (2) didn&#39;t need speeding up. Its animations were already at 0.5, including the animator, which works fine on the phone. Nothing OS ships with very little bloat. So I checked battery health instead:</p>
+<div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">adb</span><span style="color:#98C379"> shell</span><span style="color:#98C379"> dumpsys</span><span style="color:#98C379"> batterystats</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">grep</span><span style="color:#D19A66"> -E</span><span style="color:#98C379"> 'Estimated battery capacity|Last learned battery capacity'</span></span></code></pre></div>
+
+<p>The battery&#39;s learned capacity was <strong>3,592 mAh</strong> against a design capacity of <strong>4,700 mAh</strong>, about <strong>76%</strong> after roughly three years. Replacement is usually recommended somewhere around 70–80%. That one number explained the phone&#39;s shorter days better than any tweak could, and it means slowing further wear (charging to 80%, Android&#39;s adaptive charging) is worth more than anything else.</p>
+<p>I also uninstalled 14 apps that I named myself from the list, with <code>adb uninstall --user 0</code>, and logged each one with its Play Store link. My rule here was strict: only apps I named. A long list of other candidates was left alone, including several multi-gigabyte ones, because large isn&#39;t the same as unused.</p>
+<p>The phone also has a managed work profile, a second Android user. Nothing in it was touched or listed. <code>pm list users</code> shows it exists, and that was all I needed to know.</p>
+<h2>My wife&#39;s Pixel: the problem was storage</h2>
+<p>Her Pixel 7a felt slow, and the cause was obvious within a minute: <strong>97 of 110 GB used</strong>. Videos took 27.5 GB, photos 22.7 GB, YouTube downloads 11 GB and app caches 6.9 GB. A phone that is nearly full has less room to work with, and no animation setting will change that.</p>
+<p>The only change I made was animations to 0.5. Clearing caches would have been safe, since cache is data apps can rebuild, but she said not now. Which apps or videos to delete is her decision, not mine and not the agent&#39;s, so nothing was removed.</p>
+<p>What I did do was check it for malware, because when a phone feels slow the next question is usually whether something is wrong with it:</p>
+<ul>
+<li><strong>Where apps came from.</strong> Every user app&#39;s installer was listed with <code>pm list packages -3 -i</code>, to spot anything not installed from the Play Store.</li>
+<li><strong>Play Protect</strong> was on.</li>
+<li><strong>Verified boot</strong> was green, the bootloader locked, no <code>su</code> binary, and the security patch level was from October 2026. Malware that could hide from the other checks would normally have to modify the system, and that would turn verified boot orange or red.</li>
+<li><strong>The permissions malware uses:</strong> accessibility services, notification listeners, device admins, draw-over-other-apps, usage access, always-on VPN, the default SMS app and user-installed CA certificates. Each was listed and checked.</li>
+</ul>
+<p>It was clean. The phone is just nearly full.</p>
+<h2>Close the doors</h2>
+<p>ADB over Wi-Fi is a remote control for a device. Anything paired can install apps, read storage and send input over the network. When the work was done, every device got it switched off again:</p>
+<div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">adb</span><span style="color:#D19A66"> -s</span><span style="color:#E06C75"> $TV</span><span style="color:#98C379">    shell</span><span style="color:#98C379"> settings</span><span style="color:#98C379"> put</span><span style="color:#98C379"> global</span><span style="color:#98C379"> adb_enabled</span><span style="color:#D19A66"> 0</span><span style="color:#7F848E;font-style:italic">       # Fire TV</span></span>
+<span class="line"><span style="color:#61AFEF">adb</span><span style="color:#D19A66"> -s</span><span style="color:#E06C75"> $PHONE</span><span style="color:#98C379"> shell</span><span style="color:#98C379"> settings</span><span style="color:#98C379"> put</span><span style="color:#98C379"> global</span><span style="color:#98C379"> adb_wifi_enabled</span><span style="color:#D19A66"> 0</span><span style="color:#7F848E;font-style:italic">  # phones</span></span></code></pre></div>
+
+<p>Then I confirmed that the TV&#39;s port 5555 was closed and that neither phone was still advertising wireless debugging over mDNS. Android revokes a paired computer after seven days without a connection anyway, but there&#39;s no reason to leave it open for seven days.</p>
+<h2>What I&#39;d keep</h2>
+<ul>
+<li><strong>Disable instead of uninstall, and write the restore script first.</strong> It cost nothing and meant every decision could be reversed in seconds.</li>
+<li><strong>Test a change in the state it takes effect in.</strong> If a setting is read at startup, restart the device to test it.</li>
+<li><strong>Measure before adding a &quot;fix&quot;.</strong> The DNS blocker sounded like a clear win until it sent every Hotstar segment five times farther.</li>
+<li><strong>Find the actual problem.</strong> The TV needed less running in the background. My phone needed a battery. My wife&#39;s phone needed space. One fixed list of tweaks would have missed two of the three.</li>
+<li><strong>Use an agent for commands, not decisions.</strong> It ran every command, read every log and kept the restore script current. Which apps go, and on whose phone, stayed decisions for the people who own the devices.</li>
+</ul>
+]]></content:encoded>
+    </item>
     <item>
       <title><![CDATA[The Keepalive That Was Disabled for Inactivity]]></title>
       <description><![CDATA[In August I shipped a workflow to stop Aiven powering off my free Postgres. The event log says it lost: the write ping ran every six hours for twelve days and Aiven powered the service down anyway. Meanwhile GitHub disabled the whole workflow for repository inactivity on day 62 — an inactivity shutdown one layer up — and the API half never ran at all because its secret was never set.]]></description>
@@ -2075,128 +2405,6 @@
 <h2>conclusion</h2>
 <p>These changes might seem small individually, but collectively they represent a significant step forward in engineering quality. By refactoring the pagination, we now have a robust URL structure. By optimizing images, we&#39;ve reduced the LCP and improved the mobile experience. And by fixing accessibility issues, we&#39;ve ensured the site is inclusive for everyone.</p>
 <p>The journey of optimization is never truly finished, but today&#39;s updates bring us much closer to that 100/100 score.</p>
-]]></content:encoded>
-    </item>
-    <item>
-      <title><![CDATA[Automating Terminal-Style Thumbnails]]></title>
-      <description><![CDATA[How I built a custom thumbnail generator using Puppeteer to create consistent, terminal-themed open graph images for every blog post.]]></description>
-      <link>https://jeffreyjose07.is-a.dev/blog/automating-terminal-style-thumbnails</link>
-      <guid isPermaLink="true">https://jeffreyjose07.is-a.dev/blog/automating-terminal-style-thumbnails</guid>
-      <pubDate>Wed, 03 Dec 2025 00:00:00 GMT</pubDate>
-      <author>jeffrey.jose07@gmail.com (Jeffrey Jose)</author>
-      <dc:creator><![CDATA[Jeffrey Jose]]></dc:creator>
-      <category><![CDATA[automation]]></category>
-      <category><![CDATA[design]]></category>
-      <category><![CDATA[javascript]]></category>
-      <category><![CDATA[nodejs]]></category>
-      <media:thumbnail url="https://jeffreyjose07.is-a.dev/assets/thumbnails/automating-terminal-style-thumbnails.png" />
-      <content:encoded><![CDATA[<p>I recently decided to give my blog a visual refresh. While I loved the content, the thumbnails were a mix of generic gradients and random screenshots. I wanted something that felt cohesive, technical, and aligned with the &quot;terminal/cyberpunk&quot; aesthetic of my portfolio.</p>
-<p>Instead of manually designing a cover image for every new post in Figma or Canva, I did what any engineer would do: I wrote a script to do it for me.</p>
-<h2>The Goal</h2>
-<p>I wanted thumbnails that looked like a terminal window executing a command related to the post. For example:</p>
-<ul>
-<li>A backend post might show a <code>curl</code> request.</li>
-<li>A personal post might show a <code>cat journal.md</code> command.</li>
-<li>A database post might show a <code>psql</code> query.</li>
-</ul>
-<p>The result needed to be a high-quality PNG that could be used as an Open Graph image (for Twitter/LinkedIn cards) and as the header image on the blog itself.</p>
-<h2>The Tech Stack</h2>
-<ul>
-<li><strong>Node.js</strong>: The runtime for the script.</li>
-<li><strong>Puppeteer</strong>: A headless Chrome Node.js API. This is the secret sauce. It allows me to render HTML/CSS exactly as a browser would and take a screenshot.</li>
-<li><strong>HTML/CSS</strong>: To design the &quot;terminal window&quot; layout.</li>
-</ul>
-<h2>The Implementation</h2>
-<h3>1. The Template</h3>
-<p>First, I created an HTML template (<code>template.html</code>) that defines the look of the terminal. It uses Flexbox to center a &quot;window&quot; div, and CSS to style the window controls (the red, yellow, and green dots) and the dark background.</p>
-<p>I used Google Fonts to load <strong>JetBrains Mono</strong> for the terminal text and <strong>Outfit</strong> for the window title, ensuring typography matches the rest of my site.</p>
-<div class="code-block-wrap" data-lang="html"><span class="code-lang" aria-hidden="true">html</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"terminal-window"</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"window-header"</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"window-controls"</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">            &#x3C;!-- Mac-style dots --></span></span>
-<span class="line"><span style="color:#ABB2BF">            &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"control-dot red"</span><span style="color:#ABB2BF">>&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">            &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"control-dot yellow"</span><span style="color:#ABB2BF">>&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">            &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"control-dot green"</span><span style="color:#ABB2BF">>&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">        &#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">        &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"window-title"</span><span style="color:#ABB2BF">>~/blog/posts/{{windowTitle}}&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">    &#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">    &#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"terminal-content"</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">        {{terminalContent}}</span></span>
-<span class="line"><span style="color:#ABB2BF">    &#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span></code></pre></div>
-
-<h3>2. The Generator Script</h3>
-<p>The script (<code>generate.js</code>) reads my blog&#39;s configuration and post metadata. It then launches a headless browser instance using Puppeteer.</p>
-<p>For each post, it:</p>
-<ol>
-<li>Determines the &quot;primary tag&quot; (e.g., <code>backend</code>, <code>personal</code>, <code>frontend</code>).</li>
-<li>Selects a corresponding &quot;command pattern&quot; based on that tag.</li>
-<li>Injects the post title and the generated command into the HTML template.</li>
-<li>Takes a screenshot of the rendered page.</li>
-<li>Saves the image to <code>public/assets/thumbnails/</code>.</li>
-</ol>
-<p>Here&#39;s a snippet of the logic that maps tags to terminal commands:</p>
-<div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#C678DD">switch</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">primaryCategory</span><span style="color:#ABB2BF">) {</span></span>
-<span class="line"><span style="color:#C678DD">    case</span><span style="color:#98C379"> 'backend'</span><span style="color:#ABB2BF">:</span></span>
-<span class="line"><span style="color:#E06C75">        commandHtml</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> `curl -X POST /api/v1/deploy`</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E06C75">        outputHtml</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> `{"status": "success", "message": "Deployment initiated..."}`</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">        break</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">    case</span><span style="color:#98C379"> 'personal'</span><span style="color:#ABB2BF">:</span></span>
-<span class="line"><span style="color:#E06C75">        commandHtml</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> `cat ~/journal/</span><span style="color:#C678DD">${</span><span style="color:#E06C75">slug</span><span style="color:#C678DD">}</span><span style="color:#98C379">.md`</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#E06C75">        outputHtml</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> `Reflecting on: "</span><span style="color:#C678DD">${</span><span style="color:#E06C75">description</span><span style="color:#C678DD">}</span><span style="color:#98C379">"`</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#C678DD">        break</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">    // ... other categories</span></span>
-<span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div>
-
-<h3>3. Build Integration</h3>
-<p>The best part is that this is now part of my build pipeline. Whenever I run <code>npm run build:blog</code>, the script checks if a thumbnail exists for each post. If it&#39;s missing, it automatically generates a fresh one in milliseconds.</p>
-<p>This means I never have to worry about assets again. I just write the markdown, tag it appropriately, and the system generates a beautiful, custom thumbnail that perfectly matches the content.</p>
-<h2>The Result</h2>
-<p>You&#39;re looking at it right now! The thumbnail for this post was generated by the very system it describes. It&#39;s a meta-example of automation serving creativity.</p>
-<p>By treating design assets as code, I&#39;ve ensured 100% consistency across the blog while removing manual toil from my writing process.</p>
-]]></content:encoded>
-    </item>
-    <item>
-      <title><![CDATA[Optimizing Blog Interactivity and UX]]></title>
-      <description><![CDATA[A deep dive into recent improvements: fixing the blank screen issue, implementing collapsible tag filters, and debugging critical interactivity bugs.]]></description>
-      <link>https://jeffreyjose07.is-a.dev/blog/optimizing-blog-interactivity-and-ux</link>
-      <guid isPermaLink="true">https://jeffreyjose07.is-a.dev/blog/optimizing-blog-interactivity-and-ux</guid>
-      <pubDate>Sun, 30 Nov 2025 00:00:00 GMT</pubDate>
-      <author>jeffrey.jose07@gmail.com (Jeffrey Jose)</author>
-      <dc:creator><![CDATA[Jeffrey Jose]]></dc:creator>
-      <category><![CDATA[web-development]]></category>
-      <category><![CDATA[debugging]]></category>
-      <category><![CDATA[ux]]></category>
-      <category><![CDATA[javascript]]></category>
-      <media:thumbnail url="https://jeffreyjose07.is-a.dev/assets/thumbnails/optimizing-blog-interactivity-and-ux.png" />
-      <content:encoded><![CDATA[<p>In this update, I&#39;ve focused on refining the user experience of this blog and resolving some critical issues that were hindering usability. Here&#39;s a breakdown of the changes and the technical challenges I overcame.</p>
-<h2>1. Fixing the &quot;Blank Screen&quot; Issue</h2>
-<p><strong>The Problem:</strong> Users were reporting that the blog content wasn&#39;t loading immediately, often resulting in a blank screen. This was caused by a &quot;loading overlay&quot; and a complex materialization animation that was intended to be a cool effect but ended up blocking content delivery.</p>
-<p><strong>The Solution:</strong> I decided to prioritize performance and immediate content visibility. I completely removed the <code>loadingOverlay</code> HTML element and its associated CSS animations and JavaScript logic. Now, the blog content renders instantly upon page load, providing a much snappier experience.</p>
-<h2>2. Collapsible Tag Filters</h2>
-<p><strong>The Problem:</strong> As the number of tags grew, the &quot;filter by tag&quot; section on the homepage became cluttered and took up too much vertical space, pushing the actual blog posts down.</p>
-<p><strong>The Solution:</strong> I implemented a collapsible tag filter section.</p>
-<ul>
-<li><strong>Default State:</strong> The section is now compact (limited to <code>85px</code> height) by default.</li>
-<li><strong>Interactivity:</strong> A &quot;show more&quot; button allows users to expand the full list of tags if they wish to explore.</li>
-<li><strong>Auto-Expansion:</strong> If you navigate to the blog with a specific tag selected (e.g., via a URL hash), the section automatically expands to show the active tag.</li>
-</ul>
-<h2>3. Debugging Critical Interactivity Bugs</h2>
-<p><strong>The Problem:</strong> After implementing the collapsible tags, I encountered a frustrating issue where the &quot;show more&quot; button and the tag filters themselves were completely non-functional. The browser console was surprisingly quiet, showing no obvious errors.</p>
-<p><strong>The Debugging Process:</strong></p>
-<ol>
-<li><strong>Initial Investigation:</strong> I suspected the event listeners weren&#39;t attaching correctly. I tried moving the script placement and using <code>DOMContentLoaded</code>, but the issue persisted.</li>
-<li><strong>Deep Dive:</strong> I added extensive <code>console.log</code> statements, but none of them appeared. This suggested the script wasn&#39;t executing <em>at all</em>.</li>
-<li><strong>The Breakthrough:</strong> I inspected the generated HTML and found a syntax error in the injected data. The build script was replacing <code>{{ allPostsData }}</code> with the JSON data, but the regex was too strict and didn&#39;t account for the spaces I had added in the template for readability (<code>{{ allPostsData }}</code>). This resulted in invalid JavaScript syntax, crashing the entire script block.</li>
-</ol>
-<p><strong>The Fix:</strong> I updated the build script&#39;s regex to be more flexible:</p>
-<div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">replace</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">/{{\s</span><span style="color:#D19A66">*</span><span style="color:#E06C75">allPostsData\s</span><span style="color:#D19A66">*</span><span style="color:#E06C75">}}/</span><span style="color:#C678DD">g</span><span style="color:#ABB2BF">, </span><span style="color:#E5C07B">JSON</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">stringify</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">sortedPosts</span><span style="color:#ABB2BF">))</span></span></code></pre></div>
-
-<p>This simple change ensured the data was injected correctly, restoring all interactivity.</p>
-<h2>4. Restoring Animations and Sound</h2>
-<p>With the critical bugs squashed, I was able to re-enable the retro animations (like the &quot;digital rain&quot; effect) and the subtle sound effects that give this blog its unique cyberpunk aesthetic.</p>
-<h2>Conclusion</h2>
-<p>These updates highlight the importance of balancing aesthetic features with core usability. While animations are fun, they should never come at the cost of content accessibility. And sometimes, the trickiest bugs are hidden in the simplest places—like a few extra spaces in a template placeholder.</p>
 ]]></content:encoded>
     </item>
   </channel>
