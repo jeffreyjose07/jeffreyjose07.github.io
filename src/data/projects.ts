@@ -56,21 +56,25 @@ export const featuredProjects: Project[] = [
         ]
     },
     {
-        title: "TruthMeter AI - AI Pair Programming Metrics Extension",
-        description: "A VS Code extension that measures the ACTUAL impact of AI coding assistants on developer productivity based on peer-reviewed research, not vanity metrics. Works with any AI assistant (GitHub Copilot, Cursor, Windsurf Cascade, etc.) and tracks what actually matters: code quality, true productivity gains, and economic ROI.",
+        title: "TruthMeter AI - Evidence-Based AI Coding Metrics for VS Code",
+        description: "A VS Code extension that measures how AI coding agents actually affect a codebase, using only evidence you can verify: AI co-author trailers and agent bot commits, git blame line survival, fix-within-72h rates, and opt-in local Claude Code and Codex session logs. Version 2 replaced v1's keystroke and regex guesswork, which flagged any paste as AI.",
         image: "/truthmeter-ai-screenshot.png",
-        liveUrl: "https://marketplace.visualstudio.com/items?itemName=jeffreyjose.truthmeter-ai",
+        liveUrl: "https://marketplace.visualstudio.com/items?itemName=JeffreyJose.truthmeter-ai",
         githubUrl: "https://github.com/jeffreyjose07/truthmeterai",
-        technologies: ["TypeScript", "VS Code Extension API", "Node.js", "Git Analysis", "Webpack", "Mocha Testing"],
+        technologies: ["TypeScript", "VS Code Extension API", "Git", "esbuild", "Mocha", "GitHub Actions OIDC"],
         highlights: [
-            "Research-backed metrics from METR 2025, GitClear 2024, and GitHub studies",
-            "Tracks code churn, duplication, complexity, and actual vs perceived productivity",
-            "Privacy-first design — all data stored locally, no cloud sync",
-            "145+ passing tests with 80%+ code coverage"
+            "Attribution from git itself: Claude Code, Copilot, Cursor, Codex, Jules, Aider and Devin signatures",
+            "AI vs other line survival via git blame, with small-sample guards instead of noisy percentages",
+            "Finds untrailed AI commits from local agent session logs, privacy-first and opt-in",
+            "Tested against back-dated real git repos and real VS Code; 32 KB bundle, zero runtime dependencies"
         ],
         writeups: [
             {
-                label: "Why I built it, and what the research actually says",
+                label: "v2: deleting the guesswork, counting only what git records",
+                href: "/blog/truthmeter-v2-counting-only-what-git-records"
+            },
+            {
+                label: "v1: why I built it, and what the research says",
                 href: "/blog/building-truthmeter-ai-measuring-the-real-impact-o"
             }
         ]
