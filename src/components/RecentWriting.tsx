@@ -32,6 +32,10 @@ const RecentWriting = () => {
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
+    // Already have what the page was built with; don't re-fetch on every load.
+    // Reads the seed rather than `posts` so the effect keeps an empty dep list.
+    if (seededPosts().length > 0) return;
+
     let cancelled = false;
 
     fetch("/blog/posts.json")
