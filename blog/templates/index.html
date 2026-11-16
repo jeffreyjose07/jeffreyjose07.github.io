@@ -13,7 +13,7 @@
 
     <style>
         body {
-            padding-top: 100px;
+            padding-top: 110px;
         }
 
         .blog-header {
@@ -332,7 +332,10 @@
 
     <main class="container">
         <header class="blog-header">
-            <h1 class="blog-title">{{title}}</h1>
+            <div class="dev-badge" style="margin-bottom: 1.25rem;">
+                // TECHNICAL WRITING &amp; ARCHITECTURE LOGS
+            </div>
+            <h1 class="blog-title">Engineering <span class="text-gradient-premium">Log</span></h1>
             <p class="blog-description">{{description}}</p>
         </header>
 
@@ -410,7 +413,7 @@
                 }
 
                 div.innerHTML = `
-                    <a href="/blog/${post.slug}">
+                    <a href="/blog/${post.slug}/">
                         ${thumbnailHtml}
                         <div class="post-content-wrapper">
                             <div class="post-meta-top">

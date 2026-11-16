@@ -1,0 +1,958 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Modernizing the Developer Portfolio: Bento Grids, Proof Metrics, and Unified Theme - Jeffrey Jose</title> <meta name="description" content="A comprehensive teardown and modernization of the portfolio and blog: replacing playful typography with authoritative developer styles, killing layout voids with a Developer Bento Grid, elevating proof metrics, and unifying the blog architecture." /> <meta property="og:title" content="Modernizing the Developer Portfolio: Bento Grids, Proof Metrics, and Unified Theme"> <meta property="og:description" content="A comprehensive teardown and modernization of the portfolio and blog: replacing playful typography with authoritative developer styles, killing layout voids with a Developer Bento Grid, elevating proof metrics, and unifying the blog architecture."> <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/modernizing-the-developer-portfolio-and-blog"> <meta property="og:type" content="article"> <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/modernizing-the-developer-portfolio-and-blog.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="Modernizing the Developer Portfolio: Bento Grids, Proof Metrics, and Unified Theme"> <meta name="twitter:description" content="A comprehensive teardown and modernization of the portfolio and blog: replacing playful typography with authoritative developer styles, killing layout voids with a Developer Bento Grid, elevating proof metrics, and unifying the blog architecture."> <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/modernizing-the-developer-portfolio-and-blog.png"> <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" /> <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" /> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link
+href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap"
+rel="stylesheet"> <style>
+:root {
+--background: #09090b;
+--foreground: #fafafa;
+--primary: #1cc9a0;
+/* Mirrors --primary-foreground in src/index.css. Near-black on teal:
+white failed WCAG AA contrast on every primary surface. */
+--primary-foreground: #09090b;
+--primary-glow: #5eead4;
+--secondary: #111114;
+--secondary-foreground: #fafafa;
+--muted: #18181b;
+--muted-foreground: #a1a1aa;
+--accent: #18181b;
+--accent-foreground: #fafafa;
+--border: rgba(255, 255, 255, 0.08);
+--input: #27272a;
+--font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+--font-heading: 'Inter', 'Plus Jakarta Sans', system-ui, sans-serif;
+--font-mono: 'JetBrains Mono', ui-monospace, 'Menlo', 'Monaco', monospace;
+--gradient-hero: linear-gradient(135deg, #09090b, #0c1f1a);
+--gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+--gradient-accent: linear-gradient(135deg, #1cc9a0, #22d3ee);
+--radius: 0.75rem;
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: var(--font-sans);
+background-color: var(--background);
+background-image: 
+radial-gradient(ellipse 80% 50% at 50% -20%, rgba(28, 201, 160, 0.08), transparent 70%),
+linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+background-size: 100% 100%, 36px 36px, 36px 36px;
+color: var(--foreground);
+line-height: 1.65;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+overflow-x: hidden;
+max-width: 100vw;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+font-family: var(--font-heading);
+font-weight: 700;
+line-height: 1.25;
+margin-bottom: 1rem;
+letter-spacing: -0.03em;
+}
+a {
+color: inherit;
+text-decoration: none;
+transition: color 0.2s ease;
+}
+.container {
+width: 100%;
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 1.5rem;
+}
+.panel-card,
+.glass-card {
+background: var(--secondary);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+position: relative;
+transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.panel-card::before,
+.glass-card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 1px;
+background: linear-gradient(90deg, transparent, rgba(28, 201, 160, 0.4), transparent);
+opacity: 0;
+transition: opacity 0.3s ease;
+pointer-events: none;
+border-top-left-radius: var(--radius);
+border-top-right-radius: var(--radius);
+}
+.panel-card:hover,
+.glass-card:hover {
+border-color: rgba(28, 201, 160, 0.35);
+transform: translateY(-2px);
+box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.6), 0 0 20px -5px rgba(28, 201, 160, 0.15);
+}
+.panel-card:hover::before,
+.glass-card:hover::before {
+opacity: 1;
+}
+.glass {
+background: rgba(17, 17, 20, 0.8);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border: 1px solid var(--border);
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 10%, #5eead4 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: transparent;
+display: inline-block;
+}
+.bg-mesh {
+background-color: var(--background);
+}
+.dev-badge {
+font-family: var(--font-mono);
+font-size: 0.75rem;
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
+background: rgba(28, 201, 160, 0.1);
+color: var(--primary);
+border: 1px solid rgba(28, 201, 160, 0.25);
+display: inline-flex;
+align-items: center;
+gap: 0.375rem;
+}
+::-webkit-scrollbar {
+width: 8px;
+}
+::-webkit-scrollbar-track {
+background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+background: #27272a;
+border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #3f3f46;
+}
+.sr-only {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+margin: -1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border: 0;
+}
+</style> <style>
+body {
+padding-top: 110px;
+}
+.reading-progress {
+position: fixed;
+top: 0;
+left: 0;
+height: 3px;
+background: linear-gradient(90deg, #1cc9a0, #5eead4);
+box-shadow: 0 0 8px rgba(28, 201, 160, 0.6);
+width: 0%;
+z-index: 1001;
+transition: width 0.1s ease-out;
+}
+.post-container {
+max-width: 820px;
+margin: 0 auto;
+padding: 2.5rem;
+background: #111114;
+border: 1px solid rgba(255, 255, 255, 0.08);
+border-radius: 1rem;
+box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+position: relative;
+}
+.post-container::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 1px;
+background: linear-gradient(90deg, transparent, rgba(28, 201, 160, 0.45), transparent);
+border-top-left-radius: 1rem;
+border-top-right-radius: 1rem;
+}
+.post-header {
+margin-bottom: 3rem;
+text-align: center;
+border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+padding-bottom: 2rem;
+}
+.post-meta {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 0.75rem;
+margin-bottom: 1.25rem;
+font-size: 0.8125rem;
+color: var(--muted-foreground);
+font-family: var(--font-mono);
+}
+.episode-badge {
+background: rgba(28, 201, 160, 0.12);
+color: var(--primary);
+padding: 0.2rem 0.55rem;
+border-radius: 0.375rem;
+border: 1px solid rgba(28, 201, 160, 0.25);
+font-family: var(--font-mono);
+font-weight: 600;
+font-size: 0.75rem;
+}
+.post-title {
+font-size: clamp(1.85rem, 4vw, 2.75rem);
+line-height: 1.15;
+margin-bottom: 1rem;
+color: var(--foreground);
+font-family: var(--font-heading);
+font-weight: 800;
+letter-spacing: -0.03em;
+}
+.post-content {
+font-size: 1.0625rem;
+line-height: 1.8;
+color: #d4d4d8;
+word-break: break-word;
+}
+.post-content p {
+margin-bottom: 1.5rem;
+}
+.post-content h2 {
+font-size: 1.65rem;
+margin-top: 3rem;
+margin-bottom: 1.25rem;
+color: var(--foreground);
+font-family: var(--font-heading);
+letter-spacing: -0.025em;
+}
+.post-content h3 {
+font-size: 1.35rem;
+margin-top: 2.25rem;
+margin-bottom: 1rem;
+color: var(--foreground);
+font-family: var(--font-heading);
+letter-spacing: -0.02em;
+}
+.post-content ul,
+.post-content ol {
+margin-bottom: 1.5rem;
+padding-left: 1.5rem;
+}
+.post-content li {
+margin-bottom: 0.5rem;
+}
+.post-content a {
+color: var(--primary-glow);
+text-decoration: none;
+border-bottom: 1px solid rgba(28, 201, 160, 0.35);
+transition: all 0.2s;
+}
+.post-content a:hover {
+border-bottom-color: var(--primary);
+color: var(--primary);
+}
+.post-content blockquote {
+border-left: 3px solid var(--primary);
+padding-left: 1.5rem;
+margin: 2rem 0;
+font-style: italic;
+color: #a1a1aa;
+background: rgba(255, 255, 255, 0.02);
+padding: 1.25rem 1.5rem;
+border-radius: 0 0.5rem 0.5rem 0;
+border: 1px solid rgba(255, 255, 255, 0.04);
+border-left: 3px solid var(--primary);
+}
+/* Inline code only — do not paint fenced blocks (Shiki owns those). */
+.post-content :not(pre) > code {
+font-family: var(--font-mono);
+font-size: 0.88em;
+background: rgba(255, 255, 255, 0.08);
+padding: 0.2em 0.45em;
+border-radius: 0.3rem;
+color: #e4e4e7;
+border: 1px solid rgba(255, 255, 255, 0.1);
+}
+/* Fenced blocks: Shiki (One Dark Pro) owns token colors via inline styles */
+.post-content .code-block-wrap {
+position: relative;
+margin: 2rem -2.5rem;
+width: calc(100% + 5rem);
+border-radius: 0.5rem;
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.12);
+background: #18181b;
+box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+.post-content .code-block-wrap .code-lang {
+position: absolute;
+top: 0.65rem;
+right: 0.85rem;
+z-index: 1;
+font-family: var(--font-mono);
+font-size: 0.65rem;
+letter-spacing: 0.06em;
+text-transform: uppercase;
+color: rgba(171, 178, 191, 0.8);
+background: rgba(255, 255, 255, 0.06);
+padding: 0.15rem 0.45rem;
+border-radius: 4px;
+pointer-events: none;
+user-select: none;
+}
+.post-content pre,
+.post-content .code-block-wrap pre.shiki {
+background: #18181b;
+padding: 1.65rem 1.25rem 1.35rem;
+border-radius: 0.5rem;
+overflow-x: auto;
+margin: 2rem -2.5rem;
+border: 1px solid rgba(255, 255, 255, 0.1);
+width: calc(100% + 5rem);
+line-height: 1.6;
+font-family: var(--font-mono);
+}
+.post-content .code-block-wrap pre.shiki {
+margin: 0;
+width: 100%;
+border: none;
+border-radius: 0;
+background: transparent !important;
+}
+@media (max-width: 768px) {
+.post-content pre,
+.post-content .code-block-wrap {
+margin-left: -1.5rem;
+margin-right: -1.5rem;
+width: calc(100% + 3rem);
+border-radius: 0;
+}
+}
+.post-content pre code,
+.post-content .code-block-wrap pre.shiki code {
+background: none !important;
+padding: 0;
+font-size: 0.9rem;
+color: inherit;
+font-family: var(--font-mono);
+}
+.post-content .shiki span {
+-webkit-text-fill-color: currentColor;
+}
+.post-content .shiki .line {
+display: block;
+width: 100%;
+min-height: 1.35em;
+white-space: pre;
+}
+.post-content .shiki-fallback {
+margin: 0;
+width: 100%;
+border: none;
+border-radius: 0;
+color: #abb2bf;
+}
+.post-figure {
+margin: 2rem 0;
+border-radius: var(--radius);
+overflow: hidden;
+border: 1px solid rgba(255, 255, 255, 0.08);
+background: rgba(255, 255, 255, 0.02);
+}
+.post-content img,
+.post-figure img {
+display: block;
+width: 100%;
+max-width: 100%;
+height: auto;
+margin: 0;
+border-radius: 0;
+box-shadow: none;
+}
+.post-figure img {
+aspect-ratio: auto;
+object-fit: contain;
+background: #0a0a0c;
+}
+.post-footer {
+margin-top: 4rem;
+padding-top: 2rem;
+border-top: 1px solid rgba(255, 255, 255, 0.08);
+color: var(--muted-foreground);
+font-size: 0.875rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 1rem;
+}
+.post-tags-footer {
+display: flex;
+gap: 0.5rem;
+flex-wrap: wrap;
+}
+.tag-pill {
+font-size: 0.75rem;
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
+background: rgba(255, 255, 255, 0.04);
+color: var(--muted-foreground);
+border: 1px solid rgba(255, 255, 255, 0.08);
+text-decoration: none;
+font-family: var(--font-mono);
+transition: border-color 0.2s, color 0.2s;
+}
+.tag-pill:hover {
+background: rgba(28, 201, 160, 0.1);
+color: var(--primary);
+border-color: rgba(28, 201, 160, 0.3);
+}
+/* Modern Author Card */
+.author-card {
+display: flex;
+align-items: center;
+gap: 1.25rem;
+margin-top: 3rem;
+padding: 1.5rem;
+background: #141417;
+border: 1px solid rgba(255, 255, 255, 0.08);
+border-radius: 0.75rem;
+position: relative;
+}
+.author-avatar-wrap {
+position: relative;
+flex-shrink: 0;
+width: 56px;
+height: 56px;
+}
+.author-avatar {
+width: 56px;
+height: 56px;
+border-radius: 50%;
+object-fit: cover;
+border: 2px solid rgba(28, 201, 160, 0.5);
+box-shadow: 0 0 15px -2px rgba(28, 201, 160, 0.3);
+display: block;
+}
+.status-dot-avatar {
+position: absolute;
+bottom: 2px;
+right: 2px;
+width: 10px;
+height: 10px;
+border-radius: 50%;
+background-color: var(--primary);
+border: 2px solid #141417;
+box-shadow: 0 0 6px var(--primary);
+}
+.author-avatar-fallback {
+display: none;
+width: 56px;
+height: 56px;
+border-radius: 50%;
+align-items: center;
+justify-content: center;
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.1rem;
+color: var(--primary-foreground);
+background: var(--primary);
+border: 2px solid rgba(28, 201, 160, 0.4);
+}
+.author-avatar-wrap.is-fallback .author-avatar {
+display: none;
+}
+.author-avatar-wrap.is-fallback .author-avatar-fallback {
+display: flex;
+}
+.author-info {
+display: flex;
+flex-direction: column;
+gap: 0.35rem;
+}
+.author-name {
+font-family: var(--font-heading);
+font-weight: 700;
+color: var(--foreground);
+font-size: 1rem;
+letter-spacing: -0.01em;
+}
+.author-bio {
+font-size: 0.85rem;
+color: var(--muted-foreground);
+line-height: 1.5;
+}
+.author-links {
+display: flex;
+gap: 1rem;
+margin-top: 0.25rem;
+}
+.author-links a {
+font-family: var(--font-mono);
+font-size: 0.8rem;
+color: var(--primary);
+text-decoration: none;
+transition: color 0.2s;
+}
+.author-links a:hover {
+color: var(--primary-glow);
+text-decoration: underline;
+}
+/* Post Navigation */
+.post-navigation {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 1.5rem;
+margin-top: 3rem;
+margin-bottom: 2rem;
+}
+.nav-previous,
+.nav-next {
+padding: 1.25rem;
+display: flex;
+flex-direction: column;
+border-radius: 0.75rem;
+}
+.nav-previous a,
+.nav-next a {
+text-decoration: none;
+height: 100%;
+display: flex;
+flex-direction: column;
+}
+.nav-label {
+font-family: var(--font-mono);
+font-size: 0.75rem;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+color: var(--primary);
+margin-bottom: 0.4rem;
+}
+.nav-title {
+font-family: var(--font-heading);
+font-weight: 600;
+color: var(--foreground);
+font-size: 1.05rem;
+transition: color 0.2s;
+letter-spacing: -0.01em;
+}
+.nav-previous:hover .nav-title,
+.nav-next:hover .nav-title {
+color: var(--primary-glow);
+}
+.nav-next {
+text-align: right;
+}
+@media (max-width: 768px) {
+.post-title {
+font-size: 2rem;
+}
+.post-navigation {
+grid-template-columns: 1fr;
+}
+.nav-next {
+text-align: left;
+}
+.post-container {
+padding: 1.5rem;
+}
+}
+/* Inline styles injected from frontmatter */
+</style> </head> <body class="bg-mesh"> <div class="reading-progress"></div> <style>
+/* Modern Floating Island Header */
+.site-header {
+position: fixed;
+top: 1rem;
+left: 0;
+right: 0;
+z-index: 1000;
+display: flex;
+justify-content: center;
+padding: 0 1rem;
+pointer-events: none;
+transition: all 0.3s ease;
+}
+.header-inner {
+width: 100%;
+max-width: 960px;
+pointer-events: auto;
+padding: 0.5rem 1.15rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 1rem;
+background: rgba(9, 9, 11, 0.85);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+border: 1px solid rgba(255, 255, 255, 0.12);
+border-radius: 9999px;
+box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6), 0 0 15px -3px rgba(28, 201, 160, 0.1);
+transition: all 0.25s ease;
+}
+.site-logo {
+font-family: var(--font-heading);
+font-weight: 700;
+font-size: 1.05rem;
+color: var(--foreground);
+text-decoration: none;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+letter-spacing: -0.02em;
+}
+.logo-status-pill {
+display: inline-flex;
+align-items: center;
+gap: 0.35rem;
+padding: 0.15rem 0.55rem;
+font-family: var(--font-mono);
+font-size: 0.7rem;
+color: var(--primary);
+background: rgba(28, 201, 160, 0.1);
+border: 1px solid rgba(28, 201, 160, 0.25);
+border-radius: 9999px;
+}
+.status-pulse-dot {
+width: 6px;
+height: 6px;
+border-radius: 50%;
+background-color: var(--primary);
+box-shadow: 0 0 6px var(--primary);
+animation: pulseGlow 2s infinite;
+}
+@keyframes pulseGlow {
+0%, 100% { opacity: 1; transform: scale(1); }
+50% { opacity: 0.4; transform: scale(0.85); }
+}
+.text-gradient-premium {
+background: linear-gradient(135deg, #fff 10%, #5eead4 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: transparent;
+display: inline-block;
+}
+.site-nav {
+display: flex;
+align-items: center;
+gap: 0.35rem;
+}
+.nav-link {
+font-family: var(--font-sans);
+font-size: 0.8125rem;
+font-weight: 500;
+color: var(--muted-foreground);
+text-decoration: none;
+padding: 0.35rem 0.75rem;
+border-radius: 9999px;
+transition: all 0.2s ease;
+}
+.nav-link:hover {
+color: var(--foreground);
+background: rgba(255, 255, 255, 0.06);
+}
+.nav-link.active {
+color: var(--foreground);
+background: rgba(255, 255, 255, 0.1);
+font-weight: 600;
+}
+/* Search Button */
+.search-trigger {
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.12);
+color: var(--muted-foreground);
+padding: 0.35rem 0.75rem;
+border-radius: 9999px;
+font-size: 0.8125rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 0.45rem;
+transition: all 0.2s ease;
+font-family: var(--font-mono);
+}
+.search-trigger:hover {
+background: rgba(255, 255, 255, 0.1);
+color: var(--foreground);
+border-color: rgba(28, 201, 160, 0.35);
+}
+.search-text,
+.search-shortcut {
+display: none;
+}
+@media (min-width: 768px) {
+.search-text {
+display: inline;
+}
+.search-shortcut {
+display: inline-flex;
+font-size: 0.7rem;
+background: rgba(255, 255, 255, 0.08);
+border: 1px solid rgba(255, 255, 255, 0.12);
+border-radius: 4px;
+padding: 0.05rem 0.35rem;
+color: var(--muted-foreground);
+}
+}
+/* Mobile Menu */
+.mobile-menu-toggle {
+display: none;
+background: none;
+border: none;
+color: var(--foreground);
+cursor: pointer;
+padding: 0.35rem;
+}
+@media (max-width: 768px) {
+.site-nav {
+display: none;
+position: absolute;
+top: calc(100% + 0.5rem);
+left: 1rem;
+right: 1rem;
+flex-direction: column;
+background: #111114;
+border: 1px solid rgba(255, 255, 255, 0.12);
+border-radius: 1rem;
+padding: 1rem;
+gap: 0.5rem;
+align-items: stretch;
+box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+}
+.site-nav.open {
+display: flex;
+animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.mobile-menu-toggle {
+display: block;
+}
+.nav-link {
+padding: 0.6rem 1rem;
+border-radius: 0.5rem;
+text-align: left;
+}
+}
+@keyframes slideDown {
+from {
+opacity: 0;
+transform: translateY(-8px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+/* Search Modal */
+.search-modal-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+z-index: 2000;
+align-items: flex-start;
+justify-content: center;
+padding-top: 100px;
+opacity: 0;
+transition: opacity 0.25s ease;
+}
+.search-modal-overlay.open {
+display: flex;
+opacity: 1;
+}
+.search-modal {
+background: #101013;
+border: 1px solid rgba(255, 255, 255, 0.15);
+border-radius: 1rem;
+width: 90%;
+max-width: 600px;
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 25px -5px rgba(28, 201, 160, 0.2);
+overflow: hidden;
+transform: scale(0.96);
+transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.search-modal-overlay.open .search-modal {
+transform: scale(1);
+}
+.search-input-container {
+padding: 1.25rem 1.5rem;
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+display: flex;
+align-items: center;
+}
+.search-icon {
+color: var(--primary);
+margin-right: 0.85rem;
+flex-shrink: 0;
+}
+.search-input {
+background: transparent;
+border: none;
+color: var(--foreground);
+font-size: 1.05rem;
+width: 100%;
+outline: none;
+font-family: var(--font-sans);
+}
+.search-input::placeholder {
+color: var(--muted-foreground);
+}
+.search-results {
+max-height: 400px;
+overflow-y: auto;
+padding: 0.75rem;
+}
+.search-result-item {
+display: block;
+padding: 0.85rem 1rem;
+text-decoration: none;
+color: var(--muted-foreground);
+border-radius: 0.5rem;
+transition: all 0.2s ease;
+margin-bottom: 0.25rem;
+border: 1px solid transparent;
+}
+.search-result-item:hover {
+background: rgba(255, 255, 255, 0.05);
+border-color: rgba(28, 201, 160, 0.25);
+color: var(--foreground);
+}
+.search-result-title {
+font-weight: 600;
+font-size: 0.95rem;
+color: var(--foreground);
+margin-bottom: 0.25rem;
+font-family: var(--font-heading);
+}
+.search-result-item:hover .search-result-title {
+color: var(--primary);
+}
+.search-result-excerpt {
+font-size: 0.8125rem;
+color: var(--muted-foreground);
+display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient: vertical;
+overflow: hidden;
+}
+</style> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
+class="text-gradient-premium">Jose</span></span> <span class="logo-status-pill"> <span class="status-pulse-dot"></span>
+blog
+</span> </a> <nav class="site-nav"> <a href="/#hero" class="nav-link">Home</a> <a href="/#experience" class="nav-link">Experience</a> <a href="/#skills" class="nav-link">Skills</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/blog/" class="nav-link active">Blog</a> <a href="/#contact" class="nav-link">Contact</a> </nav> <div style="display: flex; align-items: center; gap: 0.75rem;"> <button class="search-trigger" onclick="openSearch()" aria-label="Search posts"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut">⌘K</span> </button> <button class="mobile-menu-toggle" aria-label="Toggle menu"
+onclick="document.querySelector('.site-nav').classList.toggle('open')"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()"> <div class="search-modal"> <div class="search-input-container"> <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts by topic, title, or tags..." id="searchInput" autocomplete="off"> </div> <div class="search-results" id="searchResults"> </div> </div> </div> <script>
+let searchIndex = [];
+let isSearchOpen = false;
+async function loadSearchIndex() {
+if (searchIndex.length > 0) return;
+try {
+const response = await fetch('/blog/search.json');
+searchIndex = await response.json();
+} catch (e) {
+console.error('Failed to load search index', e);
+}
+}
+function openSearch() {
+document.getElementById('searchModal').classList.add('open');
+document.getElementById('searchInput').focus();
+isSearchOpen = true;
+loadSearchIndex();
+document.body.style.overflow = 'hidden';
+}
+function closeSearch() {
+document.getElementById('searchModal').classList.remove('open');
+isSearchOpen = false;
+document.body.style.overflow = '';
+}
+function performSearch(query) {
+if (!query) {
+document.getElementById('searchResults').innerHTML = '';
+return;
+}
+const results = searchIndex.filter(post => {
+const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
+const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
+const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
+return titleMatch || descMatch || tagMatch;
+}).slice(0, 5); // Limit to 5 results
+const resultsHtml = results.map(post => `
+<a href="/blog/${post.slug}/" class="search-result-item" onclick="closeSearch()"> <div class="search-result-title">${post.title}</div> <div class="search-result-excerpt">${post.description || ''}</div> </a>
+`).join('');
+document.getElementById('searchResults').innerHTML = results.length > 0
+? resultsHtml
+: '<div style="padding: 1.5rem; color: var(--muted-foreground); text-align: center; font-size: 0.9rem;">No matching articles found</div>';
+}
+document.getElementById('searchInput').addEventListener('input', (e) => {
+performSearch(e.target.value);
+});
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+e.preventDefault();
+if (isSearchOpen) closeSearch();
+else openSearch();
+}
+if (e.key === 'Escape' && isSearchOpen) {
+closeSearch();
+}
+});
+</script> <main class="container"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#040</span> <span>16 Nov 2026</span> <span>·</span> <span>8 min read</span> </div> <h1 class="post-title">Modernizing the Developer Portfolio: Bento Grids, Proof Metrics, and Unified Theme</h1> </header> <div class="post-content"> <p>Seven months ago in <a href="/blog/redesigning-the-portfolio-teal-fonts-and-timelines/">episode 026</a>, I overhauled this site&#39;s color system, migrating from an electric violet palette to emerald teal and introducing scroll-driven timeline animations. That redesign fixed immediate issues like broken keyframes and unstyled utility classes. But as time went on, stepping back to look at the portfolio revealed subtle signs of aging.</p> <p>The personal website of a senior distributed systems engineer should communicate technical rigor, precision, and architectural discipline. Instead, several design decisions were working against that:</p> <ol> <li><strong>Playful typography vs. systems engineering:</strong> The heading typeface (<code>Syne</code>) had wide, geometric letterforms that felt more like a boutique creative agency than someone who builds high-throughput Kafka pipelines and debugs WebFlux thread pool exhaustion.</li> <li><strong>The empty void in Skills:</strong> The &quot;Full Toolkit&quot; rendered as a single vertical list on the left side of the screen, leaving more than 50% of the display completely blank on desktop viewports.</li> <li><strong>Buried proof metrics:</strong> High-impact real-world numbers — handling 50k+ req/sec on WebFlux, scaling batch jobs by 3×, achieving All India Rank 170 (top 0.08% nationwide) in GATE Computer Science among 200,000+ engineers — were buried inside dense paragraphs where recruiters and hiring managers scanning in ten seconds would miss them.</li> <li><strong>Header and mobile menu glitches:</strong> The navigation was a traditional block header, and the mobile menu had a transparency layering bug where menu items overlapped text directly over the hero.</li> <li><strong>Drift between portfolio and blog:</strong> While the portfolio evolved, the blog templates remained anchored to the older layout, with disconnected navigation bars and an untextured dark background.</li> </ol> <p>Here is how I audited, redesigned, and unified both halves of the website into a modern developer-themed design system.</p> <hr> <h2>1. Typography &amp; Aesthetic Framework: Linear Meets Supabase</h2> <p>Modern developer tools — Linear, Vercel, Supabase, Cloudflare — have defined a recognizable visual standard: high-contrast dark backgrounds, micro-technical grid patterns, razor-sharp sans typography with tight tracking, and monospace accents for data and metrics.</p> <h3>Typography Hierarchy</h3> <p>I replaced <code>Syne</code> as the heading font with <strong>Inter</strong> and <strong>Plus Jakarta Sans</strong>, styled with tight negative letter tracking (<code>tracking-tight font-bold</code>). Headings now feel authoritative, structured, and legible at all scale factors.</p> <p>For technical tags, episode numbers, status indicators, and metric callouts, I introduced <strong>JetBrains Mono</strong>. Code and metadata now look like they belong in a production IDE:</p> <div class="code-block-wrap" data-lang="typescript"><span class="code-lang" aria-hidden="true">typescript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">// tailwind.config.ts</span></span> <span class="line"><span style="color:#E06C75">fontFamily</span><span style="color:#ABB2BF">: {</span></span> <span class="line"><span style="color:#E06C75">  sans</span><span style="color:#ABB2BF">: [</span><span style="color:#98C379">'Plus Jakarta Sans'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'Inter'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'-apple-system'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'BlinkMacSystemFont'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'Segoe UI'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'Roboto'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'sans-serif'</span><span style="color:#ABB2BF">],</span></span> <span class="line"><span style="color:#E06C75">  heading</span><span style="color:#ABB2BF">: [</span><span style="color:#98C379">'Inter'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'Plus Jakarta Sans'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'system-ui'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'sans-serif'</span><span style="color:#ABB2BF">],</span></span> <span class="line"><span style="color:#E06C75">  mono</span><span style="color:#ABB2BF">: [</span><span style="color:#98C379">'JetBrains Mono'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'ui-monospace'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'Menlo'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'Monaco'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'monospace'</span><span style="color:#ABB2BF">],</span></span> <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div> <h3>Depth and the Ambient Micro-Grid</h3> <p>A flat black canvas (<code>#09090b</code>) without depth can feel empty or unpolished. To introduce subtle technical texture without clutter, I created a custom CSS background utility combining a 36px micro-grid with an ambient radial teal glow:</p> <div class="code-block-wrap" data-lang="css"><span class="code-lang" aria-hidden="true">css</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">/* src/index.css */</span></span> <span class="line"><span style="color:#D19A66">.bg-grid-pattern</span><span style="color:#ABB2BF"> {</span></span> <span class="line"><span style="color:#ABB2BF">  background-size: </span><span style="color:#D19A66">36</span><span style="color:#E06C75">px</span><span style="color:#D19A66"> 36</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF">  background-image: </span></span> <span class="line"><span style="color:#56B6C2">    linear-gradient</span><span style="color:#ABB2BF">(to </span><span style="color:#D19A66">right</span><span style="color:#ABB2BF">, </span><span style="color:#56B6C2">rgba</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">0.035</span><span style="color:#ABB2BF">) </span><span style="color:#D19A66">1</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">transparent</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">),</span></span> <span class="line"><span style="color:#56B6C2">    linear-gradient</span><span style="color:#ABB2BF">(to </span><span style="color:#D19A66">bottom</span><span style="color:#ABB2BF">, </span><span style="color:#56B6C2">rgba</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">0.035</span><span style="color:#ABB2BF">) </span><span style="color:#D19A66">1</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">transparent</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">);</span></span> <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div> <p>Behind the hero and key headers, a radial gradient in emerald teal (<code>rgba(28, 201, 160, 0.08)</code>) provides atmospheric lighting that highlights the primary subject.</p> <hr> <h2>2. Floating Island Pill Navigation</h2> <p>The old top bar was a static full-width strip that felt heavy. I redesigned the navigation into a <strong>floating frosted-glass pill island</strong>:</p> <ul> <li><strong>Centered Island:</strong> Fixed at <code>top-4</code>, constrained to <code>max-w-5xl</code>, and floating above the content with <code>backdrop-blur-md</code> and <code>bg-background/80</code>.</li> <li><strong>System Status Indicator:</strong> Next to the brand logo (<code>Jeffrey.Jose</code>), an active monospace status pill with a pulsating green indicator displays <code>backend</code>.</li> <li><strong>Active Navigation Tracking:</strong> The navigation tracks the user&#39;s scroll position, lighting up the active section (<code>Home</code>, <code>Writing</code>, <code>Experience</code>, <code>Skills</code>, <code>Projects</code>, <code>Blog</code>, <code>Contact</code>).</li> <li><strong>One-Click Actions:</strong> A high-contrast <code>Resume.pdf</code> action button and theme toggle are integrated directly into the bar.</li> </ul> <p>For mobile viewports, I isolated the mobile menu sheet using a dedicated popover surface (<code>bg-popover text-popover-foreground border border-border shadow-2xl</code>) with a <code>fixed inset-0 bg-black/70 backdrop-blur-sm</code> backdrop scrim, eliminating the transparency bleed once and for all.</p> <hr> <h2>3. Above-the-Fold Proof Metrics</h2> <p>Recruiters and engineers do not read personal websites sequentially from top to bottom; they scan for verifiable credentials within five seconds. </p> <p>In the hero section immediately beneath the summary bio, I added a strip of high-density monospace <strong>proof chips</strong>:</p> <ul> <li><code>6+ yrs @ Jio Platforms</code></li> <li><code>50k+ req/s WebFlux</code></li> <li><code>GATE AIR 170 (Top 0.08%)</code></li> <li><code>IIT Kharagpur M.Tech</code></li> </ul> <p>Additionally, the avatar now features a glowing emerald ring with a live pulse dot, signifying availability for high-impact distributed systems engineering opportunities.</p> <hr> <h2>4. The Developer Bento Grid for Skills</h2> <p>The most noticeable architectural change on the homepage is the <strong>Skills &amp; Architecture</strong> section.</p> <p>Previously, skills were split into a top card and a &quot;Full Toolkit&quot; list that collapsed into a single column on the left, leaving a gaping white (or black) hole across half of wide screens.</p> <p>I completely rebuilt this into a balanced 6-card <strong>Developer Bento Grid</strong>:</p> <table> <thead> <tr> <th align="left">Grid Area</th> <th align="left">Focus</th> <th align="left">Core Technologies</th> </tr> </thead> <tbody><tr> <td align="left"><strong>01. Core Architecture</strong> (Span 2)</td> <td align="left">High-concurrency backend &amp; event streaming</td> <td align="left">Java 21, Spring Boot 3, Apache Kafka, Project Reactor / WebFlux, gRPC, Distributed Locks</td> </tr> <tr> <td align="left"><strong>02. Data &amp; Storage</strong> (Span 1)</td> <td align="left">Persistence, caching &amp; search</td> <td align="left">PostgreSQL, Redis, MongoDB, Elasticsearch, Liquibase</td> </tr> <tr> <td align="left"><strong>03. Cloud &amp; DevOps</strong> (Span 1)</td> <td align="left">Containerization &amp; orchestration</td> <td align="left">Docker, Kubernetes, AWS, GCP, CI/CD, Prometheus, Grafana</td> </tr> <tr> <td align="left"><strong>04. Distributed Patterns</strong> (Span 2)</td> <td align="left">Architectural resilience</td> <td align="left">Microservices, Event-Driven, CQRS, SAGA, Circuit Breakers (Resilience4j)</td> </tr> <tr> <td align="left"><strong>05. Engineering Leadership</strong> (Span 2)</td> <td align="left">Execution and quality</td> <td align="left">Architecture Reviews, Mentorship, k6 &amp; JMeter Load Testing, Chaos Testing</td> </tr> <tr> <td align="left"><strong>06. Verified Credentials</strong> (Span 1)</td> <td align="left">Formal certifications</td> <td align="left">Spring Professional, Oracle Certified Java SE 11 Developer</td> </tr> </tbody></table> <p>Every card in the grid uses a <code>.dev-card</code> structure with a subtle top-border gradient highlight (<code>.dev-card-highlight</code>) that activates on hover.</p> <hr> <h2>5. Experience Timeline &amp; Project Window Chrome</h2> <h3>Gradient Timeline Spine</h3> <p>In the Work Experience section (<code>// 02. WORK EXPERIENCE</code>), the timeline was upgraded with an illuminated gradient spine connecting all positions at Jio Platforms. Standout metric callouts (<code>⚡ 3× Batch Speed-up</code>, <code>⚡ 50k+ Concurrent Reqs</code>, <code>⚡ 85% Manual Reduction</code>, <code>⚡ 45% Incident Drop</code>) were pulled out of prose into highlighted badges for instant readability.</p> <h3>macOS Window Chrome on Projects</h3> <p>For featured projects (like the scalable chat platform and TruthMeter AI), each card is framed inside simulated terminal / macOS browser window chrome:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>● ● ● domain.dev DEPLOYED</span></span></code></pre></div> <p>This frames each project as an active, deployed engineering system rather than a generic card, highlighting architecture features, live demo links, and GitHub repository references.</p> <h3>Academic Distinction Banner</h3> <p>In the Education section, I created a dedicated achievement banner for <strong>GATE 2017 Computer Science AIR 170</strong> (Top 0.08% among 200,000+ candidates nationwide), pairing it with my M.Tech research at IIT Kharagpur on distributed computing.</p> <hr> <h2>6. Unifying the Blog Architecture</h2> <p>A core principle from <code>CLAUDE.md</code> is: <strong>Portfolio and blog share one identity — if you change one, change the other.</strong></p> <p>Having modernized the portfolio, leaving the blog in its previous state would cause immediate visual drift. I audited the blog generation engine (<code>blog/scripts/build.js</code>) and its templates (<code>blog/templates/</code>):</p> <h3>1. Template Modernization</h3> <ul> <li><strong>Fonts &amp; CSS:</strong> Updated <code>blog/templates/styles.html</code> to load Inter, JetBrains Mono, and Plus Jakarta Sans. Integrated the 36px micro-grid and ambient top radial glow so reading an article feels continuous with browsing the portfolio.</li> <li><strong>Floating Island Header:</strong> Replaced the blog&#39;s block header in <code>blog/templates/header.html</code> with the same floating island pill design, complete with <code>Jeffrey.Jose · blog</code> brand status, responsive popover drawer, and <code>⌘K</code> search shortcut.</li> <li><strong>Author Bio Card:</strong> Rebuilt the author bio at the footer of each article with an emerald avatar glow ring and live backend status indicator.</li> </ul> <h3>2. Fixing the Hidden <code>{ { inlineScripts } }</code> Bug</h3> <p>During visual auditing with browser tooling, I checked the developer console on a generated post page and noticed:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>Uncaught ReferenceError: inlineScripts is not defined</span></span></code></pre></div> <p>Tracing this down in <code>blog/templates/post.html</code> revealed line 571:</p> <div class="code-block-wrap" data-lang="html"><span class="code-lang" aria-hidden="true">html</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">/* Inline scripts injected from frontmatter */</span></span> <span class="line"><span style="color:#ABB2BF">{ { inlineScripts } }</span></span></code></pre></div> <p>There was an inadvertent space between the opening curly braces: <code>{ {</code> instead of <code>{{</code>. Because <code>build.js</code> uses <code>new RegExp(&#39;{{\\s*&#39; + token + &#39;\\s*}}&#39;, &#39;g&#39;)</code> for template interpolation, it required two consecutive opening braces. The template variable was never replaced, leaving <code>{ { inlineScripts } }</code> as literal JavaScript syntax inside the <code>&lt;script&gt;</code> tag. The browser attempted to evaluate <code>inlineScripts</code> as an identifier and threw an error on every single post page.</p> <p>Fixing this to <code></code> resolved the error across all 38 generated post pages.</p> <h3>3. Trailing Slashes for Static Directory Routing</h3> <p>Static sites generated with folder-based permalinks (<code>/blog/post-slug/index.html</code>) require trailing slashes on URLs. When linking to <code>/blog/post-slug</code> without the trailing slash:</p> <ul> <li>In production, GitHub Pages responds with an HTTP 301 redirect to <code>/blog/post-slug/</code>.</li> <li>In local development or SPA preview servers (like Vite preview), requests without trailing slashes trigger history API fallback, landing on the React 404 page.</li> </ul> <p>I updated all post links in <code>blog/scripts/build.js</code>, <code>blog/templates/index.html</code>, <code>blog/templates/header.html</code>, and <code>src/components/RecentWriting.tsx</code> to include trailing slashes (<code>/blog/${slug}/</code>), eliminating the redirect penalty and ensuring seamless navigation everywhere.</p> <hr> <h2>The Result</h2> <p>The entire site now presents a unified, cohesive developer aesthetic:</p> <ul> <li><strong>Clean builds:</strong> <code>npx vite build</code>, <code>npm run lint</code>, <code>npm run build:prerender-harness</code>, and <code>node blog/scripts/build.js</code> pass with 0 errors.</li> <li><strong>Hydration safety:</strong> All SSR / prerender constraints are strictly maintained.</li> <li><strong>Consistency:</strong> Navigating between the portfolio, the blog index, and individual technical write-ups now feels like exploring a single, meticulously engineered system.</li> </ul> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-frontend" class="tag process" data-tag="frontend">frontend</a>, <a href="/blog#tag-design" class="tag neutral" data-tag="design">design</a>, <a href="/blog#tag-portfolio" class="tag structure" data-tag="portfolio">portfolio</a>, <a href="/blog#tag-ui-design" class="tag process" data-tag="ui-design">ui-design</a>, <a href="/blog#tag-architecture" class="tag structure" data-tag="architecture">architecture</a>, <a href="/blog#tag-css" class="tag neutral" data-tag="css">css</a>, <a href="/blog#tag-meta" class="tag meta" data-tag="meta">meta</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="status-dot-avatar" aria-hidden="true"></span> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <div style="display: flex; align-items: center; gap: 0.5rem;"> <span class="author-name">Jeffrey Jose</span> <span class="dev-badge" style="font-size: 0.65rem; padding: 0.1rem 0.45rem;">backend</span> </div> <span class="author-bio">Senior backend engineer writing about Spring Boot, distributed systems, and production debugging.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous panel-card"> <a href="/blog/tuning-a-fire-tv-and-two-phones-over-adb/"> <span class="nav-label">← previous</span> <span class="nav-title">Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 9999px; text-decoration: none; color: var(--muted-foreground); font-size: 0.8125rem; font-family: var(--font-mono); transition: color 0.2s, border-color 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
+Subscribe via RSS
+</a> </div> </main> <script>
+// Reading Progress Bar
+window.addEventListener('scroll', () => {
+const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+const scrolled = (winScroll / height) * 100;
+document.querySelector('.reading-progress').style.width = scrolled + '%';
+});
+// Load view count from GoatCounter
+document.addEventListener('DOMContentLoaded', () => {
+loadViewCount();
+});
+function loadViewCount() {
+const path = window.location.pathname;
+const viewCountElement = document.getElementById('view-count');
+if (!viewCountElement) return;
+fetch(`https://jeffreyjose.goatcounter.com/counter${path}.json`)
+.then(response => {
+if (!response.ok) throw new Error('View count unavailable');
+return response.json();
+})
+.then(data => {
+const count = data.count ?? 0;
+viewCountElement.textContent = `${count.toLocaleString()} views`;
+viewCountElement.hidden = false;
+})
+.catch(() => {
+viewCountElement.hidden = true;
+});
+}
+/* Inline scripts injected from frontmatter */
+</script> <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script> </body> </html>

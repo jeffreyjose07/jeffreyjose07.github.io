@@ -1,4 +1,4 @@
-import { GraduationCap, Calendar, MapPin } from "lucide-react";
+import { GraduationCap, Calendar, MapPin, Trophy, BookOpen } from "lucide-react";
 
 const Education = () => {
   const education = [
@@ -23,55 +23,92 @@ const Education = () => {
   ];
 
   const achievements = [
-    { title: "IIT Kharagpur", subtitle: "M.Tech. Computer Science" },
+    { title: "IIT Kharagpur", subtitle: "M.Tech. Computer Science & Engineering" },
     { title: "GATE 2017", subtitle: "All India Rank 170 among 200,000+ candidates" },
-    { title: "Teaching Assistant", subtitle: "2+ years at IIT Kharagpur" },
+    { title: "Teaching Assistant", subtitle: "2+ years teaching DS & Algorithms at IIT Kharagpur" },
   ];
 
   return (
-    <section id="education" className="py-24 bg-background">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-14">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4">Education</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            M.Tech. from IIT Kharagpur and GATE AIR 170 — algorithms, systems, and SAR research.
+    <section id="education" className="py-24 px-4 sm:px-6 bg-background relative border-t border-border/50">
+      <div className="container mx-auto max-w-5xl">
+        {/* Section Header */}
+        <div className="mb-14">
+          <div className="text-xs font-mono font-semibold uppercase tracking-widest text-primary mb-3">
+            // 05. ACADEMIA & FOUNDATIONS
+          </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold tracking-tight text-foreground">
+            Academic Background
+          </h2>
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mt-2 leading-relaxed">
+            Graduate studies at IIT Kharagpur, algorithmic foundations, and remote sensing research.
           </p>
         </div>
 
-        <div className="max-w-5xl mx-auto space-y-6 mb-14">
+        {/* Premier Achievement Callout */}
+        <div className="dev-card dev-card-highlight p-5 sm:p-6 mb-8 bg-gradient-to-r from-primary/10 via-card/60 to-secondary/40 border-primary/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="p-2.5 rounded-xl bg-primary/15 text-primary border border-primary/25 shrink-0">
+              <Trophy className="w-5 h-5 sm:w-6 sm:h-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-heading font-bold text-base sm:text-lg text-foreground">
+                  GATE 2017 Computer Science
+                </h3>
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-primary text-primary-foreground">
+                  AIR 170
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                All India Rank 170 among 200,000+ candidates nationwide
+              </p>
+            </div>
+          </div>
+          <div className="text-xs font-mono text-primary font-semibold px-3 py-1.5 rounded-lg border border-primary/20 bg-primary/10 shrink-0">
+            Top 0.08% Nationwide
+          </div>
+        </div>
+
+        {/* Education Timeline Cards */}
+        <div className="space-y-6 mb-12">
           {education.map((edu, index) => (
             <article
               key={index}
-              className="rounded-lg border border-border bg-secondary/15 p-6 md:p-8"
+              className="dev-card dev-card-highlight p-6 sm:p-8 relative"
             >
               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-md bg-primary/10 text-primary shrink-0">
+                  <div className="p-3 rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
                     <GraduationCap className="h-6 w-6" />
                   </div>
-                  <div className="space-y-2">
-                    <h3 className="text-2xl font-heading font-bold text-foreground">
+                  <div className="space-y-1.5">
+                    <h3 className="text-xl sm:text-2xl font-heading font-bold text-foreground">
                       {edu.degree}
                     </h3>
-                    <p className="text-lg font-medium text-foreground/90">{edu.field}</p>
-                    <p className="text-muted-foreground font-medium">{edu.institution}</p>
+                    <p className="text-base font-semibold text-primary">{edu.field}</p>
+                    <p className="text-muted-foreground font-medium text-sm">{edu.institution}</p>
+
                     {edu.thesis && (
-                      <div className="mt-3 space-y-1.5 text-sm">
-                        <p className="font-semibold text-foreground">M.Tech Thesis</p>
-                        <p className="text-muted-foreground italic">{edu.thesis}</p>
-                        <p className="text-xs text-muted-foreground">Guided by: {edu.advisor}</p>
-                        <p className="text-muted-foreground">{edu.description}</p>
+                      <div className="mt-4 p-4 rounded-lg bg-secondary/40 border border-border/60 text-xs sm:text-sm space-y-1.5">
+                        <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-foreground">
+                          <BookOpen className="w-3.5 h-3.5 text-primary" />
+                          <span>M.Tech Thesis</span>
+                        </div>
+                        <p className="text-muted-foreground italic font-medium">"{edu.thesis}"</p>
+                        <p className="text-[11px] font-mono text-muted-foreground">Advisor: {edu.advisor}</p>
+                        <p className="text-muted-foreground text-xs leading-relaxed pt-1">{edu.description}</p>
                       </div>
                     )}
                   </div>
                 </div>
-                <div className="flex flex-col gap-2 text-sm text-muted-foreground lg:text-right shrink-0">
-                  <div className="flex items-center gap-2 lg:justify-end">
-                    <Calendar className="h-4 w-4 text-primary" />
+
+                <div className="flex flex-col gap-2 text-xs font-mono text-muted-foreground lg:text-right shrink-0">
+                  <div className="flex items-center gap-1.5 lg:justify-end">
+                    <Calendar className="h-3.5 w-3.5 text-primary" />
                     <span>{edu.period}</span>
                   </div>
-                  <div className="flex items-center gap-2 lg:justify-end">
-                    <MapPin className="h-4 w-4 text-primary" />
+                  <div className="flex items-center gap-1.5 lg:justify-end">
+                    <MapPin className="h-3.5 w-3.5 text-primary" />
                     <span>{edu.location}</span>
                   </div>
                 </div>
@@ -80,19 +117,21 @@ const Education = () => {
           ))}
         </div>
 
-        <div className="max-w-5xl mx-auto rounded-lg border border-border bg-secondary/15 p-6 md:p-8">
-          <h3 className="text-xl font-heading font-bold mb-2">Key Achievements</h3>
-          <p className="text-sm text-muted-foreground mb-6 max-w-3xl">
-            Teaching Assistant during M.Tech., mentoring students in Programming, Data Structures,
-            and Theory of Computations.
+        {/* Academic Highlights Summary */}
+        <div className="dev-card p-6 md:p-8">
+          <h3 className="text-lg sm:text-xl font-heading font-bold text-foreground mb-2">
+            Academic Highlights
+          </h3>
+          <p className="text-xs sm:text-sm text-muted-foreground mb-6 max-w-3xl">
+            Graduate teaching assistantship in Algorithms, Data Structures, and Theory of Computation at IIT Kharagpur.
           </p>
-          <dl className="grid sm:grid-cols-3 gap-6">
+          <dl className="grid sm:grid-cols-3 gap-5">
             {achievements.map((achievement, index) => (
-              <div key={index} className="border-t border-border pt-4">
-                <dt className="font-heading font-semibold text-foreground mb-1">
+              <div key={index} className="border-t border-border/60 pt-4">
+                <dt className="font-heading font-semibold text-foreground text-sm mb-1">
                   {achievement.title}
                 </dt>
-                <dd className="text-sm text-muted-foreground">{achievement.subtitle}</dd>
+                <dd className="text-xs font-mono text-muted-foreground">{achievement.subtitle}</dd>
               </div>
             ))}
           </dl>

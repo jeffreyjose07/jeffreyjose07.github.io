@@ -1,4 +1,4 @@
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, Terminal } from "lucide-react";
 import { socialLinks } from "@/data/socials";
 
 const Footer = () => {
@@ -13,11 +13,24 @@ const Footer = () => {
   };
 
   return (
-    <footer className="border-t border-border bg-background">
-      <div className="container mx-auto px-6 py-12 max-w-6xl">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+    <footer className="border-t border-border/60 bg-background/50 relative py-12">
+      <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+          {/* Brand & Micro Tag */}
+          <div className="flex items-center gap-2">
+            <span className="p-1 rounded bg-primary/10 text-primary border border-primary/20">
+              <Terminal className="w-3.5 h-3.5" />
+            </span>
+            <span className="text-sm font-heading font-bold text-foreground">
+              Jeffrey<span className="text-primary">.</span>Jose
+            </span>
+            <span className="text-xs font-mono text-muted-foreground ml-2">
+              • Systems & Backend
+            </span>
+          </div>
+
           {/* Quick links */}
-          <nav aria-label="Footer navigation" className="flex flex-wrap gap-6 text-sm text-muted-foreground">
+          <nav aria-label="Footer navigation" className="flex flex-wrap gap-5 text-xs font-mono text-muted-foreground">
             {quickLinks.map((link) => (
               <a
                 key={link.href}
@@ -29,38 +42,40 @@ const Footer = () => {
             ))}
           </nav>
 
-          {/* Social icons */}
-          <div className="flex gap-4">
-            {socialLinks.map((social, index) => (
-              <a
-                key={index}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={social.label}
-                className="p-2 rounded-md text-muted-foreground hover:text-primary transition-colors duration-200"
-              >
-                <social.icon className="h-5 w-5" />
-              </a>
-            ))}
-          </div>
+          {/* Social icons & back to top */}
+          <div className="flex items-center gap-3">
+            <div className="flex gap-2">
+              {socialLinks.map((social, index) => (
+                <a
+                  key={index}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  className="p-2 rounded-lg border border-border/70 bg-secondary/30 text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
+                >
+                  <social.icon className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
 
-          {/* Back to top */}
-          <button
-            onClick={scrollToTop}
-            aria-label="Back to top"
-            className="p-2 rounded-md text-muted-foreground hover:text-primary transition-colors duration-200"
-          >
-            <ArrowUp className="h-5 w-5" />
-          </button>
+            <button
+              onClick={scrollToTop}
+              aria-label="Back to top"
+              className="p-2 rounded-lg border border-border/70 bg-secondary/30 text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors ml-1"
+            >
+              <ArrowUp className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-border text-center text-sm text-muted-foreground">
-          {/* Frozen at build time — see vite.build-constants.ts. Reading the
-              clock here would render a different year than the prerendered
-              HTML from 1 January until the next deploy. The `typeof` guard
-              keeps this safe if a build path omits the define. */}
-          <p>&copy; {typeof __BUILD_YEAR__ === "number" ? __BUILD_YEAR__ : new Date().getFullYear()} Jeffrey Jose. All rights reserved.</p>
+        <div className="mt-8 pt-6 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-mono text-muted-foreground">
+          <p>
+            &copy; {typeof __BUILD_YEAR__ === "number" ? __BUILD_YEAR__ : new Date().getFullYear()} Jeffrey Jose. All rights reserved.
+          </p>
+          <p className="text-[11px] text-muted-foreground/70">
+            Engineered with React, TypeScript & Tailwind CSS
+          </p>
         </div>
       </div>
     </footer>

@@ -224,6 +224,59 @@ html {
     opacity: 1;
   }
 
+  /* Modern developer styling utilities */
+  .bg-grid-pattern {
+    background-size: 36px 36px;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  }
+  :root:not(.dark) .bg-grid-pattern {
+    background-image: 
+      linear-gradient(to right, rgba(0, 0, 0, 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.045) 1px, transparent 1px);
+  }
+
+  .bg-dot-pattern {
+    background-size: 24px 24px;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  }
+  :root:not(.dark) .bg-dot-pattern {
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.07) 1px, transparent 1px);
+  }
+
+  .dev-card {
+    @apply rounded-xl border border-border/70 bg-card/40 backdrop-blur-md transition-all duration-300;
+  }
+  .dev-card:hover {
+    @apply border-primary/40 shadow-[0_0_25px_-5px_hsla(162,75%,46%,0.12)];
+  }
+
+  .dev-card-highlight {
+    position: relative;
+    overflow: hidden;
+  }
+  .dev-card-highlight::before {
+    content: '';
+    position: absolute;
+    inset-x: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.5), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .dev-card-highlight:hover::before {
+    opacity: 1;
+  }
+
+  .dev-chip {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium border border-border/70 bg-secondary/40 text-muted-foreground transition-colors;
+  }
+  .dev-chip:hover {
+    @apply text-foreground border-primary/40;
+  }
+
   /* Utility classes for layout */
   .center-content {
     @apply flex items-center justify-center;

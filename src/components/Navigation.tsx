@@ -7,13 +7,22 @@ import MobileMenu from "./navigation/MobileMenu";
 import { games } from "@/data/games";
 import Logo from "./Logo";
 
+interface NavItem {
+  label: string;
+  href: string;
+  external?: boolean;
+}
+
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
 
-  const navItems: { label: string; href: string; external?: boolean }[] = [
+  const navItems: NavItem[] = [
     { label: "Home", href: "/#hero" },
+    { label: "Writing", href: "/#writing" },
+    { label: "Experience", href: "/#experience" },
+    { label: "Skills", href: "/#skills" },
     { label: "Projects", href: "/#projects" },
     { label: "Blog", href: "/blog", external: true },
     { label: "Contact", href: "/#contact" },
@@ -43,26 +52,21 @@ const Navigation = () => {
     // Handle hash links
     if (href.startsWith("/#")) {
       const hash = href.substring(1); // remove leading /
-      // Check if we are on the home page (root or index.html)
       const isHomePage = window.location.pathname === "/" || window.location.pathname === "/index.html";
 
       if (isHomePage) {
-        // We are on home page, scroll to element
         const element = document.querySelector(hash);
         if (element) {
           element.scrollIntoView({
             behavior: "smooth",
             block: "start"
           });
-          // Update URL without reload
           window.history.pushState(null, "", href);
         }
       } else {
-        // We are on another page, navigate to home with hash
         window.location.href = href;
       }
     } else {
-      // Regular link
       window.location.href = href;
     }
   };
@@ -71,10 +75,10 @@ const Navigation = () => {
     <nav className={`
       fixed top-0 left-0 w-full z-50 transition-all duration-300
       ${isScrolled
-        ? "bg-background/70 backdrop-blur-md border-b border-white/10"
-        : "bg-transparent"}
+        ? "bg-background/80 backdrop-blur-xl border-b border-border/60 py-3 shadow-xs"
+        : "bg-transparent py-4 sm:py-5"}
     `}>
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between">
         {/* Logo */}
         <div className="flex-shrink-0">
           <a
@@ -83,19 +87,23 @@ const Navigation = () => {
               e.preventDefault();
               handleNavClick("/#hero");
             }}
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-2.5 group"
           >
-            <Logo className="w-8 h-8 group-hover:scale-110 transition-transform duration-300" />
-            <span className="text-xl font-heading font-bold tracking-tight group-hover:text-primary transition-colors duration-300">
-              Jeffrey<span className="text-primary">.</span>Jose
-            </span>
+            <Logo className="w-8 h-8 group-hover:scale-105 transition-transform duration-200" />
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-heading font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                Jeffrey<span className="text-primary">.</span>Jose
+              </span>
+              <span className="hidden lg:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono border border-primary/25 bg-primary/10 text-primary">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                backend
+              </span>
+            </div>
           </a>
         </div>
 
-
-
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-1">
+        <div className="hidden md:flex items-center space-x-1 border border-border/70 bg-secondary/35 backdrop-blur-md px-2.5 py-1 rounded-full shadow-inner">
           {navItems.map((item) => (
             <a
               key={item.href}
@@ -104,48 +112,53 @@ const Navigation = () => {
                 e.preventDefault();
                 handleNavClick(item.href, item.external);
               }}
-              className="px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 hover:bg-accent hover:text-primary"
+              className="px-3 py-1 text-xs font-medium rounded-full text-muted-foreground hover:text-foreground hover:bg-background/90 transition-all duration-150"
             >
               {item.label}
             </a>
           ))}
 
-          <div className="ml-2">
-            <GamesDropdown isScrolled={true} gameItems={gameItems} />
+          <div className="pl-0.5">
+            <GamesDropdown isScrolled={isScrolled} gameItems={gameItems} />
           </div>
+        </div>
 
-          {/* Desktop Theme Toggle.
-              Always rendered, with the icon chosen by CSS from the `.dark`
-              class rather than by a render-time branch. Gating this on a
-              `mounted` flag meant the button was absent on React's first pass
-              but present in the prerendered HTML — a structural hydration
-              mismatch that dropped the whole root back to client rendering. */}
+        {/* Right controls */}
+        <div className="hidden md:flex items-center space-x-2.5">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-            className="ml-2 rounded-md hover:bg-transparent hover:text-primary transition-colors duration-200"
+            className="h-8 w-8 rounded-full border border-border/70 hover:bg-secondary/60 hover:text-primary transition-colors duration-200"
             aria-label="Toggle theme"
           >
-            <span className="relative block h-5 w-5">
-              <Sun size={20} className="absolute inset-0 scale-0 text-yellow-400 transition-transform hover:text-yellow-300 dark:scale-100" />
-              <Moon size={20} className="absolute inset-0 scale-100 text-slate-700 transition-transform hover:text-slate-900 dark:scale-0" />
+            <span className="relative block h-4 w-4">
+              <Sun size={16} className="absolute inset-0 scale-0 text-yellow-400 transition-transform hover:text-yellow-300 dark:scale-100" />
+              <Moon size={16} className="absolute inset-0 scale-100 text-slate-700 transition-transform hover:text-slate-900 dark:scale-0" />
             </span>
           </Button>
+
+          <a
+            href="/resume.pdf"
+            download="Jeffrey_Jose_Resume.pdf"
+            className="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-mono font-medium rounded-full border border-primary/30 bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-200"
+          >
+            Resume.pdf
+          </a>
         </div>
 
         {/* Mobile controls */}
-        <div className="md:hidden flex items-center space-x-2">
+        <div className="md:hidden flex items-center space-x-1.5">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-            className="rounded-md hover:bg-white/10"
+            className="h-8 w-8 rounded-full border border-border/60 hover:bg-secondary/60"
             aria-label="Toggle theme"
           >
-            <span className="relative block h-5 w-5">
-              <Sun size={20} className="absolute inset-0 scale-0 transition-transform dark:scale-100" />
-              <Moon size={20} className="absolute inset-0 scale-100 transition-transform dark:scale-0" />
+            <span className="relative block h-4 w-4">
+              <Sun size={16} className="absolute inset-0 scale-0 transition-transform dark:scale-100" />
+              <Moon size={16} className="absolute inset-0 scale-100 transition-transform dark:scale-0" />
             </span>
           </Button>
 
@@ -153,10 +166,10 @@ const Navigation = () => {
             variant="ghost"
             size="icon"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="rounded-md hover:bg-white/10"
+            className="h-8 w-8 rounded-full border border-border/60 hover:bg-secondary/60"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </Button>
         </div>
       </div>

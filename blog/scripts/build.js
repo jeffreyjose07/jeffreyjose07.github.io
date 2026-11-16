@@ -410,7 +410,7 @@ function generatePostNavigation(prevPost, nextPost) {
     if (prevPost) {
         navHtml += `
             <div class="nav-previous panel-card">
-                <a href="/blog/${prevPost.slug}">
+                <a href="/blog/${prevPost.slug}/">
                     <span class="nav-label">← previous</span>
                     <span class="nav-title">${prevPost.title}</span>
                 </a>
@@ -420,7 +420,7 @@ function generatePostNavigation(prevPost, nextPost) {
     if (nextPost) {
         navHtml += `
             <div class="nav-next panel-card">
-                <a href="/blog/${nextPost.slug}">
+                <a href="/blog/${nextPost.slug}/">
                     <span class="nav-label">next →</span>
                     <span class="nav-title">${nextPost.title}</span>
                 </a>
@@ -474,7 +474,7 @@ function generateIndex(posts) {
             }
 
             return `            <div class="post-item panel-card" data-tags="${escapeHtml(tagsAttr)}">
-                <a href="/blog/${post.slug}">
+                <a href="/blog/${post.slug}/">
                     ${thumbnailHtml}
                     <div class="post-content-wrapper">
                         <div class="post-meta-top">
@@ -690,7 +690,7 @@ function generatePostsJson(posts) {
 
     // Create a clean data structure for analytics
     const postsData = posts.map(post => ({
-        url: `/blog/${post.slug}`,
+        url: `/blog/${post.slug}/`,
         title: post.title,
         episode: post.episodeNumber.toString().padStart(3, '0'),
         date: post.date,
@@ -746,7 +746,7 @@ function generateArchive(posts) {
         const postsHtml = yearPosts.map(post => {
             const episodeNum = post.episodeNumber.toString().padStart(3, '0');
             return `            <li class="panel-card" style="margin-bottom: 10px; padding: 10px 15px;">
-                <a href="/blog/${post.slug}" style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="/blog/${post.slug}/" style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <span class="post-number" style="color: var(--primary); margin-right: 10px;">#${episodeNum}</span>
                         <span class="post-title">${escapeHtml(post.title)}</span>

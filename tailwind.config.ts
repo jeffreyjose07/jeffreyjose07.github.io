@@ -28,8 +28,10 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['Plus Jakarta Sans', 'sans-serif'],
-				heading: ['Syne', 'sans-serif'],
+				sans: ['Plus Jakarta Sans', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+				heading: ['Inter', 'Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+				mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+				syne: ['Syne', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

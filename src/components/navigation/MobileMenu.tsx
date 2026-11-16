@@ -16,16 +16,24 @@ const MobileMenu = ({
 }: MobileMenuProps) => {
   return (
     <>
+      {/* Backdrop overlay */}
       <div
-        className={`md:hidden fixed left-0 right-0 z-40 transform transition-all duration-300 ease-in-out ${
-          isOpen
-            ? "translate-y-0 opacity-100"
-            : "-translate-y-full opacity-0 pointer-events-none"
+        className={`md:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-40 transition-opacity duration-300 ${
+          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
-        style={{ top: "64px" }}
+        onClick={onClose}
+      />
+
+      {/* Menu sheet */}
+      <div
+        className={`md:hidden fixed inset-x-0 top-[60px] z-50 transition-all duration-300 ease-in-out ${
+          isOpen
+            ? "opacity-100 translate-y-0 pointer-events-auto"
+            : "opacity-0 -translate-y-4 pointer-events-none"
+        }`}
       >
-        <div className="bg-background border-b border-border">
-          <div className="px-4 py-3 space-y-1">
+        <div className="bg-popover text-popover-foreground border border-border shadow-2xl p-5 mx-4 mt-2 rounded-2xl">
+          <div className="space-y-1">
             {navItems.map((item) => (
               <a
                 key={item.href}
@@ -34,15 +42,16 @@ const MobileMenu = ({
                   e.preventDefault();
                   onNavClick(item.href, item.external);
                 }}
-                className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium transition-colors rounded-md"
+                className="text-foreground hover:text-primary hover:bg-secondary/70 flex items-center justify-between px-4 py-3 text-sm font-medium transition-colors rounded-xl"
               >
-                {item.label}
+                <span>{item.label}</span>
+                <span className="text-xs text-muted-foreground font-mono">→</span>
               </a>
             ))}
 
-            <div className="space-y-1 pt-2">
-              <div className="text-muted-foreground font-medium px-4 py-2 text-xs uppercase tracking-wider">
-                Games
+            <div className="pt-3 mt-2 border-t border-border/70">
+              <div className="text-muted-foreground font-mono px-4 py-1 text-xs uppercase tracking-wider">
+                Playable Experiments
               </div>
               {gameItems.map((game) => (
                 <a
@@ -53,7 +62,7 @@ const MobileMenu = ({
                     onClose();
                     window.location.href = game.href;
                   }}
-                  className="text-foreground hover:text-primary hover:bg-accent block px-8 py-2 text-base font-medium transition-colors rounded-md"
+                  className="text-foreground hover:text-primary hover:bg-secondary/70 block px-6 py-2.5 text-xs font-mono transition-colors rounded-xl"
                 >
                   {game.label}
                 </a>
@@ -61,12 +70,6 @@ const MobileMenu = ({
             </div>
           </div>
         </div>
-
-        <div
-          className="fixed inset-0 bg-black/20 -z-10"
-          onClick={onClose}
-          style={{ top: "0", height: "100vh" }}
-        />
       </div>
     </>
   );

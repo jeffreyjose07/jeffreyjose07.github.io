@@ -10,9 +10,173 @@
     <link>https://jeffreyjose07.is-a.dev/blog</link>
     <atom:link href="https://jeffreyjose07.is-a.dev/blog/feed.xml" rel="self" type="application/rss+xml"/>
     <language>en-us</language>
-    <lastBuildDate>Sun, 15 Nov 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 GMT</lastBuildDate>
     <generator>Custom Node.js Blog Builder</generator>
     <copyright>Copyright 2026 Jeffrey Jose</copyright>
+    <item>
+      <title><![CDATA[Modernizing the Developer Portfolio: Bento Grids, Proof Metrics, and Unified Theme]]></title>
+      <description><![CDATA[A comprehensive teardown and modernization of the portfolio and blog: replacing playful typography with authoritative developer styles, killing layout voids with a Developer Bento Grid, elevating proof metrics, and unifying the blog architecture.]]></description>
+      <link>https://jeffreyjose07.is-a.dev/blog/modernizing-the-developer-portfolio-and-blog</link>
+      <guid isPermaLink="true">https://jeffreyjose07.is-a.dev/blog/modernizing-the-developer-portfolio-and-blog</guid>
+      <pubDate>Mon, 16 Nov 2026 00:00:00 GMT</pubDate>
+      <author>jeffrey.jose07@gmail.com (Jeffrey Jose)</author>
+      <dc:creator><![CDATA[Jeffrey Jose]]></dc:creator>
+      <category><![CDATA[frontend]]></category>
+      <category><![CDATA[design]]></category>
+      <category><![CDATA[portfolio]]></category>
+      <category><![CDATA[ui-design]]></category>
+      <category><![CDATA[architecture]]></category>
+      <category><![CDATA[css]]></category>
+      <category><![CDATA[meta]]></category>
+      <media:thumbnail url="https://jeffreyjose07.is-a.dev/assets/thumbnails/modernizing-the-developer-portfolio-and-blog.png" />
+      <content:encoded><![CDATA[<p>Seven months ago in <a href="https://jeffreyjose07.is-a.dev/blog/redesigning-the-portfolio-teal-fonts-and-timelines/">episode 026</a>, I overhauled this site&#39;s color system, migrating from an electric violet palette to emerald teal and introducing scroll-driven timeline animations. That redesign fixed immediate issues like broken keyframes and unstyled utility classes. But as time went on, stepping back to look at the portfolio revealed subtle signs of aging.</p>
+<p>The personal website of a senior distributed systems engineer should communicate technical rigor, precision, and architectural discipline. Instead, several design decisions were working against that:</p>
+<ol>
+<li><strong>Playful typography vs. systems engineering:</strong> The heading typeface (<code>Syne</code>) had wide, geometric letterforms that felt more like a boutique creative agency than someone who builds high-throughput Kafka pipelines and debugs WebFlux thread pool exhaustion.</li>
+<li><strong>The empty void in Skills:</strong> The &quot;Full Toolkit&quot; rendered as a single vertical list on the left side of the screen, leaving more than 50% of the display completely blank on desktop viewports.</li>
+<li><strong>Buried proof metrics:</strong> High-impact real-world numbers — handling 50k+ req/sec on WebFlux, scaling batch jobs by 3×, achieving All India Rank 170 (top 0.08% nationwide) in GATE Computer Science among 200,000+ engineers — were buried inside dense paragraphs where recruiters and hiring managers scanning in ten seconds would miss them.</li>
+<li><strong>Header and mobile menu glitches:</strong> The navigation was a traditional block header, and the mobile menu had a transparency layering bug where menu items overlapped text directly over the hero.</li>
+<li><strong>Drift between portfolio and blog:</strong> While the portfolio evolved, the blog templates remained anchored to the older layout, with disconnected navigation bars and an untextured dark background.</li>
+</ol>
+<p>Here is how I audited, redesigned, and unified both halves of the website into a modern developer-themed design system.</p>
+<hr>
+<h2>1. Typography &amp; Aesthetic Framework: Linear Meets Supabase</h2>
+<p>Modern developer tools — Linear, Vercel, Supabase, Cloudflare — have defined a recognizable visual standard: high-contrast dark backgrounds, micro-technical grid patterns, razor-sharp sans typography with tight tracking, and monospace accents for data and metrics.</p>
+<h3>Typography Hierarchy</h3>
+<p>I replaced <code>Syne</code> as the heading font with <strong>Inter</strong> and <strong>Plus Jakarta Sans</strong>, styled with tight negative letter tracking (<code>tracking-tight font-bold</code>). Headings now feel authoritative, structured, and legible at all scale factors.</p>
+<p>For technical tags, episode numbers, status indicators, and metric callouts, I introduced <strong>JetBrains Mono</strong>. Code and metadata now look like they belong in a production IDE:</p>
+<div class="code-block-wrap" data-lang="typescript"><span class="code-lang" aria-hidden="true">typescript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">// tailwind.config.ts</span></span>
+<span class="line"><span style="color:#E06C75">fontFamily</span><span style="color:#ABB2BF">: {</span></span>
+<span class="line"><span style="color:#E06C75">  sans</span><span style="color:#ABB2BF">: [</span><span style="color:#98C379">'Plus Jakarta Sans'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'Inter'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'-apple-system'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'BlinkMacSystemFont'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'Segoe UI'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'Roboto'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'sans-serif'</span><span style="color:#ABB2BF">],</span></span>
+<span class="line"><span style="color:#E06C75">  heading</span><span style="color:#ABB2BF">: [</span><span style="color:#98C379">'Inter'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'Plus Jakarta Sans'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'system-ui'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'sans-serif'</span><span style="color:#ABB2BF">],</span></span>
+<span class="line"><span style="color:#E06C75">  mono</span><span style="color:#ABB2BF">: [</span><span style="color:#98C379">'JetBrains Mono'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'ui-monospace'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'Menlo'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'Monaco'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'monospace'</span><span style="color:#ABB2BF">],</span></span>
+<span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div>
+
+<h3>Depth and the Ambient Micro-Grid</h3>
+<p>A flat black canvas (<code>#09090b</code>) without depth can feel empty or unpolished. To introduce subtle technical texture without clutter, I created a custom CSS background utility combining a 36px micro-grid with an ambient radial teal glow:</p>
+<div class="code-block-wrap" data-lang="css"><span class="code-lang" aria-hidden="true">css</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">/* src/index.css */</span></span>
+<span class="line"><span style="color:#D19A66">.bg-grid-pattern</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#ABB2BF">  background-size: </span><span style="color:#D19A66">36</span><span style="color:#E06C75">px</span><span style="color:#D19A66"> 36</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">;</span></span>
+<span class="line"><span style="color:#ABB2BF">  background-image: </span></span>
+<span class="line"><span style="color:#56B6C2">    linear-gradient</span><span style="color:#ABB2BF">(to </span><span style="color:#D19A66">right</span><span style="color:#ABB2BF">, </span><span style="color:#56B6C2">rgba</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">0.035</span><span style="color:#ABB2BF">) </span><span style="color:#D19A66">1</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">transparent</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">),</span></span>
+<span class="line"><span style="color:#56B6C2">    linear-gradient</span><span style="color:#ABB2BF">(to </span><span style="color:#D19A66">bottom</span><span style="color:#ABB2BF">, </span><span style="color:#56B6C2">rgba</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">0.035</span><span style="color:#ABB2BF">) </span><span style="color:#D19A66">1</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66">transparent</span><span style="color:#D19A66"> 1</span><span style="color:#E06C75">px</span><span style="color:#ABB2BF">);</span></span>
+<span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div>
+
+<p>Behind the hero and key headers, a radial gradient in emerald teal (<code>rgba(28, 201, 160, 0.08)</code>) provides atmospheric lighting that highlights the primary subject.</p>
+<hr>
+<h2>2. Floating Island Pill Navigation</h2>
+<p>The old top bar was a static full-width strip that felt heavy. I redesigned the navigation into a <strong>floating frosted-glass pill island</strong>:</p>
+<ul>
+<li><strong>Centered Island:</strong> Fixed at <code>top-4</code>, constrained to <code>max-w-5xl</code>, and floating above the content with <code>backdrop-blur-md</code> and <code>bg-background/80</code>.</li>
+<li><strong>System Status Indicator:</strong> Next to the brand logo (<code>Jeffrey.Jose</code>), an active monospace status pill with a pulsating green indicator displays <code>backend</code>.</li>
+<li><strong>Active Navigation Tracking:</strong> The navigation tracks the user&#39;s scroll position, lighting up the active section (<code>Home</code>, <code>Writing</code>, <code>Experience</code>, <code>Skills</code>, <code>Projects</code>, <code>Blog</code>, <code>Contact</code>).</li>
+<li><strong>One-Click Actions:</strong> A high-contrast <code>Resume.pdf</code> action button and theme toggle are integrated directly into the bar.</li>
+</ul>
+<p>For mobile viewports, I isolated the mobile menu sheet using a dedicated popover surface (<code>bg-popover text-popover-foreground border border-border shadow-2xl</code>) with a <code>fixed inset-0 bg-black/70 backdrop-blur-sm</code> backdrop scrim, eliminating the transparency bleed once and for all.</p>
+<hr>
+<h2>3. Above-the-Fold Proof Metrics</h2>
+<p>Recruiters and engineers do not read personal websites sequentially from top to bottom; they scan for verifiable credentials within five seconds. </p>
+<p>In the hero section immediately beneath the summary bio, I added a strip of high-density monospace <strong>proof chips</strong>:</p>
+<ul>
+<li><code>6+ yrs @ Jio Platforms</code></li>
+<li><code>50k+ req/s WebFlux</code></li>
+<li><code>GATE AIR 170 (Top 0.08%)</code></li>
+<li><code>IIT Kharagpur M.Tech</code></li>
+</ul>
+<p>Additionally, the avatar now features a glowing emerald ring with a live pulse dot, signifying availability for high-impact distributed systems engineering opportunities.</p>
+<hr>
+<h2>4. The Developer Bento Grid for Skills</h2>
+<p>The most noticeable architectural change on the homepage is the <strong>Skills &amp; Architecture</strong> section.</p>
+<p>Previously, skills were split into a top card and a &quot;Full Toolkit&quot; list that collapsed into a single column on the left, leaving a gaping white (or black) hole across half of wide screens.</p>
+<p>I completely rebuilt this into a balanced 6-card <strong>Developer Bento Grid</strong>:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Grid Area</th>
+<th align="left">Focus</th>
+<th align="left">Core Technologies</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>01. Core Architecture</strong> (Span 2)</td>
+<td align="left">High-concurrency backend &amp; event streaming</td>
+<td align="left">Java 21, Spring Boot 3, Apache Kafka, Project Reactor / WebFlux, gRPC, Distributed Locks</td>
+</tr>
+<tr>
+<td align="left"><strong>02. Data &amp; Storage</strong> (Span 1)</td>
+<td align="left">Persistence, caching &amp; search</td>
+<td align="left">PostgreSQL, Redis, MongoDB, Elasticsearch, Liquibase</td>
+</tr>
+<tr>
+<td align="left"><strong>03. Cloud &amp; DevOps</strong> (Span 1)</td>
+<td align="left">Containerization &amp; orchestration</td>
+<td align="left">Docker, Kubernetes, AWS, GCP, CI/CD, Prometheus, Grafana</td>
+</tr>
+<tr>
+<td align="left"><strong>04. Distributed Patterns</strong> (Span 2)</td>
+<td align="left">Architectural resilience</td>
+<td align="left">Microservices, Event-Driven, CQRS, SAGA, Circuit Breakers (Resilience4j)</td>
+</tr>
+<tr>
+<td align="left"><strong>05. Engineering Leadership</strong> (Span 2)</td>
+<td align="left">Execution and quality</td>
+<td align="left">Architecture Reviews, Mentorship, k6 &amp; JMeter Load Testing, Chaos Testing</td>
+</tr>
+<tr>
+<td align="left"><strong>06. Verified Credentials</strong> (Span 1)</td>
+<td align="left">Formal certifications</td>
+<td align="left">Spring Professional, Oracle Certified Java SE 11 Developer</td>
+</tr>
+</tbody></table>
+<p>Every card in the grid uses a <code>.dev-card</code> structure with a subtle top-border gradient highlight (<code>.dev-card-highlight</code>) that activates on hover.</p>
+<hr>
+<h2>5. Experience Timeline &amp; Project Window Chrome</h2>
+<h3>Gradient Timeline Spine</h3>
+<p>In the Work Experience section (<code>// 02. WORK EXPERIENCE</code>), the timeline was upgraded with an illuminated gradient spine connecting all positions at Jio Platforms. Standout metric callouts (<code>⚡ 3× Batch Speed-up</code>, <code>⚡ 50k+ Concurrent Reqs</code>, <code>⚡ 85% Manual Reduction</code>, <code>⚡ 45% Incident Drop</code>) were pulled out of prose into highlighted badges for instant readability.</p>
+<h3>macOS Window Chrome on Projects</h3>
+<p>For featured projects (like the scalable chat platform and TruthMeter AI), each card is framed inside simulated terminal / macOS browser window chrome:</p>
+<div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>● ● ● domain.dev DEPLOYED</span></span></code></pre></div>
+
+<p>This frames each project as an active, deployed engineering system rather than a generic card, highlighting architecture features, live demo links, and GitHub repository references.</p>
+<h3>Academic Distinction Banner</h3>
+<p>In the Education section, I created a dedicated achievement banner for <strong>GATE 2017 Computer Science AIR 170</strong> (Top 0.08% among 200,000+ candidates nationwide), pairing it with my M.Tech research at IIT Kharagpur on distributed computing.</p>
+<hr>
+<h2>6. Unifying the Blog Architecture</h2>
+<p>A core principle from <code>CLAUDE.md</code> is: <strong>Portfolio and blog share one identity — if you change one, change the other.</strong></p>
+<p>Having modernized the portfolio, leaving the blog in its previous state would cause immediate visual drift. I audited the blog generation engine (<code>blog/scripts/build.js</code>) and its templates (<code>blog/templates/</code>):</p>
+<h3>1. Template Modernization</h3>
+<ul>
+<li><strong>Fonts &amp; CSS:</strong> Updated <code>blog/templates/styles.html</code> to load Inter, JetBrains Mono, and Plus Jakarta Sans. Integrated the 36px micro-grid and ambient top radial glow so reading an article feels continuous with browsing the portfolio.</li>
+<li><strong>Floating Island Header:</strong> Replaced the blog&#39;s block header in <code>blog/templates/header.html</code> with the same floating island pill design, complete with <code>Jeffrey.Jose · blog</code> brand status, responsive popover drawer, and <code>⌘K</code> search shortcut.</li>
+<li><strong>Author Bio Card:</strong> Rebuilt the author bio at the footer of each article with an emerald avatar glow ring and live backend status indicator.</li>
+</ul>
+<h3>2. Fixing the Hidden <code>{ { inlineScripts } }</code> Bug</h3>
+<p>During visual auditing with browser tooling, I checked the developer console on a generated post page and noticed:</p>
+<div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>Uncaught ReferenceError: inlineScripts is not defined</span></span></code></pre></div>
+
+<p>Tracing this down in <code>blog/templates/post.html</code> revealed line 571:</p>
+<div class="code-block-wrap" data-lang="html"><span class="code-lang" aria-hidden="true">html</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">/* Inline scripts injected from frontmatter */</span></span>
+<span class="line"><span style="color:#ABB2BF">{ { inlineScripts } }</span></span></code></pre></div>
+
+<p>There was an inadvertent space between the opening curly braces: <code>{ {</code> instead of <code>{{</code>. Because <code>build.js</code> uses <code>new RegExp(&#39;{{\\s*&#39; + token + &#39;\\s*}}&#39;, &#39;g&#39;)</code> for template interpolation, it required two consecutive opening braces. The template variable was never replaced, leaving <code>{ { inlineScripts } }</code> as literal JavaScript syntax inside the <code>&lt;script&gt;</code> tag. The browser attempted to evaluate <code>inlineScripts</code> as an identifier and threw an error on every single post page.</p>
+<p>Fixing this to <code>{{inlineScripts}}</code> resolved the error across all 38 generated post pages.</p>
+<h3>3. Trailing Slashes for Static Directory Routing</h3>
+<p>Static sites generated with folder-based permalinks (<code>/blog/post-slug/index.html</code>) require trailing slashes on URLs. When linking to <code>/blog/post-slug</code> without the trailing slash:</p>
+<ul>
+<li>In production, GitHub Pages responds with an HTTP 301 redirect to <code>/blog/post-slug/</code>.</li>
+<li>In local development or SPA preview servers (like Vite preview), requests without trailing slashes trigger history API fallback, landing on the React 404 page.</li>
+</ul>
+<p>I updated all post links in <code>blog/scripts/build.js</code>, <code>blog/templates/index.html</code>, <code>blog/templates/header.html</code>, and <code>src/components/RecentWriting.tsx</code> to include trailing slashes (<code>/blog/${slug}/</code>), eliminating the redirect penalty and ensuring seamless navigation everywhere.</p>
+<hr>
+<h2>The Result</h2>
+<p>The entire site now presents a unified, cohesive developer aesthetic:</p>
+<ul>
+<li><strong>Clean builds:</strong> <code>npx vite build</code>, <code>npm run lint</code>, <code>npm run build:prerender-harness</code>, and <code>node blog/scripts/build.js</code> pass with 0 errors.</li>
+<li><strong>Hydration safety:</strong> All SSR / prerender constraints are strictly maintained.</li>
+<li><strong>Consistency:</strong> Navigating between the portfolio, the blog index, and individual technical write-ups now feels like exploring a single, meticulously engineered system.</li>
+</ul>
+]]></content:encoded>
+    </item>
     <item>
       <title><![CDATA[TruthMeter 2.0: Deleting the Guesswork and Counting Only What Git Records]]></title>
       <description><![CDATA[A year after shipping TruthMeter AI, I opened it again and found its core number meant nothing: any paste, any autocomplete and any file containing console.error counted as 'AI'. Version 2 deletes 19,000 lines and measures only verifiable evidence: co-author trailers, git blame survival, fix-within-72h and opt-in agent session logs. It is also the first release published to the Marketplace with no stored token.]]></description>
@@ -2307,104 +2471,6 @@
 <p>Running an explicit audit forced the looking. The portfolio is sharper for it.</p>
 <hr>
 <p><em>All changes are live. The build is clean, the animations fire when they should, and the violet is gone.</em></p>
-]]></content:encoded>
-    </item>
-    <item>
-      <title><![CDATA[Optimizing Performance and Pagination: A Deep Dive into Web Vitals]]></title>
-      <description><![CDATA[How I refactored the blog's pagination system for better SEO, optimized image loading strategies to boost Core Web Vitals, and fixed critical accessibility issues.]]></description>
-      <link>https://jeffreyjose07.is-a.dev/blog/optimizing-performance-and-pagination-a-deep-dive-into-web</link>
-      <guid isPermaLink="true">https://jeffreyjose07.is-a.dev/blog/optimizing-performance-and-pagination-a-deep-dive-into-web</guid>
-      <pubDate>Wed, 17 Dec 2025 00:00:00 GMT</pubDate>
-      <author>jeffrey.jose07@gmail.com (Jeffrey Jose)</author>
-      <dc:creator><![CDATA[Jeffrey Jose]]></dc:creator>
-      <category><![CDATA[optimization]]></category>
-      <category><![CDATA[web-development]]></category>
-      <category><![CDATA[performance]]></category>
-      <category><![CDATA[accessibility]]></category>
-      <category><![CDATA[seo]]></category>
-      <media:thumbnail url="https://jeffreyjose07.is-a.dev/assets/thumbnails/optimizing-performance-and-pagination-a-deep-dive-into-web.png" />
-      <content:encoded><![CDATA[<p>As this portfolio and blog continue to grow, maintaining peak performance and a seamless user experience becomes increasingly challenging. Today, I tackled several technical debt items that were affecting both <strong>SEO</strong> and <strong>Core Web Vitals</strong>. This post details the journey of refactoring the pagination system, implementing advanced image loading strategies, and resolving accessibility bottlenecks identified by Google PageSpeed Insights.</p>
-<h2>the pagination problem</h2>
-<p>Initially, the blog&#39;s pagination was simple but brittle. The build script generated flat HTML files like <code>page2.html</code> and <code>page3.html</code>. While functional, this approach had significant downsides:</p>
-<ol>
-<li><strong>URL Structure</strong>: <code>jeffreyjose07.is-a.dev/blog/page2.html</code> is not clean or idiomatic. The standard convention is a directory-based structure like <code>/blog/page/2/</code>.</li>
-<li><strong>Scalability</strong>: Flat files clutter the root directory and make URL management cumbersome.</li>
-<li><strong>SEO</strong>: Search engines prefer structured, predictable URL hierarchies.</li>
-</ol>
-<h3>the solution: directory-based routing</h3>
-<p>I refactored the Node.js build script (<code>blog/scripts/build.js</code>) to generate a nested directory structure. Instead of writing <code>page${i}.html</code>, the script now creates a directory for each page:</p>
-<div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">// Old approach</span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">// fs.writeFileSync(path.join(OUTPUT_DIR, `page${i + 1}.html`), html);</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">// New approach</span></span>
-<span class="line"><span style="color:#C678DD">const</span><span style="color:#E5C07B"> pageDir</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> path</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">join</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">OUTPUT_DIR</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'page'</span><span style="color:#ABB2BF">, (</span><span style="color:#E06C75">i</span><span style="color:#56B6C2"> +</span><span style="color:#D19A66"> 1</span><span style="color:#ABB2BF">).</span><span style="color:#61AFEF">toString</span><span style="color:#ABB2BF">());</span></span>
-<span class="line"><span style="color:#C678DD">if</span><span style="color:#ABB2BF"> (</span><span style="color:#56B6C2">!</span><span style="color:#E5C07B">fs</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">existsSync</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">pageDir</span><span style="color:#ABB2BF">)) {</span></span>
-<span class="line"><span style="color:#E5C07B">    fs</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">mkdirSync</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">pageDir</span><span style="color:#ABB2BF">, { </span><span style="color:#E06C75">recursive</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">true</span><span style="color:#ABB2BF"> });</span></span>
-<span class="line"><span style="color:#ABB2BF">}</span></span>
-<span class="line"><span style="color:#E5C07B">fs</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">writeFileSync</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">path</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">join</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">pageDir</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'index.html'</span><span style="color:#ABB2BF">), </span><span style="color:#E06C75">html</span><span style="color:#ABB2BF">);</span></span></code></pre></div>
-
-<p>This simple change transforms the URL from <code>/blog/page2.html</code> to <code>/blog/page/2/</code>, which is cleaner, professional, and more SEO-friendly. I also updated the pagination links in the template to respect this new structure:</p>
-<div class="code-block-wrap" data-lang="html"><span class="code-lang" aria-hidden="true">html</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">&#x3C;!-- Before --></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">a</span><span style="color:#D19A66"> href</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"/blog/page2.html"</span><span style="color:#ABB2BF">>2&#x3C;/</span><span style="color:#E06C75">a</span><span style="color:#ABB2BF">></span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">&#x3C;!-- After --></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">a</span><span style="color:#D19A66"> href</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"/blog/page/2/"</span><span style="color:#ABB2BF">>2&#x3C;/</span><span style="color:#E06C75">a</span><span style="color:#ABB2BF">></span></span></code></pre></div>
-
-<h2>optimizing core web vitals</h2>
-<p>A recent PageSpeed Insights analysis revealed a mobile performance score of <strong>91</strong>, which is good, but I aimed for perfection. The primary bottlenecks were <strong>Largest Contentful Paint (LCP)</strong> and <strong>Cumulative Layout Shift (CLS)</strong> caused by unoptimized images.</p>
-<h3>from background-image to img tags</h3>
-<p>The blog index originally displayed post thumbnails using <code>div</code> elements with <code>background-image</code>. While this makes it easy to handle different aspect ratios using <code>background-size: cover</code>, it has a major performance drawback: browser preloaders cannot discover background images as easily as <code>&lt;img&gt;</code> tags, delaying the LCP.</p>
-<p>I refactored the template to use semantic <code>&lt;img&gt;</code> tags with modern CSS:</p>
-<div class="code-block-wrap" data-lang="css"><span class="code-lang" aria-hidden="true">css</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#D19A66">.post-thumbnail</span><span style="color:#E06C75"> img</span><span style="color:#ABB2BF"> {</span></span>
-<span class="line"><span style="color:#ABB2BF">    width: </span><span style="color:#D19A66">100</span><span style="color:#E06C75">%</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    height: </span><span style="color:#D19A66">100</span><span style="color:#E06C75">%</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">    object-fit: </span><span style="color:#D19A66">cover</span><span style="color:#ABB2BF">; </span><span style="color:#7F848E;font-style:italic">/* Replicates background-size: cover */</span></span>
-<span class="line"><span style="color:#ABB2BF">    transition: transform </span><span style="color:#D19A66">0.5</span><span style="color:#E06C75">s</span><span style="color:#D19A66"> ease</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div>
-
-<h3>intelligent loading strategy</h3>
-<p>To further improve LCP, I implemented a conditional loading strategy. The browser shouldn&#39;t lazy-load images that are in the initial viewport, nor should it eagerly load images that are off-screen.</p>
-<p>I updated the build script to apply <code>loading=&quot;eager&quot;</code> to the first 3 posts on the first page, and <code>loading=&quot;lazy&quot;</code> to everything else. Additionally, for the main profile image on the homepage, I added <code>fetchPriority=&quot;high&quot;</code> to explicitly signal its importance to the browser&#39;s resource scheduler.</p>
-<div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">// Eager load images for the first 3 posts on the first page, lazy load others</span></span>
-<span class="line"><span style="color:#C678DD">const</span><span style="color:#E5C07B"> loadingAttr</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">i</span><span style="color:#56B6C2"> ===</span><span style="color:#D19A66"> 0</span><span style="color:#56B6C2"> &#x26;&#x26;</span><span style="color:#E06C75"> index</span><span style="color:#56B6C2"> &#x3C;</span><span style="color:#D19A66"> 3</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">?</span><span style="color:#98C379"> 'eager'</span><span style="color:#C678DD"> :</span><span style="color:#98C379"> 'lazy'</span><span style="color:#ABB2BF">;</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#E06C75">thumbnailHtml</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> `&#x3C;div class="post-thumbnail"></span></span>
-<span class="line"><span style="color:#98C379">    &#x3C;img src="</span><span style="color:#C678DD">${</span><span style="color:#E06C75">thumbSrc</span><span style="color:#C678DD">}</span><span style="color:#98C379">" alt="</span><span style="color:#C678DD">${</span><span style="color:#E5C07B">post</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">title</span><span style="color:#C678DD">}</span><span style="color:#98C379">" loading="</span><span style="color:#C678DD">${</span><span style="color:#E06C75">loadingAttr</span><span style="color:#C678DD">}</span><span style="color:#98C379">" width="400" height="225"></span></span>
-<span class="line"><span style="color:#98C379">&#x3C;/div>`</span><span style="color:#ABB2BF">;</span></span></code></pre></div>
-
-<p>This ensures the most critical content loads immediately, while conserving bandwidth for the rest.</p>
-<h3>optimizing font delivery</h3>
-<p>In a second round of optimization, PageSpeed Insights still flagged Google Fonts as a render-blocking resource. To address this, I switched to a non-blocking loading strategy using <code>rel=&quot;preload&quot;</code> combined with an <code>onload</code> handler.</p>
-<div class="code-block-wrap" data-lang="html"><span class="code-lang" aria-hidden="true">html</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">link</span><span style="color:#D19A66"> rel</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"preload"</span><span style="color:#D19A66"> as</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"style"</span><span style="color:#D19A66"> href</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"..."</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">link</span><span style="color:#D19A66"> rel</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"stylesheet"</span><span style="color:#D19A66"> href</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"..."</span><span style="color:#D19A66"> media</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"print"</span><span style="color:#D19A66"> onload</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"</span><span style="color:#E5C07B">this</span><span style="color:#98C379">.</span><span style="color:#E06C75">media</span><span style="color:#56B6C2">=</span><span style="color:#98C379">'all'"</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">noscript</span><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">link</span><span style="color:#D19A66"> rel</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"stylesheet"</span><span style="color:#D19A66"> href</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"..."</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">noscript</span><span style="color:#ABB2BF">></span></span></code></pre></div>
-
-<p>This technique allows the browser to fetch the font stylesheet asynchronously without blocking the initial paint, significantly improving the <strong>First Contentful Paint (FCP)</strong> metric.</p>
-<h2>accessibility wins</h2>
-<p>Performance isn&#39;t just about speed; it&#39;s about usability. The audit flagged several <strong>accessibility</strong> issues that needed immediate attention:</p>
-<ol>
-<li><p><strong>Icon-Only Buttons</strong>: Social media links and the theme toggle button lacked text labels, making them invisible to screen readers. I added <code>aria-label</code> attributes to all icon-only interactions.</p>
-<div class="code-block-wrap" data-lang="jsx"><span class="code-lang" aria-hidden="true">jsx</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">a</span><span style="color:#ABB2BF"> </span></span>
-<span class="line"><span style="color:#D19A66;font-style:italic">  href</span><span style="color:#56B6C2">=</span><span style="color:#C678DD">{</span><span style="color:#E5C07B">social</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">href</span><span style="color:#C678DD">}</span><span style="color:#ABB2BF"> </span></span>
-<span class="line"><span style="color:#D19A66;font-style:italic">  aria-label</span><span style="color:#56B6C2">=</span><span style="color:#C678DD">{</span><span style="color:#E5C07B">social</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">label</span><span style="color:#C678DD">}</span><span style="color:#7F848E;font-style:italic"> // Added for accessibility</span></span>
-<span class="line"><span style="color:#D19A66;font-style:italic">  target</span><span style="color:#56B6C2">=</span><span style="color:#98C379">"_blank"</span></span>
-<span class="line"><span style="color:#ABB2BF">></span></span>
-<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E5C07B">social.icon</span><span style="color:#ABB2BF"> /></span></span>
-<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">a</span><span style="color:#ABB2BF">></span></span></code></pre></div>
-
-</li>
-<li><p><strong>Contrast Ratios</strong>: The &quot;Email&quot;, &quot;Phone&quot;, and &quot;Location&quot; labels in the contact section used a muted color that failed contrast guidelines on dark backgrounds. I updated the text color from <code>text-zinc-400</code> to <code>text-white</code> to ensure maximum legibility for all users.</p>
-</li>
-<li><p><strong>Heading Hierarchy</strong>: I restructured the heading levels in the Skills and Education sections (changing <code>CardTitle</code> to render as <code>h3</code> and adjusting nested headings) to ensure a strictly sequential descending order, which is crucial for screen reader navigation.</p>
-</li>
-<li><p><strong>Layout Stability</strong>: I added explicit <code>width</code> and <code>height</code> attributes to the main profile avatar. This allows the browser to reserve space for the image before it loads, preventing jarring layout shifts (CLS).</p>
-</li>
-</ol>
-<h2>conclusion</h2>
-<p>These changes might seem small individually, but collectively they represent a significant step forward in engineering quality. By refactoring the pagination, we now have a robust URL structure. By optimizing images, we&#39;ve reduced the LCP and improved the mobile experience. And by fixing accessibility issues, we&#39;ve ensured the site is inclusive for everyone.</p>
-<p>The journey of optimization is never truly finished, but today&#39;s updates bring us much closer to that 100/100 score.</p>
 ]]></content:encoded>
     </item>
   </channel>

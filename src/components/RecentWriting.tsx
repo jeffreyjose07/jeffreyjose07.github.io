@@ -1,24 +1,11 @@
 import { useEffect, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Clock, Calendar } from "lucide-react";
 import { selectRecentPosts, type BlogPost } from "@/lib/recentPosts";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /**
- * Format a `YYYY-MM-DD` post date without going through a Date object.
- *
- * `new Date("2026-08-05")` is parsed as an *instant* — UTC midnight — and
- * `toLocaleDateString` then renders it in the viewer's timezone. The homepage is
- * prerendered in CI under UTC, so anyone west of Greenwich rendered the previous
- * day: "4 Aug 2026" against the "5 Aug 2026" baked into the HTML. That is a text
- * mismatch, which fails hydration (React #425) and drops the whole root back to
- * client rendering, taking the prerender's benefit with it.
- *
- * It was invisible from IST, where UTC midnight is still the same calendar day,
- * and fired for every visitor in the Americas.
- *
- * A post date is a calendar date, not a moment in time, so it must be formatted
- * as one. Output matches the previous en-GB "d MMM yyyy" exactly.
+ * Format a `YYYY-MM-DD` post date without timezone shifts.
  */
 const formatPostDate = (iso: string): string => {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso).trim());
@@ -29,47 +16,27 @@ const formatPostDate = (iso: string): string => {
 
 /**
  * Posts baked into the page by the prerender step (`scripts/prerender.js`).
- *
- * Without this the component would render nothing on the client's first pass —
- * `posts` starts empty and the early return below hides the whole section — so
- * the prerendered markup would flash out of existence the moment React boots
- * and back in when the fetch resolved. Seeding makes the first client render
- * match the HTML that was shipped, and skips the request entirely.
  */
 const seededPosts = (): BlogPost[] => {
   if (typeof window === "undefined") return [];
   const seeded = (window as { __RECENT_POSTS__?: BlogPost[] }).__RECENT_POSTS__;
   if (!Array.isArray(seeded)) return [];
-  // Sorted and sliced here as well as in the fetch path, so this component
-  // stays the only place that decides order and count. The prerender seeds an
-  // already-trimmed list; re-applying is idempotent and means a seed carrying
-  // the full posts.json can never render 37 entries where 4 belong.
   return selectRecentPosts(seeded);
 };
 
 /**
  * Surfaces the most recent long-form posts on the front page.
- *
- * The writing is the strongest evidence of how I work — real incidents,
- * measurements and post-mortems — so it should not sit one click away behind a
- * nav link. Data comes from public/blog/posts.json, which the blog build
- * generates on every deploy, so this stays current without a second source of
- * truth.
  */
 const RecentWriting = () => {
   const [posts, setPosts] = useState<BlogPost[]>(seededPosts);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    // Already have what the page was built with; don't re-fetch on every load.
-    // Reads the seed rather than `posts` so the effect keeps an empty dep list.
-    if (seededPosts().length > 0) return;
-
     let cancelled = false;
 
     fetch("/blog/posts.json")
       .then((res) => {
-        if (!res.ok) throw new Error(`posts.json returned ${res.status}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
       .then((data: BlogPost[]) => {
@@ -85,55 +52,80 @@ const RecentWriting = () => {
     };
   }, []);
 
-  // Render nothing rather than an empty shell if the feed is unavailable.
   if (failed || posts.length === 0) return null;
 
   return (
-    <section id="writing" className="py-24 px-6 bg-muted/30">
+    <section id="writing" className="py-24 px-4 sm:px-6 relative border-t border-border/40">
       <div className="max-w-5xl mx-auto">
-        <div className="mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Recent Writing</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl">
-            Working logs from real systems — outages, migrations, and the
-            failure modes that only show up in production.
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+          <div>
+            <div className="text-xs font-mono font-semibold uppercase tracking-widest text-primary mb-3">
+              // 01. TECHNICAL WRITING
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold tracking-tight text-foreground">
+              Production Incident Logs
+            </h2>
+            <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mt-2 leading-relaxed">
+              Real systems under load — post-mortems, reactive pipelines, and failure modes that only surface at scale.
+            </p>
+          </div>
+
+          <a
+            href="/blog/"
+            className="inline-flex items-center gap-2 text-xs font-mono font-medium text-primary hover:text-primary-glow border border-primary/25 bg-primary/10 hover:bg-primary/20 px-3.5 py-2 rounded-lg transition-all shrink-0 self-start sm:self-auto"
+          >
+            <span>All Articles</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </a>
         </div>
 
         <ul className="space-y-4">
           {posts.map((post) => (
             <li key={post.slug}>
               <a
-                href={`/blog/${post.slug}`}
-                className="group block rounded-lg border border-border bg-background p-6 transition-colors hover:border-primary/60"
+                href={`/blog/${post.slug}/`}
+                className="group block dev-card dev-card-highlight p-5 sm:p-6 md:p-7 relative transition-all duration-300 hover:-translate-y-0.5"
               >
-                <div className="flex flex-wrap items-center gap-3 mb-2 text-sm text-muted-foreground">
-                  <span className="font-mono text-primary">#{post.episode}</span>
-                  <span>{formatPostDate(post.date)}</span>
-                  <span aria-hidden="true">·</span>
-                  <span>{post.readingTime} min read</span>
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <div className="flex flex-wrap items-center gap-2.5 text-xs text-muted-foreground">
+                    <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/25">
+                      #{post.episode}
+                    </span>
+                    <span className="inline-flex items-center gap-1 font-mono">
+                      <Calendar className="w-3 h-3 text-muted-foreground" />
+                      {formatPostDate(post.date)}
+                    </span>
+                    <span aria-hidden="true" className="text-border">·</span>
+                    <span className="inline-flex items-center gap-1 font-mono">
+                      <Clock className="w-3 h-3 text-muted-foreground" />
+                      {post.readingTime} min
+                    </span>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
                 </div>
 
-                <h3 className="text-xl md:text-2xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                <h3 className="text-lg sm:text-xl font-heading font-bold text-foreground group-hover:text-primary transition-colors mb-2 tracking-tight">
                   {post.title}
                 </h3>
 
-                <p className="text-muted-foreground leading-relaxed line-clamp-3">
+                <p className="text-sm sm:text-base text-muted-foreground line-clamp-2 leading-relaxed mb-4">
                   {post.description}
                 </p>
+
+                <div className="flex flex-wrap gap-1.5">
+                  {post.tags.slice(0, 4).map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-xs font-mono px-2 py-0.5 rounded bg-secondary/80 text-muted-foreground border border-border/50 group-hover:border-primary/20 group-hover:text-foreground transition-colors"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
               </a>
             </li>
           ))}
         </ul>
-
-        <div className="mt-10">
-          <a
-            href="/blog"
-            className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all"
-          >
-            Read all posts
-            <ArrowRight className="w-4 h-4" />
-          </a>
-        </div>
       </div>
     </section>
   );

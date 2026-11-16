@@ -1,5 +1,5 @@
 <!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL - Jeffrey Jose</title> <meta name="description" content="scalable-chat-platform was down for two months and I did not notice. A free-tier Postgres powered off, its DNS record vanished, and a servlet filter took the whole app down with it — including the health endpoint that was supposed to tell me. Now with the Render-side postmortem: a 59-day hole in the deploy history, an empty healthCheckPath, and one of my own conclusions falsified." /> <meta property="og:title" content="The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL"> <meta property="og:description" content="scalable-chat-platform was down for two months and I did not notice. A free-tier Postgres powered off, its DNS record vanished, and a servlet filter took the whole app down with it — including the health endpoint that was supposed to tell me. Now with the Render-side postmortem: a 59-day hole in the deploy history, an empty healthCheckPath, and one of my own conclusions falsified."> <meta property="og:url" content="https://jeffreyjose07.is-a.dev/blog/two-month-outage-aiven-dns-and-jdbc-urls"> <meta property="og:type" content="article"> <meta property="og:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/two-month-outage-aiven-dns-and-jdbc-urls.png"> <meta name="twitter:card" content="summary_large_image"> <meta name="twitter:title" content="The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL"> <meta name="twitter:description" content="scalable-chat-platform was down for two months and I did not notice. A free-tier Postgres powered off, its DNS record vanished, and a servlet filter took the whole app down with it — including the health endpoint that was supposed to tell me. Now with the Render-side postmortem: a 59-day hole in the deploy history, an empty healthCheckPath, and one of my own conclusions falsified."> <meta name="twitter:image" content="https://jeffreyjose07.is-a.dev/assets/thumbnails/two-month-outage-aiven-dns-and-jdbc-urls.png"> <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" /> <link rel="alternate" type="application/rss+xml" title="RSS" href="/blog/feed.xml" /> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link
-href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@500;600;700;800&display=swap"
+href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap"
 rel="stylesheet"> <style>
 :root {
 --background: #09090b;
@@ -9,19 +9,19 @@ rel="stylesheet"> <style>
 white failed WCAG AA contrast on every primary surface. */
 --primary-foreground: #09090b;
 --primary-glow: #5eead4;
---secondary: #18181b;
+--secondary: #111114;
 --secondary-foreground: #fafafa;
 --muted: #18181b;
 --muted-foreground: #a1a1aa;
 --accent: #18181b;
 --accent-foreground: #fafafa;
---border: #27272a;
+--border: rgba(255, 255, 255, 0.08);
 --input: #27272a;
---font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
---font-heading: 'Syne', system-ui, sans-serif;
---font-mono: ui-monospace, 'Menlo', monospace;
+--font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+--font-heading: 'Inter', 'Plus Jakarta Sans', system-ui, sans-serif;
+--font-mono: 'JetBrains Mono', ui-monospace, 'Menlo', 'Monaco', monospace;
 --gradient-hero: linear-gradient(135deg, #09090b, #0c1f1a);
---gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+--gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
 --gradient-accent: linear-gradient(135deg, #1cc9a0, #22d3ee);
 --radius: 0.75rem;
 }
@@ -33,8 +33,13 @@ box-sizing: border-box;
 body {
 font-family: var(--font-sans);
 background-color: var(--background);
+background-image: 
+radial-gradient(ellipse 80% 50% at 50% -20%, rgba(28, 201, 160, 0.08), transparent 70%),
+linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+background-size: 100% 100%, 36px 36px, 36px 36px;
 color: var(--foreground);
-line-height: 1.6;
+line-height: 1.65;
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 overflow-x: hidden;
@@ -48,9 +53,9 @@ h5,
 h6 {
 font-family: var(--font-heading);
 font-weight: 700;
-line-height: 1.2;
+line-height: 1.25;
 margin-bottom: 1rem;
-letter-spacing: -0.02em;
+letter-spacing: -0.03em;
 }
 a {
 color: inherit;
@@ -63,30 +68,47 @@ max-width: 1200px;
 margin: 0 auto;
 padding: 0 1.5rem;
 }
-.panel-card {
-background: var(--secondary);
-border: 1px solid var(--border);
-border-radius: 0.5rem;
-transition: border-color 0.2s ease;
-}
-.panel-card:hover {
-border-color: rgba(28, 201, 160, 0.35);
-}
-.glass {
-background: var(--secondary);
-border: 1px solid var(--border);
-}
+.panel-card,
 .glass-card {
 background: var(--secondary);
 border: 1px solid var(--border);
-border-radius: 0.5rem;
-transition: border-color 0.2s ease;
+border-radius: var(--radius);
+position: relative;
+transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
+.panel-card::before,
+.glass-card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 1px;
+background: linear-gradient(90deg, transparent, rgba(28, 201, 160, 0.4), transparent);
+opacity: 0;
+transition: opacity 0.3s ease;
+pointer-events: none;
+border-top-left-radius: var(--radius);
+border-top-right-radius: var(--radius);
+}
+.panel-card:hover,
 .glass-card:hover {
 border-color: rgba(28, 201, 160, 0.35);
+transform: translateY(-2px);
+box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.6), 0 0 20px -5px rgba(28, 201, 160, 0.15);
+}
+.panel-card:hover::before,
+.glass-card:hover::before {
+opacity: 1;
+}
+.glass {
+background: rgba(17, 17, 20, 0.8);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border: 1px solid var(--border);
 }
 .text-gradient-premium {
-background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
+background: linear-gradient(135deg, #fff 10%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
@@ -96,6 +118,18 @@ display: inline-block;
 .bg-mesh {
 background-color: var(--background);
 }
+.dev-badge {
+font-family: var(--font-mono);
+font-size: 0.75rem;
+padding: 0.25rem 0.6rem;
+border-radius: 0.375rem;
+background: rgba(28, 201, 160, 0.1);
+color: var(--primary);
+border: 1px solid rgba(28, 201, 160, 0.25);
+display: inline-flex;
+align-items: center;
+gap: 0.375rem;
+}
 ::-webkit-scrollbar {
 width: 8px;
 }
@@ -103,11 +137,11 @@ width: 8px;
 background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
-background: #3f3f46;
+background: #27272a;
 border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-background: #52525b;
+background: #3f3f46;
 }
 .sr-only {
 position: absolute;
@@ -122,66 +156,99 @@ border: 0;
 }
 </style> <style>
 body {
-padding-top: 100px;
+padding-top: 110px;
+}
+.reading-progress {
+position: fixed;
+top: 0;
+left: 0;
+height: 3px;
+background: linear-gradient(90deg, #1cc9a0, #5eead4);
+box-shadow: 0 0 8px rgba(28, 201, 160, 0.6);
+width: 0%;
+z-index: 1001;
+transition: width 0.1s ease-out;
 }
 .post-container {
-max-width: 800px;
+max-width: 820px;
 margin: 0 auto;
-padding: 2rem;
-background: var(--secondary);
-border: 1px solid var(--border);
-border-radius: 0.5rem;
+padding: 2.5rem;
+background: #111114;
+border: 1px solid rgba(255, 255, 255, 0.08);
+border-radius: 1rem;
+box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+position: relative;
+}
+.post-container::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 1px;
+background: linear-gradient(90deg, transparent, rgba(28, 201, 160, 0.45), transparent);
+border-top-left-radius: 1rem;
+border-top-right-radius: 1rem;
 }
 .post-header {
 margin-bottom: 3rem;
 text-align: center;
-border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 padding-bottom: 2rem;
 }
 .post-meta {
 display: flex;
 justify-content: center;
 align-items: center;
-gap: 1rem;
-margin-bottom: 1rem;
-font-size: 0.875rem;
+gap: 0.75rem;
+margin-bottom: 1.25rem;
+font-size: 0.8125rem;
 color: var(--muted-foreground);
+font-family: var(--font-mono);
 }
 .episode-badge {
 background: rgba(28, 201, 160, 0.12);
 color: var(--primary);
-padding: 0.25rem 0.6rem;
+padding: 0.2rem 0.55rem;
 border-radius: 0.375rem;
+border: 1px solid rgba(28, 201, 160, 0.25);
 font-family: var(--font-mono);
 font-weight: 600;
-font-size: 0.8rem;
+font-size: 0.75rem;
 }
 .post-title {
-font-size: clamp(1.75rem, 4vw, 2.5rem);
+font-size: clamp(1.85rem, 4vw, 2.75rem);
 line-height: 1.15;
-margin-bottom: 1.5rem;
+margin-bottom: 1rem;
 color: var(--foreground);
+font-family: var(--font-heading);
+font-weight: 800;
+letter-spacing: -0.03em;
 }
 .post-content {
-font-size: 1.125rem;
+font-size: 1.0625rem;
 line-height: 1.8;
-color: #d1d5db;
+color: #d4d4d8;
 word-break: break-word;
 }
 .post-content p {
 margin-bottom: 1.5rem;
 }
 .post-content h2 {
-font-size: 1.75rem;
+font-size: 1.65rem;
 margin-top: 3rem;
-margin-bottom: 1.5rem;
+margin-bottom: 1.25rem;
 color: var(--foreground);
+font-family: var(--font-heading);
+letter-spacing: -0.025em;
 }
 .post-content h3 {
-font-size: 1.5rem;
-margin-top: 2.5rem;
+font-size: 1.35rem;
+margin-top: 2.25rem;
 margin-bottom: 1rem;
 color: var(--foreground);
+font-family: var(--font-heading);
+letter-spacing: -0.02em;
 }
 .post-content ul,
 .post-content ol {
@@ -202,58 +269,65 @@ border-bottom-color: var(--primary);
 color: var(--primary);
 }
 .post-content blockquote {
-border-left: 4px solid var(--primary);
+border-left: 3px solid var(--primary);
 padding-left: 1.5rem;
 margin: 2rem 0;
 font-style: italic;
-color: var(--muted-foreground);
-background: rgba(255, 255, 255, 0.03);
-padding: 1.5rem;
+color: #a1a1aa;
+background: rgba(255, 255, 255, 0.02);
+padding: 1.25rem 1.5rem;
 border-radius: 0 0.5rem 0.5rem 0;
+border: 1px solid rgba(255, 255, 255, 0.04);
+border-left: 3px solid var(--primary);
 }
 /* Inline code only — do not paint fenced blocks (Shiki owns those). */
 .post-content :not(pre) > code {
-font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-font-size: 0.9em;
-background: rgba(255, 255, 255, 0.1);
-padding: 0.2em 0.4em;
-border-radius: 0.25rem;
-color: #e2e8f0;
+font-family: var(--font-mono);
+font-size: 0.88em;
+background: rgba(255, 255, 255, 0.08);
+padding: 0.2em 0.45em;
+border-radius: 0.3rem;
+color: #e4e4e7;
+border: 1px solid rgba(255, 255, 255, 0.1);
 }
 /* Fenced blocks: Shiki (One Dark Pro) owns token colors via inline styles */
 .post-content .code-block-wrap {
 position: relative;
-margin: 2rem -2rem;
-width: calc(100% + 4rem);
+margin: 2rem -2.5rem;
+width: calc(100% + 5rem);
 border-radius: 0.5rem;
 overflow: hidden;
 border: 1px solid rgba(255, 255, 255, 0.12);
-background: #282c34;
-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+background: #18181b;
+box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 .post-content .code-block-wrap .code-lang {
 position: absolute;
-top: 0.55rem;
-right: 0.75rem;
+top: 0.65rem;
+right: 0.85rem;
 z-index: 1;
-font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+font-family: var(--font-mono);
 font-size: 0.65rem;
-letter-spacing: 0.04em;
+letter-spacing: 0.06em;
 text-transform: uppercase;
-color: rgba(171, 178, 191, 0.65);
+color: rgba(171, 178, 191, 0.8);
+background: rgba(255, 255, 255, 0.06);
+padding: 0.15rem 0.45rem;
+border-radius: 4px;
 pointer-events: none;
 user-select: none;
 }
 .post-content pre,
 .post-content .code-block-wrap pre.shiki {
-background: #282c34;
+background: #18181b;
 padding: 1.65rem 1.25rem 1.35rem;
 border-radius: 0.5rem;
 overflow-x: auto;
-margin: 2rem -2rem;
+margin: 2rem -2.5rem;
 border: 1px solid rgba(255, 255, 255, 0.1);
-width: calc(100% + 4rem);
-line-height: 1.55;
+width: calc(100% + 5rem);
+line-height: 1.6;
+font-family: var(--font-mono);
 }
 .post-content .code-block-wrap pre.shiki {
 margin: 0;
@@ -265,9 +339,9 @@ background: transparent !important;
 @media (max-width: 768px) {
 .post-content pre,
 .post-content .code-block-wrap {
-margin-left: -1rem;
-margin-right: -1rem;
-width: calc(100% + 2rem);
+margin-left: -1.5rem;
+margin-right: -1.5rem;
+width: calc(100% + 3rem);
 border-radius: 0;
 }
 }
@@ -275,16 +349,13 @@ border-radius: 0;
 .post-content .code-block-wrap pre.shiki code {
 background: none !important;
 padding: 0;
-font-size: 0.92rem;
-/* Never flatten Shiki token colors */
+font-size: 0.9rem;
 color: inherit;
+font-family: var(--font-mono);
 }
 .post-content .shiki span {
-/* Inline token colors must win over any inherited prose color */
 -webkit-text-fill-color: currentColor;
 }
-/* Must be block: HTML minify collapses newlines between .line spans.
-inline-block + width:100% + leftover spaces keeps every line on one row. */
 .post-content .shiki .line {
 display: block;
 width: 100%;
@@ -323,7 +394,7 @@ background: #0a0a0c;
 .post-footer {
 margin-top: 4rem;
 padding-top: 2rem;
-border-top: 1px solid rgba(255, 255, 255, 0.1);
+border-top: 1px solid rgba(255, 255, 255, 0.08);
 color: var(--muted-foreground);
 font-size: 0.875rem;
 display: flex;
@@ -341,27 +412,29 @@ flex-wrap: wrap;
 font-size: 0.75rem;
 padding: 0.25rem 0.6rem;
 border-radius: 0.375rem;
-background: rgba(255, 255, 255, 0.05);
+background: rgba(255, 255, 255, 0.04);
 color: var(--muted-foreground);
-border: 1px solid rgba(255, 255, 255, 0.1);
+border: 1px solid rgba(255, 255, 255, 0.08);
 text-decoration: none;
+font-family: var(--font-mono);
 transition: border-color 0.2s, color 0.2s;
 }
 .tag-pill:hover {
 background: rgba(28, 201, 160, 0.1);
 color: var(--primary);
-border-color: rgba(28, 201, 160, 0.25);
+border-color: rgba(28, 201, 160, 0.3);
 }
-/* Author card */
+/* Modern Author Card */
 .author-card {
 display: flex;
 align-items: center;
 gap: 1.25rem;
 margin-top: 3rem;
 padding: 1.5rem;
-background: var(--background);
-border: 1px solid var(--border);
-border-radius: 0.5rem;
+background: #141417;
+border: 1px solid rgba(255, 255, 255, 0.08);
+border-radius: 0.75rem;
+position: relative;
 }
 .author-avatar-wrap {
 position: relative;
@@ -374,8 +447,20 @@ width: 56px;
 height: 56px;
 border-radius: 50%;
 object-fit: cover;
-border: 2px solid rgba(28, 201, 160, 0.4);
+border: 2px solid rgba(28, 201, 160, 0.5);
+box-shadow: 0 0 15px -2px rgba(28, 201, 160, 0.3);
 display: block;
+}
+.status-dot-avatar {
+position: absolute;
+bottom: 2px;
+right: 2px;
+width: 10px;
+height: 10px;
+border-radius: 50%;
+background-color: var(--primary);
+border: 2px solid #141417;
+box-shadow: 0 0 6px var(--primary);
 }
 .author-avatar-fallback {
 display: none;
@@ -400,13 +485,14 @@ display: flex;
 .author-info {
 display: flex;
 flex-direction: column;
-gap: 0.25rem;
+gap: 0.35rem;
 }
 .author-name {
 font-family: var(--font-heading);
-font-weight: 600;
+font-weight: 700;
 color: var(--foreground);
 font-size: 1rem;
+letter-spacing: -0.01em;
 }
 .author-bio {
 font-size: 0.85rem;
@@ -415,40 +501,34 @@ line-height: 1.5;
 }
 .author-links {
 display: flex;
-gap: 0.75rem;
+gap: 1rem;
 margin-top: 0.25rem;
 }
 .author-links a {
+font-family: var(--font-mono);
 font-size: 0.8rem;
-color: var(--primary-glow);
+color: var(--primary);
 text-decoration: none;
 transition: color 0.2s;
 }
 .author-links a:hover {
-color: var(--primary);
+color: var(--primary-glow);
+text-decoration: underline;
 }
-/* Reading progress */
-.reading-progress {
-position: fixed;
-top: 0;
-left: 0;
-height: 3px;
-background: var(--primary);
-z-index: 2000;
-transition: width 0.1s ease;
-}
-/* Navigation */
+/* Post Navigation */
 .post-navigation {
 display: grid;
 grid-template-columns: 1fr 1fr;
 gap: 1.5rem;
 margin-top: 3rem;
+margin-bottom: 2rem;
 }
 .nav-previous,
 .nav-next {
-padding: 1.5rem;
+padding: 1.25rem;
 display: flex;
 flex-direction: column;
+border-radius: 0.75rem;
 }
 .nav-previous a,
 .nav-next a {
@@ -458,18 +538,20 @@ display: flex;
 flex-direction: column;
 }
 .nav-label {
+font-family: var(--font-mono);
 font-size: 0.75rem;
 text-transform: uppercase;
 letter-spacing: 0.05em;
-color: var(--muted-foreground);
-margin-bottom: 0.5rem;
+color: var(--primary);
+margin-bottom: 0.4rem;
 }
 .nav-title {
 font-family: var(--font-heading);
 font-weight: 600;
 color: var(--foreground);
-font-size: 1.125rem;
+font-size: 1.05rem;
 transition: color 0.2s;
+letter-spacing: -0.01em;
 }
 .nav-previous:hover .nav-title,
 .nav-next:hover .nav-title {
@@ -493,47 +575,74 @@ padding: 1.5rem;
 }
 }
 /* Inline styles injected from frontmatter */
-{
-{
-inlineStyles
-}
-}
 </style> </head> <body class="bg-mesh"> <div class="reading-progress"></div> <style>
-/* Top Bar Header */
+/* Modern Floating Island Header */
 .site-header {
 position: fixed;
-top: 0;
+top: 1rem;
 left: 0;
-width: 100%;
+right: 0;
 z-index: 1000;
+display: flex;
+justify-content: center;
+padding: 0 1rem;
+pointer-events: none;
 transition: all 0.3s ease;
-background: transparent;
-border-bottom: 1px solid transparent;
-}
-.site-header.scrolled {
-background: rgba(9, 9, 11, 0.92);
-border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .header-inner {
-max-width: 1280px;
-margin: 0 auto;
-padding: 1rem 1.5rem;
+width: 100%;
+max-width: 960px;
+pointer-events: auto;
+padding: 0.5rem 1.15rem;
 display: flex;
 align-items: center;
 justify-content: space-between;
+gap: 1rem;
+background: rgba(9, 9, 11, 0.85);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+border: 1px solid rgba(255, 255, 255, 0.12);
+border-radius: 9999px;
+box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6), 0 0 15px -3px rgba(28, 201, 160, 0.1);
+transition: all 0.25s ease;
 }
 .site-logo {
 font-family: var(--font-heading);
 font-weight: 700;
-font-size: 1.25rem;
+font-size: 1.05rem;
 color: var(--foreground);
 text-decoration: none;
 display: flex;
 align-items: center;
 gap: 0.5rem;
+letter-spacing: -0.02em;
+}
+.logo-status-pill {
+display: inline-flex;
+align-items: center;
+gap: 0.35rem;
+padding: 0.15rem 0.55rem;
+font-family: var(--font-mono);
+font-size: 0.7rem;
+color: var(--primary);
+background: rgba(28, 201, 160, 0.1);
+border: 1px solid rgba(28, 201, 160, 0.25);
+border-radius: 9999px;
+}
+.status-pulse-dot {
+width: 6px;
+height: 6px;
+border-radius: 50%;
+background-color: var(--primary);
+box-shadow: 0 0 6px var(--primary);
+animation: pulseGlow 2s infinite;
+}
+@keyframes pulseGlow {
+0%, 100% { opacity: 1; transform: scale(1); }
+50% { opacity: 0.4; transform: scale(0.85); }
 }
 .text-gradient-premium {
-background: linear-gradient(135deg, #fff 0%, #5eead4 100%);
+background: linear-gradient(135deg, #fff 10%, #5eead4 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 background-clip: text;
@@ -542,82 +651,47 @@ display: inline-block;
 }
 .site-nav {
 display: flex;
-gap: 2rem;
+align-items: center;
+gap: 0.35rem;
 }
 .nav-link {
 font-family: var(--font-sans);
-font-size: 0.875rem;
+font-size: 0.8125rem;
 font-weight: 500;
 color: var(--muted-foreground);
 text-decoration: none;
-transition: color 0.2s ease;
-position: relative;
+padding: 0.35rem 0.75rem;
+border-radius: 9999px;
+transition: all 0.2s ease;
 }
 .nav-link:hover {
-color: var(--primary-glow);
+color: var(--foreground);
+background: rgba(255, 255, 255, 0.06);
 }
 .nav-link.active {
 color: var(--foreground);
-}
-/* Mobile Menu */
-.mobile-menu-toggle {
-display: none;
-background: none;
-border: none;
-color: var(--foreground);
-cursor: pointer;
-padding: 0.5rem;
-}
-@media (max-width: 768px) {
-.site-nav {
-display: none;
-position: absolute;
-top: 100%;
-left: 0;
-right: 0;
-flex-direction: column;
-background: rgba(9, 9, 11, 0.98);
-border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-padding: 1rem;
-gap: 1rem;
-align-items: center;
-}
-.site-nav.open {
-display: flex;
-animation: slideDown 0.3s ease-out forwards;
-}
-.mobile-menu-toggle {
-display: block;
-}
-}
-@keyframes slideDown {
-from {
-opacity: 0;
-transform: translateY(-10px);
-}
-to {
-opacity: 1;
-transform: translateY(0);
-}
+background: rgba(255, 255, 255, 0.1);
+font-weight: 600;
 }
 /* Search Button */
 .search-trigger {
 background: rgba(255, 255, 255, 0.05);
-border: 1px solid rgba(255, 255, 255, 0.1);
+border: 1px solid rgba(255, 255, 255, 0.12);
 color: var(--muted-foreground);
-padding: 0.5rem 1rem;
-border-radius: 0.375rem;
-font-size: 0.875rem;
+padding: 0.35rem 0.75rem;
+border-radius: 9999px;
+font-size: 0.8125rem;
 cursor: pointer;
 display: flex;
 align-items: center;
-gap: 0.5rem;
+gap: 0.45rem;
 transition: all 0.2s ease;
+font-family: var(--font-mono);
 }
 .search-trigger:hover {
 background: rgba(255, 255, 255, 0.1);
 color: var(--foreground);
-border-color: rgba(255, 255, 255, 0.2);
+border-color: rgba(28, 201, 160, 0.35);
 }
 .search-text,
 .search-shortcut {
@@ -628,10 +702,61 @@ display: none;
 display: inline;
 }
 .search-shortcut {
-display: inline;
-font-size: 0.75rem;
-opacity: 0.6;
-margin-left: 0.5rem;
+display: inline-flex;
+font-size: 0.7rem;
+background: rgba(255, 255, 255, 0.08);
+border: 1px solid rgba(255, 255, 255, 0.12);
+border-radius: 4px;
+padding: 0.05rem 0.35rem;
+color: var(--muted-foreground);
+}
+}
+/* Mobile Menu */
+.mobile-menu-toggle {
+display: none;
+background: none;
+border: none;
+color: var(--foreground);
+cursor: pointer;
+padding: 0.35rem;
+}
+@media (max-width: 768px) {
+.site-nav {
+display: none;
+position: absolute;
+top: calc(100% + 0.5rem);
+left: 1rem;
+right: 1rem;
+flex-direction: column;
+background: #111114;
+border: 1px solid rgba(255, 255, 255, 0.12);
+border-radius: 1rem;
+padding: 1rem;
+gap: 0.5rem;
+align-items: stretch;
+box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+}
+.site-nav.open {
+display: flex;
+animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.mobile-menu-toggle {
+display: block;
+}
+.nav-link {
+padding: 0.6rem 1rem;
+border-radius: 0.5rem;
+text-align: left;
+}
+}
+@keyframes slideDown {
+from {
+opacity: 0;
+transform: translateY(-8px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
 }
 }
 /* Search Modal */
@@ -643,98 +768,102 @@ left: 0;
 right: 0;
 bottom: 0;
 background: rgba(0, 0, 0, 0.8);
-backdrop-filter: blur(8px);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
 z-index: 2000;
 align-items: flex-start;
 justify-content: center;
 padding-top: 100px;
 opacity: 0;
-transition: opacity 0.3s ease;
+transition: opacity 0.25s ease;
 }
 .search-modal-overlay.open {
 display: flex;
 opacity: 1;
 }
 .search-modal {
-background: #09090b;
-border: 1px solid rgba(255, 255, 255, 0.1);
+background: #101013;
+border: 1px solid rgba(255, 255, 255, 0.15);
 border-radius: 1rem;
 width: 90%;
 max-width: 600px;
-box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 25px -5px rgba(28, 201, 160, 0.2);
 overflow: hidden;
-transform: scale(0.95);
-transition: transform 0.3s ease;
+transform: scale(0.96);
+transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .search-modal-overlay.open .search-modal {
 transform: scale(1);
 }
 .search-input-container {
-padding: 1.5rem;
+padding: 1.25rem 1.5rem;
 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 display: flex;
 align-items: center;
 }
 .search-icon {
-color: var(--muted-foreground);
-margin-right: 1rem;
+color: var(--primary);
+margin-right: 0.85rem;
+flex-shrink: 0;
 }
 .search-input {
 background: transparent;
 border: none;
 color: var(--foreground);
-font-size: 1.125rem;
+font-size: 1.05rem;
 width: 100%;
 outline: none;
 font-family: var(--font-sans);
 }
+.search-input::placeholder {
+color: var(--muted-foreground);
+}
 .search-results {
 max-height: 400px;
 overflow-y: auto;
-padding: 0.5rem;
+padding: 0.75rem;
 }
 .search-result-item {
 display: block;
-padding: 1rem;
+padding: 0.85rem 1rem;
 text-decoration: none;
 color: var(--muted-foreground);
 border-radius: 0.5rem;
 transition: all 0.2s ease;
 margin-bottom: 0.25rem;
+border: 1px solid transparent;
 }
 .search-result-item:hover {
 background: rgba(255, 255, 255, 0.05);
+border-color: rgba(28, 201, 160, 0.25);
 color: var(--foreground);
 }
 .search-result-title {
 font-weight: 600;
-font-size: 1rem;
-color: var(--primary-glow);
+font-size: 0.95rem;
+color: var(--foreground);
 margin-bottom: 0.25rem;
+font-family: var(--font-heading);
+}
+.search-result-item:hover .search-result-title {
+color: var(--primary);
 }
 .search-result-excerpt {
-font-size: 0.875rem;
+font-size: 0.8125rem;
 color: var(--muted-foreground);
 display: -webkit-box;
 -webkit-line-clamp: 2;
 -webkit-box-orient: vertical;
 overflow: hidden;
 }
-</style> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <img src="/logo.svg" alt="JJ" width="32" height="32"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
-class="text-gradient-premium">Jose</span></span> </a> <nav class="site-nav"> <a href="/#hero" class="nav-link">Home</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/blog" class="nav-link active">Blog</a> <a href="/#contact" class="nav-link">Contact</a> </nav> <div style="display: flex; align-items: center; gap: 1rem;"> <button class="search-trigger" onclick="openSearch()"> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+</style> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
+class="text-gradient-premium">Jose</span></span> <span class="logo-status-pill"> <span class="status-pulse-dot"></span>
+blog
+</span> </a> <nav class="site-nav"> <a href="/#hero" class="nav-link">Home</a> <a href="/#experience" class="nav-link">Experience</a> <a href="/#skills" class="nav-link">Skills</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/blog/" class="nav-link active">Blog</a> <a href="/#contact" class="nav-link">Contact</a> </nav> <div style="display: flex; align-items: center; gap: 0.75rem;"> <button class="search-trigger" onclick="openSearch()" aria-label="Search posts"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
 stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut">⌘K</span> </button> <button class="mobile-menu-toggle" aria-label="Toggle menu"
-onclick="document.querySelector('.site-nav').classList.toggle('open')"> <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-stroke-linecap="round" stroke-linejoin="round"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()"> <div class="search-modal"> <div class="search-input-container"> <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts..." id="searchInput" autocomplete="off"> </div> <div class="search-results" id="searchResults"> </div> </div> </div> <script>
-// Header Scroll Effect
-window.addEventListener('scroll', () => {
-const header = document.getElementById('siteHeader');
-if (window.scrollY > 20) {
-header.classList.add('scrolled');
-} else {
-header.classList.remove('scrolled');
-}
-});
+onclick="document.querySelector('.site-nav').classList.toggle('open')"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()"> <div class="search-modal"> <div class="search-input-container"> <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts by topic, title, or tags..." id="searchInput" autocomplete="off"> </div> <div class="search-results" id="searchResults"> </div> </div> </div> <script>
 let searchIndex = [];
 let isSearchOpen = false;
 async function loadSearchIndex() {
@@ -770,11 +899,11 @@ const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(q
 return titleMatch || descMatch || tagMatch;
 }).slice(0, 5); // Limit to 5 results
 const resultsHtml = results.map(post => `
-<a href="/blog/${post.slug}" class="search-result-item" onclick="closeSearch()"> <div class="search-result-title">${post.title}</div> <div class="search-result-excerpt">${post.description || ''}</div> </a>
+<a href="/blog/${post.slug}/" class="search-result-item" onclick="closeSearch()"> <div class="search-result-title">${post.title}</div> <div class="search-result-excerpt">${post.description || ''}</div> </a>
 `).join('');
 document.getElementById('searchResults').innerHTML = results.length > 0
 ? resultsHtml
-: '<div style="padding: 1rem; color: var(--muted-foreground); text-align: center;">No results found</div>';
+: '<div style="padding: 1.5rem; color: var(--muted-foreground); text-align: center; font-size: 0.9rem;">No matching articles found</div>';
 }
 document.getElementById('searchInput').addEventListener('input', (e) => {
 performSearch(e.target.value);
@@ -790,23 +919,13 @@ if (e.key === 'Escape' && isSearchOpen) {
 closeSearch();
 }
 });
-</script> <main class="container"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#033</span> <span>1 Aug 2026</span> <span>·</span> <span>17 min read</span> </div> <h1 class="post-title">The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL</h1> </header> <div class="post-content"> <p>Working log for <a href="https://github.com/jeffreyjose07/scalable-chat-platform">scalable-chat-platform</a>. <strong>Previous:</strong> <a href="/blog/hardening-chat-platform-deps-health-ci">Hardening the Chat Platform: Deps, Deep Health, and CI Pings</a>.</p> <p>In episode 027 I added a scheduled GitHub Action that pings <code>GET /api/health/status</code> every five minutes and fails loudly if any dependency is down. That was the right instinct. Then it went red on <strong>2026-06-03</strong> and stayed red for <strong>two months</strong>, firing every five minutes into a void, and I did not notice until I went looking for something else.</p> <p>This is the post-mortem. It has three stacked failure modes, each one hiding the next, and each producing a completely different error at a different layer of the stack. The interesting part is not the fix — the fix was one environment variable. The interesting part is why an app with a carefully built three-dependency health check could not tell me which dependency had died.</p> <hr> <h2>The symptom: zero bytes</h2> <p>The first thing I did was the obvious thing.</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">curl</span><span style="color:#D19A66"> -sS</span><span style="color:#D19A66"> -o</span><span style="color:#98C379"> /dev/null</span><span style="color:#D19A66"> -w</span><span style="color:#98C379"> "HTTP %{http_code} time=%{time_total}s\n"</span><span style="color:#56B6C2"> \</span></span> <span class="line"><span style="color:#D19A66">  --max-time</span><span style="color:#D19A66"> 60</span><span style="color:#98C379"> https://scalable-chat-platform.onrender.com</span></span></code></pre></div> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">curl</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">(28) Operation timed out after 60003 milliseconds with 0 bytes received</span></span> <span class="line"><span style="color:#98C379">HTTP 000  time=60.003420s</span></span></code></pre></div> <p><strong>Zero bytes.</strong> That detail matters. A crashed-but-running Spring Boot app gives you a 500 with a JSON error body. A container that died gives you Render&#39;s own 502 page, and quickly. Zero bytes after a full 60-second timeout means nothing upstream ever accepted the request — the container was not listening on 8080 at all.</p> <p>The CI probe had been saying the same thing for two months, in a more compact form:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">curl</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">(28) Operation timed out after 45001 milliseconds with 0 bytes received</span></span> <span class="line"><span style="color:#7F848E;font-style:italic">##[error]Process completed with exit code 28.</span></span></code></pre></div> <h2>Dating the outage with <code>gh</code></h2> <p>Before touching any config, I wanted two numbers: <em>when</em> did this start, and <em>which</em> dependency broke. The GitHub Actions history had both, for free.</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">gh</span><span style="color:#98C379"> run</span><span style="color:#98C379"> list</span><span style="color:#D19A66"> --workflow=</span><span style="color:#98C379">"ping-app-health.yml"</span><span style="color:#D19A66"> --status</span><span style="color:#98C379"> success</span><span style="color:#D19A66"> --limit</span><span style="color:#D19A66"> 3</span><span style="color:#56B6C2"> \</span></span> <span class="line"><span style="color:#D19A66">  --json</span><span style="color:#98C379"> createdAt</span><span style="color:#D19A66"> -q</span><span style="color:#98C379"> '.[].createdAt'</span></span></code></pre></div> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#D19A66">2026-06-03T07:06:50Z</span></span> <span class="line"><span style="color:#D19A66">2026-06-02T06:51:40Z</span></span> <span class="line"><span style="color:#D19A66">2026-06-01T13:07:03Z</span></span></code></pre></div> <p>Last green: <strong>June 3rd</strong>. Then:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">gh</span><span style="color:#98C379"> run</span><span style="color:#98C379"> list</span><span style="color:#D19A66"> --workflow=</span><span style="color:#98C379">"ping-app-health.yml"</span><span style="color:#D19A66"> --limit</span><span style="color:#D19A66"> 100</span><span style="color:#56B6C2"> \</span></span> <span class="line"><span style="color:#D19A66">  --json</span><span style="color:#98C379"> conclusion</span><span style="color:#D19A66"> -q</span><span style="color:#98C379"> '[.[].conclusion] | group_by(.) | map({(.[0]): length}) | add'</span></span></code></pre></div> <div class="code-block-wrap" data-lang="json"><span class="code-lang" aria-hidden="true">json</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">{</span><span style="color:#E06C75">"failure"</span><span style="color:#ABB2BF">:</span><span style="color:#D19A66">99</span><span style="color:#ABB2BF">,</span><span style="color:#E06C75">"startup_failure"</span><span style="color:#ABB2BF">:</span><span style="color:#D19A66">1</span><span style="color:#ABB2BF">}</span></span></code></pre></div> <p>Ninety-nine consecutive failures. But the genuinely useful signal was the <em>other</em> workflow:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#98C379">2026-08-01T03:37  success   Keep Redis Alive</span></span> <span class="line"><span style="color:#98C379">2026-07-31T19:43  success   Keep Redis Alive</span></span> <span class="line"><span style="color:#98C379">2026-07-31T14:24  success   Keep Redis Alive</span></span></code></pre></div> <p><code>Keep Redis Alive</code> connects to Upstash using the same <code>REDIS_URL</code> secret the app uses, and it had been <strong>green throughout the entire outage</strong>. That is an independent, credential-level proof that Redis was healthy. One <code>gh</code> command eliminated a third of the dependency surface before I read a single line of application log.</p> <blockquote> <p>Two scheduled workflows hitting two different layers turned out to be worth more than either alone. The app-level probe said &quot;something is broken.&quot; The dependency-level probe said &quot;and it is not Redis.&quot;</p> </blockquote> <h2>The log: a pool that starts and never finishes</h2> <p>Render&#39;s log stream had the shape of the problem:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">05:49:31.658  INFO  o.h.e.t.j.p.i.JtaPlatformInitiator</span><span style="color:#ABB2BF">  : </span><span style="color:#E06C75">HHH000489</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">No JTA platform available</span></span> <span class="line"><span style="color:#E06C75">05:49:31.769  INFO  com.zaxxer.hikari.HikariDataSource</span><span style="color:#ABB2BF">  : </span><span style="color:#98C379">HikariPool-1 - Starting...</span></span> <span class="line"><span style="color:#E06C75">06:38:18.723  OpenJDK 64-Bit Server VM warning</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">Options -Xverify:none and -noverify were deprecated</span></span></code></pre></div> <p><code>HikariPool-1 - Starting...</code> and then <strong>nothing</strong> — until a fresh JVM boot 49 minutes later. The line that should follow, and never did, is <code>HikariPool-1 - Start completed.</code> The application was dying between those two log lines, over and over, in a restart loop.</p> <p>The full stack trace bottomed out at the only line that mattered:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>Caused by: java.net.UnknownHostException: pg-xxxxxxxx-chat-platform-db.g.aivencloud.com</span></span> <span class="line"><span>    at java.base/sun.nio.ch.NioSocketImpl.connect(Unknown Source)</span></span> <span class="line"><span>    at org.postgresql.core.PGStream.createSocket(PGStream.java:243)</span></span> <span class="line"><span>    at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:132)</span></span> <span class="line"><span>    ...</span></span> <span class="line"><span>    at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)</span></span></code></pre></div> <p><code>UnknownHostException</code>. Not &quot;connection refused.&quot; Not &quot;authentication failed.&quot; Not &quot;timeout.&quot; <strong>The hostname did not resolve.</strong></p> <p>I confirmed it from my laptop, outside Render entirely:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">dig</span><span style="color:#98C379"> +short</span><span style="color:#98C379"> pg-xxxxxxxx-chat-platform-db.g.aivencloud.com</span></span> <span class="line"><span style="color:#7F848E;font-style:italic"># (no output — NXDOMAIN)</span></span> <span class="line"></span> <span class="line"><span style="color:#61AFEF">dig</span><span style="color:#98C379"> +short</span><span style="color:#98C379"> ep-old-breeze-a1lpt8gb-pooler.ap-southeast-1.aws.neon.tech</span></span> <span class="line"><span style="color:#7F848E;font-style:italic"># 52.220.170.93</span></span> <span class="line"><span style="color:#7F848E;font-style:italic"># 13.228.184.177</span></span></code></pre></div> <p>The old Neon endpoint from <a href="/blog/from-neon-to-supabase-to-aiven-postgresql-migration">episode 014&#39;s migration odyssey</a> still resolved. The current Aiven one had no DNS record at all.</p> <h3>Why the record disappeared</h3> <p>Aiven&#39;s free tier powers off a service after a period with no client activity. When it powers off, the nodes are released and <strong>the DNS record goes with them</strong>. The service still exists in the console, your data still exists, but the hostname stops resolving until you power it back on.</p> <p>This is a meaningfully different failure from the one you plan for. Everyone writes retry logic for &quot;database is slow&quot; or &quot;connection refused.&quot; Almost nobody writes it for &quot;the hostname ceased to exist,&quot; because in a normal production environment hostnames do not spontaneously stop resolving. Free tiers are not a normal production environment.</p> <hr> <h2>The real bug: why the <em>whole app</em> died</h2> <p>Here is the part I actually got wrong, and the part worth internalising.</p> <p><code>application-render.yml</code> opens with what I thought was insurance:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">spring</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">  main</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">    lazy-initialization</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">true</span></span></code></pre></div> <p>Lazy initialization is supposed to mean beans are created on first use, not at startup. My mental model was that a dead Postgres would produce a degraded app: the UI would load, static assets would serve, non-DB endpoints would answer, and only the database-backed paths would fail.</p> <p>That is not what happened, and the stack trace explains why:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>Error creating bean with name 'securityConfig'</span></span> <span class="line"><span>  → Unsatisfied dependency: 'jwtAuthenticationFilter'</span></span> <span class="line"><span>    → Unsatisfied dependency: 'userService'</span></span> <span class="line"><span>      → Unsatisfied dependency: 'userRepository'</span></span> <span class="line"><span>        → Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory'</span></span> <span class="line"><span>          → Unable to build Hibernate SessionFactory</span></span> <span class="line"><span>            → JDBCConnectionException: Unable to open JDBC Connection for DDL execution</span></span></code></pre></div> <p>Read that chain bottom-up and the trap is obvious. <code>JwtAuthenticationFilter</code> is a <strong>servlet filter</strong>. Servlet filters are <code>ServletContextInitializer</code> beans, and Tomcat must instantiate every one of them at context startup to build the filter chain — there is no &quot;first use&quot; to defer to, because the filter chain <em>is</em> the thing being constructed. Spring has no choice but to create it eagerly.</p> <p>Creating the filter requires <code>UserService</code>, which requires <code>UserRepository</code>, which requires the <code>EntityManagerFactory</code>, which requires a live JDBC connection because <code>ddl-auto: update</code> makes Hibernate run schema introspection at boot.</p> <p><strong>So <code>lazy-initialization: true</code> bought me nothing.</strong> One unreachable database took down Tomcat itself.</p> <h3>The health endpoint could never have saved me</h3> <p>This is the sharpest lesson in the whole incident.</p> <p><code>HealthController</code> is genuinely good code. It probes all three stores, measures response times, caches results with a shorter TTL while unhealthy so recovery is noticed fast, and returns a proper non-200 when anything is down:</p> <div class="code-block-wrap" data-lang="java"><span class="code-lang" aria-hidden="true">java</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">@</span><span style="color:#E5C07B">RestController</span></span> <span class="line"><span style="color:#ABB2BF">@</span><span style="color:#E5C07B">RequestMapping</span><span style="color:#E06C75">(</span><span style="color:#98C379">"/api/health"</span><span style="color:#E06C75">)</span></span> <span class="line"><span style="color:#C678DD">public</span><span style="color:#C678DD"> class</span><span style="color:#E5C07B"> HealthController</span><span style="color:#ABB2BF"> {</span></span> <span class="line"><span style="color:#ABB2BF">    @</span><span style="color:#E5C07B">Autowired</span><span style="color:#C678DD"> private</span><span style="color:#E5C07B"> DataSource</span><span style="color:#E06C75"> dataSource</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF">    @</span><span style="color:#E5C07B">Autowired</span><span style="color:#C678DD"> private</span><span style="color:#E5C07B"> MongoTemplate</span><span style="color:#E06C75"> mongoTemplate</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF">    @</span><span style="color:#E5C07B">Autowired</span><span style="color:#C678DD"> private</span><span style="color:#E5C07B"> RedisTemplate</span><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E5C07B">String</span><span style="color:#ABB2BF">,</span><span style="color:#E5C07B"> String</span><span style="color:#ABB2BF">></span><span style="color:#E06C75"> redisTemplate</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#7F848E;font-style:italic">    // ... deep probe with caching</span></span> <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div> <p>It never ran. Not once in two months. Tomcat never finished starting, so no controller was ever mapped, so the endpoint that exists specifically to tell me &quot;postgresql: DOWN&quot; could not be reached <strong>precisely when it had something to say</strong>.</p> <blockquote> <p>A health check that shares a fate with the thing it monitors is not a health check. It is a second copy of the outage.</p> </blockquote> <p>That is why the probe got zero bytes instead of a JSON body naming the dead dependency. The monitoring was structurally incapable of reporting the most important failure mode it had.</p> <hr> <h2>Fix, part one: power on</h2> <p>The recovery itself was anticlimactic. Power the service back on in the Aiven console, then verify from outside:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">dig</span><span style="color:#98C379"> +short</span><span style="color:#98C379"> pg-xxxxxxxx-chat-platform-db.g.aivencloud.com</span></span> <span class="line"><span style="color:#7F848E;font-style:italic"># 165.22.223.111</span></span> <span class="line"></span> <span class="line"><span style="color:#61AFEF">nc</span><span style="color:#D19A66"> -z</span><span style="color:#D19A66"> -v</span><span style="color:#D19A66"> -G</span><span style="color:#D19A66"> 8</span><span style="color:#98C379"> pg-xxxxxxxx-chat-platform-db.g.aivencloud.com</span><span style="color:#D19A66"> 24531</span></span> <span class="line"><span style="color:#7F848E;font-style:italic"># Connection to ... port 24531 [tcp/*] succeeded!</span></span></code></pre></div> <p>DNS back, TCP open. Then the question that actually mattered: <strong>did the data survive?</strong></p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">psql</span><span style="color:#98C379"> "host=... port=24531 dbname=defaultdb user=avnadmin sslmode=require"</span><span style="color:#56B6C2"> \</span></span> <span class="line"><span style="color:#D19A66">  -Atc</span><span style="color:#98C379"> "SELECT table_name FROM information_schema.tables WHERE table_schema='public';"</span></span></code></pre></div> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>conversation_participants</span></span> <span class="line"><span>conversations</span></span> <span class="line"><span>users</span></span></code></pre></div> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>users|8</span></span> <span class="line"><span>conversations|5</span></span></code></pre></div> <p>All three tables, all rows intact, PostgreSQL 15.18. A power-off is not a deletion — the volume is preserved. Worth knowing before you panic.</p> <h2>The hazard I braced for, and did not actually hit</h2> <p><strong>Correction, added after pulling the Render deploy history — see the postmortem section below.</strong> When I first wrote this I expected the next step to be fixing <code>DATABASE_URL</code>, and I said so. The deploy record shows I was wrong: the environment variable was already correct, and powering Aiven back on was the <em>entire</em> fix. I am leaving this section in because the trap is real and will bite anyone migrating providers — but it was not what broke this deployment.</p> <p>Aiven hands you a connection string in this shape:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#98C379">postgres://avnadmin:PASSWORD@pg-xxxxxxxx-chat-platform-db.g.aivencloud.com:24531/defaultdb?sslmode=require</span></span></code></pre></div> <p>That is a <strong>libpq URI</strong>. It is what <code>psql</code>, <code>pg_dump</code>, and most non-JVM drivers expect. Paste it straight into Render&#39;s <code>DATABASE_URL</code> and the app still will not boot, because <code>application-render.yml</code> passes it through unmodified:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">spring</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">  datasource</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">    url</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">${DATABASE_URL}</span></span> <span class="line"><span style="color:#E06C75">    driver-class-name</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">org.postgresql.Driver</span></span></code></pre></div> <p>Spring hands <code>spring.datasource.url</code> to <code>DriverManager</code>, which selects a driver by asking each registered one <code>acceptsURL(url)</code>. <code>org.postgresql.Driver</code> only accepts strings beginning with <code>jdbc:postgresql:</code> or <code>jdbc:postgres:</code>. A bare <code>postgres://</code> URI matches <strong>no</strong> driver, so you get:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>Driver claims to not accept jdbcUrl</span></span></code></pre></div> <p>...thrown before a single packet leaves the container. It never reaches DNS, never reaches TCP. A completely different error, at a completely different layer, that looks nothing like the problem you just fixed.</p> <p>There is a second wrinkle: that profile sets no <code>spring.datasource.username</code> or <code>password</code>, so the credentials <strong>must</strong> live inside the URL as query parameters. The working value is:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#98C379">jdbc:postgresql://pg-xxxxxxxx-chat-platform-db.g.aivencloud.com:24531/defaultdb?ssl=require&#x26;user=avnadmin&#x26;password=***&#x26;autoCommit=false</span></span></code></pre></div> <p>So the same database now needs <strong>two different strings</strong> depending on who is connecting:</p> <table> <thead> <tr> <th>Consumer</th> <th>Format</th> <th>Shape</th> </tr> </thead> <tbody><tr> <td>Render <code>DATABASE_URL</code> (Spring)</td> <td>JDBC</td> <td><code>jdbc:postgresql://host:port/db?user=…&amp;password=…</code></td> </tr> <tr> <td>GitHub secret (<code>psql</code>)</td> <td>libpq URI</td> <td><code>postgres://user:pass@host:port/db?sslmode=require</code></td> </tr> </tbody></table> <p>Writing that table down and keeping it somewhere is the actual deliverable of this section — just not, as it turned out, the fix for this incident.</p> <h2>Fix, part three: a truncated secret</h2> <p>With the app back up, I added a keep-alive workflow (below) and ran it. It failed:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">psql</span><span style="color:#ABB2BF">: </span><span style="color:#E06C75">error</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">connection to server at "pg-xxxxxxxx-chat-platform-db.g.aivencloud.com"</span></span> <span class="line"><span style="color:#E06C75">(165.22.223.111), port 24531 failed</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">FATAL</span><span style="color:#ABB2BF">:  </span><span style="color:#98C379">password authentication failed for user "avnadmin"</span></span></code></pre></div> <p>Third failure mode, third layer. And notice how much this error tells you: DNS resolved (it printed the IP), TCP connected, TLS negotiated, the server parsed the username. Everything worked <em>except</em> the credential. That is a one-value fix, not a design problem.</p> <p>The cause was mundane and entirely self-inflicted — my terminal had been mangling multi-line pastes all session, and the secret had been silently truncated on the way in. The robust fix avoids the interactive paste prompt entirely:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#56B6C2">printf</span><span style="color:#98C379"> 'postgres://avnadmin:PASSWORD@HOST:24531/defaultdb?sslmode=require'</span><span style="color:#ABB2BF"> > </span><span style="color:#98C379">/tmp/pg_uri.txt</span></span> <span class="line"><span style="color:#61AFEF">gh</span><span style="color:#98C379"> secret</span><span style="color:#98C379"> set</span><span style="color:#98C379"> AIVEN_POSTGRES_URI</span><span style="color:#D19A66"> --repo</span><span style="color:#98C379"> user/repo</span><span style="color:#ABB2BF"> &#x3C; </span><span style="color:#98C379">/tmp/pg_uri.txt</span><span style="color:#ABB2BF"> &#x26;&#x26; </span><span style="color:#61AFEF">rm</span><span style="color:#D19A66"> -P</span><span style="color:#98C379"> /tmp/pg_uri.txt</span></span></code></pre></div> <p><code>printf</code> rather than <code>echo</code> is deliberate: <code>echo</code> appends a trailing newline, and a stray <code>\n</code> inside a connection URI is its own subtle authentication failure.</p> <hr> <h2>Verification</h2> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">curl</span><span style="color:#D19A66"> -sS</span><span style="color:#98C379"> https://scalable-chat-platform.onrender.com/api/health/status</span></span></code></pre></div> <div class="code-block-wrap" data-lang="json"><span class="code-lang" aria-hidden="true">json</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">{</span></span> <span class="line"><span style="color:#E06C75">  "service"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"chat-platform-backend"</span><span style="color:#ABB2BF">,</span></span> <span class="line"><span style="color:#E06C75">  "status"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"UP"</span><span style="color:#ABB2BF">,</span></span> <span class="line"><span style="color:#E06C75">  "dependencies"</span><span style="color:#ABB2BF">: {</span></span> <span class="line"><span style="color:#E06C75">    "postgresql"</span><span style="color:#ABB2BF">: { </span><span style="color:#E06C75">"responseTime"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"82ms"</span><span style="color:#ABB2BF">,   </span><span style="color:#E06C75">"details"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"Connection successful"</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">"status"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"UP"</span><span style="color:#ABB2BF"> },</span></span> <span class="line"><span style="color:#E06C75">    "mongodb"</span><span style="color:#ABB2BF">:    { </span><span style="color:#E06C75">"responseTime"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"64ms"</span><span style="color:#ABB2BF">,   </span><span style="color:#E06C75">"details"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"Ping successful"</span><span style="color:#ABB2BF">,       </span><span style="color:#E06C75">"status"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"UP"</span><span style="color:#ABB2BF"> },</span></span> <span class="line"><span style="color:#E06C75">    "redis"</span><span style="color:#ABB2BF">:      { </span><span style="color:#E06C75">"responseTime"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"4046ms"</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">"response"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"PONG"</span><span style="color:#ABB2BF">,                 </span><span style="color:#E06C75">"status"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"UP"</span><span style="color:#ABB2BF"> }</span></span> <span class="line"><span style="color:#ABB2BF">  }</span></span> <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div> <p>And the CI probe, green for the first time since June 3rd:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">overall</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">UP</span></span> <span class="line"><span style="color:#E06C75">  postgresql</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">UP</span></span> <span class="line"><span style="color:#E06C75">  mongodb</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">UP</span></span> <span class="line"><span style="color:#E06C75">  redis</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">UP</span></span></code></pre></div> <h3>An unrelated bug the health JSON just handed me</h3> <p>Look again at those response times. Postgres: <strong>82ms</strong>. Mongo: <strong>64ms</strong>. Redis: <strong>4046ms</strong>.</p> <p>Redis is a thousand times slower than Postgres for a single <code>PING</code>. That is an Upstash free-tier cold start. Now compare it to the timeout configured in the same profile:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">spring</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">  redis</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">    timeout</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">2000ms</span></span></code></pre></div> <p>The configured timeout is <strong>2 seconds</strong>. The observed cold-start latency is <strong>4 seconds</strong>. A user request that lands on a cold Redis will time out where my health check succeeded — because the health check ran first and warmed the connection. That is a latent production bug I would not have found without printing per-dependency timings, and it is a good argument for putting response times in health payloads even when everything says <code>UP</code>.</p> <h2>The Render-side postmortem</h2> <p>Everything above was reconstructed from application logs, GitHub Actions history, and probes from my laptop. Afterwards I connected Render&#39;s MCP server and pulled the platform&#39;s own record. It confirmed the diagnosis, corrected one of my conclusions, and surfaced three configuration problems I did not know I had.</p> <h3>The deploy history contains a two-month hole</h3> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>dep-d8ftrdho3t8c738fk1f0   2026-06-03T08:00:28Z   live → deactivated</span></span> <span class="line"><span>                           ↑ commit 0582d37</span></span> <span class="line"><span>        ...nothing at all for 59 days...</span></span> <span class="line"><span>dep-d9mr0k2jnfac739p45hg   2026-08-01T08:42:17Z   manual redeploy</span></span> <span class="line"><span>dep-d9mr51nlk1mc738orheg   2026-08-01T08:48:56Z   live</span></span></code></pre></div> <p>That June 3rd deploy <strong>succeeded</strong>. It built, it started, Render marked it live, and it stayed the active deploy for the entire outage. Nothing was ever redeployed, rolled back, or reconfigured in between. The code that ran perfectly on June 3rd is byte-identical to the code that could not boot on August 1st — which is exactly what you would expect when the thing that changed is external.</p> <h3>The correction: <code>DATABASE_URL</code> was never wrong</h3> <p>Here is the measurement that overturned my assumption. That manual redeploy on August 1st at 08:37 was triggered <strong>after</strong> I powered Aiven back on but <strong>before</strong> any environment variable was touched. It ran the unchanged June 3rd commit. And:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#98C379">08:41:41.274  HikariPool-1 - Starting...</span></span> <span class="line"><span style="color:#98C379">08:41:44.032  HikariPool-1 - Start completed.</span></span></code></pre></div> <p>Two point seven seconds. Same code, same environment variables, same everything — the only difference in the universe was that the database hostname resolved again.</p> <p>So the JDBC-versus-libpq section above describes a genuine hazard that I did not actually hit. The deployed <code>DATABASE_URL</code> had been in correct JDBC form since the Aiven migration. I had predicted a second failure mode and it simply was not there. Worth stating plainly, because a post-mortem that quietly keeps its wrong predictions is worth much less than one that marks them.</p> <h3><code>render.yaml</code> is not the source of truth</h3> <p>The live service configuration disagrees with the <code>render.yaml</code> committed in the repository on three separate points:</p> <table> <thead> <tr> <th>Setting</th> <th><code>render.yaml</code> says</th> <th>Render actually has</th> </tr> </thead> <tbody><tr> <td><code>plan</code></td> <td><code>starter</code> (commented &quot;Upgraded from free&quot;)</td> <td><strong><code>free</code></strong></td> </tr> <tr> <td><code>region</code></td> <td><code>oregon</code></td> <td><strong><code>singapore</code></strong></td> </tr> <tr> <td><code>healthCheckPath</code></td> <td><code>/api/health/status</code></td> <td><strong><code>&quot;&quot;</code> (empty)</strong></td> </tr> </tbody></table> <p>This is the trap of Blueprint files: Render only applies <code>render.yaml</code> when the service is <strong>created from a Blueprint</strong>. This service was created through the dashboard, so the file has been decorative from day one. I have been editing a configuration file for two months believing it configured something.</p> <p>The third row is the one that matters. <strong>Render was never health-checking this service.</strong> With <code>healthCheckPath</code> empty it only verifies that something binds the port at deploy time; it never probes the running app afterwards. Combined with the app dying at startup, Render had no mechanism to notice, mark the service unhealthy, or alert me — and the deploy stayed flagged &quot;live&quot; for two months while nothing worked.</p> <h3>The <code>free</code> plan explains the zero bytes</h3> <p><code>plan: free</code> also resolves the symptom I opened with. Free web services spin down after inactivity and cold-start on the next request. This app takes roughly 45–60 seconds to boot when everything is healthy — Spring context, JPA, three connection pools. My health probe uses <code>curl --max-time 45</code>.</p> <p>That is a race the probe cannot reliably win even against a <em>healthy</em> app, and cannot win at all against one that crash-loops. Rather than a fast 502 from a dead upstream, each request sat waiting on a container that was still starting, until curl gave up. Hence zero bytes at 45 seconds rather than an error page.</p> <h3>The platform metrics were empty, and that is the finding</h3> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>instance_count      → []</span></span> <span class="line"><span>http_request_count  → []</span></span></code></pre></div> <p>Not zero — <strong>empty</strong>, for the full 30-day retention window. No instances recorded, no requests recorded. The service was so consistently down that Render&#39;s own telemetry had nothing to plot. An empty metrics response is easy to read as &quot;monitoring is broken&quot;; here it was the most concise possible statement of the outage.</p> <p>The memory series did have data, and it draws the crash loop precisely:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#98C379">instance -6z9m7   07:55  131.8 MB    ← JVM starting up</span></span> <span class="line"><span style="color:#98C379">                  08:00   54.0 MB    ← died, fresh process</span></span> <span class="line"><span style="color:#98C379">                  08:05  130.2 MB    ← starting up again</span></span> <span class="line"><span style="color:#98C379">instance -lznsj   08:50  256.9 MB    ← recovered</span></span> <span class="line"><span style="color:#98C379">                  08:55  257.3 MB</span></span> <span class="line"><span style="color:#98C379">                  09:00  258.6 MB    ← flat = healthy</span></span></code></pre></div> <p>A sawtooth is a crash loop. A flat line is a running application. In the same window Render&#39;s logs carry twelve <code>UnknownHostException</code> events between 07:51:44 and 08:02:36 — arriving in pairs about seventy seconds apart, which is one restart cycle.</p> <h3>The last deploy was an accident</h3> <p>A small irony in the record: the deploy that finally went live (<code>dep-d9mr51nlk1mc738orheg</code>, 08:47) was triggered by <code>new_commit</code> — the push of the keep-alive workflow described below. Auto-deploy is on for <code>main</code>, so committing the <em>prevention</em> for this incident is what shipped the <em>recovery</em> for it.</p> <h2>Prevention</h2> <p>The keep-alive workflow, modelled directly on the Redis one that had been quietly proving its worth all along:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">name</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">Keep Postgres Alive</span></span> <span class="line"></span> <span class="line"><span style="color:#D19A66">on</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">  schedule</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#ABB2BF">    - </span><span style="color:#E06C75">cron</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'30 */6 * * *'</span></span> <span class="line"><span style="color:#E06C75">  workflow_dispatch</span><span style="color:#ABB2BF">:</span></span> <span class="line"></span> <span class="line"><span style="color:#E06C75">jobs</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">  ping-postgres</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">    runs-on</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">ubuntu-latest</span></span> <span class="line"><span style="color:#E06C75">    steps</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#ABB2BF">      - </span><span style="color:#E06C75">name</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">Install postgresql-client</span></span> <span class="line"><span style="color:#E06C75">        run</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">sudo apt-get update &#x26;&#x26; sudo apt-get install -y postgresql-client</span></span> <span class="line"><span style="color:#ABB2BF">      - </span><span style="color:#E06C75">name</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">Ping PostgreSQL</span></span> <span class="line"><span style="color:#E06C75">        env</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">          PG_URI</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">${{ secrets.AIVEN_POSTGRES_URI }}</span></span> <span class="line"><span style="color:#E06C75">        run</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">psql "$PG_URI" -Atc "SELECT now();"</span></span></code></pre></div> <p>Two details that are easy to get wrong:</p> <ol> <li><strong>The cron is offset to <code>:30</code>.</strong> The Redis keep-alive runs at <code>0 */6</code>. Staggering them avoids two jobs contending for runners and hitting two providers in the same instant.</li> <li><strong>Scheduled workflows only fire from the default branch.</strong> A cron sitting on a feature branch is completely inert, and GitHub gives you no warning about it. Merging to <code>main</code> is not cosmetic here — it is what arms the job.</li> </ol> <p>There is a third gotcha worth flagging: GitHub <strong>disables scheduled workflows after 60 days of repository inactivity</strong>. Dependabot keeps this repo busy enough that it has not bitten me, but if that ever stops, both keep-alives die silently — and then so does the database they protect.</p> <hr> <h2>What I would actually change</h2> <p>The keep-alive is a workaround. It treats the symptom — an idle timer — rather than the disease, which is that <strong>Postgres is a hard single point of failure for a deployment that does not need it to be</strong>.</p> <p>If I wanted this app to survive a database outage in degraded mode, the thing to fix is not connection pool settings. It is the dependency chain that pulls JPA into eager startup. Concretely:</p> <ul> <li>Break <code>JwtAuthenticationFilter</code>&#39;s compile-time dependency on <code>UserService</code> — inject an <code>ObjectProvider&lt;UserService&gt;</code> and resolve it per-request, so filter construction no longer forces the JPA graph.</li> <li>Move off <code>ddl-auto: update</code> to a migration tool, so boot does not require a live connection for schema introspection.</li> <li>Give the health endpoint its own dependency-free path, so it can report <code>postgresql: DOWN</code> instead of sharing the outage.</li> </ul> <p>Any one of those turns &quot;the entire site is a 60-second timeout&quot; into &quot;the site loads and says the database is down.&quot; That is a much better two months.</p> <p>And three platform-side fixes the Render data made obvious, none of which involve code:</p> <ul> <li><strong>Set <code>healthCheckPath</code> on the actual service.</strong> It is empty today, so Render never probes the running app. Setting it to <code>/api/health/status</code> means a failed boot marks the deploy unhealthy instead of silently &quot;live&quot; — the single highest-value change on this list.</li> <li><strong>Reconcile or delete <code>render.yaml</code>.</strong> A config file that configures nothing is worse than no file, because it invites you to &quot;fix&quot; production by editing it. Either recreate the service from the Blueprint so the file is authoritative, or delete it and treat the dashboard as the source of truth.</li> <li><strong>Raise the probe timeout above the cold-start time</strong>, or move off the free plan. A 45-second timeout against a 45-to-60-second cold start produces failures that are indistinguishable from a real outage — which is precisely how a genuine outage hid in plain sight.</li> </ul> <h2>Lessons</h2> <p><strong>A red check nobody looks at is not monitoring.</strong> The signal was there, correct and precise, every five minutes for two months. The gap was not detection — it was escalation. A failing scheduled workflow needs to reach a human, or it is just a log file with a nicer UI.</p> <p><strong>Failure modes are legible by layer, if you read the exact exception.</strong> <code>UnknownHostException</code> (resolution) → <code>Driver claims to not accept jdbcUrl</code> (client-side URL parsing, never leaves the process) → <code>FATAL: password authentication failed</code> (full connection, rejected at auth). Three errors, three layers, three completely different fixes. Reading the precise wording is faster than changing several things and redeploying blind.</p> <p><strong>Verify at each layer before moving to the next.</strong> <code>dig</code>, then <code>nc</code>, then <code>psql</code>, then the app. Each step took seconds and each one eliminated an entire category of cause. Fixing the environment variable and hitting redeploy would have conflated three separate problems into one confusing loop.</p> <p><strong>Lazy initialization is not a resilience feature.</strong> It defers what it can. Servlet filters are not among them. If a bean ends up in the filter chain, everything it transitively depends on is a startup-time hard dependency, whatever the config says.</p> <p><strong>Check what the platform thinks is true.</strong> I reconstructed this entire incident from logs and probes, and got the shape right — but I also carried a wrong assumption to the end, and I only found the empty <code>healthCheckPath</code>, the <code>free</code> plan, and the <code>render.yaml</code> drift by asking Render directly. Your infrastructure-as-code file describes what you <em>intended</em>. Only the platform knows what you <em>have</em>.</p> <p><strong>Write down predictions so you can be shown wrong.</strong> I stated that <code>DATABASE_URL</code> was the remaining blocker. It was not. Because that prediction was specific, one deploy record was enough to falsify it. A vaguer claim would have quietly survived.</p> <p>The app has been up since, the keep-alive is green, and the health endpoint is once again the first place I will look — assuming, this time, that something tells me to look.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-scalable-chat-platform" class="tag neutral" data-tag="scalable-chat-platform">scalable-chat-platform</a>, <a href="/blog#tag-postgresql" class="tag neutral" data-tag="postgresql">postgresql</a>, <a href="/blog#tag-aiven" class="tag neutral" data-tag="aiven">aiven</a>, <a href="/blog#tag-render" class="tag neutral" data-tag="render">render</a>, <a href="/blog#tag-spring-boot" class="tag structure" data-tag="spring-boot">spring-boot</a>, <a href="/blog#tag-incident" class="tag neutral" data-tag="incident">incident</a>, <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a>, <a href="/blog#tag-debugging" class="tag neutral" data-tag="debugging">debugging</a>, <a href="/blog#tag-deployment" class="tag neutral" data-tag="deployment">deployment</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <span class="author-name">Jeffrey Jose</span> <span class="author-bio">Senior backend engineer writing about Spring, distributed systems, and production debugging.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous panel-card"> <a href="/blog/spring-hikari-hogging-and-optimistic-locking"> <span class="nav-label">← previous</span> <span class="nav-title">HikariCP Exhaustion, Connection Hogging, and Optimistic Locking</span> </a> </div> <div class="nav-next panel-card"> <a href="/blog/object-object-marked-token-api"> <span class="nav-label">next →</span> <span class="nav-title">[object Object]: How One Dependabot Bump Broke 34 of 39 Posts</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
-style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: color 0.2s, border-color 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+</script> <main class="container"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#033</span> <span>1 Aug 2026</span> <span>·</span> <span>17 min read</span> </div> <h1 class="post-title">The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL</h1> </header> <div class="post-content"> <p>Working log for <a href="https://github.com/jeffreyjose07/scalable-chat-platform">scalable-chat-platform</a>. <strong>Previous:</strong> <a href="/blog/hardening-chat-platform-deps-health-ci">Hardening the Chat Platform: Deps, Deep Health, and CI Pings</a>.</p> <p>In episode 027 I added a scheduled GitHub Action that pings <code>GET /api/health/status</code> every five minutes and fails loudly if any dependency is down. That was the right instinct. Then it went red on <strong>2026-06-03</strong> and stayed red for <strong>two months</strong>, firing every five minutes into a void, and I did not notice until I went looking for something else.</p> <p>This is the post-mortem. It has three stacked failure modes, each one hiding the next, and each producing a completely different error at a different layer of the stack. The interesting part is not the fix — the fix was one environment variable. The interesting part is why an app with a carefully built three-dependency health check could not tell me which dependency had died.</p> <hr> <h2>The symptom: zero bytes</h2> <p>The first thing I did was the obvious thing.</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">curl</span><span style="color:#D19A66"> -sS</span><span style="color:#D19A66"> -o</span><span style="color:#98C379"> /dev/null</span><span style="color:#D19A66"> -w</span><span style="color:#98C379"> "HTTP %{http_code} time=%{time_total}s\n"</span><span style="color:#56B6C2"> \</span></span> <span class="line"><span style="color:#D19A66">  --max-time</span><span style="color:#D19A66"> 60</span><span style="color:#98C379"> https://scalable-chat-platform.onrender.com</span></span></code></pre></div> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">curl</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">(28) Operation timed out after 60003 milliseconds with 0 bytes received</span></span> <span class="line"><span style="color:#98C379">HTTP 000  time=60.003420s</span></span></code></pre></div> <p><strong>Zero bytes.</strong> That detail matters. A crashed-but-running Spring Boot app gives you a 500 with a JSON error body. A container that died gives you Render&#39;s own 502 page, and quickly. Zero bytes after a full 60-second timeout means nothing upstream ever accepted the request — the container was not listening on 8080 at all.</p> <p>The CI probe had been saying the same thing for two months, in a more compact form:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">curl</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">(28) Operation timed out after 45001 milliseconds with 0 bytes received</span></span> <span class="line"><span style="color:#7F848E;font-style:italic">##[error]Process completed with exit code 28.</span></span></code></pre></div> <h2>Dating the outage with <code>gh</code></h2> <p>Before touching any config, I wanted two numbers: <em>when</em> did this start, and <em>which</em> dependency broke. The GitHub Actions history had both, for free.</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">gh</span><span style="color:#98C379"> run</span><span style="color:#98C379"> list</span><span style="color:#D19A66"> --workflow=</span><span style="color:#98C379">"ping-app-health.yml"</span><span style="color:#D19A66"> --status</span><span style="color:#98C379"> success</span><span style="color:#D19A66"> --limit</span><span style="color:#D19A66"> 3</span><span style="color:#56B6C2"> \</span></span> <span class="line"><span style="color:#D19A66">  --json</span><span style="color:#98C379"> createdAt</span><span style="color:#D19A66"> -q</span><span style="color:#98C379"> '.[].createdAt'</span></span></code></pre></div> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#D19A66">2026-06-03T07:06:50Z</span></span> <span class="line"><span style="color:#D19A66">2026-06-02T06:51:40Z</span></span> <span class="line"><span style="color:#D19A66">2026-06-01T13:07:03Z</span></span></code></pre></div> <p>Last green: <strong>June 3rd</strong>. Then:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">gh</span><span style="color:#98C379"> run</span><span style="color:#98C379"> list</span><span style="color:#D19A66"> --workflow=</span><span style="color:#98C379">"ping-app-health.yml"</span><span style="color:#D19A66"> --limit</span><span style="color:#D19A66"> 100</span><span style="color:#56B6C2"> \</span></span> <span class="line"><span style="color:#D19A66">  --json</span><span style="color:#98C379"> conclusion</span><span style="color:#D19A66"> -q</span><span style="color:#98C379"> '[.[].conclusion] | group_by(.) | map({(.[0]): length}) | add'</span></span></code></pre></div> <div class="code-block-wrap" data-lang="json"><span class="code-lang" aria-hidden="true">json</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">{</span><span style="color:#E06C75">"failure"</span><span style="color:#ABB2BF">:</span><span style="color:#D19A66">99</span><span style="color:#ABB2BF">,</span><span style="color:#E06C75">"startup_failure"</span><span style="color:#ABB2BF">:</span><span style="color:#D19A66">1</span><span style="color:#ABB2BF">}</span></span></code></pre></div> <p>Ninety-nine consecutive failures. But the genuinely useful signal was the <em>other</em> workflow:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#98C379">2026-08-01T03:37  success   Keep Redis Alive</span></span> <span class="line"><span style="color:#98C379">2026-07-31T19:43  success   Keep Redis Alive</span></span> <span class="line"><span style="color:#98C379">2026-07-31T14:24  success   Keep Redis Alive</span></span></code></pre></div> <p><code>Keep Redis Alive</code> connects to Upstash using the same <code>REDIS_URL</code> secret the app uses, and it had been <strong>green throughout the entire outage</strong>. That is an independent, credential-level proof that Redis was healthy. One <code>gh</code> command eliminated a third of the dependency surface before I read a single line of application log.</p> <blockquote> <p>Two scheduled workflows hitting two different layers turned out to be worth more than either alone. The app-level probe said &quot;something is broken.&quot; The dependency-level probe said &quot;and it is not Redis.&quot;</p> </blockquote> <h2>The log: a pool that starts and never finishes</h2> <p>Render&#39;s log stream had the shape of the problem:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">05:49:31.658  INFO  o.h.e.t.j.p.i.JtaPlatformInitiator</span><span style="color:#ABB2BF">  : </span><span style="color:#E06C75">HHH000489</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">No JTA platform available</span></span> <span class="line"><span style="color:#E06C75">05:49:31.769  INFO  com.zaxxer.hikari.HikariDataSource</span><span style="color:#ABB2BF">  : </span><span style="color:#98C379">HikariPool-1 - Starting...</span></span> <span class="line"><span style="color:#E06C75">06:38:18.723  OpenJDK 64-Bit Server VM warning</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">Options -Xverify:none and -noverify were deprecated</span></span></code></pre></div> <p><code>HikariPool-1 - Starting...</code> and then <strong>nothing</strong> — until a fresh JVM boot 49 minutes later. The line that should follow, and never did, is <code>HikariPool-1 - Start completed.</code> The application was dying between those two log lines, over and over, in a restart loop.</p> <p>The full stack trace bottomed out at the only line that mattered:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>Caused by: java.net.UnknownHostException: pg-xxxxxxxx-chat-platform-db.g.aivencloud.com</span></span> <span class="line"><span>    at java.base/sun.nio.ch.NioSocketImpl.connect(Unknown Source)</span></span> <span class="line"><span>    at org.postgresql.core.PGStream.createSocket(PGStream.java:243)</span></span> <span class="line"><span>    at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:132)</span></span> <span class="line"><span>    ...</span></span> <span class="line"><span>    at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)</span></span></code></pre></div> <p><code>UnknownHostException</code>. Not &quot;connection refused.&quot; Not &quot;authentication failed.&quot; Not &quot;timeout.&quot; <strong>The hostname did not resolve.</strong></p> <p>I confirmed it from my laptop, outside Render entirely:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">dig</span><span style="color:#98C379"> +short</span><span style="color:#98C379"> pg-xxxxxxxx-chat-platform-db.g.aivencloud.com</span></span> <span class="line"><span style="color:#7F848E;font-style:italic"># (no output — NXDOMAIN)</span></span> <span class="line"></span> <span class="line"><span style="color:#61AFEF">dig</span><span style="color:#98C379"> +short</span><span style="color:#98C379"> ep-old-breeze-a1lpt8gb-pooler.ap-southeast-1.aws.neon.tech</span></span> <span class="line"><span style="color:#7F848E;font-style:italic"># 52.220.170.93</span></span> <span class="line"><span style="color:#7F848E;font-style:italic"># 13.228.184.177</span></span></code></pre></div> <p>The old Neon endpoint from <a href="/blog/from-neon-to-supabase-to-aiven-postgresql-migration">episode 014&#39;s migration odyssey</a> still resolved. The current Aiven one had no DNS record at all.</p> <h3>Why the record disappeared</h3> <p>Aiven&#39;s free tier powers off a service after a period with no client activity. When it powers off, the nodes are released and <strong>the DNS record goes with them</strong>. The service still exists in the console, your data still exists, but the hostname stops resolving until you power it back on.</p> <p>This is a meaningfully different failure from the one you plan for. Everyone writes retry logic for &quot;database is slow&quot; or &quot;connection refused.&quot; Almost nobody writes it for &quot;the hostname ceased to exist,&quot; because in a normal production environment hostnames do not spontaneously stop resolving. Free tiers are not a normal production environment.</p> <hr> <h2>The real bug: why the <em>whole app</em> died</h2> <p>Here is the part I actually got wrong, and the part worth internalising.</p> <p><code>application-render.yml</code> opens with what I thought was insurance:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">spring</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">  main</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">    lazy-initialization</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">true</span></span></code></pre></div> <p>Lazy initialization is supposed to mean beans are created on first use, not at startup. My mental model was that a dead Postgres would produce a degraded app: the UI would load, static assets would serve, non-DB endpoints would answer, and only the database-backed paths would fail.</p> <p>That is not what happened, and the stack trace explains why:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>Error creating bean with name 'securityConfig'</span></span> <span class="line"><span>  → Unsatisfied dependency: 'jwtAuthenticationFilter'</span></span> <span class="line"><span>    → Unsatisfied dependency: 'userService'</span></span> <span class="line"><span>      → Unsatisfied dependency: 'userRepository'</span></span> <span class="line"><span>        → Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory'</span></span> <span class="line"><span>          → Unable to build Hibernate SessionFactory</span></span> <span class="line"><span>            → JDBCConnectionException: Unable to open JDBC Connection for DDL execution</span></span></code></pre></div> <p>Read that chain bottom-up and the trap is obvious. <code>JwtAuthenticationFilter</code> is a <strong>servlet filter</strong>. Servlet filters are <code>ServletContextInitializer</code> beans, and Tomcat must instantiate every one of them at context startup to build the filter chain — there is no &quot;first use&quot; to defer to, because the filter chain <em>is</em> the thing being constructed. Spring has no choice but to create it eagerly.</p> <p>Creating the filter requires <code>UserService</code>, which requires <code>UserRepository</code>, which requires the <code>EntityManagerFactory</code>, which requires a live JDBC connection because <code>ddl-auto: update</code> makes Hibernate run schema introspection at boot.</p> <p><strong>So <code>lazy-initialization: true</code> bought me nothing.</strong> One unreachable database took down Tomcat itself.</p> <h3>The health endpoint could never have saved me</h3> <p>This is the sharpest lesson in the whole incident.</p> <p><code>HealthController</code> is genuinely good code. It probes all three stores, measures response times, caches results with a shorter TTL while unhealthy so recovery is noticed fast, and returns a proper non-200 when anything is down:</p> <div class="code-block-wrap" data-lang="java"><span class="code-lang" aria-hidden="true">java</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">@</span><span style="color:#E5C07B">RestController</span></span> <span class="line"><span style="color:#ABB2BF">@</span><span style="color:#E5C07B">RequestMapping</span><span style="color:#E06C75">(</span><span style="color:#98C379">"/api/health"</span><span style="color:#E06C75">)</span></span> <span class="line"><span style="color:#C678DD">public</span><span style="color:#C678DD"> class</span><span style="color:#E5C07B"> HealthController</span><span style="color:#ABB2BF"> {</span></span> <span class="line"><span style="color:#ABB2BF">    @</span><span style="color:#E5C07B">Autowired</span><span style="color:#C678DD"> private</span><span style="color:#E5C07B"> DataSource</span><span style="color:#E06C75"> dataSource</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF">    @</span><span style="color:#E5C07B">Autowired</span><span style="color:#C678DD"> private</span><span style="color:#E5C07B"> MongoTemplate</span><span style="color:#E06C75"> mongoTemplate</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#ABB2BF">    @</span><span style="color:#E5C07B">Autowired</span><span style="color:#C678DD"> private</span><span style="color:#E5C07B"> RedisTemplate</span><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E5C07B">String</span><span style="color:#ABB2BF">,</span><span style="color:#E5C07B"> String</span><span style="color:#ABB2BF">></span><span style="color:#E06C75"> redisTemplate</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#7F848E;font-style:italic">    // ... deep probe with caching</span></span> <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div> <p>It never ran. Not once in two months. Tomcat never finished starting, so no controller was ever mapped, so the endpoint that exists specifically to tell me &quot;postgresql: DOWN&quot; could not be reached <strong>precisely when it had something to say</strong>.</p> <blockquote> <p>A health check that shares a fate with the thing it monitors is not a health check. It is a second copy of the outage.</p> </blockquote> <p>That is why the probe got zero bytes instead of a JSON body naming the dead dependency. The monitoring was structurally incapable of reporting the most important failure mode it had.</p> <hr> <h2>Fix, part one: power on</h2> <p>The recovery itself was anticlimactic. Power the service back on in the Aiven console, then verify from outside:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">dig</span><span style="color:#98C379"> +short</span><span style="color:#98C379"> pg-xxxxxxxx-chat-platform-db.g.aivencloud.com</span></span> <span class="line"><span style="color:#7F848E;font-style:italic"># 165.22.223.111</span></span> <span class="line"></span> <span class="line"><span style="color:#61AFEF">nc</span><span style="color:#D19A66"> -z</span><span style="color:#D19A66"> -v</span><span style="color:#D19A66"> -G</span><span style="color:#D19A66"> 8</span><span style="color:#98C379"> pg-xxxxxxxx-chat-platform-db.g.aivencloud.com</span><span style="color:#D19A66"> 24531</span></span> <span class="line"><span style="color:#7F848E;font-style:italic"># Connection to ... port 24531 [tcp/*] succeeded!</span></span></code></pre></div> <p>DNS back, TCP open. Then the question that actually mattered: <strong>did the data survive?</strong></p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">psql</span><span style="color:#98C379"> "host=... port=24531 dbname=defaultdb user=avnadmin sslmode=require"</span><span style="color:#56B6C2"> \</span></span> <span class="line"><span style="color:#D19A66">  -Atc</span><span style="color:#98C379"> "SELECT table_name FROM information_schema.tables WHERE table_schema='public';"</span></span></code></pre></div> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>conversation_participants</span></span> <span class="line"><span>conversations</span></span> <span class="line"><span>users</span></span></code></pre></div> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>users|8</span></span> <span class="line"><span>conversations|5</span></span></code></pre></div> <p>All three tables, all rows intact, PostgreSQL 15.18. A power-off is not a deletion — the volume is preserved. Worth knowing before you panic.</p> <h2>The hazard I braced for, and did not actually hit</h2> <p><strong>Correction, added after pulling the Render deploy history — see the postmortem section below.</strong> When I first wrote this I expected the next step to be fixing <code>DATABASE_URL</code>, and I said so. The deploy record shows I was wrong: the environment variable was already correct, and powering Aiven back on was the <em>entire</em> fix. I am leaving this section in because the trap is real and will bite anyone migrating providers — but it was not what broke this deployment.</p> <p>Aiven hands you a connection string in this shape:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#98C379">postgres://avnadmin:PASSWORD@pg-xxxxxxxx-chat-platform-db.g.aivencloud.com:24531/defaultdb?sslmode=require</span></span></code></pre></div> <p>That is a <strong>libpq URI</strong>. It is what <code>psql</code>, <code>pg_dump</code>, and most non-JVM drivers expect. Paste it straight into Render&#39;s <code>DATABASE_URL</code> and the app still will not boot, because <code>application-render.yml</code> passes it through unmodified:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">spring</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">  datasource</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">    url</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">${DATABASE_URL}</span></span> <span class="line"><span style="color:#E06C75">    driver-class-name</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">org.postgresql.Driver</span></span></code></pre></div> <p>Spring hands <code>spring.datasource.url</code> to <code>DriverManager</code>, which selects a driver by asking each registered one <code>acceptsURL(url)</code>. <code>org.postgresql.Driver</code> only accepts strings beginning with <code>jdbc:postgresql:</code> or <code>jdbc:postgres:</code>. A bare <code>postgres://</code> URI matches <strong>no</strong> driver, so you get:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>Driver claims to not accept jdbcUrl</span></span></code></pre></div> <p>...thrown before a single packet leaves the container. It never reaches DNS, never reaches TCP. A completely different error, at a completely different layer, that looks nothing like the problem you just fixed.</p> <p>There is a second wrinkle: that profile sets no <code>spring.datasource.username</code> or <code>password</code>, so the credentials <strong>must</strong> live inside the URL as query parameters. The working value is:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#98C379">jdbc:postgresql://pg-xxxxxxxx-chat-platform-db.g.aivencloud.com:24531/defaultdb?ssl=require&#x26;user=avnadmin&#x26;password=***&#x26;autoCommit=false</span></span></code></pre></div> <p>So the same database now needs <strong>two different strings</strong> depending on who is connecting:</p> <table> <thead> <tr> <th>Consumer</th> <th>Format</th> <th>Shape</th> </tr> </thead> <tbody><tr> <td>Render <code>DATABASE_URL</code> (Spring)</td> <td>JDBC</td> <td><code>jdbc:postgresql://host:port/db?user=…&amp;password=…</code></td> </tr> <tr> <td>GitHub secret (<code>psql</code>)</td> <td>libpq URI</td> <td><code>postgres://user:pass@host:port/db?sslmode=require</code></td> </tr> </tbody></table> <p>Writing that table down and keeping it somewhere is the actual deliverable of this section — just not, as it turned out, the fix for this incident.</p> <h2>Fix, part three: a truncated secret</h2> <p>With the app back up, I added a keep-alive workflow (below) and ran it. It failed:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">psql</span><span style="color:#ABB2BF">: </span><span style="color:#E06C75">error</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">connection to server at "pg-xxxxxxxx-chat-platform-db.g.aivencloud.com"</span></span> <span class="line"><span style="color:#E06C75">(165.22.223.111), port 24531 failed</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">FATAL</span><span style="color:#ABB2BF">:  </span><span style="color:#98C379">password authentication failed for user "avnadmin"</span></span></code></pre></div> <p>Third failure mode, third layer. And notice how much this error tells you: DNS resolved (it printed the IP), TCP connected, TLS negotiated, the server parsed the username. Everything worked <em>except</em> the credential. That is a one-value fix, not a design problem.</p> <p>The cause was mundane and entirely self-inflicted — my terminal had been mangling multi-line pastes all session, and the secret had been silently truncated on the way in. The robust fix avoids the interactive paste prompt entirely:</p> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#56B6C2">printf</span><span style="color:#98C379"> 'postgres://avnadmin:PASSWORD@HOST:24531/defaultdb?sslmode=require'</span><span style="color:#ABB2BF"> > </span><span style="color:#98C379">/tmp/pg_uri.txt</span></span> <span class="line"><span style="color:#61AFEF">gh</span><span style="color:#98C379"> secret</span><span style="color:#98C379"> set</span><span style="color:#98C379"> AIVEN_POSTGRES_URI</span><span style="color:#D19A66"> --repo</span><span style="color:#98C379"> user/repo</span><span style="color:#ABB2BF"> &#x3C; </span><span style="color:#98C379">/tmp/pg_uri.txt</span><span style="color:#ABB2BF"> &#x26;&#x26; </span><span style="color:#61AFEF">rm</span><span style="color:#D19A66"> -P</span><span style="color:#98C379"> /tmp/pg_uri.txt</span></span></code></pre></div> <p><code>printf</code> rather than <code>echo</code> is deliberate: <code>echo</code> appends a trailing newline, and a stray <code>\n</code> inside a connection URI is its own subtle authentication failure.</p> <hr> <h2>Verification</h2> <div class="code-block-wrap" data-lang="bash"><span class="code-lang" aria-hidden="true">bash</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">curl</span><span style="color:#D19A66"> -sS</span><span style="color:#98C379"> https://scalable-chat-platform.onrender.com/api/health/status</span></span></code></pre></div> <div class="code-block-wrap" data-lang="json"><span class="code-lang" aria-hidden="true">json</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">{</span></span> <span class="line"><span style="color:#E06C75">  "service"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"chat-platform-backend"</span><span style="color:#ABB2BF">,</span></span> <span class="line"><span style="color:#E06C75">  "status"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"UP"</span><span style="color:#ABB2BF">,</span></span> <span class="line"><span style="color:#E06C75">  "dependencies"</span><span style="color:#ABB2BF">: {</span></span> <span class="line"><span style="color:#E06C75">    "postgresql"</span><span style="color:#ABB2BF">: { </span><span style="color:#E06C75">"responseTime"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"82ms"</span><span style="color:#ABB2BF">,   </span><span style="color:#E06C75">"details"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"Connection successful"</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">"status"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"UP"</span><span style="color:#ABB2BF"> },</span></span> <span class="line"><span style="color:#E06C75">    "mongodb"</span><span style="color:#ABB2BF">:    { </span><span style="color:#E06C75">"responseTime"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"64ms"</span><span style="color:#ABB2BF">,   </span><span style="color:#E06C75">"details"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"Ping successful"</span><span style="color:#ABB2BF">,       </span><span style="color:#E06C75">"status"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"UP"</span><span style="color:#ABB2BF"> },</span></span> <span class="line"><span style="color:#E06C75">    "redis"</span><span style="color:#ABB2BF">:      { </span><span style="color:#E06C75">"responseTime"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"4046ms"</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75">"response"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"PONG"</span><span style="color:#ABB2BF">,                 </span><span style="color:#E06C75">"status"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"UP"</span><span style="color:#ABB2BF"> }</span></span> <span class="line"><span style="color:#ABB2BF">  }</span></span> <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre></div> <p>And the CI probe, green for the first time since June 3rd:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">overall</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">UP</span></span> <span class="line"><span style="color:#E06C75">  postgresql</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">UP</span></span> <span class="line"><span style="color:#E06C75">  mongodb</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">UP</span></span> <span class="line"><span style="color:#E06C75">  redis</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">UP</span></span></code></pre></div> <h3>An unrelated bug the health JSON just handed me</h3> <p>Look again at those response times. Postgres: <strong>82ms</strong>. Mongo: <strong>64ms</strong>. Redis: <strong>4046ms</strong>.</p> <p>Redis is a thousand times slower than Postgres for a single <code>PING</code>. That is an Upstash free-tier cold start. Now compare it to the timeout configured in the same profile:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">spring</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">  redis</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">    timeout</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">2000ms</span></span></code></pre></div> <p>The configured timeout is <strong>2 seconds</strong>. The observed cold-start latency is <strong>4 seconds</strong>. A user request that lands on a cold Redis will time out where my health check succeeded — because the health check ran first and warmed the connection. That is a latent production bug I would not have found without printing per-dependency timings, and it is a good argument for putting response times in health payloads even when everything says <code>UP</code>.</p> <h2>The Render-side postmortem</h2> <p>Everything above was reconstructed from application logs, GitHub Actions history, and probes from my laptop. Afterwards I connected Render&#39;s MCP server and pulled the platform&#39;s own record. It confirmed the diagnosis, corrected one of my conclusions, and surfaced three configuration problems I did not know I had.</p> <h3>The deploy history contains a two-month hole</h3> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>dep-d8ftrdho3t8c738fk1f0   2026-06-03T08:00:28Z   live → deactivated</span></span> <span class="line"><span>                           ↑ commit 0582d37</span></span> <span class="line"><span>        ...nothing at all for 59 days...</span></span> <span class="line"><span>dep-d9mr0k2jnfac739p45hg   2026-08-01T08:42:17Z   manual redeploy</span></span> <span class="line"><span>dep-d9mr51nlk1mc738orheg   2026-08-01T08:48:56Z   live</span></span></code></pre></div> <p>That June 3rd deploy <strong>succeeded</strong>. It built, it started, Render marked it live, and it stayed the active deploy for the entire outage. Nothing was ever redeployed, rolled back, or reconfigured in between. The code that ran perfectly on June 3rd is byte-identical to the code that could not boot on August 1st — which is exactly what you would expect when the thing that changed is external.</p> <h3>The correction: <code>DATABASE_URL</code> was never wrong</h3> <p>Here is the measurement that overturned my assumption. That manual redeploy on August 1st at 08:37 was triggered <strong>after</strong> I powered Aiven back on but <strong>before</strong> any environment variable was touched. It ran the unchanged June 3rd commit. And:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#98C379">08:41:41.274  HikariPool-1 - Starting...</span></span> <span class="line"><span style="color:#98C379">08:41:44.032  HikariPool-1 - Start completed.</span></span></code></pre></div> <p>Two point seven seconds. Same code, same environment variables, same everything — the only difference in the universe was that the database hostname resolved again.</p> <p>So the JDBC-versus-libpq section above describes a genuine hazard that I did not actually hit. The deployed <code>DATABASE_URL</code> had been in correct JDBC form since the Aiven migration. I had predicted a second failure mode and it simply was not there. Worth stating plainly, because a post-mortem that quietly keeps its wrong predictions is worth much less than one that marks them.</p> <h3><code>render.yaml</code> is not the source of truth</h3> <p>The live service configuration disagrees with the <code>render.yaml</code> committed in the repository on three separate points:</p> <table> <thead> <tr> <th>Setting</th> <th><code>render.yaml</code> says</th> <th>Render actually has</th> </tr> </thead> <tbody><tr> <td><code>plan</code></td> <td><code>starter</code> (commented &quot;Upgraded from free&quot;)</td> <td><strong><code>free</code></strong></td> </tr> <tr> <td><code>region</code></td> <td><code>oregon</code></td> <td><strong><code>singapore</code></strong></td> </tr> <tr> <td><code>healthCheckPath</code></td> <td><code>/api/health/status</code></td> <td><strong><code>&quot;&quot;</code> (empty)</strong></td> </tr> </tbody></table> <p>This is the trap of Blueprint files: Render only applies <code>render.yaml</code> when the service is <strong>created from a Blueprint</strong>. This service was created through the dashboard, so the file has been decorative from day one. I have been editing a configuration file for two months believing it configured something.</p> <p>The third row is the one that matters. <strong>Render was never health-checking this service.</strong> With <code>healthCheckPath</code> empty it only verifies that something binds the port at deploy time; it never probes the running app afterwards. Combined with the app dying at startup, Render had no mechanism to notice, mark the service unhealthy, or alert me — and the deploy stayed flagged &quot;live&quot; for two months while nothing worked.</p> <h3>The <code>free</code> plan explains the zero bytes</h3> <p><code>plan: free</code> also resolves the symptom I opened with. Free web services spin down after inactivity and cold-start on the next request. This app takes roughly 45–60 seconds to boot when everything is healthy — Spring context, JPA, three connection pools. My health probe uses <code>curl --max-time 45</code>.</p> <p>That is a race the probe cannot reliably win even against a <em>healthy</em> app, and cannot win at all against one that crash-loops. Rather than a fast 502 from a dead upstream, each request sat waiting on a container that was still starting, until curl gave up. Hence zero bytes at 45 seconds rather than an error page.</p> <h3>The platform metrics were empty, and that is the finding</h3> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>instance_count      → []</span></span> <span class="line"><span>http_request_count  → []</span></span></code></pre></div> <p>Not zero — <strong>empty</strong>, for the full 30-day retention window. No instances recorded, no requests recorded. The service was so consistently down that Render&#39;s own telemetry had nothing to plot. An empty metrics response is easy to read as &quot;monitoring is broken&quot;; here it was the most concise possible statement of the outage.</p> <p>The memory series did have data, and it draws the crash loop precisely:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#98C379">instance -6z9m7   07:55  131.8 MB    ← JVM starting up</span></span> <span class="line"><span style="color:#98C379">                  08:00   54.0 MB    ← died, fresh process</span></span> <span class="line"><span style="color:#98C379">                  08:05  130.2 MB    ← starting up again</span></span> <span class="line"><span style="color:#98C379">instance -lznsj   08:50  256.9 MB    ← recovered</span></span> <span class="line"><span style="color:#98C379">                  08:55  257.3 MB</span></span> <span class="line"><span style="color:#98C379">                  09:00  258.6 MB    ← flat = healthy</span></span></code></pre></div> <p>A sawtooth is a crash loop. A flat line is a running application. In the same window Render&#39;s logs carry twelve <code>UnknownHostException</code> events between 07:51:44 and 08:02:36 — arriving in pairs about seventy seconds apart, which is one restart cycle.</p> <h3>The last deploy was an accident</h3> <p>A small irony in the record: the deploy that finally went live (<code>dep-d9mr51nlk1mc738orheg</code>, 08:47) was triggered by <code>new_commit</code> — the push of the keep-alive workflow described below. Auto-deploy is on for <code>main</code>, so committing the <em>prevention</em> for this incident is what shipped the <em>recovery</em> for it.</p> <h2>Prevention</h2> <p>The keep-alive workflow, modelled directly on the Redis one that had been quietly proving its worth all along:</p> <div class="code-block-wrap" data-lang="yaml"><span class="code-lang" aria-hidden="true">yaml</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">name</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">Keep Postgres Alive</span></span> <span class="line"></span> <span class="line"><span style="color:#D19A66">on</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">  schedule</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#ABB2BF">    - </span><span style="color:#E06C75">cron</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'30 */6 * * *'</span></span> <span class="line"><span style="color:#E06C75">  workflow_dispatch</span><span style="color:#ABB2BF">:</span></span> <span class="line"></span> <span class="line"><span style="color:#E06C75">jobs</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">  ping-postgres</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">    runs-on</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">ubuntu-latest</span></span> <span class="line"><span style="color:#E06C75">    steps</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#ABB2BF">      - </span><span style="color:#E06C75">name</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">Install postgresql-client</span></span> <span class="line"><span style="color:#E06C75">        run</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">sudo apt-get update &#x26;&#x26; sudo apt-get install -y postgresql-client</span></span> <span class="line"><span style="color:#ABB2BF">      - </span><span style="color:#E06C75">name</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">Ping PostgreSQL</span></span> <span class="line"><span style="color:#E06C75">        env</span><span style="color:#ABB2BF">:</span></span> <span class="line"><span style="color:#E06C75">          PG_URI</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">${{ secrets.AIVEN_POSTGRES_URI }}</span></span> <span class="line"><span style="color:#E06C75">        run</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">psql "$PG_URI" -Atc "SELECT now();"</span></span></code></pre></div> <p>Two details that are easy to get wrong:</p> <ol> <li><strong>The cron is offset to <code>:30</code>.</strong> The Redis keep-alive runs at <code>0 */6</code>. Staggering them avoids two jobs contending for runners and hitting two providers in the same instant.</li> <li><strong>Scheduled workflows only fire from the default branch.</strong> A cron sitting on a feature branch is completely inert, and GitHub gives you no warning about it. Merging to <code>main</code> is not cosmetic here — it is what arms the job.</li> </ol> <p>There is a third gotcha worth flagging: GitHub <strong>disables scheduled workflows after 60 days of repository inactivity</strong>. Dependabot keeps this repo busy enough that it has not bitten me, but if that ever stops, both keep-alives die silently — and then so does the database they protect.</p> <hr> <h2>What I would actually change</h2> <p>The keep-alive is a workaround. It treats the symptom — an idle timer — rather than the disease, which is that <strong>Postgres is a hard single point of failure for a deployment that does not need it to be</strong>.</p> <p>If I wanted this app to survive a database outage in degraded mode, the thing to fix is not connection pool settings. It is the dependency chain that pulls JPA into eager startup. Concretely:</p> <ul> <li>Break <code>JwtAuthenticationFilter</code>&#39;s compile-time dependency on <code>UserService</code> — inject an <code>ObjectProvider&lt;UserService&gt;</code> and resolve it per-request, so filter construction no longer forces the JPA graph.</li> <li>Move off <code>ddl-auto: update</code> to a migration tool, so boot does not require a live connection for schema introspection.</li> <li>Give the health endpoint its own dependency-free path, so it can report <code>postgresql: DOWN</code> instead of sharing the outage.</li> </ul> <p>Any one of those turns &quot;the entire site is a 60-second timeout&quot; into &quot;the site loads and says the database is down.&quot; That is a much better two months.</p> <p>And three platform-side fixes the Render data made obvious, none of which involve code:</p> <ul> <li><strong>Set <code>healthCheckPath</code> on the actual service.</strong> It is empty today, so Render never probes the running app. Setting it to <code>/api/health/status</code> means a failed boot marks the deploy unhealthy instead of silently &quot;live&quot; — the single highest-value change on this list.</li> <li><strong>Reconcile or delete <code>render.yaml</code>.</strong> A config file that configures nothing is worse than no file, because it invites you to &quot;fix&quot; production by editing it. Either recreate the service from the Blueprint so the file is authoritative, or delete it and treat the dashboard as the source of truth.</li> <li><strong>Raise the probe timeout above the cold-start time</strong>, or move off the free plan. A 45-second timeout against a 45-to-60-second cold start produces failures that are indistinguishable from a real outage — which is precisely how a genuine outage hid in plain sight.</li> </ul> <h2>Lessons</h2> <p><strong>A red check nobody looks at is not monitoring.</strong> The signal was there, correct and precise, every five minutes for two months. The gap was not detection — it was escalation. A failing scheduled workflow needs to reach a human, or it is just a log file with a nicer UI.</p> <p><strong>Failure modes are legible by layer, if you read the exact exception.</strong> <code>UnknownHostException</code> (resolution) → <code>Driver claims to not accept jdbcUrl</code> (client-side URL parsing, never leaves the process) → <code>FATAL: password authentication failed</code> (full connection, rejected at auth). Three errors, three layers, three completely different fixes. Reading the precise wording is faster than changing several things and redeploying blind.</p> <p><strong>Verify at each layer before moving to the next.</strong> <code>dig</code>, then <code>nc</code>, then <code>psql</code>, then the app. Each step took seconds and each one eliminated an entire category of cause. Fixing the environment variable and hitting redeploy would have conflated three separate problems into one confusing loop.</p> <p><strong>Lazy initialization is not a resilience feature.</strong> It defers what it can. Servlet filters are not among them. If a bean ends up in the filter chain, everything it transitively depends on is a startup-time hard dependency, whatever the config says.</p> <p><strong>Check what the platform thinks is true.</strong> I reconstructed this entire incident from logs and probes, and got the shape right — but I also carried a wrong assumption to the end, and I only found the empty <code>healthCheckPath</code>, the <code>free</code> plan, and the <code>render.yaml</code> drift by asking Render directly. Your infrastructure-as-code file describes what you <em>intended</em>. Only the platform knows what you <em>have</em>.</p> <p><strong>Write down predictions so you can be shown wrong.</strong> I stated that <code>DATABASE_URL</code> was the remaining blocker. It was not. Because that prediction was specific, one deploy record was enough to falsify it. A vaguer claim would have quietly survived.</p> <p>The app has been up since, the keep-alive is green, and the health endpoint is once again the first place I will look — assuming, this time, that something tells me to look.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-scalable-chat-platform" class="tag neutral" data-tag="scalable-chat-platform">scalable-chat-platform</a>, <a href="/blog#tag-postgresql" class="tag neutral" data-tag="postgresql">postgresql</a>, <a href="/blog#tag-aiven" class="tag neutral" data-tag="aiven">aiven</a>, <a href="/blog#tag-render" class="tag neutral" data-tag="render">render</a>, <a href="/blog#tag-spring-boot" class="tag structure" data-tag="spring-boot">spring-boot</a>, <a href="/blog#tag-incident" class="tag neutral" data-tag="incident">incident</a>, <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a>, <a href="/blog#tag-debugging" class="tag neutral" data-tag="debugging">debugging</a>, <a href="/blog#tag-deployment" class="tag neutral" data-tag="deployment">deployment</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="status-dot-avatar" aria-hidden="true"></span> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <div style="display: flex; align-items: center; gap: 0.5rem;"> <span class="author-name">Jeffrey Jose</span> <span class="dev-badge" style="font-size: 0.65rem; padding: 0.1rem 0.45rem;">backend</span> </div> <span class="author-bio">Senior backend engineer writing about Spring Boot, distributed systems, and production debugging.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous panel-card"> <a href="/blog/spring-hikari-hogging-and-optimistic-locking/"> <span class="nav-label">← previous</span> <span class="nav-title">HikariCP Exhaustion, Connection Hogging, and Optimistic Locking</span> </a> </div> <div class="nav-next panel-card"> <a href="/blog/object-object-marked-token-api/"> <span class="nav-label">next →</span> <span class="nav-title">[object Object]: How One Dependabot Bump Broke 34 of 39 Posts</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 9999px; text-decoration: none; color: var(--muted-foreground); font-size: 0.8125rem; font-family: var(--font-mono); transition: color 0.2s, border-color 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
 Subscribe via RSS
 </a> </div> </main> <script>
-// Prevent scroll restoration but don't interfere with navigation
-if ('scrollRestoration' in history) {
-history.scrollRestoration = 'manual';
-}
-// Only scroll to top on actual page refresh (not navigation)
-window.addEventListener('load', () => {
-setTimeout(() => {
-window.scrollTo(0, 0);
-}, 0);
-});
-// Reading progress indicator
+// Reading Progress Bar
 window.addEventListener('scroll', () => {
 const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
 const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -836,5 +955,4 @@ viewCountElement.hidden = true;
 });
 }
 /* Inline scripts injected from frontmatter */
-{ { inlineScripts } }
 </script> <script data-goatcounter="https://jeffreyjose.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script> </body> </html>

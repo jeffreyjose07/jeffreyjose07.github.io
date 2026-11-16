@@ -3,17 +3,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Phone, MapPin, Send, Loader2 } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Loader2, Copy, Check } from "lucide-react";
 import { socialLinks } from "@/data/socials";
 
 const Contact = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText("jeffreyjose.k@gmail.com");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -98,60 +105,96 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="py-24">
-      <div className="container mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-14 items-start max-w-6xl mx-auto">
+    <section id="contact" className="py-24 px-4 sm:px-6 bg-background relative border-t border-border/50">
+      <div className="container mx-auto max-w-5xl">
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          {/* Left Details */}
           <div>
-            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4">Contact</h2>
-            <p className="text-lg text-muted-foreground leading-relaxed mb-10">
-              Open to senior backend / distributed systems roles and focused collaboration.
-              Prefer email for hiring conversations.
+            <div className="text-xs font-mono font-semibold uppercase tracking-widest text-primary mb-3">
+              // 06. DIRECT CONTACT
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold tracking-tight text-foreground mb-4">
+              Get in Touch
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8">
+              Open to senior backend, distributed systems engineering, and architecture discussions.
+              Prefer email for career opportunities.
             </p>
 
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-md border border-border flex items-center justify-center text-primary shrink-0">
-                  <Mail className="h-4 w-4" />
+            <div className="space-y-4 mb-8">
+              {/* Email with copy button */}
+              <div className="dev-card p-4 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                    <Mail className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
+                      Email
+                    </h3>
+                    <a
+                      href="mailto:jeffreyjose.k@gmail.com"
+                      className="text-sm sm:text-base font-semibold text-foreground hover:text-primary transition-colors"
+                    >
+                      jeffreyjose.k@gmail.com
+                    </a>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
-                    Email
-                  </h3>
-                  <a
-                    href="mailto:jeffreyjose.k@gmail.com"
-                    className="text-lg font-medium hover:text-primary transition-colors"
-                  >
-                    jeffreyjose.k@gmail.com
-                  </a>
-                </div>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCopyEmail}
+                  className="h-8 px-2.5 text-xs font-mono text-muted-foreground hover:text-foreground gap-1.5 rounded-lg border border-border/60 hover:bg-secondary/60"
+                  aria-label="Copy email address"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-primary" />
+                      <span className="text-primary">Copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5" />
+                      <span>Copy</span>
+                    </>
+                  )}
+                </Button>
               </div>
 
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-md border border-border flex items-center justify-center text-primary shrink-0">
+              {/* Phone */}
+              <div className="dev-card p-4 flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
                   <Phone className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
+                  <h3 className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
                     Phone
                   </h3>
-                  <span className="text-lg font-medium">+91 95677 61105</span>
+                  <span className="text-sm sm:text-base font-semibold text-foreground">
+                    +91 95677 61105
+                  </span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-md border border-border flex items-center justify-center text-primary shrink-0">
+              {/* Location */}
+              <div className="dev-card p-4 flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
                   <MapPin className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
+                  <h3 className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
                     Location
                   </h3>
-                  <span className="text-lg font-medium">Bengaluru, India</span>
+                  <span className="text-sm sm:text-base font-semibold text-foreground">
+                    Bengaluru, India
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-3 mt-10">
+            {/* Social pills */}
+            <div className="flex gap-2.5">
               {socialLinks.map((social, index) => (
                 <a
                   key={index}
@@ -159,7 +202,7 @@ const Contact = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="w-10 h-10 rounded-md border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
+                  className="p-2.5 rounded-lg border border-border/70 bg-secondary/30 text-muted-foreground hover:text-primary hover:border-primary/40 hover:bg-secondary/50 transition-all"
                 >
                   <social.icon className="h-4 w-4" />
                 </a>
@@ -167,10 +210,11 @@ const Contact = () => {
             </div>
           </div>
 
-          <div className="rounded-lg border border-border bg-secondary/15 p-6 md:p-8">
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium">
+          {/* Form Card */}
+          <div className="dev-card dev-card-highlight p-6 sm:p-8">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <label htmlFor="name" className="text-xs font-mono font-medium text-foreground">
                   Name
                 </label>
                 <Input
@@ -180,12 +224,12 @@ const Contact = () => {
                   value={formData.name}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="bg-background border-border focus:border-primary/50 h-11 rounded-md"
+                  className="bg-background/80 border-border/80 focus:border-primary focus:ring-1 focus:ring-primary h-10 rounded-lg text-sm"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">
+              <div className="space-y-1.5">
+                <label htmlFor="email" className="text-xs font-mono font-medium text-foreground">
                   Email
                 </label>
                 <Input
@@ -196,23 +240,23 @@ const Contact = () => {
                   value={formData.email}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="bg-background border-border focus:border-primary/50 h-11 rounded-md"
+                  className="bg-background/80 border-border/80 focus:border-primary focus:ring-1 focus:ring-primary h-10 rounded-lg text-sm"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-medium">
+              <div className="space-y-1.5">
+                <label htmlFor="message" className="text-xs font-mono font-medium text-foreground">
                   Message
                 </label>
                 <Textarea
                   id="message"
                   name="message"
-                  placeholder="Role, team, or question…"
+                  placeholder="Role, team, or systems question…"
                   value={formData.message}
                   onChange={handleChange}
                   disabled={isLoading}
-                  rows={5}
-                  className="bg-background border-border focus:border-primary/50 resize-none rounded-md"
+                  rows={4}
+                  className="bg-background/80 border-border/80 focus:border-primary focus:ring-1 focus:ring-primary resize-none rounded-lg text-sm"
                 />
               </div>
 
@@ -220,16 +264,16 @@ const Contact = () => {
                 type="submit"
                 size="lg"
                 disabled={isLoading}
-                className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground rounded-md"
+                className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg shadow-md shadow-primary/20 text-sm font-mono gap-2 transition-all mt-2"
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                     Sending…
                   </>
                 ) : (
                   <>
-                    <Send className="mr-2 h-4 w-4" />
+                    <Send className="h-4 w-4" />
                     Send Message
                   </>
                 )}

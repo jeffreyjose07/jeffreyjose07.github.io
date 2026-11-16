@@ -1,6 +1,25 @@
 [
   {
-    "url": "/blog/tuning-a-fire-tv-and-two-phones-over-adb",
+    "url": "/blog/modernizing-the-developer-portfolio-and-blog/",
+    "title": "Modernizing the Developer Portfolio: Bento Grids, Proof Metrics, and Unified Theme",
+    "episode": "040",
+    "date": "2026-11-16",
+    "tags": [
+      "frontend",
+      "design",
+      "portfolio",
+      "ui-design",
+      "architecture",
+      "css",
+      "meta"
+    ],
+    "description": "A comprehensive teardown and modernization of the portfolio and blog: replacing playful typography with authoritative developer styles, killing layout voids with a Developer Bento Grid, elevating proof metrics, and unifying the blog architecture.",
+    "readingTime": 8,
+    "wordCount": 1589,
+    "slug": "modernizing-the-developer-portfolio-and-blog"
+  },
+  {
+    "url": "/blog/tuning-a-fire-tv-and-two-phones-over-adb/",
     "title": "Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings",
     "episode": "039",
     "date": "2026-11-15",
@@ -21,7 +40,7 @@
     "slug": "tuning-a-fire-tv-and-two-phones-over-adb"
   },
   {
-    "url": "/blog/truthmeter-v2-counting-only-what-git-records",
+    "url": "/blog/truthmeter-v2-counting-only-what-git-records/",
     "title": "TruthMeter 2.0: Deleting the Guesswork and Counting Only What Git Records",
     "episode": "038",
     "date": "2026-11-15",
@@ -42,7 +61,7 @@
     "slug": "truthmeter-v2-counting-only-what-git-records"
   },
   {
-    "url": "/blog/keepalive-disabled-for-inactivity",
+    "url": "/blog/keepalive-disabled-for-inactivity/",
     "title": "The Keepalive That Was Disabled for Inactivity",
     "episode": "037",
     "date": "2026-11-10",
@@ -63,7 +82,7 @@
     "slug": "keepalive-disabled-for-inactivity"
   },
   {
-    "url": "/blog/four-reasonable-decisions-and-a-dead-feed",
+    "url": "/blog/four-reasonable-decisions-and-a-dead-feed/",
     "title": "Four Reasonable Decisions and a Dead Feed",
     "episode": "036",
     "date": "2026-08-05",
@@ -82,7 +101,7 @@
     "slug": "four-reasonable-decisions-and-a-dead-feed"
   },
   {
-    "url": "/blog/documentation-that-outlived-its-code",
+    "url": "/blog/documentation-that-outlived-its-code/",
     "title": "Documentation That Outlived Its Code",
     "episode": "035",
     "date": "2026-08-01",
@@ -100,7 +119,7 @@
     "slug": "documentation-that-outlived-its-code"
   },
   {
-    "url": "/blog/object-object-marked-token-api",
+    "url": "/blog/object-object-marked-token-api/",
     "title": "[object Object]: How One Dependabot Bump Broke 34 of 39 Posts",
     "episode": "034",
     "date": "2026-08-01",
@@ -119,7 +138,7 @@
     "slug": "object-object-marked-token-api"
   },
   {
-    "url": "/blog/two-month-outage-aiven-dns-and-jdbc-urls",
+    "url": "/blog/two-month-outage-aiven-dns-and-jdbc-urls/",
     "title": "The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL",
     "episode": "033",
     "date": "2026-08-01",
@@ -140,7 +159,7 @@
     "slug": "two-month-outage-aiven-dns-and-jdbc-urls"
   },
   {
-    "url": "/blog/spring-hikari-hogging-and-optimistic-locking",
+    "url": "/blog/spring-hikari-hogging-and-optimistic-locking/",
     "title": "HikariCP Exhaustion, Connection Hogging, and Optimistic Locking",
     "episode": "032",
     "date": "2026-07-30",
@@ -159,7 +178,7 @@
     "slug": "spring-hikari-hogging-and-optimistic-locking"
   },
   {
-    "url": "/blog/spring-bean-lifecycle-and-mini-umbrellas",
+    "url": "/blog/spring-bean-lifecycle-and-mini-umbrellas/",
     "title": "Spring Bean Lifecycle, Circular Deps, and Mini-Umbrellas",
     "episode": "031",
     "date": "2026-07-30",
@@ -177,7 +196,7 @@
     "slug": "spring-bean-lifecycle-and-mini-umbrellas"
   },
   {
-    "url": "/blog/spring-threadlocals-and-async",
+    "url": "/blog/spring-threadlocals-and-async/",
     "title": "Spring ThreadLocals and @Async: What We Proved",
     "episode": "030",
     "date": "2026-07-30",
@@ -195,7 +214,7 @@
     "slug": "spring-threadlocals-and-async"
   },
   {
-    "url": "/blog/spring-proxies-and-self-invocation",
+    "url": "/blog/spring-proxies-and-self-invocation/",
     "title": "Spring Proxies and Self-Invocation: What We Proved",
     "episode": "029",
     "date": "2026-07-30",
@@ -213,7 +232,7 @@
     "slug": "spring-proxies-and-self-invocation"
   },
   {
-    "url": "/blog/proving-spring-internals-with-tests",
+    "url": "/blog/proving-spring-internals-with-tests/",
     "title": "Proving Spring Internals With Tests (Not Folklore)",
     "episode": "028",
     "date": "2026-07-30",
@@ -231,7 +250,7 @@
     "slug": "proving-spring-internals-with-tests"
   },
   {
-    "url": "/blog/hardening-the-chat-platform-deps-deep-health-and-ci-pings",
+    "url": "/blog/hardening-the-chat-platform-deps-deep-health-and-ci-pings/",
     "title": "Hardening the Chat Platform: Deps, Deep Health, and CI Pings",
     "episode": "027",
     "date": "2026-05-27",
@@ -249,7 +268,7 @@
     "slug": "hardening-the-chat-platform-deps-deep-health-and-ci-pings"
   },
   {
-    "url": "/blog/redesigning-the-portfolio-teal-fonts-and-timelines",
+    "url": "/blog/redesigning-the-portfolio-teal-fonts-and-timelines/",
     "title": "Redesigning the Portfolio: Teal, Fonts, and Timelines",
     "episode": "026",
     "date": "2026-05-19",
@@ -267,7 +286,7 @@
     "slug": "redesigning-the-portfolio-teal-fonts-and-timelines"
   },
   {
-    "url": "/blog/optimizing-performance-and-pagination-a-deep-dive-into-web",
+    "url": "/blog/optimizing-performance-and-pagination-a-deep-dive-into-web/",
     "title": "Optimizing Performance and Pagination: A Deep Dive into Web Vitals",
     "episode": "025",
     "date": "2025-12-17",
@@ -284,7 +303,7 @@
     "slug": "optimizing-performance-and-pagination-a-deep-dive-into-web"
   },
   {
-    "url": "/blog/automating-terminal-style-thumbnails",
+    "url": "/blog/automating-terminal-style-thumbnails/",
     "title": "Automating Terminal-Style Thumbnails",
     "episode": "024",
     "date": "2025-12-03",
@@ -300,7 +319,7 @@
     "slug": "automating-terminal-style-thumbnails"
   },
   {
-    "url": "/blog/refining-navigation-and-branding-a-journey-to-consistency",
+    "url": "/blog/refining-navigation-and-branding-a-journey-to-consistency/",
     "title": "Refining Navigation and Branding: A Journey to Consistency",
     "episode": "023",
     "date": "2025-11-30",
@@ -317,7 +336,7 @@
     "slug": "refining-navigation-and-branding-a-journey-to-consistency"
   },
   {
-    "url": "/blog/optimizing-blog-interactivity-and-ux",
+    "url": "/blog/optimizing-blog-interactivity-and-ux/",
     "title": "Optimizing Blog Interactivity and UX",
     "episode": "022",
     "date": "2025-11-30",
@@ -333,7 +352,7 @@
     "slug": "optimizing-blog-interactivity-and-ux"
   },
   {
-    "url": "/blog/building-truthmeter-ai-measuring-the-real-impact-of-ai",
+    "url": "/blog/building-truthmeter-ai-measuring-the-real-impact-of-ai/",
     "title": "Building TruthMeter AI: Measuring the Real Impact of AI Coding Assistants",
     "episode": "021",
     "date": "2025-11-28",
@@ -351,7 +370,7 @@
     "slug": "building-truthmeter-ai-measuring-the-real-impact-of-ai"
   },
   {
-    "url": "/blog/enhancing-game-ui-mobile-responsiveness-and-terminal",
+    "url": "/blog/enhancing-game-ui-mobile-responsiveness-and-terminal/",
     "title": "Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics",
     "episode": "020",
     "date": "2025-11-28",
@@ -368,7 +387,7 @@
     "slug": "enhancing-game-ui-mobile-responsiveness-and-terminal"
   },
   {
-    "url": "/blog/building-a-secure-password-reset-flow",
+    "url": "/blog/building-a-secure-password-reset-flow/",
     "title": "Building a Secure Password Reset Flow",
     "episode": "019",
     "date": "2025-11-20",
@@ -384,7 +403,7 @@
     "slug": "building-a-secure-password-reset-flow"
   },
   {
-    "url": "/blog/adding-interactive-scripts-to-blog-posts",
+    "url": "/blog/adding-interactive-scripts-to-blog-posts/",
     "title": "Adding Interactive Scripts to Blog Posts",
     "episode": "018",
     "date": "2025-01-26",
@@ -400,7 +419,7 @@
     "slug": "adding-interactive-scripts-to-blog-posts"
   },
   {
-    "url": "/blog/solving-adjacent-increasing-subarrays-from-naive-to-optimal",
+    "url": "/blog/solving-adjacent-increasing-subarrays-from-naive-to-optimal/",
     "title": "Solving Adjacent Increasing Subarrays: From Naive to Optimal",
     "episode": "017",
     "date": "2025-01-26",
@@ -417,7 +436,7 @@
     "slug": "solving-adjacent-increasing-subarrays-from-naive-to-optimal"
   },
   {
-    "url": "/blog/adding-custom-domain-jeffreyjose07is-adev",
+    "url": "/blog/adding-custom-domain-jeffreyjose07is-adev/",
     "title": "Adding Custom Domain: jeffreyjose07.is-a.dev",
     "episode": "016",
     "date": "2025-01-24",
@@ -433,7 +452,7 @@
     "slug": "adding-custom-domain-jeffreyjose07is-adev"
   },
   {
-    "url": "/blog/building-a-secure-snake-game-with-terminal-aesthetic",
+    "url": "/blog/building-a-secure-snake-game-with-terminal-aesthetic/",
     "title": "Building a Secure Snake Game with Terminal Aesthetic",
     "episode": "015",
     "date": "2025-09-02",
@@ -450,7 +469,7 @@
     "slug": "building-a-secure-snake-game-with-terminal-aesthetic"
   },
   {
-    "url": "/blog/from-neon-to-supabase-to-aiven-a-postgresql-migration",
+    "url": "/blog/from-neon-to-supabase-to-aiven-a-postgresql-migration/",
     "title": "From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey",
     "episode": "014",
     "date": "2025-08-28",
@@ -470,7 +489,7 @@
     "slug": "from-neon-to-supabase-to-aiven-a-postgresql-migration"
   },
   {
-    "url": "/blog/migrating-from-render-to-neon-postgresql-lessons-from-a",
+    "url": "/blog/migrating-from-render-to-neon-postgresql-lessons-from-a/",
     "title": "Migrating from Render to Neon PostgreSQL: Lessons from a Zero-Downtime Database Migration",
     "episode": "013",
     "date": "2025-01-18",
@@ -490,7 +509,7 @@
     "slug": "migrating-from-render-to-neon-postgresql-lessons-from-a"
   },
   {
-    "url": "/blog/implementing-privacy-first-analytics-from-research-to",
+    "url": "/blog/implementing-privacy-first-analytics-from-research-to/",
     "title": "Implementing Privacy-First Analytics: From Research to GoatCounter",
     "episode": "012",
     "date": "2025-01-13",
@@ -507,7 +526,7 @@
     "slug": "implementing-privacy-first-analytics-from-research-to"
   },
   {
-    "url": "/blog/debugging-cross-repository-workflows",
+    "url": "/blog/debugging-cross-repository-workflows/",
     "title": "Debugging Cross-Repository GitHub Actions: A Void Blocks Tale",
     "episode": "011",
     "date": "2025-08-11",
@@ -524,7 +543,7 @@
     "slug": "debugging-cross-repository-workflows"
   },
   {
-    "url": "/blog/building-void-blocks-a-cyberpunk-tetris-game",
+    "url": "/blog/building-void-blocks-a-cyberpunk-tetris-game/",
     "title": "Building Void Blocks: A Cyberpunk Tetris Game",
     "episode": "010",
     "date": "2025-01-26",
@@ -542,7 +561,7 @@
     "slug": "building-void-blocks-a-cyberpunk-tetris-game"
   },
   {
-    "url": "/blog/deploying-a-chat-platform-to-render",
+    "url": "/blog/deploying-a-chat-platform-to-render/",
     "title": "Deploying a Chat Platform to Render",
     "episode": "009",
     "date": "2025-01-25",
@@ -559,7 +578,7 @@
     "slug": "deploying-a-chat-platform-to-render"
   },
   {
-    "url": "/blog/ai-as-learning-catalyst-how-to-gain-skills-without-losing",
+    "url": "/blog/ai-as-learning-catalyst-how-to-gain-skills-without-losing/",
     "title": "AI as Learning Catalyst: How to Gain Skills Without Losing Competence",
     "episode": "008",
     "date": "2025-01-25",
@@ -575,7 +594,7 @@
     "slug": "ai-as-learning-catalyst-how-to-gain-skills-without-losing"
   },
   {
-    "url": "/blog/bugfixes-and-lessons-learned",
+    "url": "/blog/bugfixes-and-lessons-learned/",
     "title": "Lessons from the Bugs: How We Improved the Portfolio and Blog",
     "episode": "007",
     "date": "2025-07-25",
@@ -591,7 +610,7 @@
     "slug": "bugfixes-and-lessons-learned"
   },
   {
-    "url": "/blog/ascii-visualizers",
+    "url": "/blog/ascii-visualizers/",
     "title": "Adding Text-Based Visualizers to the Blog Homepage",
     "episode": "006",
     "date": "2025-01-24",
@@ -606,7 +625,7 @@
     "slug": "ascii-visualizers"
   },
   {
-    "url": "/blog/ai-assisted-writing",
+    "url": "/blog/ai-assisted-writing/",
     "title": "How I Write Blogs with Claude - A Transparent Process",
     "episode": "005",
     "date": "2025-01-24",
@@ -620,7 +639,7 @@
     "slug": "ai-assisted-writing"
   },
   {
-    "url": "/blog/automated-blog-system",
+    "url": "/blog/automated-blog-system/",
     "title": "Automating the Void - Building a Frictionless Blog System",
     "episode": "004",
     "date": "2025-01-24",
@@ -634,7 +653,7 @@
     "slug": "automated-blog-system"
   },
   {
-    "url": "/blog/scalable-chat-platform",
+    "url": "/blog/scalable-chat-platform/",
     "title": "Building a Scalable Chat Platform with Claude Code",
     "episode": "003",
     "date": "2025-01-24",
@@ -649,7 +668,7 @@
     "slug": "scalable-chat-platform"
   },
   {
-    "url": "/blog/creating-this-portfolio-website-and-blog",
+    "url": "/blog/creating-this-portfolio-website-and-blog/",
     "title": "Creating This Portfolio Website and Blog",
     "episode": "002",
     "date": "2025-01-24",
@@ -663,7 +682,7 @@
     "slug": "creating-this-portfolio-website-and-blog"
   },
   {
-    "url": "/blog/brainwash-yourself-for-success",
+    "url": "/blog/brainwash-yourself-for-success/",
     "title": "Brainwash Yourself for Success",
     "episode": "001",
     "date": "2017-04-22",
@@ -677,7 +696,7 @@
     "slug": "brainwash-yourself-for-success"
   },
   {
-    "url": "/blog/revelations-of-a-btech-student",
+    "url": "/blog/revelations-of-a-btech-student/",
     "title": "The Revelations of a BTech Student",
     "episode": "000",
     "date": "2017-04-20",
