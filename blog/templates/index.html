@@ -162,20 +162,23 @@
 
         /* Tag Filters */
         .tag-filters-container {
-            margin-bottom: 3rem;
+            margin-bottom: 1rem;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
             gap: 0.5rem;
-            max-height: 90px;
-            /* Show roughly 2 rows */
+            max-height: 86px;
             overflow: hidden;
             transition: max-height 0.3s ease;
             position: relative;
+            -webkit-mask-image: linear-gradient(to bottom, #000 56%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 56%, transparent 100%);
         }
 
         .tag-filters-container.expanded {
             max-height: 1000px;
+            -webkit-mask-image: none;
+            mask-image: none;
         }
 
         .tag-toggle-btn {
@@ -184,9 +187,9 @@
             color: var(--primary);
             cursor: pointer;
             font-size: 0.875rem;
-            margin-top: 0.5rem;
             display: block;
-            margin: 0 auto 3rem auto;
+            margin: 0 auto 2.5rem auto;
+            padding: 0.25rem 0.75rem;
             font-family: var(--font-sans);
         }
 
@@ -266,7 +269,7 @@
 
             .post-item:first-child {
                 grid-column: 1 / -1;
-                min-height: 450px;
+                min-height: 380px;
             }
 
             .post-item:first-child a {
@@ -274,32 +277,37 @@
             }
 
             .post-item:first-child .post-thumbnail {
-                width: 60%;
+                width: 52%;
                 height: auto;
                 min-height: 100%;
+                padding: 1.25rem;
+                background-color: #0c0c0f;
                 border-bottom: none;
-                border-right: 1px solid rgba(255, 255, 255, 0.05);
+                border-right: 1px solid rgba(255, 255, 255, 0.06);
             }
 
             .post-item:first-child .post-thumbnail img {
                 object-fit: contain;
+                max-height: 360px;
+                border-radius: 0.375rem;
             }
 
             .post-item:first-child .post-content-wrapper {
-                width: 40%;
+                width: 48%;
                 justify-content: center;
-                padding: 4rem;
+                padding: 2.5rem 2.75rem;
             }
 
             .post-item:first-child .post-title {
-                font-size: 3rem;
-                margin-bottom: 1.5rem;
+                font-size: clamp(1.65rem, 2.5vw, 2.25rem);
+                line-height: 1.2;
+                margin-bottom: 1rem;
                 color: var(--foreground);
             }
 
             .post-item:first-child .post-description {
-                font-size: 1.25rem;
-                -webkit-line-clamp: 5;
+                font-size: 1.0625rem;
+                -webkit-line-clamp: 4;
             }
         }
 
@@ -330,10 +338,10 @@
 <body class="bg-mesh">
     {{siteHeader}}
 
-    <main class="container">
+    <main class="container" id="main-content">
         <header class="blog-header">
             <div class="dev-badge" style="margin-bottom: 1.25rem;">
-                // TECHNICAL WRITING &amp; ARCHITECTURE LOGS
+                // ENGINEERING BLOG
             </div>
             <h1 class="blog-title">Engineering <span class="text-gradient-premium">Log</span></h1>
             <p class="blog-description">{{description}}</p>
@@ -343,7 +351,7 @@
             <button class="tag-filter active" data-tag="all">All Posts</button>
             {{tagFilters}}
         </div>
-        <button id="tagToggleBtn" class="tag-toggle-btn">Show more tags</button>
+        <button id="tagToggleBtn" class="tag-toggle-btn" aria-expanded="false" aria-controls="tagFilters">Show more tags</button>
 
         <div class="posts-grid" id="postsGrid">
             {{posts}}
@@ -420,7 +428,7 @@
                                 <span class="episode-number">#${episodeNum}</span>
                                 <span class="date">${formatDate(post.date)}</span>
                             </div>
-                            <h3 class="post-title">${post.title}</h3>
+                            <h2 class="post-title">${post.title}</h2>
                             <p class="post-description">${post.description}</p>
                             <div class="post-tags">
                                 ${tagsHtml}
@@ -534,8 +542,9 @@
             }
 
             tagToggleBtn.addEventListener('click', () => {
-                tagContainer.classList.toggle('expanded');
-                if (tagContainer.classList.contains('expanded')) {
+                const expanded = tagContainer.classList.toggle('expanded');
+                tagToggleBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                if (expanded) {
                     tagToggleBtn.textContent = 'Show less tags';
                 } else {
                     tagToggleBtn.textContent = 'Show more tags';

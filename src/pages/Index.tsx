@@ -34,6 +34,12 @@ const Index = () => {
           content="Senior Backend Engineer at Jio — Spring Boot, Kafka, WebFlux, and distributed systems. Portfolio, projects, and technical writing."
         />
       </Helmet>
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-md focus:bg-primary focus:text-primary-foreground focus:font-medium focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       <Navigation />
       {/* Screen readers use the main landmark to skip past the nav straight to
           content. Everything between the nav and the footer belongs to it. */}

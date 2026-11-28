@@ -1516,8 +1516,8 @@
 <h3>1. The design system in <code>CLAUDE.md</code> was a year out of date</h3>
 <p>Replaced with what the code actually says, sourced from <code>tailwind.config.ts</code> and <code>src/index.css</code> rather than memory:</p>
 <div class="code-block-wrap" data-lang="css"><span class="code-lang" aria-hidden="true">css</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">/* src/index.css — the real accent */</span></span>
-<span class="line"><span style="color:#ABB2BF">--primary:      162 75% 38%;   </span><span style="color:#7F848E;font-style:italic">/* light */</span></span>
-<span class="line"><span style="color:#ABB2BF">--primary-glow: 162 75% 52%;</span></span></code></pre></div>
+<span class="line"><span style="color:#C678DD">--primary:      162 75% 38%;</span><span style="color:#7F848E;font-style:italic">   /* light */</span></span>
+<span class="line"><span style="color:#C678DD">--primary-glow: 162 75% 52%;</span></span></code></pre></div>
 
 <div class="code-block-wrap" data-lang="javascript"><span class="code-lang" aria-hidden="true">javascript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">// tailwind.config.ts — the real fonts</span></span>
 <span class="line"><span style="color:#E06C75">fontFamily</span><span style="color:#ABB2BF">: {</span></span>

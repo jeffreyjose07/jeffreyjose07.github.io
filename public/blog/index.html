@@ -30,6 +30,9 @@ margin: 0;
 padding: 0;
 box-sizing: border-box;
 }
+html {
+scroll-padding-top: 6rem;
+}
 body {
 font-family: var(--font-sans);
 background-color: var(--background);
@@ -57,6 +60,17 @@ line-height: 1.25;
 margin-bottom: 1rem;
 letter-spacing: -0.03em;
 }
+h1,
+h2,
+h3,
+h4 {
+text-wrap: balance;
+}
+h2,
+h3,
+h4 {
+scroll-margin-top: 6rem;
+}
 a {
 color: inherit;
 text-decoration: none;
@@ -67,6 +81,35 @@ width: 100%;
 max-width: 1200px;
 margin: 0 auto;
 padding: 0 1.5rem;
+}
+@media (max-width: 640px) {
+.container {
+padding: 0 0.875rem;
+}
+}
+.skip-link:where(:not(:focus-within, :active)) {
+position: absolute !important;
+clip-path: inset(50%) !important;
+overflow: hidden !important;
+width: 1px !important;
+height: 1px !important;
+margin: -1px !important;
+padding: 0 !important;
+border: 0 !important;
+white-space: nowrap !important;
+}
+.skip-link:focus-visible {
+position: fixed;
+top: 1rem;
+left: 1rem;
+z-index: 2500;
+padding: 0.6rem 1rem;
+border-radius: 0.5rem;
+background: var(--primary);
+color: var(--primary-foreground);
+font-weight: 600;
+font-size: 0.875rem;
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 .panel-card,
 .glass-card {
@@ -285,19 +328,22 @@ border-color: rgba(28, 201, 160, 0.2);
 }
 /* Tag Filters */
 .tag-filters-container {
-margin-bottom: 3rem;
+margin-bottom: 1rem;
 display: flex;
 justify-content: center;
 flex-wrap: wrap;
 gap: 0.5rem;
-max-height: 90px;
-/* Show roughly 2 rows */
+max-height: 86px;
 overflow: hidden;
 transition: max-height 0.3s ease;
 position: relative;
+-webkit-mask-image: linear-gradient(to bottom, #000 56%, transparent 100%);
+mask-image: linear-gradient(to bottom, #000 56%, transparent 100%);
 }
 .tag-filters-container.expanded {
 max-height: 1000px;
+-webkit-mask-image: none;
+mask-image: none;
 }
 .tag-toggle-btn {
 background: transparent;
@@ -305,9 +351,9 @@ border: none;
 color: var(--primary);
 cursor: pointer;
 font-size: 0.875rem;
-margin-top: 0.5rem;
 display: block;
-margin: 0 auto 3rem auto;
+margin: 0 auto 2.5rem auto;
+padding: 0.25rem 0.75rem;
 font-family: var(--font-sans);
 }
 .tag-toggle-btn:hover {
@@ -377,34 +423,39 @@ grid-template-columns: repeat(3, 1fr);
 }
 .post-item:first-child {
 grid-column: 1 / -1;
-min-height: 450px;
+min-height: 380px;
 }
 .post-item:first-child a {
 flex-direction: row;
 }
 .post-item:first-child .post-thumbnail {
-width: 60%;
+width: 52%;
 height: auto;
 min-height: 100%;
+padding: 1.25rem;
+background-color: #0c0c0f;
 border-bottom: none;
-border-right: 1px solid rgba(255, 255, 255, 0.05);
+border-right: 1px solid rgba(255, 255, 255, 0.06);
 }
 .post-item:first-child .post-thumbnail img {
 object-fit: contain;
+max-height: 360px;
+border-radius: 0.375rem;
 }
 .post-item:first-child .post-content-wrapper {
-width: 40%;
+width: 48%;
 justify-content: center;
-padding: 4rem;
+padding: 2.5rem 2.75rem;
 }
 .post-item:first-child .post-title {
-font-size: 3rem;
-margin-bottom: 1.5rem;
+font-size: clamp(1.65rem, 2.5vw, 2.25rem);
+line-height: 1.2;
+margin-bottom: 1rem;
 color: var(--foreground);
 }
 .post-item:first-child .post-description {
-font-size: 1.25rem;
--webkit-line-clamp: 5;
+font-size: 1.0625rem;
+-webkit-line-clamp: 4;
 }
 }
 /* Stats Footer */
@@ -610,64 +661,77 @@ opacity: 1;
 transform: translateY(0);
 }
 }
-/* Search Modal */
-.search-modal-overlay {
-display: none;
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background: rgba(0, 0, 0, 0.8);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-z-index: 2000;
-align-items: flex-start;
-justify-content: center;
-padding-top: 100px;
-opacity: 0;
-transition: opacity 0.25s ease;
-}
-.search-modal-overlay.open {
-display: flex;
-opacity: 1;
-}
-.search-modal {
+/* Search Dialog (native <dialog>) */
+dialog.search-dialog {
+margin: 100px auto auto;
+padding: 0;
 background: #101013;
+color: var(--foreground);
 border: 1px solid rgba(255, 255, 255, 0.15);
 border-radius: 1rem;
-width: 90%;
+width: min(92vw, 600px);
 max-width: 600px;
 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 25px -5px rgba(28, 201, 160, 0.2);
 overflow: hidden;
-transform: scale(0.96);
-transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.search-modal-overlay.open .search-modal {
-transform: scale(1);
+dialog.search-dialog:modal {
+overscroll-behavior: contain;
+}
+dialog.search-dialog::backdrop {
+background: rgba(0, 0, 0, 0.78);
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+overflow: hidden;
+overscroll-behavior: contain;
+}
+@media (max-width: 640px) {
+dialog.search-dialog {
+margin-top: 72px;
+}
 }
 .search-input-container {
-padding: 1.25rem 1.5rem;
+padding: 1rem 1.25rem;
 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 display: flex;
 align-items: center;
+gap: 0.75rem;
 }
 .search-icon {
 color: var(--primary);
-margin-right: 0.85rem;
 flex-shrink: 0;
 }
 .search-input {
 background: transparent;
 border: none;
 color: var(--foreground);
-font-size: 1.05rem;
+font-size: 1rem;
 width: 100%;
 outline: none;
 font-family: var(--font-sans);
 }
 .search-input::placeholder {
 color: var(--muted-foreground);
+}
+.search-close {
+min-inline-size: 32px;
+min-block-size: 32px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 0.5rem;
+color: var(--muted-foreground);
+font-size: 1.125rem;
+line-height: 1;
+cursor: pointer;
+flex-shrink: 0;
+transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.search-close:hover {
+color: var(--foreground);
+border-color: rgba(28, 201, 160, 0.35);
+background: rgba(255, 255, 255, 0.1);
 }
 .search-results {
 max-height: 400px;
@@ -707,16 +771,23 @@ display: -webkit-box;
 -webkit-box-orient: vertical;
 overflow: hidden;
 }
-</style> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
+</style> <a href="#main-content" class="skip-link">Skip to main content</a> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
 class="text-gradient-premium">Jose</span></span> <span class="logo-status-pill"> <span class="status-pulse-dot"></span>
 blog
-</span> </a> <nav class="site-nav"> <a href="/#hero" class="nav-link">Home</a> <a href="/#experience" class="nav-link">Experience</a> <a href="/#skills" class="nav-link">Skills</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/blog/" class="nav-link active">Blog</a> <a href="/#contact" class="nav-link">Contact</a> </nav> <div style="display: flex; align-items: center; gap: 0.75rem;"> <button class="search-trigger" onclick="openSearch()" aria-label="Search posts"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut">⌘K</span> </button> <button class="mobile-menu-toggle" aria-label="Toggle menu"
-onclick="document.querySelector('.site-nav').classList.toggle('open')"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-stroke-linecap="round" stroke-linejoin="round"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()"> <div class="search-modal"> <div class="search-input-container"> <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts by topic, title, or tags..." id="searchInput" autocomplete="off"> </div> <div class="search-results" id="searchResults"> </div> </div> </div> <script>
+</span> </a> <nav class="site-nav" id="primaryNav" aria-label="Primary"> <a href="/#hero" class="nav-link">Home</a> <a href="/#experience" class="nav-link">Experience</a> <a href="/#skills" class="nav-link">Skills</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/blog/" class="nav-link active" aria-current="page">Blog</a> <a href="/#contact" class="nav-link">Contact</a> </nav> <div style="display: flex; align-items: center; gap: 0.75rem;"> <button type="button" class="search-trigger" id="searchTrigger" onclick="openSearch()" aria-label="Search posts"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut" aria-hidden="true">⌘K</span> </button> <button type="button" class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false"
+aria-controls="primaryNav" onclick="toggleMobileMenu(this)"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <dialog class="search-dialog" id="searchModal" closedby="any" aria-labelledby="searchDialogTitle"> <h1 id="searchDialogTitle" class="sr-only">Search articles</h1> <div class="search-input-container"> <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts by topic, title, or tags..."
+id="searchInput" aria-label="Search posts" autocomplete="off" autofocus> <button type="button" class="search-close" onclick="closeSearch()" aria-label="Close search">&times;</button> </div> <div class="search-results" id="searchResults"> </div> </dialog> <script>
 let searchIndex = [];
-let isSearchOpen = false;
+const searchDialog = document.getElementById('searchModal');
+const searchInput = document.getElementById('searchInput');
+function toggleMobileMenu(btn) {
+const nav = document.getElementById('primaryNav');
+const open = nav.classList.toggle('open');
+btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
 async function loadSearchIndex() {
 if (searchIndex.length > 0) return;
 try {
@@ -727,16 +798,30 @@ console.error('Failed to load search index', e);
 }
 }
 function openSearch() {
-document.getElementById('searchModal').classList.add('open');
-document.getElementById('searchInput').focus();
-isSearchOpen = true;
+if (!searchDialog.open) {
+searchDialog.showModal();
+}
+searchInput.focus();
 loadSearchIndex();
-document.body.style.overflow = 'hidden';
 }
 function closeSearch() {
-document.getElementById('searchModal').classList.remove('open');
-isSearchOpen = false;
-document.body.style.overflow = '';
+if (searchDialog.open) {
+searchDialog.close();
+}
+}
+// Light-dismiss fallback for browsers without <dialog closedby="any"> (e.g. Safari)
+if (!('closedBy' in HTMLDialogElement.prototype)) {
+const outside = (e, dialog) => {
+const r = dialog.getBoundingClientRect();
+return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+};
+let pressedOutside = false;
+searchDialog.addEventListener('pointerdown', (e) => {
+pressedOutside = outside(e, searchDialog);
+});
+searchDialog.addEventListener('pointerup', (e) => {
+if (pressedOutside && outside(e, searchDialog)) searchDialog.close();
+});
 }
 function performSearch(query) {
 if (!query) {
@@ -748,7 +833,7 @@ const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
 const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
 const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
 return titleMatch || descMatch || tagMatch;
-}).slice(0, 5); // Limit to 5 results
+}).slice(0, 5);
 const resultsHtml = results.map(post => `
 <a href="/blog/${post.slug}/" class="search-result-item" onclick="closeSearch()"> <div class="search-result-title">${post.title}</div> <div class="search-result-excerpt">${post.description || ''}</div> </a>
 `).join('');
@@ -756,23 +841,20 @@ document.getElementById('searchResults').innerHTML = results.length > 0
 ? resultsHtml
 : '<div style="padding: 1.5rem; color: var(--muted-foreground); text-align: center; font-size: 0.9rem;">No matching articles found</div>';
 }
-document.getElementById('searchInput').addEventListener('input', (e) => {
+searchInput.addEventListener('input', (e) => {
 performSearch(e.target.value);
 });
-// Keyboard shortcuts
+// Keyboard shortcut (Cmd/Ctrl+K)
 document.addEventListener('keydown', (e) => {
-if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
 e.preventDefault();
-if (isSearchOpen) closeSearch();
+if (searchDialog.open) closeSearch();
 else openSearch();
 }
-if (e.key === 'Escape' && isSearchOpen) {
-closeSearch();
-}
 });
-</script> <main class="container"> <header class="blog-header"> <div class="dev-badge" style="margin-bottom: 1.25rem;">
-// TECHNICAL WRITING &amp; ARCHITECTURE LOGS
-</div> <h1 class="blog-title">Engineering <span class="text-gradient-premium">Log</span></h1> <p class="blog-description">learning things, building things, breaking things, writing about it. technical projects, personal struggles, life stuff, random observations - just documenting whatever I&#39;m working through.</p> </header> <div class="tag-filters-container" id="tagFilters"> <button class="tag-filter active" data-tag="all">All Posts</button> <button class="tag-filter neutral" data-tag="personal">personal</button> <button class="tag-filter attention" data-tag="tutorials">tutorials</button> <button class="tag-filter process" data-tag="frontend">frontend</button> <button class="tag-filter meta" data-tag="meta">meta</button> <button class="tag-filter structure" data-tag="backend">backend</button> <button class="tag-filter structure" data-tag="system-design">system-design</button> <button class="tag-filter connection" data-tag="ai-tools">ai-tools</button> <button class="tag-filter success" data-tag="automation">automation</button> <button class="tag-filter neutral" data-tag="bugfixes">bugfixes</button> <button class="tag-filter neutral" data-tag="engineering">engineering</button> <button class="tag-filter neutral" data-tag="changelog">changelog</button> <button class="tag-filter neutral" data-tag="learning">learning</button> <button class="tag-filter neutral" data-tag="deployment">deployment</button> <button class="tag-filter neutral" data-tag="render">render</button> <button class="tag-filter structure" data-tag="spring-boot">spring-boot</button> <button class="tag-filter process" data-tag="react">react</button> <button class="tag-filter success" data-tag="github-actions">github-actions</button> <button class="tag-filter neutral" data-tag="gamedev">gamedev</button> <button class="tag-filter neutral" data-tag="vanilla-js">vanilla-js</button> <button class="tag-filter neutral" data-tag="tetris">tetris</button> <button class="tag-filter neutral" data-tag="cyberpunk">cyberpunk</button> <button class="tag-filter neutral" data-tag="single-file">single-file</button> <button class="tag-filter neutral" data-tag="debugging">debugging</button> <button class="tag-filter neutral" data-tag="devops">devops</button> <button class="tag-filter neutral" data-tag="ci-cd">ci-cd</button> <button class="tag-filter neutral" data-tag="analytics">analytics</button> <button class="tag-filter neutral" data-tag="privacy">privacy</button> <button class="tag-filter neutral" data-tag="web-development">web-development</button> <button class="tag-filter neutral" data-tag="goatcounter">goatcounter</button> <button class="tag-filter neutral" data-tag="github-pages">github-pages</button> <button class="tag-filter neutral" data-tag="database">database</button> <button class="tag-filter neutral" data-tag="migration">migration</button> <button class="tag-filter neutral" data-tag="postgresql">postgresql</button> <button class="tag-filter neutral" data-tag="neon">neon</button> <button class="tag-filter neutral" data-tag="scaling">scaling</button> <button class="tag-filter neutral" data-tag="cloud">cloud</button> <button class="tag-filter neutral" data-tag="aiven">aiven</button> <button class="tag-filter neutral" data-tag="supabase">supabase</button> <button class="tag-filter neutral" data-tag="game-development">game-development</button> <button class="tag-filter process" data-tag="javascript">javascript</button> <button class="tag-filter neutral" data-tag="security">security</button> <button class="tag-filter neutral" data-tag="terminal-ui">terminal-ui</button> <button class="tag-filter neutral" data-tag="domain">domain</button> <button class="tag-filter neutral" data-tag="infrastructure">infrastructure</button> <button class="tag-filter neutral" data-tag="algorithms">algorithms</button> <button class="tag-filter neutral" data-tag="optimization">optimization</button> <button class="tag-filter neutral" data-tag="leetcode">leetcode</button> <button class="tag-filter neutral" data-tag="data-structures">data-structures</button> <button class="tag-filter neutral" data-tag="problem-solving">problem-solving</button> <button class="tag-filter neutral" data-tag="Spring Boot">Spring Boot</button> <button class="tag-filter neutral" data-tag="React">React</button> <button class="tag-filter neutral" data-tag="Security">Security</button> <button class="tag-filter neutral" data-tag="Brevo">Brevo</button> <button class="tag-filter neutral" data-tag="css">css</button> <button class="tag-filter neutral" data-tag="mobile">mobile</button> <button class="tag-filter neutral" data-tag="ux">ux</button> <button class="tag-filter meta" data-tag="terminal-aesthetic">terminal-aesthetic</button> <button class="tag-filter neutral" data-tag="typescript">typescript</button> <button class="tag-filter neutral" data-tag="vscode">vscode</button> <button class="tag-filter connection" data-tag="ai">ai</button> <button class="tag-filter neutral" data-tag="metrics">metrics</button> <button class="tag-filter neutral" data-tag="testing">testing</button> <button class="tag-filter neutral" data-tag="developer-tools">developer-tools</button> <button class="tag-filter neutral" data-tag="design">design</button> <button class="tag-filter neutral" data-tag="branding">branding</button> <button class="tag-filter neutral" data-tag="nodejs">nodejs</button> <button class="tag-filter neutral" data-tag="performance">performance</button> <button class="tag-filter neutral" data-tag="accessibility">accessibility</button> <button class="tag-filter neutral" data-tag="seo">seo</button> <button class="tag-filter structure" data-tag="portfolio">portfolio</button> <button class="tag-filter process" data-tag="ui-design">ui-design</button> <button class="tag-filter process" data-tag="animation">animation</button> <button class="tag-filter neutral" data-tag="scalable-chat-platform">scalable-chat-platform</button> <button class="tag-filter neutral" data-tag="health">health</button> <button class="tag-filter neutral" data-tag="java">java</button> <button class="tag-filter neutral" data-tag="transactions">transactions</button> <button class="tag-filter neutral" data-tag="interview-prep">interview-prep</button> <button class="tag-filter structure" data-tag="architecture">architecture</button> <button class="tag-filter neutral" data-tag="aop">aop</button> <button class="tag-filter neutral" data-tag="async">async</button> <button class="tag-filter neutral" data-tag="lifecycle">lifecycle</button> <button class="tag-filter neutral" data-tag="hikaricp">hikaricp</button> <button class="tag-filter neutral" data-tag="concurrency">concurrency</button> <button class="tag-filter neutral" data-tag="incident">incident</button> <button class="tag-filter neutral" data-tag="blog">blog</button> <button class="tag-filter neutral" data-tag="marked">marked</button> <button class="tag-filter neutral" data-tag="dependabot">dependabot</button> <button class="tag-filter neutral" data-tag="build-tools">build-tools</button> <button class="tag-filter neutral" data-tag="node">node</button> <button class="tag-filter neutral" data-tag="documentation">documentation</button> <button class="tag-filter neutral" data-tag="refactoring">refactoring</button> <button class="tag-filter neutral" data-tag="technical-debt">technical-debt</button> <button class="tag-filter neutral" data-tag="rss">rss</button> <button class="tag-filter neutral" data-tag="static-site-generator">static-site-generator</button> <button class="tag-filter neutral" data-tag="build-systems">build-systems</button> <button class="tag-filter neutral" data-tag="ci">ci</button> <button class="tag-filter neutral" data-tag="ai-agents">ai-agents</button> <button class="tag-filter neutral" data-tag="mcp">mcp</button> <button class="tag-filter neutral" data-tag="monitoring">monitoring</button> <button class="tag-filter neutral" data-tag="free-tier">free-tier</button> <button class="tag-filter neutral" data-tag="truthmeter-ai">truthmeter-ai</button> <button class="tag-filter neutral" data-tag="git">git</button> <button class="tag-filter neutral" data-tag="android">android</button> <button class="tag-filter neutral" data-tag="adb">adb</button> <button class="tag-filter neutral" data-tag="fire-tv">fire-tv</button> <button class="tag-filter neutral" data-tag="debloat">debloat</button> <button class="tag-filter neutral" data-tag="dns">dns</button> <button class="tag-filter neutral" data-tag="battery">battery</button> <button class="tag-filter neutral" data-tag="homelab">homelab</button> </div> <button id="tagToggleBtn" class="tag-toggle-btn">Show more tags</button> <div class="posts-grid" id="postsGrid"> <div class="post-item panel-card" data-tags="frontend design portfolio ui-design architecture css meta"> <a href="/blog/modernizing-the-developer-portfolio-and-blog/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/modernizing-the-developer-portfolio-and-blog.png" alt="Modernizing the Developer Portfolio: Bento Grids, Proof Metrics, and Unified Theme" loading="eager" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#040</span> <span class="date">16 Nov 2026</span> </div> <h3 class="post-title">Modernizing the Developer Portfolio: Bento Grids, Proof Metrics, and Unified Theme</h3> <p class="post-description">A comprehensive teardown and modernization of the portfolio and blog: replacing playful typography with authoritative developer styles, killing layout voids with a Developer Bento Grid, elevating proof metrics, and unifying the blog architecture.</p> <div class="post-tags"> <span class="tag-pill">frontend</span><span class="tag-pill">design</span><span class="tag-pill">portfolio</span><span class="tag-pill">ui-design</span><span class="tag-pill">architecture</span><span class="tag-pill">css</span><span class="tag-pill">meta</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="android adb fire-tv debloat performance dns battery ai-agents homelab"> <a href="/blog/tuning-a-fire-tv-and-two-phones-over-adb/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/tuning-a-fire-tv-and-two-phones-over-adb.png" alt="Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings" loading="eager" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#039</span> <span class="date">15 Nov 2026</span> </div> <h3 class="post-title">Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings</h3> <p class="post-description">One evening, three devices, all over Wi-Fi ADB. I disabled 15 preinstalled apps on a 2 GB Fire TV, measured a DNS ad-blocker and rejected it, checked my phone&#39;s battery wear and my wife&#39;s Pixel for malware. Every change was reversible. The only thing that broke was the setting I thought was safest: animator_duration_scale, which left the TV&#39;s Settings tile dead after a reboot.</p> <div class="post-tags"> <span class="tag-pill">android</span><span class="tag-pill">adb</span><span class="tag-pill">fire-tv</span><span class="tag-pill">debloat</span><span class="tag-pill">performance</span><span class="tag-pill">dns</span><span class="tag-pill">battery</span><span class="tag-pill">ai-agents</span><span class="tag-pill">homelab</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="truthmeter-ai typescript vscode git ai-agents metrics testing github-actions developer-tools"> <a href="/blog/truthmeter-v2-counting-only-what-git-records/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/truthmeter-v2-counting-only-what-git-records.png" alt="TruthMeter 2.0: Deleting the Guesswork and Counting Only What Git Records" loading="eager" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#038</span> <span class="date">15 Nov 2026</span> </div> <h3 class="post-title">TruthMeter 2.0: Deleting the Guesswork and Counting Only What Git Records</h3> <p class="post-description">A year after shipping TruthMeter AI, I opened it again and found its core number meant nothing: any paste, any autocomplete and any file containing console.error counted as &#39;AI&#39;. Version 2 deletes 19,000 lines and measures only verifiable evidence: co-author trailers, git blame survival, fix-within-72h and opt-in agent session logs. It is also the first release published to the Marketplace with no stored token.</p> <div class="post-tags"> <span class="tag-pill">truthmeter-ai</span><span class="tag-pill">typescript</span><span class="tag-pill">vscode</span><span class="tag-pill">git</span><span class="tag-pill">ai-agents</span><span class="tag-pill">metrics</span><span class="tag-pill">testing</span><span class="tag-pill">github-actions</span><span class="tag-pill">developer-tools</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="scalable-chat-platform aiven postgresql github-actions ai-agents mcp monitoring incident free-tier"> <a href="/blog/keepalive-disabled-for-inactivity/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/keepalive-disabled-for-inactivity.png" alt="The Keepalive That Was Disabled for Inactivity" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#037</span> <span class="date">10 Nov 2026</span> </div> <h3 class="post-title">The Keepalive That Was Disabled for Inactivity</h3> <p class="post-description">In August I shipped a workflow to stop Aiven powering off my free Postgres. The event log says it lost: the write ping ran every six hours for twelve days and Aiven powered the service down anyway. Meanwhile GitHub disabled the whole workflow for repository inactivity on day 62 — an inactivity shutdown one layer up — and the API half never ran at all because its secret was never set.</p> <div class="post-tags"> <span class="tag-pill">scalable-chat-platform</span><span class="tag-pill">aiven</span><span class="tag-pill">postgresql</span><span class="tag-pill">github-actions</span><span class="tag-pill">ai-agents</span><span class="tag-pill">mcp</span><span class="tag-pill">monitoring</span><span class="tag-pill">incident</span><span class="tag-pill">free-tier</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="meta blog rss seo static-site-generator build-systems ci"> <a href="/blog/four-reasonable-decisions-and-a-dead-feed/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/four-reasonable-decisions-and-a-dead-feed.png" alt="Four Reasonable Decisions and a Dead Feed" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#036</span> <span class="date">5 Aug 2026</span> </div> <h3 class="post-title">Four Reasonable Decisions and a Dead Feed</h3> <p class="post-description">Every page on this blog advertised an RSS feed that returned 404. No single line of code was wrong — four independently sensible decisions composed into a file that existed only inside a CI runner. Plus a cross-domain sitemap, a verification file an SPA can fake, and what Hugo, Astro and Eleventy do differently.</p> <div class="post-tags"> <span class="tag-pill">meta</span><span class="tag-pill">blog</span><span class="tag-pill">rss</span><span class="tag-pill">seo</span><span class="tag-pill">static-site-generator</span><span class="tag-pill">build-systems</span><span class="tag-pill">ci</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="meta documentation refactoring portfolio blog technical-debt"> <a href="/blog/documentation-that-outlived-its-code/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/documentation-that-outlived-its-code.png" alt="Documentation That Outlived Its Code" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#035</span> <span class="date">1 Aug 2026</span> </div> <h3 class="post-title">Documentation That Outlived Its Code</h3> <p class="post-description">Every doc in this repo described a site that no longer existed — a terminal aesthetic replaced a year ago and a colour system reduced to an identity function. Auditing them turned up 60 lines of configuration that no code reads.</p> <div class="post-tags"> <span class="tag-pill">meta</span><span class="tag-pill">documentation</span><span class="tag-pill">refactoring</span><span class="tag-pill">portfolio</span><span class="tag-pill">blog</span><span class="tag-pill">technical-debt</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="blog marked javascript dependabot debugging build-tools node"> <a href="/blog/object-object-marked-token-api/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/object-object-marked-token-api.png" alt="[object Object]: How One Dependabot Bump Broke 34 of 39 Posts" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#034</span> <span class="date">1 Aug 2026</span> </div> <h3 class="post-title">[object Object]: How One Dependabot Bump Broke 34 of 39 Posts</h3> <p class="post-description">A major bump to marked changed every renderer method to take a token object instead of positional strings. The build kept exiting 0 while emitting the literal text [object Object] into 34 of 39 posts — and a missing curl flag nearly convinced me nothing was wrong.</p> <div class="post-tags"> <span class="tag-pill">blog</span><span class="tag-pill">marked</span><span class="tag-pill">javascript</span><span class="tag-pill">dependabot</span><span class="tag-pill">debugging</span><span class="tag-pill">build-tools</span><span class="tag-pill">node</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="scalable-chat-platform postgresql aiven render spring-boot incident github-actions debugging deployment"> <a href="/blog/two-month-outage-aiven-dns-and-jdbc-urls/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/two-month-outage-aiven-dns-and-jdbc-urls.png" alt="The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#033</span> <span class="date">1 Aug 2026</span> </div> <h3 class="post-title">The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL</h3> <p class="post-description">scalable-chat-platform was down for two months and I did not notice. A free-tier Postgres powered off, its DNS record vanished, and a servlet filter took the whole app down with it — including the health endpoint that was supposed to tell me. Now with the Render-side postmortem: a 59-day hole in the deploy history, an empty healthCheckPath, and one of my own conclusions falsified.</p> <div class="post-tags"> <span class="tag-pill">scalable-chat-platform</span><span class="tag-pill">postgresql</span><span class="tag-pill">aiven</span><span class="tag-pill">render</span><span class="tag-pill">spring-boot</span><span class="tag-pill">incident</span><span class="tag-pill">github-actions</span><span class="tag-pill">debugging</span><span class="tag-pill">deployment</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="spring-boot java hikaricp transactions concurrency interview-prep testing"> <a href="/blog/spring-hikari-hogging-and-optimistic-locking/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/spring-hikari-hogging-and-optimistic-locking.png" alt="HikariCP Exhaustion, Connection Hogging, and Optimistic Locking" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#032</span> <span class="date">30 Jul 2026</span> </div> <h3 class="post-title">HikariCP Exhaustion, Connection Hogging, and Optimistic Locking</h3> <p class="post-description">Phase 2 of the spring-validation-lab: REQUIRES_NEW against a saturated pool, HTTP inside @Transactional after first SQL, and @Version under flash contention — all proven with H2 tests.</p> <div class="post-tags"> <span class="tag-pill">spring-boot</span><span class="tag-pill">java</span><span class="tag-pill">hikaricp</span><span class="tag-pill">transactions</span><span class="tag-pill">concurrency</span><span class="tag-pill">interview-prep</span><span class="tag-pill">testing</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="spring-boot java transactions lifecycle interview-prep testing"> <a href="/blog/spring-bean-lifecycle-and-mini-umbrellas/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/spring-bean-lifecycle-and-mini-umbrellas.png" alt="Spring Bean Lifecycle, Circular Deps, and Mini-Umbrellas" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#031</span> <span class="date">30 Jul 2026</span> </div> <h3 class="post-title">Spring Bean Lifecycle, Circular Deps, and Mini-Umbrellas</h3> <p class="post-description">Phase 1 wrap: @PostConstruct runs before the AOP proxy; constructor cycles fail to boot; Spring Data invents mini-transactions when you have no outer @Transactional.</p> <div class="post-tags"> <span class="tag-pill">spring-boot</span><span class="tag-pill">java</span><span class="tag-pill">transactions</span><span class="tag-pill">lifecycle</span><span class="tag-pill">interview-prep</span><span class="tag-pill">testing</span> </div> </div> </a> </div> </div> <div class="pagination"><a href="/blog/" class="pagination-link active">1</a><a href="/blog/page/2/" class="pagination-link ">2</a><a href="/blog/page/3/" class="pagination-link ">3</a><a href="/blog/page/4/" class="pagination-link ">4</a><a href="/blog/page/5/" class="pagination-link ">5</a><a href="/blog/page/2/" class="pagination-link">Next &raquo;</a></div> <footer class="stats-footer"> <p>
+</script> <main class="container" id="main-content"> <header class="blog-header"> <div class="dev-badge" style="margin-bottom: 1.25rem;">
+// ENGINEERING BLOG
+</div> <h1 class="blog-title">Engineering <span class="text-gradient-premium">Log</span></h1> <p class="blog-description">learning things, building things, breaking things, writing about it. technical projects, personal struggles, life stuff, random observations - just documenting whatever I&#39;m working through.</p> </header> <div class="tag-filters-container" id="tagFilters"> <button class="tag-filter active" data-tag="all">All Posts</button> <button class="tag-filter neutral" data-tag="personal">personal</button> <button class="tag-filter attention" data-tag="tutorials">tutorials</button> <button class="tag-filter process" data-tag="frontend">frontend</button> <button class="tag-filter meta" data-tag="meta">meta</button> <button class="tag-filter structure" data-tag="backend">backend</button> <button class="tag-filter structure" data-tag="system-design">system-design</button> <button class="tag-filter connection" data-tag="ai-tools">ai-tools</button> <button class="tag-filter success" data-tag="automation">automation</button> <button class="tag-filter neutral" data-tag="bugfixes">bugfixes</button> <button class="tag-filter neutral" data-tag="engineering">engineering</button> <button class="tag-filter neutral" data-tag="changelog">changelog</button> <button class="tag-filter neutral" data-tag="learning">learning</button> <button class="tag-filter neutral" data-tag="deployment">deployment</button> <button class="tag-filter neutral" data-tag="render">render</button> <button class="tag-filter structure" data-tag="spring-boot">spring-boot</button> <button class="tag-filter process" data-tag="react">react</button> <button class="tag-filter success" data-tag="github-actions">github-actions</button> <button class="tag-filter neutral" data-tag="gamedev">gamedev</button> <button class="tag-filter neutral" data-tag="vanilla-js">vanilla-js</button> <button class="tag-filter neutral" data-tag="tetris">tetris</button> <button class="tag-filter neutral" data-tag="cyberpunk">cyberpunk</button> <button class="tag-filter neutral" data-tag="single-file">single-file</button> <button class="tag-filter neutral" data-tag="debugging">debugging</button> <button class="tag-filter neutral" data-tag="devops">devops</button> <button class="tag-filter neutral" data-tag="ci-cd">ci-cd</button> <button class="tag-filter neutral" data-tag="analytics">analytics</button> <button class="tag-filter neutral" data-tag="privacy">privacy</button> <button class="tag-filter neutral" data-tag="web-development">web-development</button> <button class="tag-filter neutral" data-tag="goatcounter">goatcounter</button> <button class="tag-filter neutral" data-tag="github-pages">github-pages</button> <button class="tag-filter neutral" data-tag="database">database</button> <button class="tag-filter neutral" data-tag="migration">migration</button> <button class="tag-filter neutral" data-tag="postgresql">postgresql</button> <button class="tag-filter neutral" data-tag="neon">neon</button> <button class="tag-filter neutral" data-tag="scaling">scaling</button> <button class="tag-filter neutral" data-tag="cloud">cloud</button> <button class="tag-filter neutral" data-tag="aiven">aiven</button> <button class="tag-filter neutral" data-tag="supabase">supabase</button> <button class="tag-filter neutral" data-tag="game-development">game-development</button> <button class="tag-filter process" data-tag="javascript">javascript</button> <button class="tag-filter neutral" data-tag="security">security</button> <button class="tag-filter neutral" data-tag="terminal-ui">terminal-ui</button> <button class="tag-filter neutral" data-tag="domain">domain</button> <button class="tag-filter neutral" data-tag="infrastructure">infrastructure</button> <button class="tag-filter neutral" data-tag="algorithms">algorithms</button> <button class="tag-filter neutral" data-tag="optimization">optimization</button> <button class="tag-filter neutral" data-tag="leetcode">leetcode</button> <button class="tag-filter neutral" data-tag="data-structures">data-structures</button> <button class="tag-filter neutral" data-tag="problem-solving">problem-solving</button> <button class="tag-filter neutral" data-tag="Spring Boot">Spring Boot</button> <button class="tag-filter neutral" data-tag="React">React</button> <button class="tag-filter neutral" data-tag="Security">Security</button> <button class="tag-filter neutral" data-tag="Brevo">Brevo</button> <button class="tag-filter neutral" data-tag="css">css</button> <button class="tag-filter neutral" data-tag="mobile">mobile</button> <button class="tag-filter neutral" data-tag="ux">ux</button> <button class="tag-filter meta" data-tag="terminal-aesthetic">terminal-aesthetic</button> <button class="tag-filter neutral" data-tag="typescript">typescript</button> <button class="tag-filter neutral" data-tag="vscode">vscode</button> <button class="tag-filter connection" data-tag="ai">ai</button> <button class="tag-filter neutral" data-tag="metrics">metrics</button> <button class="tag-filter neutral" data-tag="testing">testing</button> <button class="tag-filter neutral" data-tag="developer-tools">developer-tools</button> <button class="tag-filter neutral" data-tag="design">design</button> <button class="tag-filter neutral" data-tag="branding">branding</button> <button class="tag-filter neutral" data-tag="nodejs">nodejs</button> <button class="tag-filter neutral" data-tag="performance">performance</button> <button class="tag-filter neutral" data-tag="accessibility">accessibility</button> <button class="tag-filter neutral" data-tag="seo">seo</button> <button class="tag-filter structure" data-tag="portfolio">portfolio</button> <button class="tag-filter process" data-tag="ui-design">ui-design</button> <button class="tag-filter process" data-tag="animation">animation</button> <button class="tag-filter neutral" data-tag="scalable-chat-platform">scalable-chat-platform</button> <button class="tag-filter neutral" data-tag="health">health</button> <button class="tag-filter neutral" data-tag="java">java</button> <button class="tag-filter neutral" data-tag="transactions">transactions</button> <button class="tag-filter neutral" data-tag="interview-prep">interview-prep</button> <button class="tag-filter structure" data-tag="architecture">architecture</button> <button class="tag-filter neutral" data-tag="aop">aop</button> <button class="tag-filter neutral" data-tag="async">async</button> <button class="tag-filter neutral" data-tag="lifecycle">lifecycle</button> <button class="tag-filter neutral" data-tag="hikaricp">hikaricp</button> <button class="tag-filter neutral" data-tag="concurrency">concurrency</button> <button class="tag-filter neutral" data-tag="incident">incident</button> <button class="tag-filter neutral" data-tag="blog">blog</button> <button class="tag-filter neutral" data-tag="marked">marked</button> <button class="tag-filter neutral" data-tag="dependabot">dependabot</button> <button class="tag-filter neutral" data-tag="build-tools">build-tools</button> <button class="tag-filter neutral" data-tag="node">node</button> <button class="tag-filter neutral" data-tag="documentation">documentation</button> <button class="tag-filter neutral" data-tag="refactoring">refactoring</button> <button class="tag-filter neutral" data-tag="technical-debt">technical-debt</button> <button class="tag-filter neutral" data-tag="rss">rss</button> <button class="tag-filter neutral" data-tag="static-site-generator">static-site-generator</button> <button class="tag-filter neutral" data-tag="build-systems">build-systems</button> <button class="tag-filter neutral" data-tag="ci">ci</button> <button class="tag-filter neutral" data-tag="ai-agents">ai-agents</button> <button class="tag-filter neutral" data-tag="mcp">mcp</button> <button class="tag-filter neutral" data-tag="monitoring">monitoring</button> <button class="tag-filter neutral" data-tag="free-tier">free-tier</button> <button class="tag-filter neutral" data-tag="truthmeter-ai">truthmeter-ai</button> <button class="tag-filter neutral" data-tag="git">git</button> <button class="tag-filter neutral" data-tag="android">android</button> <button class="tag-filter neutral" data-tag="adb">adb</button> <button class="tag-filter neutral" data-tag="fire-tv">fire-tv</button> <button class="tag-filter neutral" data-tag="debloat">debloat</button> <button class="tag-filter neutral" data-tag="dns">dns</button> <button class="tag-filter neutral" data-tag="battery">battery</button> <button class="tag-filter neutral" data-tag="homelab">homelab</button> </div> <button id="tagToggleBtn" class="tag-toggle-btn" aria-expanded="false" aria-controls="tagFilters">Show more tags</button> <div class="posts-grid" id="postsGrid"> <div class="post-item panel-card" data-tags="frontend design portfolio ui-design architecture css meta"> <a href="/blog/modernizing-the-developer-portfolio-and-blog/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/modernizing-the-developer-portfolio-and-blog.png" alt="Modernizing the Developer Portfolio: Bento Grids, Proof Metrics, and Unified Theme" loading="eager" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#040</span> <span class="date">16 Nov 2026</span> </div> <h2 class="post-title">Modernizing the Developer Portfolio: Bento Grids, Proof Metrics, and Unified Theme</h2> <p class="post-description">A comprehensive teardown and modernization of the portfolio and blog: replacing playful typography with authoritative developer styles, killing layout voids with a Developer Bento Grid, elevating proof metrics, and unifying the blog architecture.</p> <div class="post-tags"> <span class="tag-pill">frontend</span><span class="tag-pill">design</span><span class="tag-pill">portfolio</span><span class="tag-pill">ui-design</span><span class="tag-pill">architecture</span><span class="tag-pill">css</span><span class="tag-pill">meta</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="android adb fire-tv debloat performance dns battery ai-agents homelab"> <a href="/blog/tuning-a-fire-tv-and-two-phones-over-adb/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/tuning-a-fire-tv-and-two-phones-over-adb.png" alt="Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings" loading="eager" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#039</span> <span class="date">15 Nov 2026</span> </div> <h2 class="post-title">Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings</h2> <p class="post-description">One evening, three devices, all over Wi-Fi ADB. I disabled 15 preinstalled apps on a 2 GB Fire TV, measured a DNS ad-blocker and rejected it, checked my phone&#39;s battery wear and my wife&#39;s Pixel for malware. Every change was reversible. The only thing that broke was the setting I thought was safest: animator_duration_scale, which left the TV&#39;s Settings tile dead after a reboot.</p> <div class="post-tags"> <span class="tag-pill">android</span><span class="tag-pill">adb</span><span class="tag-pill">fire-tv</span><span class="tag-pill">debloat</span><span class="tag-pill">performance</span><span class="tag-pill">dns</span><span class="tag-pill">battery</span><span class="tag-pill">ai-agents</span><span class="tag-pill">homelab</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="truthmeter-ai typescript vscode git ai-agents metrics testing github-actions developer-tools"> <a href="/blog/truthmeter-v2-counting-only-what-git-records/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/truthmeter-v2-counting-only-what-git-records.png" alt="TruthMeter 2.0: Deleting the Guesswork and Counting Only What Git Records" loading="eager" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#038</span> <span class="date">15 Nov 2026</span> </div> <h2 class="post-title">TruthMeter 2.0: Deleting the Guesswork and Counting Only What Git Records</h2> <p class="post-description">A year after shipping TruthMeter AI, I opened it again and found its core number meant nothing: any paste, any autocomplete and any file containing console.error counted as &#39;AI&#39;. Version 2 deletes 19,000 lines and measures only verifiable evidence: co-author trailers, git blame survival, fix-within-72h and opt-in agent session logs. It is also the first release published to the Marketplace with no stored token.</p> <div class="post-tags"> <span class="tag-pill">truthmeter-ai</span><span class="tag-pill">typescript</span><span class="tag-pill">vscode</span><span class="tag-pill">git</span><span class="tag-pill">ai-agents</span><span class="tag-pill">metrics</span><span class="tag-pill">testing</span><span class="tag-pill">github-actions</span><span class="tag-pill">developer-tools</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="scalable-chat-platform aiven postgresql github-actions ai-agents mcp monitoring incident free-tier"> <a href="/blog/keepalive-disabled-for-inactivity/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/keepalive-disabled-for-inactivity.png" alt="The Keepalive That Was Disabled for Inactivity" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#037</span> <span class="date">10 Nov 2026</span> </div> <h2 class="post-title">The Keepalive That Was Disabled for Inactivity</h2> <p class="post-description">In August I shipped a workflow to stop Aiven powering off my free Postgres. The event log says it lost: the write ping ran every six hours for twelve days and Aiven powered the service down anyway. Meanwhile GitHub disabled the whole workflow for repository inactivity on day 62 — an inactivity shutdown one layer up — and the API half never ran at all because its secret was never set.</p> <div class="post-tags"> <span class="tag-pill">scalable-chat-platform</span><span class="tag-pill">aiven</span><span class="tag-pill">postgresql</span><span class="tag-pill">github-actions</span><span class="tag-pill">ai-agents</span><span class="tag-pill">mcp</span><span class="tag-pill">monitoring</span><span class="tag-pill">incident</span><span class="tag-pill">free-tier</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="meta blog rss seo static-site-generator build-systems ci"> <a href="/blog/four-reasonable-decisions-and-a-dead-feed/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/four-reasonable-decisions-and-a-dead-feed.png" alt="Four Reasonable Decisions and a Dead Feed" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#036</span> <span class="date">5 Aug 2026</span> </div> <h2 class="post-title">Four Reasonable Decisions and a Dead Feed</h2> <p class="post-description">Every page on this blog advertised an RSS feed that returned 404. No single line of code was wrong — four independently sensible decisions composed into a file that existed only inside a CI runner. Plus a cross-domain sitemap, a verification file an SPA can fake, and what Hugo, Astro and Eleventy do differently.</p> <div class="post-tags"> <span class="tag-pill">meta</span><span class="tag-pill">blog</span><span class="tag-pill">rss</span><span class="tag-pill">seo</span><span class="tag-pill">static-site-generator</span><span class="tag-pill">build-systems</span><span class="tag-pill">ci</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="meta documentation refactoring portfolio blog technical-debt"> <a href="/blog/documentation-that-outlived-its-code/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/documentation-that-outlived-its-code.png" alt="Documentation That Outlived Its Code" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#035</span> <span class="date">1 Aug 2026</span> </div> <h2 class="post-title">Documentation That Outlived Its Code</h2> <p class="post-description">Every doc in this repo described a site that no longer existed — a terminal aesthetic replaced a year ago and a colour system reduced to an identity function. Auditing them turned up 60 lines of configuration that no code reads.</p> <div class="post-tags"> <span class="tag-pill">meta</span><span class="tag-pill">documentation</span><span class="tag-pill">refactoring</span><span class="tag-pill">portfolio</span><span class="tag-pill">blog</span><span class="tag-pill">technical-debt</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="blog marked javascript dependabot debugging build-tools node"> <a href="/blog/object-object-marked-token-api/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/object-object-marked-token-api.png" alt="[object Object]: How One Dependabot Bump Broke 34 of 39 Posts" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#034</span> <span class="date">1 Aug 2026</span> </div> <h2 class="post-title">[object Object]: How One Dependabot Bump Broke 34 of 39 Posts</h2> <p class="post-description">A major bump to marked changed every renderer method to take a token object instead of positional strings. The build kept exiting 0 while emitting the literal text [object Object] into 34 of 39 posts — and a missing curl flag nearly convinced me nothing was wrong.</p> <div class="post-tags"> <span class="tag-pill">blog</span><span class="tag-pill">marked</span><span class="tag-pill">javascript</span><span class="tag-pill">dependabot</span><span class="tag-pill">debugging</span><span class="tag-pill">build-tools</span><span class="tag-pill">node</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="scalable-chat-platform postgresql aiven render spring-boot incident github-actions debugging deployment"> <a href="/blog/two-month-outage-aiven-dns-and-jdbc-urls/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/two-month-outage-aiven-dns-and-jdbc-urls.png" alt="The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#033</span> <span class="date">1 Aug 2026</span> </div> <h2 class="post-title">The Two-Month Outage: Dead DNS, Eager Filters, and Two Kinds of Postgres URL</h2> <p class="post-description">scalable-chat-platform was down for two months and I did not notice. A free-tier Postgres powered off, its DNS record vanished, and a servlet filter took the whole app down with it — including the health endpoint that was supposed to tell me. Now with the Render-side postmortem: a 59-day hole in the deploy history, an empty healthCheckPath, and one of my own conclusions falsified.</p> <div class="post-tags"> <span class="tag-pill">scalable-chat-platform</span><span class="tag-pill">postgresql</span><span class="tag-pill">aiven</span><span class="tag-pill">render</span><span class="tag-pill">spring-boot</span><span class="tag-pill">incident</span><span class="tag-pill">github-actions</span><span class="tag-pill">debugging</span><span class="tag-pill">deployment</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="spring-boot java hikaricp transactions concurrency interview-prep testing"> <a href="/blog/spring-hikari-hogging-and-optimistic-locking/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/spring-hikari-hogging-and-optimistic-locking.png" alt="HikariCP Exhaustion, Connection Hogging, and Optimistic Locking" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#032</span> <span class="date">30 Jul 2026</span> </div> <h2 class="post-title">HikariCP Exhaustion, Connection Hogging, and Optimistic Locking</h2> <p class="post-description">Phase 2 of the spring-validation-lab: REQUIRES_NEW against a saturated pool, HTTP inside @Transactional after first SQL, and @Version under flash contention — all proven with H2 tests.</p> <div class="post-tags"> <span class="tag-pill">spring-boot</span><span class="tag-pill">java</span><span class="tag-pill">hikaricp</span><span class="tag-pill">transactions</span><span class="tag-pill">concurrency</span><span class="tag-pill">interview-prep</span><span class="tag-pill">testing</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="spring-boot java transactions lifecycle interview-prep testing"> <a href="/blog/spring-bean-lifecycle-and-mini-umbrellas/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/spring-bean-lifecycle-and-mini-umbrellas.png" alt="Spring Bean Lifecycle, Circular Deps, and Mini-Umbrellas" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#031</span> <span class="date">30 Jul 2026</span> </div> <h2 class="post-title">Spring Bean Lifecycle, Circular Deps, and Mini-Umbrellas</h2> <p class="post-description">Phase 1 wrap: @PostConstruct runs before the AOP proxy; constructor cycles fail to boot; Spring Data invents mini-transactions when you have no outer @Transactional.</p> <div class="post-tags"> <span class="tag-pill">spring-boot</span><span class="tag-pill">java</span><span class="tag-pill">transactions</span><span class="tag-pill">lifecycle</span><span class="tag-pill">interview-prep</span><span class="tag-pill">testing</span> </div> </div> </a> </div> </div> <div class="pagination"><a href="/blog/" class="pagination-link active">1</a><a href="/blog/page/2/" class="pagination-link ">2</a><a href="/blog/page/3/" class="pagination-link ">3</a><a href="/blog/page/4/" class="pagination-link ">4</a><a href="/blog/page/5/" class="pagination-link ">5</a><a href="/blog/page/2/" class="pagination-link">Next &raquo;</a></div> <footer class="stats-footer"> <p>
 Total posts: 41 ·
 <a href="/blog/archive.html">Archive</a> ·
 <a href="/blog/feed.xml">RSS Feed</a> </p> </footer> </main> <script>
@@ -818,7 +900,7 @@ thumbnailHtml = `<div class="post-thumbnail" style="background: linear-gradient(
 div.innerHTML = `
 <a href="/blog/${post.slug}/">
 ${thumbnailHtml}
-<div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#${episodeNum}</span> <span class="date">${formatDate(post.date)}</span> </div> <h3 class="post-title">${post.title}</h3> <p class="post-description">${post.description}</p> <div class="post-tags">
+<div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#${episodeNum}</span> <span class="date">${formatDate(post.date)}</span> </div> <h2 class="post-title">${post.title}</h2> <p class="post-description">${post.description}</p> <div class="post-tags">
 ${tagsHtml}
 </div> </div> </a>
 `;
@@ -916,8 +998,9 @@ tagToggleBtn.style.display = 'block';
 tagToggleBtn.style.display = 'none';
 }
 tagToggleBtn.addEventListener('click', () => {
-tagContainer.classList.toggle('expanded');
-if (tagContainer.classList.contains('expanded')) {
+const expanded = tagContainer.classList.toggle('expanded');
+tagToggleBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+if (expanded) {
 tagToggleBtn.textContent = 'Show less tags';
 } else {
 tagToggleBtn.textContent = 'Show more tags';

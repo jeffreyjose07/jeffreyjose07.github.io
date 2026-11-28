@@ -30,6 +30,9 @@ margin: 0;
 padding: 0;
 box-sizing: border-box;
 }
+html {
+scroll-padding-top: 6rem;
+}
 body {
 font-family: var(--font-sans);
 background-color: var(--background);
@@ -57,6 +60,17 @@ line-height: 1.25;
 margin-bottom: 1rem;
 letter-spacing: -0.03em;
 }
+h1,
+h2,
+h3,
+h4 {
+text-wrap: balance;
+}
+h2,
+h3,
+h4 {
+scroll-margin-top: 6rem;
+}
 a {
 color: inherit;
 text-decoration: none;
@@ -67,6 +81,35 @@ width: 100%;
 max-width: 1200px;
 margin: 0 auto;
 padding: 0 1.5rem;
+}
+@media (max-width: 640px) {
+.container {
+padding: 0 0.875rem;
+}
+}
+.skip-link:where(:not(:focus-within, :active)) {
+position: absolute !important;
+clip-path: inset(50%) !important;
+overflow: hidden !important;
+width: 1px !important;
+height: 1px !important;
+margin: -1px !important;
+padding: 0 !important;
+border: 0 !important;
+white-space: nowrap !important;
+}
+.skip-link:focus-visible {
+position: fixed;
+top: 1rem;
+left: 1rem;
+z-index: 2500;
+padding: 0.6rem 1rem;
+border-radius: 0.5rem;
+background: var(--primary);
+color: var(--primary-foreground);
+font-weight: 600;
+font-size: 0.875rem;
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 .panel-card,
 .glass-card {
@@ -227,9 +270,14 @@ letter-spacing: -0.03em;
 }
 .post-content {
 font-size: 1.0625rem;
-line-height: 1.8;
+line-height: 1.75;
 color: #d4d4d8;
 word-break: break-word;
+}
+.post-content p,
+.post-content li,
+.post-content blockquote {
+text-wrap: pretty;
 }
 .post-content p {
 margin-bottom: 1.5rem;
@@ -283,12 +331,12 @@ border-left: 3px solid var(--primary);
 /* Inline code only — do not paint fenced blocks (Shiki owns those). */
 .post-content :not(pre) > code {
 font-family: var(--font-mono);
-font-size: 0.88em;
-background: rgba(255, 255, 255, 0.08);
-padding: 0.2em 0.45em;
+font-size: 0.87em;
+background: rgba(255, 255, 255, 0.06);
+padding: 0.14em 0.38em;
 border-radius: 0.3rem;
 color: #e4e4e7;
-border: 1px solid rgba(255, 255, 255, 0.1);
+border: 1px solid rgba(255, 255, 255, 0.08);
 }
 /* Fenced blocks: Shiki (One Dark Pro) owns token colors via inline styles */
 .post-content .code-block-wrap {
@@ -304,23 +352,101 @@ box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 25px rgba(0, 0, 0, 0
 .post-content .code-block-wrap .code-lang {
 position: absolute;
 top: 0.65rem;
-right: 0.85rem;
+right: 2.85rem;
 z-index: 1;
 font-family: var(--font-mono);
 font-size: 0.65rem;
 letter-spacing: 0.06em;
 text-transform: uppercase;
-color: rgba(171, 178, 191, 0.8);
-background: rgba(255, 255, 255, 0.06);
-padding: 0.15rem 0.45rem;
+color: rgba(171, 178, 191, 0.75);
+background: rgba(255, 255, 255, 0.05);
+padding: 0.2rem 0.45rem;
 border-radius: 4px;
 pointer-events: none;
 user-select: none;
 }
+.post-content .code-block-wrap .copy {
+position: absolute;
+top: 0.5rem;
+right: 0.65rem;
+z-index: 2;
+display: inline-flex;
+align-items: center;
+}
+.post-content .code-block-wrap .copy-button {
+min-inline-size: 28px;
+min-block-size: 28px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+padding: 0.25rem;
+border-radius: 0.375rem;
+background: rgba(24, 24, 27, 0.9);
+border: 1px solid rgba(255, 255, 255, 0.14);
+color: #a1a1aa;
+cursor: pointer;
+transition: opacity 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.post-content .code-block-wrap .copy-button:hover,
+.post-content .code-block-wrap .copy-button:focus-visible {
+color: var(--foreground);
+border-color: rgba(28, 201, 160, 0.45);
+}
+.post-content .code-block-wrap .copy-button[data-copied] {
+color: var(--primary);
+border-color: rgba(28, 201, 160, 0.5);
+}
+.post-content .code-block-wrap .copy-button[data-failed] {
+color: #f87171;
+border-color: rgba(248, 113, 113, 0.5);
+}
+.post-content .code-block-wrap .copy .tip {
+position: absolute;
+top: 50%;
+right: calc(100% + 0.4rem);
+transform: translateY(-50%);
+white-space: nowrap;
+font-family: var(--font-mono);
+font-size: 0.7rem;
+padding: 0.2rem 0.5rem;
+border-radius: 0.3rem;
+background: #09090b;
+color: var(--primary);
+border: 1px solid rgba(28, 201, 160, 0.35);
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.15s ease;
+}
+.post-content .code-block-wrap .copy-button[data-copied] + .tip,
+.post-content .code-block-wrap .copy-button[data-failed] + .tip {
+opacity: 1;
+}
+.post-content .code-block-wrap .copy-button[data-failed] + .tip {
+color: #f87171;
+border-color: rgba(248, 113, 113, 0.4);
+}
+@media (hover: hover) {
+.post-content .code-block-wrap .copy-button {
+opacity: 0;
+}
+.post-content .code-block-wrap:hover .copy-button,
+.post-content .code-block-wrap:focus-within .copy-button,
+.post-content .code-block-wrap .copy-button:focus-visible,
+.post-content .code-block-wrap .copy-button[data-copied],
+.post-content .code-block-wrap .copy-button[data-failed] {
+opacity: 1;
+}
+}
+@media (prefers-reduced-motion: reduce) {
+.post-content .code-block-wrap .copy-button,
+.post-content .code-block-wrap .copy .tip {
+transition: opacity 0.15s ease;
+}
+}
 .post-content pre,
 .post-content .code-block-wrap pre.shiki {
 background: #18181b;
-padding: 1.65rem 1.25rem 1.35rem;
+padding: 1.65rem 3.25rem 1.35rem 1.25rem;
 border-radius: 0.5rem;
 overflow-x: auto;
 margin: 2rem -2.5rem;
@@ -339,9 +465,9 @@ background: transparent !important;
 @media (max-width: 768px) {
 .post-content pre,
 .post-content .code-block-wrap {
-margin-left: -1.5rem;
-margin-right: -1.5rem;
-width: calc(100% + 3rem);
+margin-left: -1.25rem;
+margin-right: -1.25rem;
+width: calc(100% + 2.5rem);
 border-radius: 0;
 }
 }
@@ -571,7 +697,7 @@ grid-template-columns: 1fr;
 text-align: left;
 }
 .post-container {
-padding: 1.5rem;
+padding: 1.25rem;
 }
 }
 /* Inline styles injected from frontmatter */
@@ -759,64 +885,77 @@ opacity: 1;
 transform: translateY(0);
 }
 }
-/* Search Modal */
-.search-modal-overlay {
-display: none;
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background: rgba(0, 0, 0, 0.8);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-z-index: 2000;
-align-items: flex-start;
-justify-content: center;
-padding-top: 100px;
-opacity: 0;
-transition: opacity 0.25s ease;
-}
-.search-modal-overlay.open {
-display: flex;
-opacity: 1;
-}
-.search-modal {
+/* Search Dialog (native <dialog>) */
+dialog.search-dialog {
+margin: 100px auto auto;
+padding: 0;
 background: #101013;
+color: var(--foreground);
 border: 1px solid rgba(255, 255, 255, 0.15);
 border-radius: 1rem;
-width: 90%;
+width: min(92vw, 600px);
 max-width: 600px;
 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 25px -5px rgba(28, 201, 160, 0.2);
 overflow: hidden;
-transform: scale(0.96);
-transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.search-modal-overlay.open .search-modal {
-transform: scale(1);
+dialog.search-dialog:modal {
+overscroll-behavior: contain;
+}
+dialog.search-dialog::backdrop {
+background: rgba(0, 0, 0, 0.78);
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+overflow: hidden;
+overscroll-behavior: contain;
+}
+@media (max-width: 640px) {
+dialog.search-dialog {
+margin-top: 72px;
+}
 }
 .search-input-container {
-padding: 1.25rem 1.5rem;
+padding: 1rem 1.25rem;
 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 display: flex;
 align-items: center;
+gap: 0.75rem;
 }
 .search-icon {
 color: var(--primary);
-margin-right: 0.85rem;
 flex-shrink: 0;
 }
 .search-input {
 background: transparent;
 border: none;
 color: var(--foreground);
-font-size: 1.05rem;
+font-size: 1rem;
 width: 100%;
 outline: none;
 font-family: var(--font-sans);
 }
 .search-input::placeholder {
 color: var(--muted-foreground);
+}
+.search-close {
+min-inline-size: 32px;
+min-block-size: 32px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 0.5rem;
+color: var(--muted-foreground);
+font-size: 1.125rem;
+line-height: 1;
+cursor: pointer;
+flex-shrink: 0;
+transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.search-close:hover {
+color: var(--foreground);
+border-color: rgba(28, 201, 160, 0.35);
+background: rgba(255, 255, 255, 0.1);
 }
 .search-results {
 max-height: 400px;
@@ -856,16 +995,23 @@ display: -webkit-box;
 -webkit-box-orient: vertical;
 overflow: hidden;
 }
-</style> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
+</style> <a href="#main-content" class="skip-link">Skip to main content</a> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
 class="text-gradient-premium">Jose</span></span> <span class="logo-status-pill"> <span class="status-pulse-dot"></span>
 blog
-</span> </a> <nav class="site-nav"> <a href="/#hero" class="nav-link">Home</a> <a href="/#experience" class="nav-link">Experience</a> <a href="/#skills" class="nav-link">Skills</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/blog/" class="nav-link active">Blog</a> <a href="/#contact" class="nav-link">Contact</a> </nav> <div style="display: flex; align-items: center; gap: 0.75rem;"> <button class="search-trigger" onclick="openSearch()" aria-label="Search posts"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut">⌘K</span> </button> <button class="mobile-menu-toggle" aria-label="Toggle menu"
-onclick="document.querySelector('.site-nav').classList.toggle('open')"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-stroke-linecap="round" stroke-linejoin="round"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()"> <div class="search-modal"> <div class="search-input-container"> <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts by topic, title, or tags..." id="searchInput" autocomplete="off"> </div> <div class="search-results" id="searchResults"> </div> </div> </div> <script>
+</span> </a> <nav class="site-nav" id="primaryNav" aria-label="Primary"> <a href="/#hero" class="nav-link">Home</a> <a href="/#experience" class="nav-link">Experience</a> <a href="/#skills" class="nav-link">Skills</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/blog/" class="nav-link active" aria-current="page">Blog</a> <a href="/#contact" class="nav-link">Contact</a> </nav> <div style="display: flex; align-items: center; gap: 0.75rem;"> <button type="button" class="search-trigger" id="searchTrigger" onclick="openSearch()" aria-label="Search posts"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut" aria-hidden="true">⌘K</span> </button> <button type="button" class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false"
+aria-controls="primaryNav" onclick="toggleMobileMenu(this)"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <dialog class="search-dialog" id="searchModal" closedby="any" aria-labelledby="searchDialogTitle"> <h1 id="searchDialogTitle" class="sr-only">Search articles</h1> <div class="search-input-container"> <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts by topic, title, or tags..."
+id="searchInput" aria-label="Search posts" autocomplete="off" autofocus> <button type="button" class="search-close" onclick="closeSearch()" aria-label="Close search">&times;</button> </div> <div class="search-results" id="searchResults"> </div> </dialog> <script>
 let searchIndex = [];
-let isSearchOpen = false;
+const searchDialog = document.getElementById('searchModal');
+const searchInput = document.getElementById('searchInput');
+function toggleMobileMenu(btn) {
+const nav = document.getElementById('primaryNav');
+const open = nav.classList.toggle('open');
+btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
 async function loadSearchIndex() {
 if (searchIndex.length > 0) return;
 try {
@@ -876,16 +1022,30 @@ console.error('Failed to load search index', e);
 }
 }
 function openSearch() {
-document.getElementById('searchModal').classList.add('open');
-document.getElementById('searchInput').focus();
-isSearchOpen = true;
+if (!searchDialog.open) {
+searchDialog.showModal();
+}
+searchInput.focus();
 loadSearchIndex();
-document.body.style.overflow = 'hidden';
 }
 function closeSearch() {
-document.getElementById('searchModal').classList.remove('open');
-isSearchOpen = false;
-document.body.style.overflow = '';
+if (searchDialog.open) {
+searchDialog.close();
+}
+}
+// Light-dismiss fallback for browsers without <dialog closedby="any"> (e.g. Safari)
+if (!('closedBy' in HTMLDialogElement.prototype)) {
+const outside = (e, dialog) => {
+const r = dialog.getBoundingClientRect();
+return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+};
+let pressedOutside = false;
+searchDialog.addEventListener('pointerdown', (e) => {
+pressedOutside = outside(e, searchDialog);
+});
+searchDialog.addEventListener('pointerup', (e) => {
+if (pressedOutside && outside(e, searchDialog)) searchDialog.close();
+});
 }
 function performSearch(query) {
 if (!query) {
@@ -897,7 +1057,7 @@ const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
 const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
 const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
 return titleMatch || descMatch || tagMatch;
-}).slice(0, 5); // Limit to 5 results
+}).slice(0, 5);
 const resultsHtml = results.map(post => `
 <a href="/blog/${post.slug}/" class="search-result-item" onclick="closeSearch()"> <div class="search-result-title">${post.title}</div> <div class="search-result-excerpt">${post.description || ''}</div> </a>
 `).join('');
@@ -905,21 +1065,18 @@ document.getElementById('searchResults').innerHTML = results.length > 0
 ? resultsHtml
 : '<div style="padding: 1.5rem; color: var(--muted-foreground); text-align: center; font-size: 0.9rem;">No matching articles found</div>';
 }
-document.getElementById('searchInput').addEventListener('input', (e) => {
+searchInput.addEventListener('input', (e) => {
 performSearch(e.target.value);
 });
-// Keyboard shortcuts
+// Keyboard shortcut (Cmd/Ctrl+K)
 document.addEventListener('keydown', (e) => {
-if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
 e.preventDefault();
-if (isSearchOpen) closeSearch();
+if (searchDialog.open) closeSearch();
 else openSearch();
 }
-if (e.key === 'Escape' && isSearchOpen) {
-closeSearch();
-}
 });
-</script> <main class="container"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#038</span> <span>15 Nov 2026</span> <span>·</span> <span>13 min read</span> </div> <h1 class="post-title">TruthMeter 2.0: Deleting the Guesswork and Counting Only What Git Records</h1> </header> <div class="post-content"> <p>Working log for <a href="https://github.com/jeffreyjose07/truthmeterai">truthmeterai</a>. <strong>Previous:</strong> <a href="/blog/building-truthmeter-ai-measuring-the-real-impact-o">Building TruthMeter AI: Measuring the Real Impact of AI Coding Assistants</a>.</p> <p>Episode 021 opened by complaining that AI vendors publish misleading metrics. &quot;95% acceptance rate&quot; means nothing if developers rewrite what they accept. I built TruthMeter to measure the real thing instead, wrote 4,500 words about it, and shipped it with 145 passing tests.</p> <p>A year later I opened it again to update its dependencies. Before touching <code>package.json</code> I read the function every number in the extension depended on. It was producing exactly the kind of number that post complained about.</p> <p>This is the story of version 2: what was wrong, what replaced it, and what the replacement says about this blog&#39;s own repository.</p> <hr> <h2>The function everything rested on</h2> <p>Every metric in v1 started from one question: was this edit made by an AI? VS Code has no API for that, so v1 guessed. This is the code from episode 021, unchanged:</p> <div class="code-block-wrap" data-lang="typescript"><span class="code-lang" aria-hidden="true">typescript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">private</span><span style="color:#61AFEF"> isAIGenerated</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">change</span><span style="color:#ABB2BF">: </span><span style="color:#E06C75">TextDocumentChangeEvent</span><span style="color:#ABB2BF">): </span><span style="color:#E06C75">boolean</span><span style="color:#ABB2BF"> {</span></span> <span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> text</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> change</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">document</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">getText</span><span style="color:#ABB2BF">();</span></span> <span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> insertedLength</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> change</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">contentChanges</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">0</span><span style="color:#ABB2BF">]?.</span><span style="color:#E5C07B">text</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">length</span><span style="color:#56B6C2"> ||</span><span style="color:#D19A66"> 0</span><span style="color:#ABB2BF">;</span></span> <span class="line"></span> <span class="line"><span style="color:#7F848E;font-style:italic">  // Heuristic 1: Large text insertions (>100 chars at once)</span></span> <span class="line"><span style="color:#C678DD">  if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">insertedLength</span><span style="color:#56B6C2"> ></span><span style="color:#D19A66"> 100</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">return</span><span style="color:#D19A66"> true</span><span style="color:#ABB2BF">;</span></span> <span class="line"></span> <span class="line"><span style="color:#7F848E;font-style:italic">  // Heuristic 2: Pattern matching for AI signatures</span></span> <span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> aiPatterns</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> [</span></span> <span class="line"><span style="color:#E06C75">    /</span><span style="color:#56B6C2">\/\/</span><span style="color:#E06C75"> TODO: Implement/</span><span style="color:#C678DD">gi</span><span style="color:#ABB2BF">,</span></span> <span class="line"><span style="color:#E06C75">    /function\s</span><span style="color:#D19A66">+</span><span style="color:#E06C75">\w</span><span style="color:#D19A66">+</span><span style="color:#56B6C2">\(</span><span style="color:#D19A66">[</span><span style="color:#ABB2BF">^</span><span style="color:#D19A66">)]*</span><span style="color:#56B6C2">\)</span><span style="color:#E06C75">\s</span><span style="color:#D19A66">*</span><span style="color:#E06C75">{\s</span><span style="color:#D19A66">*</span><span style="color:#56B6C2">\/\/</span><span style="color:#E06C75"> Implementation/</span><span style="color:#C678DD">gi</span><span style="color:#ABB2BF">,</span></span> <span class="line"><span style="color:#E06C75">    /catch\s</span><span style="color:#D19A66">*</span><span style="color:#56B6C2">\(</span><span style="color:#D19A66">[</span><span style="color:#ABB2BF">^</span><span style="color:#D19A66">)]+</span><span style="color:#56B6C2">\)</span><span style="color:#E06C75">\s</span><span style="color:#D19A66">*</span><span style="color:#E06C75">{\s</span><span style="color:#D19A66">*</span><span style="color:#E06C75">console</span><span style="color:#56B6C2">\.</span><span style="color:#E06C75">error/</span><span style="color:#C678DD">gi</span></span> <span class="line"><span style="color:#ABB2BF">  ];</span></span> <span class="line"><span style="color:#C678DD">  if</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">aiPatterns</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">some</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">pattern</span><span style="color:#C678DD"> =></span><span style="color:#E5C07B"> pattern</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">test</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">text</span><span style="color:#ABB2BF">))) </span><span style="color:#C678DD">return</span><span style="color:#D19A66"> true</span><span style="color:#ABB2BF">;</span></span> <span class="line"></span> <span class="line"><span style="color:#7F848E;font-style:italic">  // Heuristic 3: Rapid successive changes (AI streaming)</span></span> <span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> timeSinceLastChange</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> Date</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">now</span><span style="color:#ABB2BF">() </span><span style="color:#56B6C2">-</span><span style="color:#E5C07B"> this</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">lastChangeTime</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#C678DD">  if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">timeSinceLastChange</span><span style="color:#56B6C2"> &#x3C;</span><span style="color:#D19A66"> 100</span><span style="color:#56B6C2"> &#x26;&#x26;</span><span style="color:#E06C75"> insertedLength</span><span style="color:#56B6C2"> ></span><span style="color:#D19A66"> 20</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">return</span><span style="color:#D19A66"> true</span><span style="color:#ABB2BF">;</span></span></code></pre></div> <p>Read each heuristic as a test with false positives:</p> <ul> <li><strong>Heuristic 1</strong> counts any insertion over 100 characters. That includes pasting from Stack Overflow, pasting your own code from another file, and <code>git checkout</code> rewriting a buffer. A paste is not an AI.</li> <li><strong>Heuristic 2</strong> is worse than it looks. <code>text</code> is <code>document.getText()</code>, the <strong>whole file</strong>, not the inserted text. Once a file contains one <code>catch (e) { console.error</code>, every edit you make to that file counts as AI-generated, including typing a single character.</li> <li><strong>Heuristic 3</strong> treats two changes less than 100 ms apart as AI streaming. Accepting an IntelliSense suggestion, expanding a snippet and format-on-save all do that.</li> </ul> <p>Everything else sat on top: churn, the &quot;AI share&quot; percentage, the ROI dashboard that turned hours into rupees. The research figures the post quoted were real. They were being multiplied by a number that meant nothing.</p> <p>The 145 tests did not catch any of this, and they could not have. They checked that the heuristics returned what the heuristics were written to return. No test asked whether a paste is an AI. <strong>A test suite can only confirm a definition. It cannot tell you the definition is wrong.</strong></p> <h2>The rule for version 2</h2> <p>One constraint decided everything else: <strong>count only what is recorded somewhere you can verify.</strong> If TruthMeter says a commit is AI-written, you can open the commit and see why. Where no evidence exists, the extension says it doesn&#39;t know instead of guessing.</p> <p>That ruled out keystroke timing and pattern matching completely. What is left are four sources of evidence, each of which you can check yourself:</p> <ol> <li><strong>Attribution in git history.</strong> Co-author trailers, agent bot authors and tool footers.</li> <li><strong>Line survival.</strong> <code>git blame</code> at HEAD shows how much of that code still exists.</li> <li><strong>Fix within 72 hours.</strong> How often a commit is followed by a fix or revert touching the same files.</li> <li><strong>Agent session logs</strong>, opt-in. Claude Code and Codex record every file they edit, locally.</li> </ol> <p>The rewrite deleted 18,957 lines and added 6,221. Webpack, husky, nyc, the ROI calculator, the keystroke tracker and three planning documents for features that never shipped are all gone. The extension now has zero runtime dependencies and bundles to <strong>32 KB</strong> with esbuild. v1 was 2 MB.</p> <figure class="post-figure"><img src="/blog/images/truthmeter-v2-dashboard.png" alt="The TruthMeter 2.0 dashboard" loading="lazy" decoding="async"></figure> <h2>Attribution: who says a commit was AI-written</h2> <p>AI coding tools increasingly sign their work. Claude Code adds <code>Co-Authored-By: Claude … &lt;noreply@anthropic.com&gt;</code> and a &quot;Generated with Claude Code&quot; footer. GitHub&#39;s coding agent commits as <code>copilot-swe-agent[bot]</code>. Jules commits as <code>google-labs-jules[bot]</code>. Cursor, Codex, Aider, Devin, Windsurf and Amazon Q all leave something similar.</p> <p>Matching those looks trivial, but it isn&#39;t, because these tools have human names. A rule as loose as <code>/claude/i</code> on the co-author line flags a painter:</p> <div class="code-block-wrap" data-lang="typescript"><span class="code-lang" aria-hidden="true">typescript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">it</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'does not flag a human co-author named Claude'</span><span style="color:#ABB2BF">, () </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span> <span class="line"><span style="color:#E5C07B">    assert</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">strictEqual</span><span style="color:#ABB2BF">(</span><span style="color:#61AFEF">classifyCommit</span><span style="color:#ABB2BF">(</span><span style="color:#61AFEF">human</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'docs</span><span style="color:#56B6C2">\n\n</span><span style="color:#98C379">Co-authored-by: Claude Monet &#x3C;claude@monet.fr>'</span><span style="color:#ABB2BF">)), </span><span style="color:#D19A66">undefined</span><span style="color:#ABB2BF">);</span></span> <span class="line"><span style="color:#ABB2BF">});</span></span></code></pre></div> <p>Jules Verne and Devin Smith had the same problem. The final rules anchor on something no human contributor would have: an <code>@anthropic.com</code> address or a model name for Claude, the <code>google-labs-jules</code> bot identity for Jules, <code>devin-ai-integration</code> or a Cognition address for Devin. Each signal also carries a <strong>confidence</strong>. A Copilot co-author trailer is marked <em>medium</em>, because it says Copilot was involved without saying how much of the commit it wrote. A bot author is <em>high</em>: the bot made the commit.</p> <p>Rules are checked in a fixed order: custom rules from your settings, then agent authors, then trailers, then footers. A team that tags commits <code>[ai-assisted]</code> can add that as a rule without waiting for me. An invalid regex in a custom rule is skipped instead of crashing the analysis, and there is a test for that too.</p> <h2>Survival: is the code still there?</h2> <p>GitClear&#39;s churn research is the reason this matters. A commit is easy to count. What is still in the codebase weeks later tells you whether the commit was any good.</p> <p>TruthMeter runs <code>git blame --line-porcelain -w HEAD</code> across the files those commits touched and counts how many current lines each commit still owns. Three details turned out to matter:</p> <ul> <li><strong>Only mature commits count.</strong> Code written yesterday has had no time to be rewritten, so including it inflates survival. By default a commit must be 14 days old, and the dashboard shows newer commits as &quot;too recent&quot; instead of as 100%.</li> <li><strong>The denominator is measurable lines.</strong> If a file was deleted, its lines count as gone. If blame was skipped for a file, because of the 400-file cap on huge repos, its lines are dropped from both sides instead of being counted as lost.</li> <li><strong>Lock files and build output are excluded.</strong> A <code>package-lock.json</code> change can add 5,000 lines. Without the exclusion one dependency bump would outweigh a month of real work.</li> </ul> <p><code>-w</code> matters too: without it, a reformat that only changes whitespace hands every line to whoever ran the formatter.</p> <h2>Fix within 72 hours, and the files everything touches</h2> <p>The second quality signal is how often a commit is followed, within three days, by a <code>fix:</code> or revert that touches the same files. It is cheap to compute and easy to explain.</p> <p>On the first runs against real repositories the fix rate came out far too high. The cause was <code>package.json</code>. Nearly every commit touches it, nearly every fix touches it, so every commit &quot;shared a file&quot; with a later fix. <code>README.md</code> and <code>CHANGELOG.md</code> did the same thing. These hub files (manifests, READMEs, changelogs, <code>.gitignore</code>) are now ignored when looking for shared files, and the rate dropped to something believable.</p> <p>Rates are also withheld when either group has fewer than five mature commits. A 0% or 100% from two commits is noise presented with a percentage sign.</p> <h2>Agent logs: the commits that don&#39;t say so</h2> <p>Trailers only work if they are kept. Plenty of people turn them off, and some repositories forbid them outright. Agents still leave a record locally, though:</p> <ul> <li><strong>Claude Code</strong> writes JSONL transcripts to <code>~/.claude/projects/</code>. Every <code>Edit</code>, <code>Write</code> and <code>MultiEdit</code> tool call includes the absolute <code>file_path</code> and a timestamp.</li> <li><strong>Codex</strong> writes sessions to <code>~/.codex/sessions/</code>. Its <code>apply_patch</code> calls contain <code>*** Update File:</code> headers, and the session metadata records the working directory.</li> </ul> <p>With logs enabled, TruthMeter finds commits with no trailer whose files an agent edited in the 24 hours before the commit. They stay in the &quot;other&quot; group, since an agent editing a file doesn&#39;t prove it wrote the commit. The dashboard reports how many there are, as a warning that the AI share is probably understated.</p> <p>This is <strong>off by default</strong> and turning it on asks for explicit consent. TruthMeter reads only file paths and timestamps inside the current workspace, never prompts or code, and nothing leaves the machine. Session logs are private data even when they are on your own disk.</p> <h2>What it says about this blog</h2> <p>The first repository I pointed it at, after its own, was this one. Over the last year:</p> <table> <thead> <tr> <th></th> <th></th> </tr> </thead> <tbody><tr> <td>Commits</td> <td>173</td> </tr> <tr> <td>AI-attributed by trailer</td> <td>23</td> </tr> <tr> <td>No trailer, but Claude Code edited their files within 24 h</td> <td><strong>18</strong></td> </tr> </tbody></table> <p>The 18 are not a bug. This repository&#39;s <code>CLAUDE.md</code> forbids AI co-author trailers, and a git hook rejects them. TruthMeter has never seen that file. It found the gap from the session logs alone, and it reported those 18 as &quot;other&quot; with a caveat that the true AI share is higher. Counting both, at least 41 of 173 commits, about a quarter, had an agent involved.</p> <p>Then a result I almost put in the wrong section. AI-attributed lines here survive at <strong>67%</strong>, other lines at <strong>38%</strong>. It reads like a headline: AI code lasts longer than mine.</p> <p>It doesn&#39;t mean that. The &quot;other&quot; group contains the <code>auto: rebuild blog</code> commits that CI makes after every post. Those commits regenerate HTML in <code>public/blog/</code>, and the next rebuild rewrites much of it again. Generated output that gets regenerated on every deploy is about the least durable code possible, and it is all on the human side of the comparison. TruthMeter excludes <code>dist/</code>, <code>build/</code> and <code>out/</code> but not <code>public/blog/</code>, and it does not separate bot commits from human ones yet.</p> <p>So the honest reading is that this comparison is confounded, and the tool did not warn me about it. That is the next feature: treat commits by CI bots as their own group. I would rather publish that than the 67%.</p> <p>On TruthMeter&#39;s own repository the answer is simpler: 5 of 5 commits are AI-attributed. I wrote v2 with Claude Code, and the commits say so.</p> <h2>Testing against git instead of against itself</h2> <p>v1&#39;s tests mocked git and checked the heuristics against themselves. v2&#39;s main integration test builds a real repository in a temp directory and back-dates every commit with <code>GIT_AUTHOR_DATE</code> and <code>GIT_COMMITTER_DATE</code>:</p> <ul> <li>six AI commits 35 to 40 days old, ten lines each</li> <li>six human commits alongside them</li> <li>a human <code>fix:</code> one hour after AI commit #3, changing one of its lines</li> <li>a refactor 20 days ago that rewrites five lines in three of the AI files, plus a 500-line lock file</li> <li>one AI commit two days old</li> </ul> <p>That scenario has answers you can work out on paper before running anything. 60 AI lines are in mature commits, 15 are rewritten by the refactor and one by the fix, so survival must be exactly <strong>44/60</strong>. One of six mature AI commits was fixed within 72 hours, so the fix rate must be exactly <strong>1/6</strong>. Human lines must total 80, not 580, because the lock file is excluded. The test asserts those numbers. A heuristic can&#39;t pass a test like that by agreeing with itself.</p> <p>The end-to-end suite launches real VS Code twice in CI, version 1.90 (the minimum supported) and the current stable, opens the same fixture repo and checks the commands, status bar and dashboard. That caught a problem no unit test would: mocha 12 is ESM-only, and VS Code 1.90&#39;s extension host loads tests with <code>require()</code>, so the whole suite died with <code>ERR_REQUIRE_ESM</code> before running one test. Mocha is pinned to 11, with a note in the repo saying why.</p> <p>Building the webview turned up one more gotcha. The dashboard&#39;s comparison bars are sized with inline <code>style=&quot;&quot;</code> attributes. If a nonce is present in <code>style-src</code>, browsers <strong>ignore</strong> <code>&#39;unsafe-inline&#39;</code>, so those attributes would be silently blocked. The fix is to use the nonce only for scripts and leave <code>style-src</code> with <code>&#39;unsafe-inline&#39;</code> and no nonce.</p> <h2>Publishing in late 2026</h2> <p>The release workflow is the part of the project that changed most underneath me. Microsoft is retiring global Azure DevOps personal access tokens, and on <strong>1 December 2026</strong> they stop working for Marketplace publishing. The <code>VSCE_PAT</code> secret this repo had used since 2025 has two weeks left.</p> <p>The replacement is <strong>trusted publishing</strong>: GitHub Actions requests a short-lived OIDC token for the workflow run, and the Marketplace exchanges it for a publish credential, but only after checking the token&#39;s claims against a policy you set on the publisher page: repository owner, repository and workflow filename. Nothing long-lived is stored anywhere.</p> <p>I shipped 2.0.0 with both paths, OIDC first and the PAT as a fallback. The OIDC step failed with:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>The token could not be exchanged for the specified publisher.</span></span></code></pre></div> <p>That was expected. No policy existed yet, so the PAT fallback published 2.0.0. After adding the policy (<code>jeffreyjose07</code> / <code>truthmeterai</code> / <code>publish.yml</code>), I tagged 2.0.1 and the run went:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>success  Publish to VS Code Marketplace (OIDC trusted publishing)</span></span> <span class="line"><span>skipped  Publish to VS Code Marketplace (PAT fallback, works until 2026-12-01)</span></span> <span class="line"><span>success  Publish to Open VSX</span></span></code></pre></div> <p>Then I deleted the fallback and the secret. Leaving it would have been worse than useless. The OIDC step had <code>continue-on-error: true</code> so the fallback could run, which means a broken policy would have fallen through to an expired token. The run would fail with a confusing 401 from the wrong step instead of the real error.</p> <p>Two more details. The policy records GitHub&#39;s <strong>numeric</strong> IDs for the owner and repository next to their names, so someone who claims the name <code>jeffreyjose07/truthmeterai</code> after a rename can&#39;t publish as me. And Open VSX, which serves Cursor, Windsurf and VSCodium, still uses a token and a different publisher ID. The workflow rewrites the <code>publisher</code> field with <code>jq</code>, packages a second VSIX and publishes it.</p> <h2>By the numbers</h2> <table> <thead> <tr> <th></th> <th>v1 (Nov 2025)</th> <th>v2 (Nov 2026)</th> </tr> </thead> <tbody><tr> <td>Source lines (excluding tests)</td> <td>~5,000</td> <td>1,452</td> </tr> <tr> <td>Runtime dependencies</td> <td>8</td> <td>0</td> </tr> <tr> <td>Bundle</td> <td>2 MB</td> <td>32 KB</td> </tr> <tr> <td>Tests</td> <td>145, checking heuristics against themselves</td> <td>32, against real git and real VS Code</td> </tr> <tr> <td>What &quot;AI&quot; means</td> <td>a guess from paste size, regex and timing</td> <td>a commit that records it</td> </tr> <tr> <td>Marketplace publishing</td> <td>stored PAT</td> <td>OIDC, no stored secret</td> </tr> <tr> <td>Time to analyse a repo</td> <td>—</td> <td>1–2 s</td> </tr> </tbody></table> <p>Fewer tests and less code, but it measures something real now.</p> <h2>What I&#39;d tell myself a year ago</h2> <p>The pitch was right. Vendor metrics are misleading, and churn and survival matter more than acceptance rates. My mistake was rebuilding the vendors&#39; problem one level down: I needed a number, there was no honest way to get it, so I made one up and wrote thorough tests for it.</p> <p>v2 often says less. A repo with no trailers and no agent logs shows zero AI-attributed commits and an offer to turn on session evidence, instead of a confident 37%. That is a less impressive dashboard. It is also the first version I&#39;d trust with a decision.</p> <p>The extension is on the <a href="https://marketplace.visualstudio.com/items?itemName=JeffreyJose.truthmeter-ai">VS Code Marketplace</a> and <a href="https://open-vsx.org/extension/jeffreyjose07/truthmeter-ai">Open VSX</a>. The v1 settings (<code>aiMetrics.*</code>) were removed rather than migrated. They configured features that no longer exist, and the changelog says so.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-truthmeter-ai" class="tag neutral" data-tag="truthmeter-ai">truthmeter-ai</a>, <a href="/blog#tag-typescript" class="tag neutral" data-tag="typescript">typescript</a>, <a href="/blog#tag-vscode" class="tag neutral" data-tag="vscode">vscode</a>, <a href="/blog#tag-git" class="tag neutral" data-tag="git">git</a>, <a href="/blog#tag-ai-agents" class="tag neutral" data-tag="ai-agents">ai-agents</a>, <a href="/blog#tag-metrics" class="tag neutral" data-tag="metrics">metrics</a>, <a href="/blog#tag-testing" class="tag neutral" data-tag="testing">testing</a>, <a href="/blog#tag-github-actions" class="tag success" data-tag="github-actions">github-actions</a>, <a href="/blog#tag-developer-tools" class="tag neutral" data-tag="developer-tools">developer-tools</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="status-dot-avatar" aria-hidden="true"></span> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <div style="display: flex; align-items: center; gap: 0.5rem;"> <span class="author-name">Jeffrey Jose</span> <span class="dev-badge" style="font-size: 0.65rem; padding: 0.1rem 0.45rem;">backend</span> </div> <span class="author-bio">Senior backend engineer writing about Spring Boot, distributed systems, and production debugging.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous panel-card"> <a href="/blog/keepalive-disabled-for-inactivity/"> <span class="nav-label">← previous</span> <span class="nav-title">The Keepalive That Was Disabled for Inactivity</span> </a> </div> <div class="nav-next panel-card"> <a href="/blog/tuning-a-fire-tv-and-two-phones-over-adb/"> <span class="nav-label">next →</span> <span class="nav-title">Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
+</script> <main class="container" id="main-content"> <article class="post-container"> <header class="post-header"> <div class="post-meta"> <span class="episode-badge">#038</span> <span>15 Nov 2026</span> <span>·</span> <span>13 min read</span> </div> <h1 class="post-title">TruthMeter 2.0: Deleting the Guesswork and Counting Only What Git Records</h1> </header> <div class="post-content"> <p>Working log for <a href="https://github.com/jeffreyjose07/truthmeterai">truthmeterai</a>. <strong>Previous:</strong> <a href="/blog/building-truthmeter-ai-measuring-the-real-impact-o">Building TruthMeter AI: Measuring the Real Impact of AI Coding Assistants</a>.</p> <p>Episode 021 opened by complaining that AI vendors publish misleading metrics. &quot;95% acceptance rate&quot; means nothing if developers rewrite what they accept. I built TruthMeter to measure the real thing instead, wrote 4,500 words about it, and shipped it with 145 passing tests.</p> <p>A year later I opened it again to update its dependencies. Before touching <code>package.json</code> I read the function every number in the extension depended on. It was producing exactly the kind of number that post complained about.</p> <p>This is the story of version 2: what was wrong, what replaced it, and what the replacement says about this blog&#39;s own repository.</p> <hr> <h2>The function everything rested on</h2> <p>Every metric in v1 started from one question: was this edit made by an AI? VS Code has no API for that, so v1 guessed. This is the code from episode 021, unchanged:</p> <div class="code-block-wrap" data-lang="typescript"><span class="code-lang" aria-hidden="true">typescript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#E06C75">private</span><span style="color:#61AFEF"> isAIGenerated</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">change</span><span style="color:#ABB2BF">: </span><span style="color:#E06C75">TextDocumentChangeEvent</span><span style="color:#ABB2BF">): </span><span style="color:#E06C75">boolean</span><span style="color:#ABB2BF"> {</span></span> <span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> text</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> change</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">document</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">getText</span><span style="color:#ABB2BF">();</span></span> <span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> insertedLength</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> change</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">contentChanges</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">0</span><span style="color:#ABB2BF">]?.</span><span style="color:#E5C07B">text</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">length</span><span style="color:#56B6C2"> ||</span><span style="color:#D19A66"> 0</span><span style="color:#ABB2BF">;</span></span> <span class="line"></span> <span class="line"><span style="color:#7F848E;font-style:italic">  // Heuristic 1: Large text insertions (>100 chars at once)</span></span> <span class="line"><span style="color:#C678DD">  if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">insertedLength</span><span style="color:#56B6C2"> ></span><span style="color:#D19A66"> 100</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">return</span><span style="color:#D19A66"> true</span><span style="color:#ABB2BF">;</span></span> <span class="line"></span> <span class="line"><span style="color:#7F848E;font-style:italic">  // Heuristic 2: Pattern matching for AI signatures</span></span> <span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> aiPatterns</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> [</span></span> <span class="line"><span style="color:#E06C75">    /</span><span style="color:#56B6C2">\/\/</span><span style="color:#E06C75"> TODO: Implement/</span><span style="color:#C678DD">gi</span><span style="color:#ABB2BF">,</span></span> <span class="line"><span style="color:#E06C75">    /function\s</span><span style="color:#D19A66">+</span><span style="color:#E06C75">\w</span><span style="color:#D19A66">+</span><span style="color:#56B6C2">\(</span><span style="color:#D19A66">[</span><span style="color:#ABB2BF">^</span><span style="color:#D19A66">)]*</span><span style="color:#56B6C2">\)</span><span style="color:#E06C75">\s</span><span style="color:#D19A66">*</span><span style="color:#E06C75">{\s</span><span style="color:#D19A66">*</span><span style="color:#56B6C2">\/\/</span><span style="color:#E06C75"> Implementation/</span><span style="color:#C678DD">gi</span><span style="color:#ABB2BF">,</span></span> <span class="line"><span style="color:#E06C75">    /catch\s</span><span style="color:#D19A66">*</span><span style="color:#56B6C2">\(</span><span style="color:#D19A66">[</span><span style="color:#ABB2BF">^</span><span style="color:#D19A66">)]+</span><span style="color:#56B6C2">\)</span><span style="color:#E06C75">\s</span><span style="color:#D19A66">*</span><span style="color:#E06C75">{\s</span><span style="color:#D19A66">*</span><span style="color:#E06C75">console</span><span style="color:#56B6C2">\.</span><span style="color:#E06C75">error/</span><span style="color:#C678DD">gi</span></span> <span class="line"><span style="color:#ABB2BF">  ];</span></span> <span class="line"><span style="color:#C678DD">  if</span><span style="color:#ABB2BF"> (</span><span style="color:#E5C07B">aiPatterns</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">some</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75;font-style:italic">pattern</span><span style="color:#C678DD"> =></span><span style="color:#E5C07B"> pattern</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">test</span><span style="color:#ABB2BF">(</span><span style="color:#E06C75">text</span><span style="color:#ABB2BF">))) </span><span style="color:#C678DD">return</span><span style="color:#D19A66"> true</span><span style="color:#ABB2BF">;</span></span> <span class="line"></span> <span class="line"><span style="color:#7F848E;font-style:italic">  // Heuristic 3: Rapid successive changes (AI streaming)</span></span> <span class="line"><span style="color:#C678DD">  const</span><span style="color:#E5C07B"> timeSinceLastChange</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> Date</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">now</span><span style="color:#ABB2BF">() </span><span style="color:#56B6C2">-</span><span style="color:#E5C07B"> this</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">lastChangeTime</span><span style="color:#ABB2BF">;</span></span> <span class="line"><span style="color:#C678DD">  if</span><span style="color:#ABB2BF"> (</span><span style="color:#E06C75">timeSinceLastChange</span><span style="color:#56B6C2"> &#x3C;</span><span style="color:#D19A66"> 100</span><span style="color:#56B6C2"> &#x26;&#x26;</span><span style="color:#E06C75"> insertedLength</span><span style="color:#56B6C2"> ></span><span style="color:#D19A66"> 20</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">return</span><span style="color:#D19A66"> true</span><span style="color:#ABB2BF">;</span></span></code></pre></div> <p>Read each heuristic as a test with false positives:</p> <ul> <li><strong>Heuristic 1</strong> counts any insertion over 100 characters. That includes pasting from Stack Overflow, pasting your own code from another file, and <code>git checkout</code> rewriting a buffer. A paste is not an AI.</li> <li><strong>Heuristic 2</strong> is worse than it looks. <code>text</code> is <code>document.getText()</code>, the <strong>whole file</strong>, not the inserted text. Once a file contains one <code>catch (e) { console.error</code>, every edit you make to that file counts as AI-generated, including typing a single character.</li> <li><strong>Heuristic 3</strong> treats two changes less than 100 ms apart as AI streaming. Accepting an IntelliSense suggestion, expanding a snippet and format-on-save all do that.</li> </ul> <p>Everything else sat on top: churn, the &quot;AI share&quot; percentage, the ROI dashboard that turned hours into rupees. The research figures the post quoted were real. They were being multiplied by a number that meant nothing.</p> <p>The 145 tests did not catch any of this, and they could not have. They checked that the heuristics returned what the heuristics were written to return. No test asked whether a paste is an AI. <strong>A test suite can only confirm a definition. It cannot tell you the definition is wrong.</strong></p> <h2>The rule for version 2</h2> <p>One constraint decided everything else: <strong>count only what is recorded somewhere you can verify.</strong> If TruthMeter says a commit is AI-written, you can open the commit and see why. Where no evidence exists, the extension says it doesn&#39;t know instead of guessing.</p> <p>That ruled out keystroke timing and pattern matching completely. What is left are four sources of evidence, each of which you can check yourself:</p> <ol> <li><strong>Attribution in git history.</strong> Co-author trailers, agent bot authors and tool footers.</li> <li><strong>Line survival.</strong> <code>git blame</code> at HEAD shows how much of that code still exists.</li> <li><strong>Fix within 72 hours.</strong> How often a commit is followed by a fix or revert touching the same files.</li> <li><strong>Agent session logs</strong>, opt-in. Claude Code and Codex record every file they edit, locally.</li> </ol> <p>The rewrite deleted 18,957 lines and added 6,221. Webpack, husky, nyc, the ROI calculator, the keystroke tracker and three planning documents for features that never shipped are all gone. The extension now has zero runtime dependencies and bundles to <strong>32 KB</strong> with esbuild. v1 was 2 MB.</p> <figure class="post-figure"><img src="/blog/images/truthmeter-v2-dashboard.png" alt="The TruthMeter 2.0 dashboard" loading="lazy" decoding="async"></figure> <h2>Attribution: who says a commit was AI-written</h2> <p>AI coding tools increasingly sign their work. Claude Code adds <code>Co-Authored-By: Claude … &lt;noreply@anthropic.com&gt;</code> and a &quot;Generated with Claude Code&quot; footer. GitHub&#39;s coding agent commits as <code>copilot-swe-agent[bot]</code>. Jules commits as <code>google-labs-jules[bot]</code>. Cursor, Codex, Aider, Devin, Windsurf and Amazon Q all leave something similar.</p> <p>Matching those looks trivial, but it isn&#39;t, because these tools have human names. A rule as loose as <code>/claude/i</code> on the co-author line flags a painter:</p> <div class="code-block-wrap" data-lang="typescript"><span class="code-lang" aria-hidden="true">typescript</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span style="color:#61AFEF">it</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'does not flag a human co-author named Claude'</span><span style="color:#ABB2BF">, () </span><span style="color:#C678DD">=></span><span style="color:#ABB2BF"> {</span></span> <span class="line"><span style="color:#E5C07B">    assert</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">strictEqual</span><span style="color:#ABB2BF">(</span><span style="color:#61AFEF">classifyCommit</span><span style="color:#ABB2BF">(</span><span style="color:#61AFEF">human</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'docs</span><span style="color:#56B6C2">\n\n</span><span style="color:#98C379">Co-authored-by: Claude Monet &#x3C;claude@monet.fr>'</span><span style="color:#ABB2BF">)), </span><span style="color:#D19A66">undefined</span><span style="color:#ABB2BF">);</span></span> <span class="line"><span style="color:#ABB2BF">});</span></span></code></pre></div> <p>Jules Verne and Devin Smith had the same problem. The final rules anchor on something no human contributor would have: an <code>@anthropic.com</code> address or a model name for Claude, the <code>google-labs-jules</code> bot identity for Jules, <code>devin-ai-integration</code> or a Cognition address for Devin. Each signal also carries a <strong>confidence</strong>. A Copilot co-author trailer is marked <em>medium</em>, because it says Copilot was involved without saying how much of the commit it wrote. A bot author is <em>high</em>: the bot made the commit.</p> <p>Rules are checked in a fixed order: custom rules from your settings, then agent authors, then trailers, then footers. A team that tags commits <code>[ai-assisted]</code> can add that as a rule without waiting for me. An invalid regex in a custom rule is skipped instead of crashing the analysis, and there is a test for that too.</p> <h2>Survival: is the code still there?</h2> <p>GitClear&#39;s churn research is the reason this matters. A commit is easy to count. What is still in the codebase weeks later tells you whether the commit was any good.</p> <p>TruthMeter runs <code>git blame --line-porcelain -w HEAD</code> across the files those commits touched and counts how many current lines each commit still owns. Three details turned out to matter:</p> <ul> <li><strong>Only mature commits count.</strong> Code written yesterday has had no time to be rewritten, so including it inflates survival. By default a commit must be 14 days old, and the dashboard shows newer commits as &quot;too recent&quot; instead of as 100%.</li> <li><strong>The denominator is measurable lines.</strong> If a file was deleted, its lines count as gone. If blame was skipped for a file, because of the 400-file cap on huge repos, its lines are dropped from both sides instead of being counted as lost.</li> <li><strong>Lock files and build output are excluded.</strong> A <code>package-lock.json</code> change can add 5,000 lines. Without the exclusion one dependency bump would outweigh a month of real work.</li> </ul> <p><code>-w</code> matters too: without it, a reformat that only changes whitespace hands every line to whoever ran the formatter.</p> <h2>Fix within 72 hours, and the files everything touches</h2> <p>The second quality signal is how often a commit is followed, within three days, by a <code>fix:</code> or revert that touches the same files. It is cheap to compute and easy to explain.</p> <p>On the first runs against real repositories the fix rate came out far too high. The cause was <code>package.json</code>. Nearly every commit touches it, nearly every fix touches it, so every commit &quot;shared a file&quot; with a later fix. <code>README.md</code> and <code>CHANGELOG.md</code> did the same thing. These hub files (manifests, READMEs, changelogs, <code>.gitignore</code>) are now ignored when looking for shared files, and the rate dropped to something believable.</p> <p>Rates are also withheld when either group has fewer than five mature commits. A 0% or 100% from two commits is noise presented with a percentage sign.</p> <h2>Agent logs: the commits that don&#39;t say so</h2> <p>Trailers only work if they are kept. Plenty of people turn them off, and some repositories forbid them outright. Agents still leave a record locally, though:</p> <ul> <li><strong>Claude Code</strong> writes JSONL transcripts to <code>~/.claude/projects/</code>. Every <code>Edit</code>, <code>Write</code> and <code>MultiEdit</code> tool call includes the absolute <code>file_path</code> and a timestamp.</li> <li><strong>Codex</strong> writes sessions to <code>~/.codex/sessions/</code>. Its <code>apply_patch</code> calls contain <code>*** Update File:</code> headers, and the session metadata records the working directory.</li> </ul> <p>With logs enabled, TruthMeter finds commits with no trailer whose files an agent edited in the 24 hours before the commit. They stay in the &quot;other&quot; group, since an agent editing a file doesn&#39;t prove it wrote the commit. The dashboard reports how many there are, as a warning that the AI share is probably understated.</p> <p>This is <strong>off by default</strong> and turning it on asks for explicit consent. TruthMeter reads only file paths and timestamps inside the current workspace, never prompts or code, and nothing leaves the machine. Session logs are private data even when they are on your own disk.</p> <h2>What it says about this blog</h2> <p>The first repository I pointed it at, after its own, was this one. Over the last year:</p> <table> <thead> <tr> <th></th> <th></th> </tr> </thead> <tbody><tr> <td>Commits</td> <td>173</td> </tr> <tr> <td>AI-attributed by trailer</td> <td>23</td> </tr> <tr> <td>No trailer, but Claude Code edited their files within 24 h</td> <td><strong>18</strong></td> </tr> </tbody></table> <p>The 18 are not a bug. This repository&#39;s <code>CLAUDE.md</code> forbids AI co-author trailers, and a git hook rejects them. TruthMeter has never seen that file. It found the gap from the session logs alone, and it reported those 18 as &quot;other&quot; with a caveat that the true AI share is higher. Counting both, at least 41 of 173 commits, about a quarter, had an agent involved.</p> <p>Then a result I almost put in the wrong section. AI-attributed lines here survive at <strong>67%</strong>, other lines at <strong>38%</strong>. It reads like a headline: AI code lasts longer than mine.</p> <p>It doesn&#39;t mean that. The &quot;other&quot; group contains the <code>auto: rebuild blog</code> commits that CI makes after every post. Those commits regenerate HTML in <code>public/blog/</code>, and the next rebuild rewrites much of it again. Generated output that gets regenerated on every deploy is about the least durable code possible, and it is all on the human side of the comparison. TruthMeter excludes <code>dist/</code>, <code>build/</code> and <code>out/</code> but not <code>public/blog/</code>, and it does not separate bot commits from human ones yet.</p> <p>So the honest reading is that this comparison is confounded, and the tool did not warn me about it. That is the next feature: treat commits by CI bots as their own group. I would rather publish that than the 67%.</p> <p>On TruthMeter&#39;s own repository the answer is simpler: 5 of 5 commits are AI-attributed. I wrote v2 with Claude Code, and the commits say so.</p> <h2>Testing against git instead of against itself</h2> <p>v1&#39;s tests mocked git and checked the heuristics against themselves. v2&#39;s main integration test builds a real repository in a temp directory and back-dates every commit with <code>GIT_AUTHOR_DATE</code> and <code>GIT_COMMITTER_DATE</code>:</p> <ul> <li>six AI commits 35 to 40 days old, ten lines each</li> <li>six human commits alongside them</li> <li>a human <code>fix:</code> one hour after AI commit #3, changing one of its lines</li> <li>a refactor 20 days ago that rewrites five lines in three of the AI files, plus a 500-line lock file</li> <li>one AI commit two days old</li> </ul> <p>That scenario has answers you can work out on paper before running anything. 60 AI lines are in mature commits, 15 are rewritten by the refactor and one by the fix, so survival must be exactly <strong>44/60</strong>. One of six mature AI commits was fixed within 72 hours, so the fix rate must be exactly <strong>1/6</strong>. Human lines must total 80, not 580, because the lock file is excluded. The test asserts those numbers. A heuristic can&#39;t pass a test like that by agreeing with itself.</p> <p>The end-to-end suite launches real VS Code twice in CI, version 1.90 (the minimum supported) and the current stable, opens the same fixture repo and checks the commands, status bar and dashboard. That caught a problem no unit test would: mocha 12 is ESM-only, and VS Code 1.90&#39;s extension host loads tests with <code>require()</code>, so the whole suite died with <code>ERR_REQUIRE_ESM</code> before running one test. Mocha is pinned to 11, with a note in the repo saying why.</p> <p>Building the webview turned up one more gotcha. The dashboard&#39;s comparison bars are sized with inline <code>style=&quot;&quot;</code> attributes. If a nonce is present in <code>style-src</code>, browsers <strong>ignore</strong> <code>&#39;unsafe-inline&#39;</code>, so those attributes would be silently blocked. The fix is to use the nonce only for scripts and leave <code>style-src</code> with <code>&#39;unsafe-inline&#39;</code> and no nonce.</p> <h2>Publishing in late 2026</h2> <p>The release workflow is the part of the project that changed most underneath me. Microsoft is retiring global Azure DevOps personal access tokens, and on <strong>1 December 2026</strong> they stop working for Marketplace publishing. The <code>VSCE_PAT</code> secret this repo had used since 2025 has two weeks left.</p> <p>The replacement is <strong>trusted publishing</strong>: GitHub Actions requests a short-lived OIDC token for the workflow run, and the Marketplace exchanges it for a publish credential, but only after checking the token&#39;s claims against a policy you set on the publisher page: repository owner, repository and workflow filename. Nothing long-lived is stored anywhere.</p> <p>I shipped 2.0.0 with both paths, OIDC first and the PAT as a fallback. The OIDC step failed with:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>The token could not be exchanged for the specified publisher.</span></span></code></pre></div> <p>That was expected. No policy existed yet, so the PAT fallback published 2.0.0. After adding the policy (<code>jeffreyjose07</code> / <code>truthmeterai</code> / <code>publish.yml</code>), I tagged 2.0.1 and the run went:</p> <div class="code-block-wrap" data-lang="text"><span class="code-lang" aria-hidden="true">text</span><pre class="shiki one-dark-pro" style="background-color:#282c34;color:#abb2bf" tabindex="0"><code><span class="line"><span>success  Publish to VS Code Marketplace (OIDC trusted publishing)</span></span> <span class="line"><span>skipped  Publish to VS Code Marketplace (PAT fallback, works until 2026-12-01)</span></span> <span class="line"><span>success  Publish to Open VSX</span></span></code></pre></div> <p>Then I deleted the fallback and the secret. Leaving it would have been worse than useless. The OIDC step had <code>continue-on-error: true</code> so the fallback could run, which means a broken policy would have fallen through to an expired token. The run would fail with a confusing 401 from the wrong step instead of the real error.</p> <p>Two more details. The policy records GitHub&#39;s <strong>numeric</strong> IDs for the owner and repository next to their names, so someone who claims the name <code>jeffreyjose07/truthmeterai</code> after a rename can&#39;t publish as me. And Open VSX, which serves Cursor, Windsurf and VSCodium, still uses a token and a different publisher ID. The workflow rewrites the <code>publisher</code> field with <code>jq</code>, packages a second VSIX and publishes it.</p> <h2>By the numbers</h2> <table> <thead> <tr> <th></th> <th>v1 (Nov 2025)</th> <th>v2 (Nov 2026)</th> </tr> </thead> <tbody><tr> <td>Source lines (excluding tests)</td> <td>~5,000</td> <td>1,452</td> </tr> <tr> <td>Runtime dependencies</td> <td>8</td> <td>0</td> </tr> <tr> <td>Bundle</td> <td>2 MB</td> <td>32 KB</td> </tr> <tr> <td>Tests</td> <td>145, checking heuristics against themselves</td> <td>32, against real git and real VS Code</td> </tr> <tr> <td>What &quot;AI&quot; means</td> <td>a guess from paste size, regex and timing</td> <td>a commit that records it</td> </tr> <tr> <td>Marketplace publishing</td> <td>stored PAT</td> <td>OIDC, no stored secret</td> </tr> <tr> <td>Time to analyse a repo</td> <td>—</td> <td>1–2 s</td> </tr> </tbody></table> <p>Fewer tests and less code, but it measures something real now.</p> <h2>What I&#39;d tell myself a year ago</h2> <p>The pitch was right. Vendor metrics are misleading, and churn and survival matter more than acceptance rates. My mistake was rebuilding the vendors&#39; problem one level down: I needed a number, there was no honest way to get it, so I made one up and wrote thorough tests for it.</p> <p>v2 often says less. A repo with no trailers and no agent logs shows zero AI-attributed commits and an offer to turn on session evidence, instead of a confident 37%. That is a less impressive dashboard. It is also the first version I&#39;d trust with a decision.</p> <p>The extension is on the <a href="https://marketplace.visualstudio.com/items?itemName=JeffreyJose.truthmeter-ai">VS Code Marketplace</a> and <a href="https://open-vsx.org/extension/jeffreyjose07/truthmeter-ai">Open VSX</a>. The v1 settings (<code>aiMetrics.*</code>) were removed rather than migrated. They configured features that no longer exist, and the changelog says so.</p> </div> <footer class="post-footer"> <div class="post-tags-footer"> <a href="/blog#tag-truthmeter-ai" class="tag-pill neutral" data-tag="truthmeter-ai">truthmeter-ai</a> <a href="/blog#tag-typescript" class="tag-pill neutral" data-tag="typescript">typescript</a> <a href="/blog#tag-vscode" class="tag-pill neutral" data-tag="vscode">vscode</a> <a href="/blog#tag-git" class="tag-pill neutral" data-tag="git">git</a> <a href="/blog#tag-ai-agents" class="tag-pill neutral" data-tag="ai-agents">ai-agents</a> <a href="/blog#tag-metrics" class="tag-pill neutral" data-tag="metrics">metrics</a> <a href="/blog#tag-testing" class="tag-pill neutral" data-tag="testing">testing</a> <a href="/blog#tag-github-actions" class="tag-pill success" data-tag="github-actions">github-actions</a> <a href="/blog#tag-developer-tools" class="tag-pill neutral" data-tag="developer-tools">developer-tools</a> </div> <div id="view-count" hidden aria-live="polite" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground);"></div> </footer> <div class="author-card"> <div class="author-avatar-wrap" id="authorAvatarWrap"> <img src="/jeffrey-profile.jpg" alt="" class="author-avatar" width="56" height="56" loading="lazy" decoding="async" onerror="document.getElementById('authorAvatarWrap').classList.add('is-fallback')"> <span class="status-dot-avatar" aria-hidden="true"></span> <span class="author-avatar-fallback" aria-hidden="true">JJ</span> </div> <div class="author-info"> <div style="display: flex; align-items: center; gap: 0.5rem;"> <span class="author-name">Jeffrey Jose</span> <span class="dev-badge" style="font-size: 0.65rem; padding: 0.1rem 0.45rem;">backend</span> </div> <span class="author-bio">Senior backend engineer writing about Spring Boot, distributed systems, and production debugging.</span> <div class="author-links"> <a href="https://github.com/jeffreyjose07" target="_blank" rel="noopener noreferrer">GitHub</a> <a href="https://www.linkedin.com/in/jeffrey-jose-07-k/" target="_blank" rel="noopener noreferrer">LinkedIn</a> <a href="/">Portfolio</a> </div> </div> </div> </article> <nav class="post-navigation"> <div class="nav-previous panel-card"> <a href="/blog/keepalive-disabled-for-inactivity/"> <span class="nav-label">← previous</span> <span class="nav-title">The Keepalive That Was Disabled for Inactivity</span> </a> </div> <div class="nav-next panel-card"> <a href="/blog/tuning-a-fire-tv-and-two-phones-over-adb/"> <span class="nav-label">next →</span> <span class="nav-title">Tuning a Fire TV and Two Phones Over ADB, and the One Setting That Broke Settings</span> </a> </div></nav> <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;"> <a href="/blog/feed.xml" class="glass"
 style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; border-radius: 9999px; text-decoration: none; color: var(--muted-foreground); font-size: 0.8125rem; font-family: var(--font-mono); transition: color 0.2s, border-color 0.2s;"> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 style="margin-right: 0.5rem; color: #f59e0b;"> <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle> </svg>
@@ -932,10 +1089,81 @@ const height = document.documentElement.scrollHeight - document.documentElement.
 const scrolled = (winScroll / height) * 100;
 document.querySelector('.reading-progress').style.width = scrolled + '%';
 });
-// Load view count from GoatCounter
+// Load view count from GoatCounter & enhance code blocks with Copy buttons
 document.addEventListener('DOMContentLoaded', () => {
 loadViewCount();
+initCodeCopyButtons();
 });
+function initCodeCopyButtons() {
+const copyIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+const checkIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+const timers = new WeakMap();
+let lastMessage = '';
+document.querySelectorAll('.post-content .code-block-wrap').forEach((wrap, idx) => {
+const pre = wrap.querySelector('pre');
+if (!pre) return;
+if (!pre.id) pre.id = `code-block-${idx + 1}`;
+const lang = wrap.getAttribute('data-lang') || 'code';
+const holder = document.createElement('span');
+holder.className = 'copy';
+const btn = document.createElement('button');
+btn.type = 'button';
+btn.className = 'copy-button';
+btn.setAttribute('command', '--copy');
+btn.setAttribute('commandfor', pre.id);
+btn.setAttribute('aria-label', `Copy ${lang} code`);
+btn.innerHTML = copyIcon;
+const tip = document.createElement('span');
+tip.className = 'tip';
+tip.setAttribute('role', 'status');
+holder.append(btn, tip);
+wrap.append(holder);
+});
+function report(button, ok) {
+const tip = button.nextElementSibling;
+clearTimeout(timers.get(button));
+button.removeAttribute('data-copied');
+button.removeAttribute('data-failed');
+let message = ok ? 'Copied' : 'Copy failed';
+if (message === lastMessage) message += '\u00A0';
+lastMessage = message;
+tip.textContent = '';
+void button.offsetWidth;
+button.setAttribute(ok ? 'data-copied' : 'data-failed', '');
+button.innerHTML = ok ? checkIcon : copyIcon;
+requestAnimationFrame(() => (tip.textContent = message));
+timers.set(button, setTimeout(() => {
+button.removeAttribute('data-copied');
+button.removeAttribute('data-failed');
+button.innerHTML = copyIcon;
+tip.textContent = '';
+}, 2000));
+}
+async function copyCode(button, target) {
+const text = target.innerText.replace(/\n$/, '');
+if (!text) return;
+try {
+await navigator.clipboard.writeText(text);
+report(button, true);
+} catch {
+report(button, false);
+}
+}
+document.addEventListener('command', (event) => {
+if (event.command === '--copy' && event.source && event.target) {
+copyCode(event.source, event.target);
+}
+}, true);
+if (!('CommandEvent' in window)) {
+document.addEventListener('click', (event) => {
+if (event.defaultPrevented) return;
+const button = event.target.closest('button[command="--copy"]');
+if (!button) return;
+const target = document.getElementById(button.getAttribute('commandfor'));
+if (target) copyCode(button, target);
+});
+}
+}
 function loadViewCount() {
 const path = window.location.pathname;
 const viewCountElement = document.getElementById('view-count');

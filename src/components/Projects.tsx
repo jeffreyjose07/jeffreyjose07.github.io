@@ -43,7 +43,7 @@ const Projects = () => {
                   </div>
 
                   <div className="p-3 sm:p-4 flex-1 flex items-center justify-center bg-background/50">
-                    <div className="relative w-full aspect-[16/10] overflow-hidden rounded-lg border border-border/60 bg-muted/30">
+                    <div className="relative w-full aspect-[4/3] overflow-hidden rounded-lg border border-border/60 bg-muted/30">
                       {project.videoUrl ? (
                         <div
                           className="w-full h-full relative"
@@ -72,10 +72,10 @@ const Projects = () => {
                         <img
                           src={project.image}
                           alt={project.title}
-                          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+                          className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
                           loading="lazy"
                           width={600}
-                          height={375}
+                          height={450}
                         />
                       )}
                     </div>

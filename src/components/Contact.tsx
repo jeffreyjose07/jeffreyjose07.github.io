@@ -9,17 +9,21 @@ import { socialLinks } from "@/data/socials";
 const Contact = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
 
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText("jeffreyjose.k@gmail.com");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText("jeffreyjose.k@gmail.com");
+      setCopyStatus("copied");
+    } catch {
+      setCopyStatus("failed");
+    }
+    setTimeout(() => setCopyStatus("idle"), 2000);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -141,25 +145,36 @@ const Contact = () => {
                   </div>
                 </div>
 
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleCopyEmail}
-                  className="h-8 px-2.5 text-xs font-mono text-muted-foreground hover:text-foreground gap-1.5 rounded-lg border border-border/60 hover:bg-secondary/60 shrink-0"
-                  aria-label="Copy email address"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="h-3.5 w-3.5 text-primary" />
-                      <span className="text-primary">Copied</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-3.5 w-3.5" />
-                      <span>Copy</span>
-                    </>
-                  )}
-                </Button>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCopyEmail}
+                    className="min-h-[32px] px-2.5 text-xs font-mono text-muted-foreground hover:text-foreground gap-1.5 rounded-lg border border-border/60 hover:bg-secondary/60"
+                  >
+                    {copyStatus === "copied" ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                        <span className="text-primary">Copied</span>
+                      </>
+                    ) : copyStatus === "failed" ? (
+                      <span>Copy failed</span>
+                    ) : (
+                      <>
+                        <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </Button>
+                  <span role="status" className="sr-only">
+                    {copyStatus === "copied"
+                      ? "Email copied to clipboard"
+                      : copyStatus === "failed"
+                      ? "Copy failed"
+                      : ""}
+                  </span>
+                </div>
               </div>
 
               {/* Phone */}

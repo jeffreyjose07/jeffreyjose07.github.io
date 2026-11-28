@@ -327,12 +327,12 @@ async function processPost(filename, episodeNumber, allPosts = []) {
     const readingTime = frontmatter.readingTime || estimateReadingTime(content);
 
 
-    // Format tags with colors and make them clickable
+    // Format tags as pills and make them clickable
     const tagsFormatted = frontmatter.tags
         ? frontmatter.tags.map(tag => {
             const tagColorCategory = config.tagColors[tag] || 'neutral';
-            return `<a href="/blog#tag-${tag}" class="tag ${tagColorCategory}" data-tag="${tag}">${tag}</a>`;
-        }).join(', ')
+            return `<a href="/blog#tag-${tag}" class="tag-pill ${tagColorCategory}" data-tag="${tag}">${tag}</a>`;
+        }).join(' ')
         : '';
 
     // Generate navigation links
@@ -481,7 +481,7 @@ function generateIndex(posts) {
                             <span class="episode-number">#${episodeNum}</span>
                             <span class="date">${formatDate(post.date)}</span>
                         </div>
-                        <h3 class="post-title">${escapeHtml(post.title)}</h3>
+                        <h2 class="post-title">${escapeHtml(post.title)}</h2>
                         <p class="post-description">${escapeHtml(post.description)}</p>
                         <div class="post-tags">
                             ${post.tags.map(tag => `<span class="tag-pill">${escapeHtml(tag)}</span>`).join('')}

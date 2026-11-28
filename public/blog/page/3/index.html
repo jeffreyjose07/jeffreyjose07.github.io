@@ -30,6 +30,9 @@ margin: 0;
 padding: 0;
 box-sizing: border-box;
 }
+html {
+scroll-padding-top: 6rem;
+}
 body {
 font-family: var(--font-sans);
 background-color: var(--background);
@@ -57,6 +60,17 @@ line-height: 1.25;
 margin-bottom: 1rem;
 letter-spacing: -0.03em;
 }
+h1,
+h2,
+h3,
+h4 {
+text-wrap: balance;
+}
+h2,
+h3,
+h4 {
+scroll-margin-top: 6rem;
+}
 a {
 color: inherit;
 text-decoration: none;
@@ -67,6 +81,35 @@ width: 100%;
 max-width: 1200px;
 margin: 0 auto;
 padding: 0 1.5rem;
+}
+@media (max-width: 640px) {
+.container {
+padding: 0 0.875rem;
+}
+}
+.skip-link:where(:not(:focus-within, :active)) {
+position: absolute !important;
+clip-path: inset(50%) !important;
+overflow: hidden !important;
+width: 1px !important;
+height: 1px !important;
+margin: -1px !important;
+padding: 0 !important;
+border: 0 !important;
+white-space: nowrap !important;
+}
+.skip-link:focus-visible {
+position: fixed;
+top: 1rem;
+left: 1rem;
+z-index: 2500;
+padding: 0.6rem 1rem;
+border-radius: 0.5rem;
+background: var(--primary);
+color: var(--primary-foreground);
+font-weight: 600;
+font-size: 0.875rem;
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 .panel-card,
 .glass-card {
@@ -285,19 +328,22 @@ border-color: rgba(28, 201, 160, 0.2);
 }
 /* Tag Filters */
 .tag-filters-container {
-margin-bottom: 3rem;
+margin-bottom: 1rem;
 display: flex;
 justify-content: center;
 flex-wrap: wrap;
 gap: 0.5rem;
-max-height: 90px;
-/* Show roughly 2 rows */
+max-height: 86px;
 overflow: hidden;
 transition: max-height 0.3s ease;
 position: relative;
+-webkit-mask-image: linear-gradient(to bottom, #000 56%, transparent 100%);
+mask-image: linear-gradient(to bottom, #000 56%, transparent 100%);
 }
 .tag-filters-container.expanded {
 max-height: 1000px;
+-webkit-mask-image: none;
+mask-image: none;
 }
 .tag-toggle-btn {
 background: transparent;
@@ -305,9 +351,9 @@ border: none;
 color: var(--primary);
 cursor: pointer;
 font-size: 0.875rem;
-margin-top: 0.5rem;
 display: block;
-margin: 0 auto 3rem auto;
+margin: 0 auto 2.5rem auto;
+padding: 0.25rem 0.75rem;
 font-family: var(--font-sans);
 }
 .tag-toggle-btn:hover {
@@ -377,34 +423,39 @@ grid-template-columns: repeat(3, 1fr);
 }
 .post-item:first-child {
 grid-column: 1 / -1;
-min-height: 450px;
+min-height: 380px;
 }
 .post-item:first-child a {
 flex-direction: row;
 }
 .post-item:first-child .post-thumbnail {
-width: 60%;
+width: 52%;
 height: auto;
 min-height: 100%;
+padding: 1.25rem;
+background-color: #0c0c0f;
 border-bottom: none;
-border-right: 1px solid rgba(255, 255, 255, 0.05);
+border-right: 1px solid rgba(255, 255, 255, 0.06);
 }
 .post-item:first-child .post-thumbnail img {
 object-fit: contain;
+max-height: 360px;
+border-radius: 0.375rem;
 }
 .post-item:first-child .post-content-wrapper {
-width: 40%;
+width: 48%;
 justify-content: center;
-padding: 4rem;
+padding: 2.5rem 2.75rem;
 }
 .post-item:first-child .post-title {
-font-size: 3rem;
-margin-bottom: 1.5rem;
+font-size: clamp(1.65rem, 2.5vw, 2.25rem);
+line-height: 1.2;
+margin-bottom: 1rem;
 color: var(--foreground);
 }
 .post-item:first-child .post-description {
-font-size: 1.25rem;
--webkit-line-clamp: 5;
+font-size: 1.0625rem;
+-webkit-line-clamp: 4;
 }
 }
 /* Stats Footer */
@@ -610,64 +661,77 @@ opacity: 1;
 transform: translateY(0);
 }
 }
-/* Search Modal */
-.search-modal-overlay {
-display: none;
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background: rgba(0, 0, 0, 0.8);
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-z-index: 2000;
-align-items: flex-start;
-justify-content: center;
-padding-top: 100px;
-opacity: 0;
-transition: opacity 0.25s ease;
-}
-.search-modal-overlay.open {
-display: flex;
-opacity: 1;
-}
-.search-modal {
+/* Search Dialog (native <dialog>) */
+dialog.search-dialog {
+margin: 100px auto auto;
+padding: 0;
 background: #101013;
+color: var(--foreground);
 border: 1px solid rgba(255, 255, 255, 0.15);
 border-radius: 1rem;
-width: 90%;
+width: min(92vw, 600px);
 max-width: 600px;
 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 25px -5px rgba(28, 201, 160, 0.2);
 overflow: hidden;
-transform: scale(0.96);
-transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.search-modal-overlay.open .search-modal {
-transform: scale(1);
+dialog.search-dialog:modal {
+overscroll-behavior: contain;
+}
+dialog.search-dialog::backdrop {
+background: rgba(0, 0, 0, 0.78);
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+overflow: hidden;
+overscroll-behavior: contain;
+}
+@media (max-width: 640px) {
+dialog.search-dialog {
+margin-top: 72px;
+}
 }
 .search-input-container {
-padding: 1.25rem 1.5rem;
+padding: 1rem 1.25rem;
 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 display: flex;
 align-items: center;
+gap: 0.75rem;
 }
 .search-icon {
 color: var(--primary);
-margin-right: 0.85rem;
 flex-shrink: 0;
 }
 .search-input {
 background: transparent;
 border: none;
 color: var(--foreground);
-font-size: 1.05rem;
+font-size: 1rem;
 width: 100%;
 outline: none;
 font-family: var(--font-sans);
 }
 .search-input::placeholder {
 color: var(--muted-foreground);
+}
+.search-close {
+min-inline-size: 32px;
+min-block-size: 32px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 0.5rem;
+color: var(--muted-foreground);
+font-size: 1.125rem;
+line-height: 1;
+cursor: pointer;
+flex-shrink: 0;
+transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.search-close:hover {
+color: var(--foreground);
+border-color: rgba(28, 201, 160, 0.35);
+background: rgba(255, 255, 255, 0.1);
 }
 .search-results {
 max-height: 400px;
@@ -707,16 +771,23 @@ display: -webkit-box;
 -webkit-box-orient: vertical;
 overflow: hidden;
 }
-</style> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
+</style> <a href="#main-content" class="skip-link">Skip to main content</a> <header class="site-header" id="siteHeader"> <div class="header-inner"> <a href="/" class="site-logo"> <span>Jeffrey<span style="color: var(--primary)">.</span><span
 class="text-gradient-premium">Jose</span></span> <span class="logo-status-pill"> <span class="status-pulse-dot"></span>
 blog
-</span> </a> <nav class="site-nav"> <a href="/#hero" class="nav-link">Home</a> <a href="/#experience" class="nav-link">Experience</a> <a href="/#skills" class="nav-link">Skills</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/blog/" class="nav-link active">Blog</a> <a href="/#contact" class="nav-link">Contact</a> </nav> <div style="display: flex; align-items: center; gap: 0.75rem;"> <button class="search-trigger" onclick="openSearch()" aria-label="Search posts"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut">⌘K</span> </button> <button class="mobile-menu-toggle" aria-label="Toggle menu"
-onclick="document.querySelector('.site-nav').classList.toggle('open')"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-stroke-linecap="round" stroke-linejoin="round"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <div class="search-modal-overlay" id="searchModal" onclick="if(event.target === this) closeSearch()"> <div class="search-modal"> <div class="search-input-container"> <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts by topic, title, or tags..." id="searchInput" autocomplete="off"> </div> <div class="search-results" id="searchResults"> </div> </div> </div> <script>
+</span> </a> <nav class="site-nav" id="primaryNav" aria-label="Primary"> <a href="/#hero" class="nav-link">Home</a> <a href="/#experience" class="nav-link">Experience</a> <a href="/#skills" class="nav-link">Skills</a> <a href="/#projects" class="nav-link">Projects</a> <a href="/blog/" class="nav-link active" aria-current="page">Blog</a> <a href="/#contact" class="nav-link">Contact</a> </nav> <div style="display: flex; align-items: center; gap: 0.75rem;"> <button type="button" class="search-trigger" id="searchTrigger" onclick="openSearch()" aria-label="Search posts"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <span class="search-text">Search</span> <span class="search-shortcut" aria-hidden="true">⌘K</span> </button> <button type="button" class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false"
+aria-controls="primaryNav" onclick="toggleMobileMenu(this)"> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <line x1="3" y1="12" x2="21" y2="12"></line> <line x1="3" y1="6" x2="21" y2="6"></line> <line x1="3" y1="18" x2="21" y2="18"></line> </svg> </button> </div> </div> </header> <dialog class="search-dialog" id="searchModal" closedby="any" aria-labelledby="searchDialogTitle"> <h1 id="searchDialogTitle" class="sr-only">Search articles</h1> <div class="search-input-container"> <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <circle cx="11" cy="11" r="8"></circle> <line x1="21" y1="21" x2="16.65" y2="16.65"></line> </svg> <input type="text" class="search-input" placeholder="Search posts by topic, title, or tags..."
+id="searchInput" aria-label="Search posts" autocomplete="off" autofocus> <button type="button" class="search-close" onclick="closeSearch()" aria-label="Close search">&times;</button> </div> <div class="search-results" id="searchResults"> </div> </dialog> <script>
 let searchIndex = [];
-let isSearchOpen = false;
+const searchDialog = document.getElementById('searchModal');
+const searchInput = document.getElementById('searchInput');
+function toggleMobileMenu(btn) {
+const nav = document.getElementById('primaryNav');
+const open = nav.classList.toggle('open');
+btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
 async function loadSearchIndex() {
 if (searchIndex.length > 0) return;
 try {
@@ -727,16 +798,30 @@ console.error('Failed to load search index', e);
 }
 }
 function openSearch() {
-document.getElementById('searchModal').classList.add('open');
-document.getElementById('searchInput').focus();
-isSearchOpen = true;
+if (!searchDialog.open) {
+searchDialog.showModal();
+}
+searchInput.focus();
 loadSearchIndex();
-document.body.style.overflow = 'hidden';
 }
 function closeSearch() {
-document.getElementById('searchModal').classList.remove('open');
-isSearchOpen = false;
-document.body.style.overflow = '';
+if (searchDialog.open) {
+searchDialog.close();
+}
+}
+// Light-dismiss fallback for browsers without <dialog closedby="any"> (e.g. Safari)
+if (!('closedBy' in HTMLDialogElement.prototype)) {
+const outside = (e, dialog) => {
+const r = dialog.getBoundingClientRect();
+return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+};
+let pressedOutside = false;
+searchDialog.addEventListener('pointerdown', (e) => {
+pressedOutside = outside(e, searchDialog);
+});
+searchDialog.addEventListener('pointerup', (e) => {
+if (pressedOutside && outside(e, searchDialog)) searchDialog.close();
+});
 }
 function performSearch(query) {
 if (!query) {
@@ -748,7 +833,7 @@ const titleMatch = post.title.toLowerCase().includes(query.toLowerCase());
 const descMatch = post.description && post.description.toLowerCase().includes(query.toLowerCase());
 const tagMatch = post.tags && post.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()));
 return titleMatch || descMatch || tagMatch;
-}).slice(0, 5); // Limit to 5 results
+}).slice(0, 5);
 const resultsHtml = results.map(post => `
 <a href="/blog/${post.slug}/" class="search-result-item" onclick="closeSearch()"> <div class="search-result-title">${post.title}</div> <div class="search-result-excerpt">${post.description || ''}</div> </a>
 `).join('');
@@ -756,23 +841,20 @@ document.getElementById('searchResults').innerHTML = results.length > 0
 ? resultsHtml
 : '<div style="padding: 1.5rem; color: var(--muted-foreground); text-align: center; font-size: 0.9rem;">No matching articles found</div>';
 }
-document.getElementById('searchInput').addEventListener('input', (e) => {
+searchInput.addEventListener('input', (e) => {
 performSearch(e.target.value);
 });
-// Keyboard shortcuts
+// Keyboard shortcut (Cmd/Ctrl+K)
 document.addEventListener('keydown', (e) => {
-if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
 e.preventDefault();
-if (isSearchOpen) closeSearch();
+if (searchDialog.open) closeSearch();
 else openSearch();
 }
-if (e.key === 'Escape' && isSearchOpen) {
-closeSearch();
-}
 });
-</script> <main class="container"> <header class="blog-header"> <div class="dev-badge" style="margin-bottom: 1.25rem;">
-// TECHNICAL WRITING &amp; ARCHITECTURE LOGS
-</div> <h1 class="blog-title">Engineering <span class="text-gradient-premium">Log</span></h1> <p class="blog-description">learning things, building things, breaking things, writing about it. technical projects, personal struggles, life stuff, random observations - just documenting whatever I&#39;m working through.</p> </header> <div class="tag-filters-container" id="tagFilters"> <button class="tag-filter active" data-tag="all">All Posts</button> <button class="tag-filter neutral" data-tag="personal">personal</button> <button class="tag-filter attention" data-tag="tutorials">tutorials</button> <button class="tag-filter process" data-tag="frontend">frontend</button> <button class="tag-filter meta" data-tag="meta">meta</button> <button class="tag-filter structure" data-tag="backend">backend</button> <button class="tag-filter structure" data-tag="system-design">system-design</button> <button class="tag-filter connection" data-tag="ai-tools">ai-tools</button> <button class="tag-filter success" data-tag="automation">automation</button> <button class="tag-filter neutral" data-tag="bugfixes">bugfixes</button> <button class="tag-filter neutral" data-tag="engineering">engineering</button> <button class="tag-filter neutral" data-tag="changelog">changelog</button> <button class="tag-filter neutral" data-tag="learning">learning</button> <button class="tag-filter neutral" data-tag="deployment">deployment</button> <button class="tag-filter neutral" data-tag="render">render</button> <button class="tag-filter structure" data-tag="spring-boot">spring-boot</button> <button class="tag-filter process" data-tag="react">react</button> <button class="tag-filter success" data-tag="github-actions">github-actions</button> <button class="tag-filter neutral" data-tag="gamedev">gamedev</button> <button class="tag-filter neutral" data-tag="vanilla-js">vanilla-js</button> <button class="tag-filter neutral" data-tag="tetris">tetris</button> <button class="tag-filter neutral" data-tag="cyberpunk">cyberpunk</button> <button class="tag-filter neutral" data-tag="single-file">single-file</button> <button class="tag-filter neutral" data-tag="debugging">debugging</button> <button class="tag-filter neutral" data-tag="devops">devops</button> <button class="tag-filter neutral" data-tag="ci-cd">ci-cd</button> <button class="tag-filter neutral" data-tag="analytics">analytics</button> <button class="tag-filter neutral" data-tag="privacy">privacy</button> <button class="tag-filter neutral" data-tag="web-development">web-development</button> <button class="tag-filter neutral" data-tag="goatcounter">goatcounter</button> <button class="tag-filter neutral" data-tag="github-pages">github-pages</button> <button class="tag-filter neutral" data-tag="database">database</button> <button class="tag-filter neutral" data-tag="migration">migration</button> <button class="tag-filter neutral" data-tag="postgresql">postgresql</button> <button class="tag-filter neutral" data-tag="neon">neon</button> <button class="tag-filter neutral" data-tag="scaling">scaling</button> <button class="tag-filter neutral" data-tag="cloud">cloud</button> <button class="tag-filter neutral" data-tag="aiven">aiven</button> <button class="tag-filter neutral" data-tag="supabase">supabase</button> <button class="tag-filter neutral" data-tag="game-development">game-development</button> <button class="tag-filter process" data-tag="javascript">javascript</button> <button class="tag-filter neutral" data-tag="security">security</button> <button class="tag-filter neutral" data-tag="terminal-ui">terminal-ui</button> <button class="tag-filter neutral" data-tag="domain">domain</button> <button class="tag-filter neutral" data-tag="infrastructure">infrastructure</button> <button class="tag-filter neutral" data-tag="algorithms">algorithms</button> <button class="tag-filter neutral" data-tag="optimization">optimization</button> <button class="tag-filter neutral" data-tag="leetcode">leetcode</button> <button class="tag-filter neutral" data-tag="data-structures">data-structures</button> <button class="tag-filter neutral" data-tag="problem-solving">problem-solving</button> <button class="tag-filter neutral" data-tag="Spring Boot">Spring Boot</button> <button class="tag-filter neutral" data-tag="React">React</button> <button class="tag-filter neutral" data-tag="Security">Security</button> <button class="tag-filter neutral" data-tag="Brevo">Brevo</button> <button class="tag-filter neutral" data-tag="css">css</button> <button class="tag-filter neutral" data-tag="mobile">mobile</button> <button class="tag-filter neutral" data-tag="ux">ux</button> <button class="tag-filter meta" data-tag="terminal-aesthetic">terminal-aesthetic</button> <button class="tag-filter neutral" data-tag="typescript">typescript</button> <button class="tag-filter neutral" data-tag="vscode">vscode</button> <button class="tag-filter connection" data-tag="ai">ai</button> <button class="tag-filter neutral" data-tag="metrics">metrics</button> <button class="tag-filter neutral" data-tag="testing">testing</button> <button class="tag-filter neutral" data-tag="developer-tools">developer-tools</button> <button class="tag-filter neutral" data-tag="design">design</button> <button class="tag-filter neutral" data-tag="branding">branding</button> <button class="tag-filter neutral" data-tag="nodejs">nodejs</button> <button class="tag-filter neutral" data-tag="performance">performance</button> <button class="tag-filter neutral" data-tag="accessibility">accessibility</button> <button class="tag-filter neutral" data-tag="seo">seo</button> <button class="tag-filter structure" data-tag="portfolio">portfolio</button> <button class="tag-filter process" data-tag="ui-design">ui-design</button> <button class="tag-filter process" data-tag="animation">animation</button> <button class="tag-filter neutral" data-tag="scalable-chat-platform">scalable-chat-platform</button> <button class="tag-filter neutral" data-tag="health">health</button> <button class="tag-filter neutral" data-tag="java">java</button> <button class="tag-filter neutral" data-tag="transactions">transactions</button> <button class="tag-filter neutral" data-tag="interview-prep">interview-prep</button> <button class="tag-filter structure" data-tag="architecture">architecture</button> <button class="tag-filter neutral" data-tag="aop">aop</button> <button class="tag-filter neutral" data-tag="async">async</button> <button class="tag-filter neutral" data-tag="lifecycle">lifecycle</button> <button class="tag-filter neutral" data-tag="hikaricp">hikaricp</button> <button class="tag-filter neutral" data-tag="concurrency">concurrency</button> <button class="tag-filter neutral" data-tag="incident">incident</button> <button class="tag-filter neutral" data-tag="blog">blog</button> <button class="tag-filter neutral" data-tag="marked">marked</button> <button class="tag-filter neutral" data-tag="dependabot">dependabot</button> <button class="tag-filter neutral" data-tag="build-tools">build-tools</button> <button class="tag-filter neutral" data-tag="node">node</button> <button class="tag-filter neutral" data-tag="documentation">documentation</button> <button class="tag-filter neutral" data-tag="refactoring">refactoring</button> <button class="tag-filter neutral" data-tag="technical-debt">technical-debt</button> <button class="tag-filter neutral" data-tag="rss">rss</button> <button class="tag-filter neutral" data-tag="static-site-generator">static-site-generator</button> <button class="tag-filter neutral" data-tag="build-systems">build-systems</button> <button class="tag-filter neutral" data-tag="ci">ci</button> <button class="tag-filter neutral" data-tag="ai-agents">ai-agents</button> <button class="tag-filter neutral" data-tag="mcp">mcp</button> <button class="tag-filter neutral" data-tag="monitoring">monitoring</button> <button class="tag-filter neutral" data-tag="free-tier">free-tier</button> <button class="tag-filter neutral" data-tag="truthmeter-ai">truthmeter-ai</button> <button class="tag-filter neutral" data-tag="git">git</button> <button class="tag-filter neutral" data-tag="android">android</button> <button class="tag-filter neutral" data-tag="adb">adb</button> <button class="tag-filter neutral" data-tag="fire-tv">fire-tv</button> <button class="tag-filter neutral" data-tag="debloat">debloat</button> <button class="tag-filter neutral" data-tag="dns">dns</button> <button class="tag-filter neutral" data-tag="battery">battery</button> <button class="tag-filter neutral" data-tag="homelab">homelab</button> </div> <button id="tagToggleBtn" class="tag-toggle-btn">Show more tags</button> <div class="posts-grid" id="postsGrid"> <div class="post-item panel-card" data-tags="css mobile ux gamedev terminal-aesthetic"> <a href="/blog/enhancing-game-ui-mobile-responsiveness-and-terminal/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/enhancing-game-ui-mobile-responsiveness-and-terminal.png" alt="Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#020</span> <span class="date">28 Nov 2025</span> </div> <h3 class="post-title">Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics</h3> <p class="post-description">Deep dive into fixing mobile UI issues and enhancing dropdown styling for terminal-themed games</p> <div class="post-tags"> <span class="tag-pill">css</span><span class="tag-pill">mobile</span><span class="tag-pill">ux</span><span class="tag-pill">gamedev</span><span class="tag-pill">terminal-aesthetic</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="Spring Boot React Security Brevo"> <a href="/blog/building-a-secure-password-reset-flow/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/building-a-secure-password-reset-flow.png" alt="Building a Secure Password Reset Flow" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#019</span> <span class="date">20 Nov 2025</span> </div> <h3 class="post-title">Building a Secure Password Reset Flow</h3> <p class="post-description">A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service.</p> <div class="post-tags"> <span class="tag-pill">Spring Boot</span><span class="tag-pill">React</span><span class="tag-pill">Security</span><span class="tag-pill">Brevo</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="meta engineering frontend tutorials"> <a href="/blog/adding-interactive-scripts-to-blog-posts/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/adding-interactive-scripts-to-blog-posts.png" alt="Adding Interactive Scripts to Blog Posts" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#018</span> <span class="date">26 Jan 2025</span> </div> <h3 class="post-title">Adding Interactive Scripts to Blog Posts</h3> <p class="post-description">how we extended the blog system to support inline JavaScript and CSS for interactive visualizations - with live demos</p> <div class="post-tags"> <span class="tag-pill">meta</span><span class="tag-pill">engineering</span><span class="tag-pill">frontend</span><span class="tag-pill">tutorials</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="algorithms optimization leetcode data-structures problem-solving"> <a href="/blog/solving-adjacent-increasing-subarrays-from-naive-to-optimal/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/solving-adjacent-increasing-subarrays-from-naive-to-optimal.png" alt="Solving Adjacent Increasing Subarrays: From Naive to Optimal" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#017</span> <span class="date">26 Jan 2025</span> </div> <h3 class="post-title">Solving Adjacent Increasing Subarrays: From Naive to Optimal</h3> <p class="post-description">A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization</p> <div class="post-tags"> <span class="tag-pill">algorithms</span><span class="tag-pill">optimization</span><span class="tag-pill">leetcode</span><span class="tag-pill">data-structures</span><span class="tag-pill">problem-solving</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="domain github-pages deployment infrastructure"> <a href="/blog/adding-custom-domain-jeffreyjose07is-adev/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/adding-custom-domain-jeffreyjose07is-adev.png" alt="Adding Custom Domain: jeffreyjose07.is-a.dev" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#016</span> <span class="date">24 Jan 2025</span> </div> <h3 class="post-title">Adding Custom Domain: jeffreyjose07.is-a.dev</h3> <p class="post-description">How I configured a custom domain for my portfolio and blog, moving from jeffreyjose07.github.io to jeffreyjose07.is-a.dev</p> <div class="post-tags"> <span class="tag-pill">domain</span><span class="tag-pill">github-pages</span><span class="tag-pill">deployment</span><span class="tag-pill">infrastructure</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="game-development javascript security terminal-ui web-development"> <a href="/blog/building-a-secure-snake-game-with-terminal-aesthetic/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/building-a-secure-snake-game-with-terminal-aesthetic.png" alt="Building a Secure Snake Game with Terminal Aesthetic" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#015</span> <span class="date">2 Sep 2025</span> </div> <h3 class="post-title">Building a Secure Snake Game with Terminal Aesthetic</h3> <p class="post-description">How we built a security-hardened Snake game with terminal aesthetic styling and integrated it into the portfolio</p> <div class="post-tags"> <span class="tag-pill">game-development</span><span class="tag-pill">javascript</span><span class="tag-pill">security</span><span class="tag-pill">terminal-ui</span><span class="tag-pill">web-development</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="postgresql database migration cloud devops aiven neon supabase"> <a href="/blog/from-neon-to-supabase-to-aiven-a-postgresql-migration/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/from-neon-to-supabase-to-aiven-a-postgresql-migration.png" alt="From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#014</span> <span class="date">28 Aug 2025</span> </div> <h3 class="post-title">From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey</h3> <p class="post-description">A technical journey through multiple PostgreSQL providers due to Neon&#39;s 50-hour weekly limit, failed Supabase migration, and successful Aiven implementation</p> <div class="post-tags"> <span class="tag-pill">postgresql</span><span class="tag-pill">database</span><span class="tag-pill">migration</span><span class="tag-pill">cloud</span><span class="tag-pill">devops</span><span class="tag-pill">aiven</span><span class="tag-pill">neon</span><span class="tag-pill">supabase</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="database migration postgresql neon render spring-boot devops scaling"> <a href="/blog/migrating-from-render-to-neon-postgresql-lessons-from-a/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/migrating-from-render-to-neon-postgresql-lessons-from-a.png" alt="Migrating from Render to Neon PostgreSQL: Lessons from a Zero-Downtime Database Migration" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#013</span> <span class="date">18 Jan 2025</span> </div> <h3 class="post-title">Migrating from Render to Neon PostgreSQL: Lessons from a Zero-Downtime Database Migration</h3> <p class="post-description">A detailed walkthrough of migrating a production chat platform from Render PostgreSQL to Neon, including challenges faced, solutions implemented, and performance improvements achieved.</p> <div class="post-tags"> <span class="tag-pill">database</span><span class="tag-pill">migration</span><span class="tag-pill">postgresql</span><span class="tag-pill">neon</span><span class="tag-pill">render</span><span class="tag-pill">spring-boot</span><span class="tag-pill">devops</span><span class="tag-pill">scaling</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="analytics privacy web-development goatcounter github-pages"> <a href="/blog/implementing-privacy-first-analytics-from-research-to/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/implementing-privacy-first-analytics-from-research-to.png" alt="Implementing Privacy-First Analytics: From Research to GoatCounter" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#012</span> <span class="date">13 Jan 2025</span> </div> <h3 class="post-title">Implementing Privacy-First Analytics: From Research to GoatCounter</h3> <p class="post-description">A comprehensive guide to implementing privacy-friendly analytics across portfolio and blog - from researching solutions to deploying GoatCounter with future API integration plans.</p> <div class="post-tags"> <span class="tag-pill">analytics</span><span class="tag-pill">privacy</span><span class="tag-pill">web-development</span><span class="tag-pill">goatcounter</span><span class="tag-pill">github-pages</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="github-actions automation debugging devops ci-cd"> <a href="/blog/debugging-cross-repository-workflows/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/debugging-cross-repository-workflows.png" alt="Debugging Cross-Repository GitHub Actions: A Void Blocks Tale" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#011</span> <span class="date">11 Aug 2025</span> </div> <h3 class="post-title">Debugging Cross-Repository GitHub Actions: A Void Blocks Tale</h3> <p class="post-description">A deep dive into the complex world of cross-repository workflows, race conditions, and permission errors I encountered while deploying my Void Blocks game.</p> <div class="post-tags"> <span class="tag-pill">github-actions</span><span class="tag-pill">automation</span><span class="tag-pill">debugging</span><span class="tag-pill">devops</span><span class="tag-pill">ci-cd</span> </div> </div> </a> </div> </div> <div class="pagination"><a href="/blog/page/2/" class="pagination-link">&laquo; Previous</a><a href="/blog/" class="pagination-link ">1</a><a href="/blog/page/2/" class="pagination-link ">2</a><a href="/blog/page/3/" class="pagination-link active">3</a><a href="/blog/page/4/" class="pagination-link ">4</a><a href="/blog/page/5/" class="pagination-link ">5</a><a href="/blog/page/4/" class="pagination-link">Next &raquo;</a></div> <footer class="stats-footer"> <p>
+</script> <main class="container" id="main-content"> <header class="blog-header"> <div class="dev-badge" style="margin-bottom: 1.25rem;">
+// ENGINEERING BLOG
+</div> <h1 class="blog-title">Engineering <span class="text-gradient-premium">Log</span></h1> <p class="blog-description">learning things, building things, breaking things, writing about it. technical projects, personal struggles, life stuff, random observations - just documenting whatever I&#39;m working through.</p> </header> <div class="tag-filters-container" id="tagFilters"> <button class="tag-filter active" data-tag="all">All Posts</button> <button class="tag-filter neutral" data-tag="personal">personal</button> <button class="tag-filter attention" data-tag="tutorials">tutorials</button> <button class="tag-filter process" data-tag="frontend">frontend</button> <button class="tag-filter meta" data-tag="meta">meta</button> <button class="tag-filter structure" data-tag="backend">backend</button> <button class="tag-filter structure" data-tag="system-design">system-design</button> <button class="tag-filter connection" data-tag="ai-tools">ai-tools</button> <button class="tag-filter success" data-tag="automation">automation</button> <button class="tag-filter neutral" data-tag="bugfixes">bugfixes</button> <button class="tag-filter neutral" data-tag="engineering">engineering</button> <button class="tag-filter neutral" data-tag="changelog">changelog</button> <button class="tag-filter neutral" data-tag="learning">learning</button> <button class="tag-filter neutral" data-tag="deployment">deployment</button> <button class="tag-filter neutral" data-tag="render">render</button> <button class="tag-filter structure" data-tag="spring-boot">spring-boot</button> <button class="tag-filter process" data-tag="react">react</button> <button class="tag-filter success" data-tag="github-actions">github-actions</button> <button class="tag-filter neutral" data-tag="gamedev">gamedev</button> <button class="tag-filter neutral" data-tag="vanilla-js">vanilla-js</button> <button class="tag-filter neutral" data-tag="tetris">tetris</button> <button class="tag-filter neutral" data-tag="cyberpunk">cyberpunk</button> <button class="tag-filter neutral" data-tag="single-file">single-file</button> <button class="tag-filter neutral" data-tag="debugging">debugging</button> <button class="tag-filter neutral" data-tag="devops">devops</button> <button class="tag-filter neutral" data-tag="ci-cd">ci-cd</button> <button class="tag-filter neutral" data-tag="analytics">analytics</button> <button class="tag-filter neutral" data-tag="privacy">privacy</button> <button class="tag-filter neutral" data-tag="web-development">web-development</button> <button class="tag-filter neutral" data-tag="goatcounter">goatcounter</button> <button class="tag-filter neutral" data-tag="github-pages">github-pages</button> <button class="tag-filter neutral" data-tag="database">database</button> <button class="tag-filter neutral" data-tag="migration">migration</button> <button class="tag-filter neutral" data-tag="postgresql">postgresql</button> <button class="tag-filter neutral" data-tag="neon">neon</button> <button class="tag-filter neutral" data-tag="scaling">scaling</button> <button class="tag-filter neutral" data-tag="cloud">cloud</button> <button class="tag-filter neutral" data-tag="aiven">aiven</button> <button class="tag-filter neutral" data-tag="supabase">supabase</button> <button class="tag-filter neutral" data-tag="game-development">game-development</button> <button class="tag-filter process" data-tag="javascript">javascript</button> <button class="tag-filter neutral" data-tag="security">security</button> <button class="tag-filter neutral" data-tag="terminal-ui">terminal-ui</button> <button class="tag-filter neutral" data-tag="domain">domain</button> <button class="tag-filter neutral" data-tag="infrastructure">infrastructure</button> <button class="tag-filter neutral" data-tag="algorithms">algorithms</button> <button class="tag-filter neutral" data-tag="optimization">optimization</button> <button class="tag-filter neutral" data-tag="leetcode">leetcode</button> <button class="tag-filter neutral" data-tag="data-structures">data-structures</button> <button class="tag-filter neutral" data-tag="problem-solving">problem-solving</button> <button class="tag-filter neutral" data-tag="Spring Boot">Spring Boot</button> <button class="tag-filter neutral" data-tag="React">React</button> <button class="tag-filter neutral" data-tag="Security">Security</button> <button class="tag-filter neutral" data-tag="Brevo">Brevo</button> <button class="tag-filter neutral" data-tag="css">css</button> <button class="tag-filter neutral" data-tag="mobile">mobile</button> <button class="tag-filter neutral" data-tag="ux">ux</button> <button class="tag-filter meta" data-tag="terminal-aesthetic">terminal-aesthetic</button> <button class="tag-filter neutral" data-tag="typescript">typescript</button> <button class="tag-filter neutral" data-tag="vscode">vscode</button> <button class="tag-filter connection" data-tag="ai">ai</button> <button class="tag-filter neutral" data-tag="metrics">metrics</button> <button class="tag-filter neutral" data-tag="testing">testing</button> <button class="tag-filter neutral" data-tag="developer-tools">developer-tools</button> <button class="tag-filter neutral" data-tag="design">design</button> <button class="tag-filter neutral" data-tag="branding">branding</button> <button class="tag-filter neutral" data-tag="nodejs">nodejs</button> <button class="tag-filter neutral" data-tag="performance">performance</button> <button class="tag-filter neutral" data-tag="accessibility">accessibility</button> <button class="tag-filter neutral" data-tag="seo">seo</button> <button class="tag-filter structure" data-tag="portfolio">portfolio</button> <button class="tag-filter process" data-tag="ui-design">ui-design</button> <button class="tag-filter process" data-tag="animation">animation</button> <button class="tag-filter neutral" data-tag="scalable-chat-platform">scalable-chat-platform</button> <button class="tag-filter neutral" data-tag="health">health</button> <button class="tag-filter neutral" data-tag="java">java</button> <button class="tag-filter neutral" data-tag="transactions">transactions</button> <button class="tag-filter neutral" data-tag="interview-prep">interview-prep</button> <button class="tag-filter structure" data-tag="architecture">architecture</button> <button class="tag-filter neutral" data-tag="aop">aop</button> <button class="tag-filter neutral" data-tag="async">async</button> <button class="tag-filter neutral" data-tag="lifecycle">lifecycle</button> <button class="tag-filter neutral" data-tag="hikaricp">hikaricp</button> <button class="tag-filter neutral" data-tag="concurrency">concurrency</button> <button class="tag-filter neutral" data-tag="incident">incident</button> <button class="tag-filter neutral" data-tag="blog">blog</button> <button class="tag-filter neutral" data-tag="marked">marked</button> <button class="tag-filter neutral" data-tag="dependabot">dependabot</button> <button class="tag-filter neutral" data-tag="build-tools">build-tools</button> <button class="tag-filter neutral" data-tag="node">node</button> <button class="tag-filter neutral" data-tag="documentation">documentation</button> <button class="tag-filter neutral" data-tag="refactoring">refactoring</button> <button class="tag-filter neutral" data-tag="technical-debt">technical-debt</button> <button class="tag-filter neutral" data-tag="rss">rss</button> <button class="tag-filter neutral" data-tag="static-site-generator">static-site-generator</button> <button class="tag-filter neutral" data-tag="build-systems">build-systems</button> <button class="tag-filter neutral" data-tag="ci">ci</button> <button class="tag-filter neutral" data-tag="ai-agents">ai-agents</button> <button class="tag-filter neutral" data-tag="mcp">mcp</button> <button class="tag-filter neutral" data-tag="monitoring">monitoring</button> <button class="tag-filter neutral" data-tag="free-tier">free-tier</button> <button class="tag-filter neutral" data-tag="truthmeter-ai">truthmeter-ai</button> <button class="tag-filter neutral" data-tag="git">git</button> <button class="tag-filter neutral" data-tag="android">android</button> <button class="tag-filter neutral" data-tag="adb">adb</button> <button class="tag-filter neutral" data-tag="fire-tv">fire-tv</button> <button class="tag-filter neutral" data-tag="debloat">debloat</button> <button class="tag-filter neutral" data-tag="dns">dns</button> <button class="tag-filter neutral" data-tag="battery">battery</button> <button class="tag-filter neutral" data-tag="homelab">homelab</button> </div> <button id="tagToggleBtn" class="tag-toggle-btn" aria-expanded="false" aria-controls="tagFilters">Show more tags</button> <div class="posts-grid" id="postsGrid"> <div class="post-item panel-card" data-tags="css mobile ux gamedev terminal-aesthetic"> <a href="/blog/enhancing-game-ui-mobile-responsiveness-and-terminal/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/enhancing-game-ui-mobile-responsiveness-and-terminal.png" alt="Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#020</span> <span class="date">28 Nov 2025</span> </div> <h2 class="post-title">Enhancing Game UI: Mobile Responsiveness and Terminal Aesthetics</h2> <p class="post-description">Deep dive into fixing mobile UI issues and enhancing dropdown styling for terminal-themed games</p> <div class="post-tags"> <span class="tag-pill">css</span><span class="tag-pill">mobile</span><span class="tag-pill">ux</span><span class="tag-pill">gamedev</span><span class="tag-pill">terminal-aesthetic</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="Spring Boot React Security Brevo"> <a href="/blog/building-a-secure-password-reset-flow/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/building-a-secure-password-reset-flow.png" alt="Building a Secure Password Reset Flow" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#019</span> <span class="date">20 Nov 2025</span> </div> <h2 class="post-title">Building a Secure Password Reset Flow</h2> <p class="post-description">A deep dive into implementing a secure, token-based password reset system using Spring Boot, React, and Brevo email service.</p> <div class="post-tags"> <span class="tag-pill">Spring Boot</span><span class="tag-pill">React</span><span class="tag-pill">Security</span><span class="tag-pill">Brevo</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="meta engineering frontend tutorials"> <a href="/blog/adding-interactive-scripts-to-blog-posts/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/adding-interactive-scripts-to-blog-posts.png" alt="Adding Interactive Scripts to Blog Posts" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#018</span> <span class="date">26 Jan 2025</span> </div> <h2 class="post-title">Adding Interactive Scripts to Blog Posts</h2> <p class="post-description">how we extended the blog system to support inline JavaScript and CSS for interactive visualizations - with live demos</p> <div class="post-tags"> <span class="tag-pill">meta</span><span class="tag-pill">engineering</span><span class="tag-pill">frontend</span><span class="tag-pill">tutorials</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="algorithms optimization leetcode data-structures problem-solving"> <a href="/blog/solving-adjacent-increasing-subarrays-from-naive-to-optimal/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/solving-adjacent-increasing-subarrays-from-naive-to-optimal.png" alt="Solving Adjacent Increasing Subarrays: From Naive to Optimal" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#017</span> <span class="date">26 Jan 2025</span> </div> <h2 class="post-title">Solving Adjacent Increasing Subarrays: From Naive to Optimal</h2> <p class="post-description">A deep dive into algorithm optimization - from O(n³) brute force to O(n) optimal solution with interactive visualization</p> <div class="post-tags"> <span class="tag-pill">algorithms</span><span class="tag-pill">optimization</span><span class="tag-pill">leetcode</span><span class="tag-pill">data-structures</span><span class="tag-pill">problem-solving</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="domain github-pages deployment infrastructure"> <a href="/blog/adding-custom-domain-jeffreyjose07is-adev/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/adding-custom-domain-jeffreyjose07is-adev.png" alt="Adding Custom Domain: jeffreyjose07.is-a.dev" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#016</span> <span class="date">24 Jan 2025</span> </div> <h2 class="post-title">Adding Custom Domain: jeffreyjose07.is-a.dev</h2> <p class="post-description">How I configured a custom domain for my portfolio and blog, moving from jeffreyjose07.github.io to jeffreyjose07.is-a.dev</p> <div class="post-tags"> <span class="tag-pill">domain</span><span class="tag-pill">github-pages</span><span class="tag-pill">deployment</span><span class="tag-pill">infrastructure</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="game-development javascript security terminal-ui web-development"> <a href="/blog/building-a-secure-snake-game-with-terminal-aesthetic/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/building-a-secure-snake-game-with-terminal-aesthetic.png" alt="Building a Secure Snake Game with Terminal Aesthetic" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#015</span> <span class="date">2 Sep 2025</span> </div> <h2 class="post-title">Building a Secure Snake Game with Terminal Aesthetic</h2> <p class="post-description">How we built a security-hardened Snake game with terminal aesthetic styling and integrated it into the portfolio</p> <div class="post-tags"> <span class="tag-pill">game-development</span><span class="tag-pill">javascript</span><span class="tag-pill">security</span><span class="tag-pill">terminal-ui</span><span class="tag-pill">web-development</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="postgresql database migration cloud devops aiven neon supabase"> <a href="/blog/from-neon-to-supabase-to-aiven-a-postgresql-migration/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/from-neon-to-supabase-to-aiven-a-postgresql-migration.png" alt="From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#014</span> <span class="date">28 Aug 2025</span> </div> <h2 class="post-title">From Neon to Supabase to Aiven: A PostgreSQL Migration Odyssey</h2> <p class="post-description">A technical journey through multiple PostgreSQL providers due to Neon&#39;s 50-hour weekly limit, failed Supabase migration, and successful Aiven implementation</p> <div class="post-tags"> <span class="tag-pill">postgresql</span><span class="tag-pill">database</span><span class="tag-pill">migration</span><span class="tag-pill">cloud</span><span class="tag-pill">devops</span><span class="tag-pill">aiven</span><span class="tag-pill">neon</span><span class="tag-pill">supabase</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="database migration postgresql neon render spring-boot devops scaling"> <a href="/blog/migrating-from-render-to-neon-postgresql-lessons-from-a/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/migrating-from-render-to-neon-postgresql-lessons-from-a.png" alt="Migrating from Render to Neon PostgreSQL: Lessons from a Zero-Downtime Database Migration" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#013</span> <span class="date">18 Jan 2025</span> </div> <h2 class="post-title">Migrating from Render to Neon PostgreSQL: Lessons from a Zero-Downtime Database Migration</h2> <p class="post-description">A detailed walkthrough of migrating a production chat platform from Render PostgreSQL to Neon, including challenges faced, solutions implemented, and performance improvements achieved.</p> <div class="post-tags"> <span class="tag-pill">database</span><span class="tag-pill">migration</span><span class="tag-pill">postgresql</span><span class="tag-pill">neon</span><span class="tag-pill">render</span><span class="tag-pill">spring-boot</span><span class="tag-pill">devops</span><span class="tag-pill">scaling</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="analytics privacy web-development goatcounter github-pages"> <a href="/blog/implementing-privacy-first-analytics-from-research-to/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/implementing-privacy-first-analytics-from-research-to.png" alt="Implementing Privacy-First Analytics: From Research to GoatCounter" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#012</span> <span class="date">13 Jan 2025</span> </div> <h2 class="post-title">Implementing Privacy-First Analytics: From Research to GoatCounter</h2> <p class="post-description">A comprehensive guide to implementing privacy-friendly analytics across portfolio and blog - from researching solutions to deploying GoatCounter with future API integration plans.</p> <div class="post-tags"> <span class="tag-pill">analytics</span><span class="tag-pill">privacy</span><span class="tag-pill">web-development</span><span class="tag-pill">goatcounter</span><span class="tag-pill">github-pages</span> </div> </div> </a> </div> <div class="post-item panel-card" data-tags="github-actions automation debugging devops ci-cd"> <a href="/blog/debugging-cross-repository-workflows/"> <div class="post-thumbnail"> <img src="/assets/thumbnails/debugging-cross-repository-workflows.png" alt="Debugging Cross-Repository GitHub Actions: A Void Blocks Tale" loading="lazy" width="400" height="225"> </div> <div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#011</span> <span class="date">11 Aug 2025</span> </div> <h2 class="post-title">Debugging Cross-Repository GitHub Actions: A Void Blocks Tale</h2> <p class="post-description">A deep dive into the complex world of cross-repository workflows, race conditions, and permission errors I encountered while deploying my Void Blocks game.</p> <div class="post-tags"> <span class="tag-pill">github-actions</span><span class="tag-pill">automation</span><span class="tag-pill">debugging</span><span class="tag-pill">devops</span><span class="tag-pill">ci-cd</span> </div> </div> </a> </div> </div> <div class="pagination"><a href="/blog/page/2/" class="pagination-link">&laquo; Previous</a><a href="/blog/" class="pagination-link ">1</a><a href="/blog/page/2/" class="pagination-link ">2</a><a href="/blog/page/3/" class="pagination-link active">3</a><a href="/blog/page/4/" class="pagination-link ">4</a><a href="/blog/page/5/" class="pagination-link ">5</a><a href="/blog/page/4/" class="pagination-link">Next &raquo;</a></div> <footer class="stats-footer"> <p>
 Total posts: 41 ·
 <a href="/blog/archive.html">Archive</a> ·
 <a href="/blog/feed.xml">RSS Feed</a> </p> </footer> </main> <script>
@@ -818,7 +900,7 @@ thumbnailHtml = `<div class="post-thumbnail" style="background: linear-gradient(
 div.innerHTML = `
 <a href="/blog/${post.slug}/">
 ${thumbnailHtml}
-<div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#${episodeNum}</span> <span class="date">${formatDate(post.date)}</span> </div> <h3 class="post-title">${post.title}</h3> <p class="post-description">${post.description}</p> <div class="post-tags">
+<div class="post-content-wrapper"> <div class="post-meta-top"> <span class="episode-number">#${episodeNum}</span> <span class="date">${formatDate(post.date)}</span> </div> <h2 class="post-title">${post.title}</h2> <p class="post-description">${post.description}</p> <div class="post-tags">
 ${tagsHtml}
 </div> </div> </a>
 `;
@@ -916,8 +998,9 @@ tagToggleBtn.style.display = 'block';
 tagToggleBtn.style.display = 'none';
 }
 tagToggleBtn.addEventListener('click', () => {
-tagContainer.classList.toggle('expanded');
-if (tagContainer.classList.contains('expanded')) {
+const expanded = tagContainer.classList.toggle('expanded');
+tagToggleBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+if (expanded) {
 tagToggleBtn.textContent = 'Show less tags';
 } else {
 tagToggleBtn.textContent = 'Show more tags';
