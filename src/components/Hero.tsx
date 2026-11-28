@@ -11,27 +11,27 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      className="min-h-screen flex items-center justify-center bg-background bg-grid-pattern relative pt-28 md:pt-36 pb-16 overflow-hidden"
+      className="min-h-screen flex items-center justify-center bg-background bg-grid-pattern relative pt-20 sm:pt-28 md:pt-36 pb-10 sm:pb-16 overflow-hidden"
     >
       {/* Ambient background glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[320px] bg-primary/10 rounded-full blur-[130px] pointer-events-none -z-0" />
 
-      <div className="container mx-auto px-4 sm:px-6 text-center relative z-10 max-w-4xl">
+      <div className="mx-auto px-4 sm:px-6 text-center relative z-10 max-w-4xl w-full">
         {/* Status Chip */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-primary/25 bg-primary/10 text-xs font-mono text-primary mb-6 backdrop-blur-md">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-primary/25 bg-primary/10 text-xs font-mono text-primary mb-5 sm:mb-6 backdrop-blur-md">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          <span>Senior Backend Engineer • Distributed Systems</span>
+          <span>Senior Backend Engineer</span>
         </div>
 
         {/* Profile Avatar */}
-        <div className="mb-6">
+        <div className="mb-5 sm:mb-6">
           <div className="relative inline-block group">
             <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-primary/30 via-emerald-400/20 to-teal-400/30 blur-md opacity-70 group-hover:opacity-100 transition duration-500" />
             {/* A plain <img>, not Radix's Avatar to preserve prerender hydration matching */}
             <img
               src={profileImage}
               alt="Jeffrey Jose"
-              className="relative w-28 h-28 sm:w-36 sm:h-36 mx-auto rounded-full ring-2 ring-primary/30 object-cover shadow-xl"
+              className="relative w-24 h-24 sm:w-36 sm:h-36 mx-auto rounded-full ring-2 ring-primary/30 object-cover shadow-xl"
               width={144}
               height={144}
               loading="eager"
@@ -45,29 +45,29 @@ const Hero = () => {
         </div>
 
         {/* Headline */}
-        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-heading font-extrabold mb-4 tracking-tight text-foreground">
+        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-heading font-extrabold mb-3 sm:mb-4 tracking-tight text-foreground">
           Jeffrey <span className="text-gradient-premium">Jose</span>
         </h1>
 
-        <p className="text-lg sm:text-xl md:text-2xl font-normal text-muted-foreground mb-4 max-w-2xl mx-auto">
-          Distributed Systems • High-Throughput Pipelines • 6 yrs @ Jio
+        <p className="text-lg sm:text-xl md:text-2xl font-normal text-muted-foreground mb-3 sm:mb-4 max-w-2xl mx-auto">
+          Distributed Systems • 6 yrs @ Jio
         </p>
 
-        <p className="text-sm sm:text-base md:text-lg mb-6 text-muted-foreground/90 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-sm sm:text-base md:text-lg mb-5 sm:mb-6 text-muted-foreground/90 max-w-2xl mx-auto leading-relaxed">
           I design and ship Spring Boot systems that stay correct under load — Kafka pipelines,
           WebFlux services, and the failure modes that only show up in production.
         </p>
 
         {/* High-credibility Developer Proof Chips */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-10 max-w-2xl mx-auto">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-7 sm:mb-10 max-w-2xl mx-auto">
           <div className="dev-chip">
-            <span className="text-primary font-bold">6+ yrs</span> @ Jio Platforms
+            <span className="text-primary font-bold">6 yrs</span> @ Jio Platforms
           </div>
           <div className="dev-chip">
             <span className="text-primary font-bold">50k+ req/s</span> WebFlux
           </div>
           <div className="dev-chip">
-            <span className="text-primary font-bold">GATE AIR 170</span> (Top 0.08%)
+            <span className="text-primary font-bold">GATE AIR 170</span>
           </div>
           <div className="dev-chip">
             <span className="text-primary font-bold">IIT Kharagpur</span> M.Tech
@@ -75,7 +75,7 @@ const Hero = () => {
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3.5 justify-center mb-12">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-3.5 justify-center mb-8 sm:mb-12">
           <Button
             size="lg"
             className="h-11 px-6 text-sm font-semibold rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center justify-center gap-2"

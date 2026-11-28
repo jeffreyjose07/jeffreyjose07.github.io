@@ -14,18 +14,15 @@ const Footer = () => {
 
   return (
     <footer className="border-t border-border/60 bg-background/50 relative py-12">
-      <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
+      <div className="mx-auto px-4 sm:px-6 max-w-5xl">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-          {/* Brand & Micro Tag */}
+          {/* Brand */}
           <div className="flex items-center gap-2">
             <span className="p-1 rounded bg-primary/10 text-primary border border-primary/20">
               <Terminal className="w-3.5 h-3.5" />
             </span>
             <span className="text-sm font-heading font-bold text-foreground">
               Jeffrey<span className="text-primary">.</span>Jose
-            </span>
-            <span className="text-xs font-mono text-muted-foreground ml-2">
-              • Systems & Backend
             </span>
           </div>
 
@@ -69,12 +66,13 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-mono text-muted-foreground">
+        <div className="mt-8 pt-6 border-t border-border/40 text-center text-xs font-mono text-muted-foreground">
+          {/* Frozen at build time — see vite.build-constants.ts. Reading the
+              clock here would render a different year than the prerendered
+              HTML from 1 January until the next deploy. The `typeof` guard
+              keeps this safe if a build path omits the define. */}
           <p>
             &copy; {typeof __BUILD_YEAR__ === "number" ? __BUILD_YEAR__ : new Date().getFullYear()} Jeffrey Jose. All rights reserved.
-          </p>
-          <p className="text-[11px] text-muted-foreground/70">
-            Engineered with React, TypeScript & Tailwind CSS
           </p>
         </div>
       </div>

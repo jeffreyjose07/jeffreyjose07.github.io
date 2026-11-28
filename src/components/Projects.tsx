@@ -5,22 +5,22 @@ import { featuredProjects, otherProjects } from "@/data/projects";
 const Projects = () => {
   return (
     <section id="projects" className="py-24 px-4 sm:px-6 bg-background relative border-t border-border/50">
-      <div className="container mx-auto max-w-5xl">
+      <div className="mx-auto max-w-5xl">
         {/* Section Header */}
-        <div className="mb-14">
+        <div className="mb-12">
           <div className="text-xs font-mono font-semibold uppercase tracking-widest text-primary mb-3">
-            // 04. FEATURED BUILDS
+            // 04. PROJECTS
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold tracking-tight text-foreground">
-            Featured Systems & Projects
+            Featured Projects
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mt-2 leading-relaxed">
-            Production distributed systems, truth-checking engines, and algorithmic tools with measurable constraints.
+            Production systems and side builds — chat platforms, truth-checking tools, and games with measurable constraints.
           </p>
         </div>
 
         {/* Featured Projects List */}
-        <div className="grid gap-10 mb-20">
+        <div className="grid gap-8 mb-16">
           {featuredProjects.map((project, index) => (
             <div
               key={index}
@@ -28,62 +28,62 @@ const Projects = () => {
             >
               <div className="grid lg:grid-cols-2 gap-0">
                 {/* Media Container with Window Chrome */}
-                <div className="flex flex-col bg-muted/40 border-b lg:border-b-0 lg:border-r border-border/60">
+                <div className="flex flex-col bg-muted/20 border-b lg:border-b-0 lg:border-r border-border/60 min-w-0">
                   {/* Simulated Terminal / Browser Top Bar */}
                   <div className="flex items-center justify-between px-4 py-2.5 bg-secondary/70 border-b border-border/70 text-xs font-mono text-muted-foreground">
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <span className="w-2.5 h-2.5 rounded-full bg-rose-500/70" />
                       <span className="w-2.5 h-2.5 rounded-full bg-amber-500/70" />
                       <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
                     </div>
-                    <span className="text-[11px] opacity-70 truncate max-w-[200px]">
-                      {project.title.toLowerCase().replace(/\s+/g, "-")}.dev
+                    <span className="text-[11px] opacity-70 truncate px-2">
+                      {project.title}
                     </span>
-                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-primary">
-                      DEPLOYED
-                    </span>
+                    <span className="w-8 shrink-0" aria-hidden="true" />
                   </div>
 
-                  <div className="relative h-full min-h-[260px] lg:min-h-[360px] overflow-hidden">
-                    {project.videoUrl ? (
-                      <div
-                        className="w-full h-full relative"
-                        onMouseEnter={(e) => {
-                          const video = e.currentTarget.querySelector("video");
-                          if (video) video.play().catch(() => {});
-                        }}
-                        onMouseLeave={(e) => {
-                          const video = e.currentTarget.querySelector("video");
-                          if (video) {
-                            video.pause();
-                            video.currentTime = 0;
-                          }
-                        }}
-                      >
-                        <video
-                          src={project.videoUrl}
-                          muted
-                          loop
-                          playsInline
-                          className="w-full h-full object-cover absolute inset-0"
-                          poster={project.image}
+                  <div className="p-3 sm:p-4 flex-1 flex items-center justify-center bg-background/50">
+                    <div className="relative w-full aspect-[16/10] overflow-hidden rounded-lg border border-border/60 bg-muted/30">
+                      {project.videoUrl ? (
+                        <div
+                          className="w-full h-full relative"
+                          onMouseEnter={(e) => {
+                            const video = e.currentTarget.querySelector("video");
+                            if (video) video.play().catch(() => {});
+                          }}
+                          onMouseLeave={(e) => {
+                            const video = e.currentTarget.querySelector("video");
+                            if (video) {
+                              video.pause();
+                              video.currentTime = 0;
+                            }
+                          }}
+                        >
+                          <video
+                            src={project.videoUrl}
+                            muted
+                            loop
+                            playsInline
+                            className="w-full h-full object-cover absolute inset-0"
+                            poster={project.image}
+                          />
+                        </div>
+                      ) : (
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+                          loading="lazy"
+                          width={600}
+                          height={375}
                         />
-                      </div>
-                    ) : (
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                        loading="lazy"
-                        width={600}
-                        height={400}
-                      />
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Content Container */}
-                <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
+                <div className="p-5 sm:p-7 lg:p-8 flex flex-col justify-between min-w-0">
                   <div>
                     <h3 className="text-2xl sm:text-3xl font-heading font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
                       {project.title}
@@ -97,7 +97,7 @@ const Projects = () => {
                     {project.highlights.length > 0 && (
                       <div className="mb-6">
                         <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-primary mb-2.5">
-                          Architectural Highlights
+                          Key Features
                         </h4>
                         <ul className="space-y-2">
                           {project.highlights.map((highlight, i) => (
@@ -113,7 +113,7 @@ const Projects = () => {
                     {/* Technologies */}
                     <div className="mb-6">
                       <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-primary mb-2.5">
-                        Stack
+                        Technologies
                       </h4>
                       <div className="flex flex-wrap gap-1.5">
                         {project.technologies.map((tech, i) => (
@@ -131,7 +131,7 @@ const Projects = () => {
                     {project.writeups && project.writeups.length > 0 && (
                       <div className="mb-6 pt-3 border-t border-border/50">
                         <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-primary mb-2">
-                          Post-Mortem & Write-up
+                          Written About
                         </h4>
                         <ul className="space-y-1.5">
                           {project.writeups.map((writeup, i) => (
@@ -170,7 +170,7 @@ const Projects = () => {
                         className="border-border/80 hover:bg-secondary rounded-lg text-xs font-mono h-9 px-4 gap-1.5"
                       >
                         <Github className="h-3.5 w-3.5" />
-                        Source Code
+                        View Code
                       </Button>
                     )}
                   </div>
@@ -184,10 +184,10 @@ const Projects = () => {
         <div>
           <div className="mb-8">
             <h3 className="text-xl sm:text-2xl font-heading font-bold text-foreground mb-2">
-              Academic & Research Builds
+              Academic & Research Projects
             </h3>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Graph algorithms, polarimetric SAR imaging, and NLP systems developed during graduate studies at IIT Kharagpur.
+              Coursework and research from M.Tech. studies at IIT Kharagpur.
             </p>
           </div>
 

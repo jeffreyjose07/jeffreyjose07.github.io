@@ -64,13 +64,14 @@ const RecentWriting = () => {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
           <div>
             <div className="text-xs font-mono font-semibold uppercase tracking-widest text-primary mb-3">
-              // 01. TECHNICAL WRITING
+              // 01. WRITING
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold tracking-tight text-foreground">
-              Production Incident Logs
+              Recent Writing
             </h2>
             <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mt-2 leading-relaxed">
-              Real systems under load — post-mortems, reactive pipelines, and failure modes that only surface at scale.
+              Working logs from real systems — outages, migrations, and the
+              failure modes that only show up in production.
             </p>
           </div>
 
@@ -78,7 +79,7 @@ const RecentWriting = () => {
             href="/blog/"
             className="inline-flex items-center gap-2 text-xs font-mono font-medium text-primary hover:text-primary-glow border border-primary/25 bg-primary/10 hover:bg-primary/20 px-3.5 py-2 rounded-lg transition-all shrink-0 self-start sm:self-auto"
           >
-            <span>All Articles</span>
+            <span>Read all posts</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </a>
         </div>

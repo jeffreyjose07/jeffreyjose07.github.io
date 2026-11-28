@@ -23,24 +23,24 @@ const Education = () => {
   ];
 
   const achievements = [
-    { title: "IIT Kharagpur", subtitle: "M.Tech. Computer Science & Engineering" },
+    { title: "IIT Kharagpur", subtitle: "M.Tech. Computer Science" },
     { title: "GATE 2017", subtitle: "All India Rank 170 among 200,000+ candidates" },
-    { title: "Teaching Assistant", subtitle: "2+ years teaching DS & Algorithms at IIT Kharagpur" },
+    { title: "Teaching Assistant", subtitle: "2+ years at IIT Kharagpur" },
   ];
 
   return (
     <section id="education" className="py-24 px-4 sm:px-6 bg-background relative border-t border-border/50">
-      <div className="container mx-auto max-w-5xl">
+      <div className="mx-auto max-w-5xl">
         {/* Section Header */}
         <div className="mb-14">
           <div className="text-xs font-mono font-semibold uppercase tracking-widest text-primary mb-3">
-            // 05. ACADEMIA & FOUNDATIONS
+            // 05. EDUCATION
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold tracking-tight text-foreground">
-            Academic Background
+            Education
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mt-2 leading-relaxed">
-            Graduate studies at IIT Kharagpur, algorithmic foundations, and remote sensing research.
+            M.Tech. from IIT Kharagpur and GATE AIR 170 — algorithms, systems, and SAR research.
           </p>
         </div>
 
@@ -60,12 +60,12 @@ const Education = () => {
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                All India Rank 170 among 200,000+ candidates nationwide
+                All India Rank 170 among 200,000+ candidates
               </p>
             </div>
           </div>
           <div className="text-xs font-mono text-primary font-semibold px-3 py-1.5 rounded-lg border border-primary/20 bg-primary/10 shrink-0">
-            Top 0.08% Nationwide
+            Top 0.08%
           </div>
         </div>
 
@@ -95,7 +95,7 @@ const Education = () => {
                           <span>M.Tech Thesis</span>
                         </div>
                         <p className="text-muted-foreground italic font-medium">"{edu.thesis}"</p>
-                        <p className="text-[11px] font-mono text-muted-foreground">Advisor: {edu.advisor}</p>
+                        <p className="text-[11px] font-mono text-muted-foreground">Guided by: {edu.advisor}</p>
                         <p className="text-muted-foreground text-xs leading-relaxed pt-1">{edu.description}</p>
                       </div>
                     )}
@@ -117,13 +117,14 @@ const Education = () => {
           ))}
         </div>
 
-        {/* Academic Highlights Summary */}
+        {/* Key Achievements Summary */}
         <div className="dev-card p-6 md:p-8">
           <h3 className="text-lg sm:text-xl font-heading font-bold text-foreground mb-2">
-            Academic Highlights
+            Key Achievements
           </h3>
           <p className="text-xs sm:text-sm text-muted-foreground mb-6 max-w-3xl">
-            Graduate teaching assistantship in Algorithms, Data Structures, and Theory of Computation at IIT Kharagpur.
+            Teaching Assistant during M.Tech., mentoring students in Programming, Data Structures,
+            and Theory of Computations.
           </p>
           <dl className="grid sm:grid-cols-3 gap-5">
             {achievements.map((achievement, index) => (

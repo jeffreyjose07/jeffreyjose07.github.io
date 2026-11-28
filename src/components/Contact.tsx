@@ -106,35 +106,35 @@ const Contact = () => {
 
   return (
     <section id="contact" className="py-24 px-4 sm:px-6 bg-background relative border-t border-border/50">
-      <div className="container mx-auto max-w-5xl">
+      <div className="mx-auto max-w-5xl">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           {/* Left Details */}
-          <div>
+          <div className="min-w-0">
             <div className="text-xs font-mono font-semibold uppercase tracking-widest text-primary mb-3">
-              // 06. DIRECT CONTACT
+              // 06. CONTACT
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold tracking-tight text-foreground mb-4">
-              Get in Touch
+              Contact
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8">
-              Open to senior backend, distributed systems engineering, and architecture discussions.
-              Prefer email for career opportunities.
+              Open to senior backend / distributed systems roles and focused collaboration.
+              Prefer email for hiring conversations.
             </p>
 
             <div className="space-y-4 mb-8">
               {/* Email with copy button */}
-              <div className="dev-card p-4 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
+              <div className="dev-card p-4 flex items-center justify-between gap-3 min-w-0">
+                <div className="flex items-center gap-3.5 min-w-0">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
                     <Mail className="h-4 w-4" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
                       Email
                     </h3>
                     <a
                       href="mailto:jeffreyjose.k@gmail.com"
-                      className="text-sm sm:text-base font-semibold text-foreground hover:text-primary transition-colors"
+                      className="block truncate text-sm sm:text-base font-semibold text-foreground hover:text-primary transition-colors"
                     >
                       jeffreyjose.k@gmail.com
                     </a>
@@ -145,7 +145,7 @@ const Contact = () => {
                   variant="ghost"
                   size="sm"
                   onClick={handleCopyEmail}
-                  className="h-8 px-2.5 text-xs font-mono text-muted-foreground hover:text-foreground gap-1.5 rounded-lg border border-border/60 hover:bg-secondary/60"
+                  className="h-8 px-2.5 text-xs font-mono text-muted-foreground hover:text-foreground gap-1.5 rounded-lg border border-border/60 hover:bg-secondary/60 shrink-0"
                   aria-label="Copy email address"
                 >
                   {copied ? (
@@ -251,7 +251,7 @@ const Contact = () => {
                 <Textarea
                   id="message"
                   name="message"
-                  placeholder="Role, team, or systems question…"
+                  placeholder="Role, team, or question…"
                   value={formData.message}
                   onChange={handleChange}
                   disabled={isLoading}

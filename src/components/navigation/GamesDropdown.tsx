@@ -27,7 +27,7 @@ const GamesDropdown = ({ gameItems }: GamesDropdownProps) => {
           e.stopPropagation();
           setIsOpen(!isOpen);
         }}
-        className="px-3 py-1 text-sm font-medium rounded-full text-muted-foreground hover:text-foreground hover:bg-background/80 transition-all flex items-center gap-1"
+        className="px-3 py-1 text-xs font-medium rounded-full text-muted-foreground hover:text-foreground hover:bg-background/80 transition-all flex items-center gap-1"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -43,7 +43,7 @@ const GamesDropdown = ({ gameItems }: GamesDropdownProps) => {
         }`}
       >
         <div className="px-3 py-1 text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
-          Playable Experiments
+          Games
         </div>
         {gameItems.map((game) => (
           <a

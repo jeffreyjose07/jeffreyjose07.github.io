@@ -58,16 +58,16 @@ const experiences: ExperienceItem[] = [
 export default function Experience() {
   return (
     <section id="experience" className="py-24 px-4 sm:px-6 bg-background relative border-t border-border/50">
-      <div className="container mx-auto max-w-5xl">
+      <div className="mx-auto max-w-5xl">
         <div className="mb-14">
           <div className="text-xs font-mono font-semibold uppercase tracking-widest text-primary mb-3">
             // 02. WORK EXPERIENCE
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold tracking-tight text-foreground">
-            Engineering Trajectory
+            Work Experience
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mt-2 leading-relaxed">
-            Six years at Jio Platforms architecting high-throughput pipelines, reactive distributed services, and zero-downtime systems.
+            Six years at Jio Platforms building batch pipelines, reactive services, and multi-tenant APIs with measurable outcomes.
           </p>
         </div>
 
@@ -142,7 +142,7 @@ function TimelineEntry({ exp, isLatest }: { exp: ExperienceItem; isLatest: boole
                 key={i}
                 className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-mono font-medium bg-primary/10 text-primary border border-primary/20"
               >
-                ⚡ {metric}
+                {metric}
               </span>
             ))}
           </div>

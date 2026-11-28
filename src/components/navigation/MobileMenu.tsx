@@ -51,7 +51,7 @@ const MobileMenu = ({
 
             <div className="pt-3 mt-2 border-t border-border/70">
               <div className="text-muted-foreground font-mono px-4 py-1 text-xs uppercase tracking-wider">
-                Playable Experiments
+                Games
               </div>
               {gameItems.map((game) => (
                 <a
